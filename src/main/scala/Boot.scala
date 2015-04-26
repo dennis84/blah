@@ -12,5 +12,5 @@ object Boot extends App with Service {
 
   val port = sys.env.get("PORT") map(_.toInt) getOrElse 9000
 
-  Http().bind("0.0.0.0", port).startHandlingWith(routes)
+  Http().bindAndHandle(routes, "0.0.0.0", port)
 }
