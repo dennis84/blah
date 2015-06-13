@@ -6,9 +6,9 @@ import akka.http.scaladsl.Http
 
 object Boot extends App with Service {
 
-  override implicit val system = ActorSystem()
-  override implicit val executor = system.dispatcher
-  override implicit val materializer = ActorFlowMaterializer()
+  implicit val system = ActorSystem()
+  implicit val executor = system.dispatcher
+  implicit val materializer = ActorFlowMaterializer()
 
   val port = sys.env.get("PORT") map(_.toInt) getOrElse 9000
 
