@@ -1,8 +1,8 @@
 package blah
 
 import akka.actor._
-import akka.stream._
-import akka.http.Http
+import akka.stream.ActorFlowMaterializer
+import akka.http.scaladsl.Http
 
 object Boot extends App with Service {
 
