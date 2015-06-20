@@ -18,15 +18,10 @@ trait Service extends Protocols with SprayJsonSupport {
   val env: Env
 
   val routes =
-    pathPrefix("articles") {
-      (post & entity(as[CreateArticle])) { req =>
+    pathPrefix("events") {
+      (post & entity(as[EventReq])) { req =>
         complete {
-          Created -> (env.api ? req).mapTo[Article]
-        }
-      } ~
-      (get & path(Segment)) { id =>
-        complete {
-          OK -> (env.api ? GetArticle(id)).mapTo[Article]
+          Created -> (env.api ? req).mapTo[Event]
         }
       }
     }

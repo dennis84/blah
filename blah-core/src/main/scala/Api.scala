@@ -1,21 +1,16 @@
 package blah.core
 
 import akka.actor._
+import spray.json._
 
-case class GetArticle(
-  val id: String)
-
-case class CreateArticle(
-  val title: String,
-  val body: String)
+case class EventReq(
+  val name: String,
+  val props: Map[String, JsValue] = Map.empty)
 
 class Api extends Actor {
 
   def receive = {
-    case GetArticle(id) =>
-      sender ! Article(id, "Hello World", "...")
-
-    case CreateArticle(title, body) =>
-      sender ! Article(Id.generate, title, body)
+    case EventReq(name, props) =>
+      sender ! Event(Id.generate, name, props)
   }
 }

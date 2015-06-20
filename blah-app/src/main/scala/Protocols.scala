@@ -4,7 +4,6 @@ import spray.json._
 import blah.core._
 
 trait Protocols extends DefaultJsonProtocol {
-  implicit val createArticle = jsonFormat2(CreateArticle)
-
-  implicit val article = jsonFormat3(Article)
+  implicit val eventReq = jsonFormat2(EventReq)
+  implicit val event = jsonFormat3(Event)
 }
