@@ -1,7 +1,8 @@
-package blah
+package blah.app
 
 import akka.actor._
 import com.datastax.driver.core.{ProtocolOptions, Cluster}
+import blah.core._
 
 class Env(system: ActorSystem) {
   val api = system.actorOf(Props[Api])

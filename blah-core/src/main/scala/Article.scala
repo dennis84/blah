@@ -1,4 +1,4 @@
-package blah
+package blah.core
 
 case class Article(
   val id: String,

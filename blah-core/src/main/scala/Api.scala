@@ -1,4 +1,4 @@
-package blah
+package blah.core
 
 import akka.actor._
 

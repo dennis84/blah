@@ -1,15 +1,6 @@
 enablePlugins(JavaAppPackaging)
 
-name         := "blah"
-organization := "com.github.dennis84"
-version      := "0.1"
-scalaVersion := "2.11.6"
-
-scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
-
-resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
-
-libraryDependencies ++= Seq(
+val deps = Seq(
   "com.typesafe.akka"      %% "akka-actor"                             % "2.3.11",
   "com.typesafe.akka"      %% "akka-slf4j"                             % "2.3.11",
   "com.typesafe.akka"      %  "akka-stream-experimental_2.11"          % "1.0-RC3",
@@ -21,4 +12,26 @@ libraryDependencies ++= Seq(
   "ch.qos.logback"         %  "logback-classic"                        % "1.1.3"
 )
 
-Revolver.settings
+lazy val commonSettings = Seq(
+  organization  := "com.github.dennis84",
+  version       := "0.1.0",
+  scalaVersion  := "2.11.6",
+  scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
+)
+
+lazy val root = (project in file("."))
+  .aggregate(core, app)
+
+lazy val core = (project in file("blah-core"))
+  .settings(commonSettings: _*)
+  .settings(
+    name := "core",
+    libraryDependencies ++= deps
+  )
+
+lazy val app = (project in file("blah-app"))
+  .settings(commonSettings: _*)
+  .settings(Revolver.settings: _*)
+  .settings(
+    name := "app"
+  ).dependsOn(core)

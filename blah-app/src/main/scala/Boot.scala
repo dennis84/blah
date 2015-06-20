@@ -1,4 +1,4 @@
-package blah
+package blah.app
 
 import scala.concurrent.duration._
 import akka.actor._
