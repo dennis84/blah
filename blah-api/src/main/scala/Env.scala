@@ -5,8 +5,6 @@ import com.datastax.driver.core.{ProtocolOptions, Cluster}
 import blah.core._
 
 class Env(system: ActorSystem) {
-  val api = system.actorOf(Props[Api])
-
   import scala.collection.JavaConversions._
   lazy val cluster = Cluster.builder()
     .addContactPoints(List("127.0.0.1"): _*)
@@ -15,4 +13,6 @@ class Env(system: ActorSystem) {
     .build()
 
   lazy val conn = cluster.connect("blah")
+  lazy val repo = new EventRepo(conn)
+  lazy val api = system.actorOf(Props(new Api(repo)))
 }
