@@ -1,4 +1,4 @@
-package blah.app
+package blah.api
 
 import akka.actor._
 import com.datastax.driver.core.{ProtocolOptions, Cluster}

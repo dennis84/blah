@@ -1,4 +1,4 @@
-package blah.app
+package blah.api
 
 import spray.json._
 import blah.core._

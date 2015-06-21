@@ -1,4 +1,4 @@
-package blah.app
+package blah.api
 
 import scala.concurrent._
 import akka.pattern.ask

@@ -20,7 +20,7 @@ lazy val commonSettings = Seq(
 )
 
 lazy val root = (project in file("."))
-  .aggregate(core, app)
+  .aggregate(core, api)
 
 lazy val core = (project in file("blah-core"))
   .settings(commonSettings: _*)
@@ -29,9 +29,9 @@ lazy val core = (project in file("blah-core"))
     libraryDependencies ++= deps
   )
 
-lazy val app = (project in file("blah-app"))
+lazy val api = (project in file("blah-api"))
   .settings(commonSettings: _*)
   .settings(Revolver.settings: _*)
   .settings(
-    name := "app"
+    name := "api"
   ).dependsOn(core)
