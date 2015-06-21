@@ -6,7 +6,7 @@ import akka.util.Timeout
 import akka.stream.ActorFlowMaterializer
 import akka.http.scaladsl.Http
 
-object Boot extends App with Service {
+object Boot extends App with Service with SetUp {
   implicit val system = ActorSystem()
   implicit val executor = system.dispatcher
   implicit val timeout = Timeout(5 seconds)
@@ -15,5 +15,7 @@ object Boot extends App with Service {
   val env = new Env(system)
   val port = sys.env.get("PORT") map (_.toInt) getOrElse 9000
 
-  Http().bindAndHandle(routes, "0.0.0.0", port)
+  withSchema(env.cluster) {
+    Http().bindAndHandle(routes, "0.0.0.0", port)
+  }
 }
