@@ -9,6 +9,8 @@ case class EventReq(
   val name: String,
   val props: Map[String, JsValue] = Map.empty)
 
+case object FindAll
+
 class Api(repo: EventRepo) extends Actor {
   implicit val executor = context.dispatcher
 
@@ -19,5 +21,7 @@ class Api(repo: EventRepo) extends Actor {
         _ <- repo insert event
       } yield event) pipeTo sender
     }
+
+    case FindAll => repo.findAll pipeTo sender
   }
 }

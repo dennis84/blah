@@ -1,4 +1,4 @@
-package blah.api
+package blah.admin
 
 import akka.actor._
 import blah.core._

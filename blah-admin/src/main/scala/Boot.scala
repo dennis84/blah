@@ -12,6 +12,7 @@ object Boot extends App with Service {
   implicit val timeout = Timeout(5 seconds)
   implicit val materializer = ActorFlowMaterializer()
 
+  val env = new Env(system)
   val port = sys.env.get("PORT") map (_.toInt) getOrElse 9001
 
   Http().bindAndHandle(routes, "0.0.0.0", port)

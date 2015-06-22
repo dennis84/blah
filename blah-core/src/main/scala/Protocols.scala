@@ -1,7 +1,6 @@
-package blah.api
+package blah.core
 
 import spray.json._
-import blah.core._
 
 trait Protocols extends DefaultJsonProtocol {
   implicit val eventReq = jsonFormat2(EventReq)
