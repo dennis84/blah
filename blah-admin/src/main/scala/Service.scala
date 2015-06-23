@@ -20,7 +20,7 @@ trait Service extends Protocols with SprayJsonSupport {
   val routes =
     (get & path("")) {
       complete {
-        OK -> (env.api ? FindAll).mapTo[List[Event]]
+        OK -> (env.api ? FindEvents).mapTo[List[Event]]
       }
     }
 }
