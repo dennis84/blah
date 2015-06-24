@@ -20,26 +20,24 @@ private[core] trait CassandraResultSetOperations {
     }
 
     @throws(classOf[Exception])
-    def result(atMost: Duration)(implicit permit: CanAwait): ResultSet = {
+    def result(atMost: Duration)(implicit permit: CanAwait): ResultSet =
       fut.get(atMost.toMillis, TimeUnit.MILLISECONDS)
-    }
 
-    def onComplete[U](func: (Try[ResultSet]) => U)(implicit ec: ExecutionContext): Unit = {
-      if (fut.isDone) {
+    def onComplete[U](func: (Try[ResultSet]) => U)(implicit ec: ExecutionContext): Unit =
+      if(fut.isDone) {
         func(Success(fut.getUninterruptibly))
       } else {
         fut.addListener(new Runnable {
           def run() {
-            func(Try(fut.get()))
+            func(Try(fut.get))
           }
         }, ExecutionContextExecutor(ec))
       }
-    }
 
     def isCompleted: Boolean = fut.isDone
 
     def value: Option[Try[ResultSet]] =
-      if(fut.isDone) Some(Try(fut.get()))
+      if(fut.isDone) Some(Try(fut.get))
       else None
   }
 
