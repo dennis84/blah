@@ -20,7 +20,7 @@ lazy val commonSettings = Seq(
 )
 
 lazy val root = (project in file("."))
-  .aggregate(core, api, admin)
+  .aggregate(core, api, admin, serving)
 
 lazy val core = (project in file("blah-core"))
   .settings(commonSettings: _*)
@@ -41,4 +41,11 @@ lazy val admin = (project in file("blah-admin"))
   .settings(Revolver.settings: _*)
   .settings(
     name := "admin"
+  ).dependsOn(core)
+
+lazy val serving = (project in file("blah-serving"))
+  .settings(commonSettings: _*)
+  .settings(Revolver.settings: _*)
+  .settings(
+    name := "serving"
   ).dependsOn(core)
