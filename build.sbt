@@ -48,4 +48,10 @@ lazy val serving = (project in file("blah-serving"))
   .settings(Revolver.settings: _*)
   .settings(
     name := "serving"
+  ).dependsOn(core, pageviews)
+
+lazy val pageviews = (project in file("blah-pageviews"))
+  .settings(commonSettings: _*)
+  .settings(
+    name := "pageviews"
   ).dependsOn(core)
