@@ -9,19 +9,11 @@ case class CreateEvent(
   val name: String,
   val props: Map[String, JsValue] = Map.empty)
 
-case object FindEvents
-
-class Api(repo: EventRepo) extends Actor {
+class Api extends Actor {
   implicit val executor = context.dispatcher
 
   def receive = {
-    case CreateEvent(name, props) => {
-      val event = Event(Id.generate, name, props)
-      (for {
-        _ <- repo insert event
-      } yield event) pipeTo sender
-    }
-
-    case FindEvents => repo.findAll pipeTo sender
+    case CreateEvent(name, props) =>
+      sender ! Event(Id.generate, name, props)
   }
 }

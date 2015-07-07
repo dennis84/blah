@@ -2,14 +2,12 @@ enablePlugins(JavaAppPackaging)
 
 val deps = Seq(
   "com.typesafe.akka"      %% "akka-actor"                             % "2.3.11",
-  "com.typesafe.akka"      %% "akka-slf4j"                             % "2.3.11",
   "com.typesafe.akka"      %  "akka-stream-experimental_2.11"          % "1.0-RC3",
   "com.typesafe.akka"      %  "akka-http-core-experimental_2.11"       % "1.0-RC3",
   "com.typesafe.akka"      %  "akka-http-experimental_2.11"            % "1.0-RC3",
   "com.typesafe.akka"      %  "akka-http-spray-json-experimental_2.11" % "1.0-RC3",
-  "com.datastax.cassandra" %  "cassandra-driver-core"                  % "2.1.6",
-  "org.xerial.snappy"      % "snappy-java"                             % "1.1.2-RC3",
-  "ch.qos.logback"         %  "logback-classic"                        % "1.1.3"
+  "org.apache.kafka"       %% "kafka"                                  % "0.8.2.1",
+  "org.apache.spark"       %% "spark-streaming-kafka"                  % "1.4.0"
 )
 
 lazy val commonSettings = Seq(

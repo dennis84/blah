@@ -15,7 +15,5 @@ object Boot extends App with Service with SetUp {
   val env = new Env(system)
   val port = sys.env.get("PORT") map (_.toInt) getOrElse 9000
 
-  withSchema(env.cluster) {
-    Http().bindAndHandle(routes, "0.0.0.0", port)
-  }
+  Http().bindAndHandle(routes, "0.0.0.0", port)
 }
