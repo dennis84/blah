@@ -4,5 +4,6 @@ import akka.actor._
 import blah.core._
 
 class Env(system: ActorSystem) {
-  lazy val api = system.actorOf(Props[Api])
+  lazy val producer = Producer[String]("foo")
+  lazy val api = system.actorOf(Props(new Api(producer)))
 }
