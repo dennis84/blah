@@ -7,35 +7,44 @@ import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming.kafka.KafkaUtils
 import kafka.serializer.StringDecoder
+import com.datastax.spark.connector.streaming._
 import spray.json._
 import blah.core._
 
-object Boot extends App with Protocols {
+object Boot extends App with Protocols with SetUp {
   Logger.getLogger("org").setLevel(Level.OFF)
   Logger.getLogger("akka").setLevel(Level.OFF)
 
-  val conf = new SparkConf()
-    .setMaster("local[2]")
-    .setAppName("example")
-    .set("spark.executor.memory", "1g")
-  val ssc = new StreamingContext(conf, Seconds(2))
+  lazy val cluster = DefaultCassandraCluster()
+  lazy val conn = cluster.connect("blah")
 
-  val stream = KafkaUtils.createStream[String, String, StringDecoder, StringDecoder](
-    ssc = ssc,
-    kafkaParams = Map(
-      "group.id" -> "1234",
-      "zookeeper.connect" -> "localhost:2181",
-      "auto.offset.reset" -> "smallest"
-    ),
-    Map("foo" -> 1),
-    StorageLevel.MEMORY_ONLY
-  ).map(_._2)
+  withSchema(cluster) {
+    val conf = new SparkConf()
+      .setMaster("local[*]")
+      .setAppName("example")
+      .set("spark.cassandra.connection.host", "127.0.0.1")
+      .set("spark.cleaner.ttl", "5000")
+    val ssc = new StreamingContext(conf, Seconds(1))
 
-  val events = stream.map(_.parseJson.convertTo[Event])
-  val xs = events.map(x => (x.name, 1)).reduceByKey(_ + _)
+    val stream = KafkaUtils.createStream[String, String, StringDecoder, StringDecoder](
+      ssc = ssc,
+      kafkaParams = Map(
+        "group.id" -> "1234",
+        "zookeeper.connect" -> "localhost:2181",
+        "auto.offset.reset" -> "smallest"),
+      topics = Map("foo" -> 1),
+      storageLevel = StorageLevel.MEMORY_ONLY
+    ).map(_._2)
 
-  xs.print()
+    val events = stream
+      .map(_.parseJson.convertTo[Event])
+      .map(x => (x.name, 1))
+      .reduceByKey(_ + _)
 
-  ssc.start()
-  ssc.awaitTermination()
+    events.saveToCassandra("blah", "example")
+    events.print()
+
+    ssc.start()
+    ssc.awaitTermination()
+  }
 }

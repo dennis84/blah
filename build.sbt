@@ -9,7 +9,9 @@ val deps = Seq(
   "org.apache.kafka"       %% "kafka"                                  % "0.8.2.1",
   "org.apache.spark"       %% "spark-core"                             % "1.4.0",
   "org.apache.spark"       %% "spark-streaming"                        % "1.4.0",
-  "org.apache.spark"       %% "spark-streaming-kafka"                  % "1.4.0"
+  "org.apache.spark"       %% "spark-streaming-kafka"                  % "1.4.0",
+  "com.datastax.cassandra" %  "cassandra-driver-core"                  % "2.1.6",
+  "com.datastax.spark"     %% "spark-cassandra-connector"              % "1.4.0-M1"
 )
 
 lazy val commonSettings = Seq(

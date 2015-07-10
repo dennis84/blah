@@ -6,7 +6,7 @@ import akka.util.Timeout
 import akka.stream.ActorFlowMaterializer
 import akka.http.scaladsl.Http
 
-object Boot extends App with Service with SetUp {
+object Boot extends App with Service {
   implicit val system = ActorSystem()
   implicit val executor = system.dispatcher
   implicit val timeout = Timeout(5 seconds)
