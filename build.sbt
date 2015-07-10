@@ -45,6 +45,13 @@ lazy val admin = (project in file("blah-admin"))
     name := "admin"
   ).dependsOn(core)
 
+lazy val serving = (project in file("blah-serving"))
+  .settings(commonSettings: _*)
+  .settings(Revolver.settings: _*)
+  .settings(
+    name := "serving"
+  ).dependsOn(core, example)
+
 lazy val example = (project in file("blah-example"))
   .settings(commonSettings: _*)
   .settings(
