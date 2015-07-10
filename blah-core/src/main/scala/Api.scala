@@ -9,7 +9,7 @@ case class CreateEvent(
   val name: String,
   val props: Map[String, JsValue] = Map.empty)
 
-class Api(producer: Producer[String]) extends Actor with Protocols {
+class Api(producer: Producer[String]) extends Actor with JsonProtocol {
   implicit val executor = context.dispatcher
 
   def receive = {

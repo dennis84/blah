@@ -2,10 +2,10 @@ enablePlugins(JavaAppPackaging)
 
 val deps = Seq(
   "com.typesafe.akka"      %% "akka-actor"                             % "2.3.11",
-  "com.typesafe.akka"      %  "akka-stream-experimental_2.11"          % "1.0-RC3",
-  "com.typesafe.akka"      %  "akka-http-core-experimental_2.11"       % "1.0-RC3",
-  "com.typesafe.akka"      %  "akka-http-experimental_2.11"            % "1.0-RC3",
-  "com.typesafe.akka"      %  "akka-http-spray-json-experimental_2.11" % "1.0-RC3",
+  "com.typesafe.akka"      %  "akka-stream-experimental_2.11"          % "1.0-RC4",
+  "com.typesafe.akka"      %  "akka-http-core-experimental_2.11"       % "1.0-RC4",
+  "com.typesafe.akka"      %  "akka-http-experimental_2.11"            % "1.0-RC4",
+  "com.typesafe.akka"      %  "akka-http-spray-json-experimental_2.11" % "1.0-RC4",
   "org.apache.kafka"       %% "kafka"                                  % "0.8.2.1",
   "org.apache.spark"       %% "spark-core"                             % "1.4.0",
   "org.apache.spark"       %% "spark-streaming"                        % "1.4.0",

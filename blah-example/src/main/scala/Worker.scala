@@ -11,10 +11,7 @@ import com.datastax.spark.connector.streaming._
 import spray.json._
 import blah.core._
 
-object Boot extends App with Protocols with SetUp {
-  Logger.getLogger("org").setLevel(Level.OFF)
-  Logger.getLogger("akka").setLevel(Level.OFF)
-
+object Worker extends App with JsonProtocol with SetUp {
   lazy val cluster = DefaultCassandraCluster()
   lazy val conn = cluster.connect("blah")
 
