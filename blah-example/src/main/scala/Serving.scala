@@ -1,6 +1,7 @@
 package blah.example
 
 import scala.concurrent.ExecutionContextExecutor
+import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.server._
@@ -9,12 +10,14 @@ import Directives._
 import spray.json._
 import com.datastax.driver.core.Session
 
-trait Serving extends ExampleJsonProtocol with SprayJsonSupport {
-  implicit val executor: ExecutionContextExecutor
-  val conn: Session
+class Serving(system: ActorSystem, conn: Session)
+  extends ExampleJsonProtocol
+  with SprayJsonSupport {
+
+  import system.dispatcher
   val repo = new Repo(conn)
 
-  val exampleRoutes =
+  val route =
     pathPrefix("example") {
       (get & path("")) {
         complete {

@@ -33,21 +33,18 @@ lazy val core = (project in file("blah-core"))
 
 lazy val api = (project in file("blah-api"))
   .settings(commonSettings: _*)
-  .settings(Revolver.settings: _*)
   .settings(
     name := "api"
   ).dependsOn(core)
 
 lazy val admin = (project in file("blah-admin"))
   .settings(commonSettings: _*)
-  .settings(Revolver.settings: _*)
   .settings(
     name := "admin"
   ).dependsOn(core)
 
 lazy val serving = (project in file("blah-serving"))
   .settings(commonSettings: _*)
-  .settings(Revolver.settings: _*)
   .settings(
     name := "serving"
   ).dependsOn(core, example)
