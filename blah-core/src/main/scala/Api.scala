@@ -1,6 +1,5 @@
 package blah.core
 
-import scala.concurrent._
 import akka.actor._
 import spray.json._
 import akka.pattern.pipe

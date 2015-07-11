@@ -9,8 +9,8 @@ import blah.core.CassandraTweaks
 class Repo(conn: Session) extends CassandraTweaks {
 
   def findAll(implicit ec: ExecutionContext): Future[List[Example]] = {
-    val query = QueryBuilder.select().all().from("blah", "example")
-    conn.executeAsync(query) map (_.all().map(mkView).toList)
+    val query = QueryBuilder.select.all.from("blah", "example")
+    conn.executeAsync(query) map (_.all.map(mkView).toList)
   }
 
   private def mkView(r: Row) = Example(

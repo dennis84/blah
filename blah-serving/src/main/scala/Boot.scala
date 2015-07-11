@@ -1,6 +1,5 @@
 package blah.serving
 
-import scala.concurrent.duration._
 import akka.actor._
 import akka.util.Timeout
 import akka.stream.ActorMaterializer

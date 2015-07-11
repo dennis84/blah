@@ -3,7 +3,6 @@ package blah.admin
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import akka.http.scaladsl.model.StatusCodes._
 import Directives._
 import blah.core._
 
