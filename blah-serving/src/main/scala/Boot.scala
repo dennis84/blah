@@ -14,7 +14,7 @@ object Boot extends App {
   val port = sys.env.get("PORT") map (_.toInt) getOrElse 9002
 
   val env = new Env(system)
-  val example = new blah.example.Serving(system, env.conn)
+  val example = new blah.example.Serving(env.conn)
 
   Http().bindAndHandle(example.route, "0.0.0.0", port)
 }
