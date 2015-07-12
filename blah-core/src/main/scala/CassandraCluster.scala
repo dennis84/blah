@@ -1,6 +1,5 @@
 package blah.core
 
-import scala.collection.JavaConversions._
 import com.datastax.driver.core.{ProtocolOptions, Cluster}
 
 object DefaultCassandraCluster {

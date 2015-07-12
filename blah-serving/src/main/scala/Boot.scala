@@ -13,7 +13,10 @@ object Boot extends App {
   val port = sys.env.get("PORT") map (_.toInt) getOrElse 9002
 
   val env = new Env(system)
-  val example = new blah.example.Serving(env.conn)
+  val websocket = new WebsocketService
+  val example = new blah.example.Serving(env.conn, websocket.hub.actor)
 
-  Http().bindAndHandle(example.route, "0.0.0.0", port)
+  val route = websocket.route
+
+  Http().bindAndHandle(route, "0.0.0.0", port)
 }
