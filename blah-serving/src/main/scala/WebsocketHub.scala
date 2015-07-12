@@ -8,7 +8,7 @@ class WebsocketHub(system: ActorSystem) {
   trait Event
   case class Join(member: ActorRef) extends Event
   case object Leave extends Event
-  case class Msg(text: String) extends Event
+  case class Message(text: String) extends Event
 
   val actor = system.actorOf(Props(new Actor {
     var members = Set.empty[ActorRef]
@@ -18,7 +18,7 @@ class WebsocketHub(system: ActorSystem) {
         context.watch(member)
         members += member
         dispatch("join!")
-      case Msg(text) =>
+      case Message(text) =>
         dispatch(text)
       case text: String =>
         dispatch(text)
@@ -38,7 +38,7 @@ class WebsocketHub(system: ActorSystem) {
   def flow = Flow(inSink, outSource)(Keep.right) { implicit b ⇒
     (actorIn, actorOut) =>
       import FlowGraph.Implicits._
-      val enveloper = b.add(Flow[String].map(Msg))
+      val enveloper = b.add(Flow[String].map(Message))
       val merge = b.add(Merge[Event](2))
       enveloper ~> merge.in(0)
       b.materializedValue ~> Flow[ActorRef].map(Join) ~> merge.in(1)

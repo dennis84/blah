@@ -26,25 +26,16 @@ lazy val root = (project in file("."))
 
 lazy val core = (project in file("blah-core"))
   .settings(commonSettings: _*)
-  .settings(
-    name := "core",
-    libraryDependencies ++= deps
-  )
+  .settings(libraryDependencies ++= deps)
 
 lazy val api = (project in file("blah-api"))
   .settings(commonSettings: _*)
-  .settings(
-    name := "api"
-  ).dependsOn(core)
+  .dependsOn(core)
 
 lazy val serving = (project in file("blah-serving"))
   .settings(commonSettings: _*)
-  .settings(
-    name := "serving"
-  ).dependsOn(core, example)
+  .dependsOn(core, example)
 
 lazy val example = (project in file("blah-example"))
   .settings(commonSettings: _*)
-  .settings(
-    name := "example"
-  ).dependsOn(core)
+  .dependsOn(core)

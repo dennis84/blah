@@ -1,7 +1,5 @@
 package blah.example
 
-import org.apache.log4j.Logger
-import org.apache.log4j.Level
 import org.apache.spark.{SparkContext, SparkConf}
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.{Seconds, StreamingContext}
