@@ -6,15 +6,15 @@ import akka.http.scaladsl.model.ws.TextMessage
 import akka.stream.scaladsl.{Sink, Source, Flow}
 import spray.json._
 import com.datastax.driver.core.Session
-import blah.core.WebsocketHub
+import blah.core.ServingEnv
 
-class Serving(conn: Session, hub: WebsocketHub)(implicit system: ActorSystem)
+class Serving(env: ServingEnv)(implicit system: ActorSystem)
   extends ExampleJsonProtocol {
 
   import system.dispatcher
-  val repo = new Repo(conn)
+  val repo = new Repo(env.cassandraConnection)
 
   system.scheduler.schedule(1.second, 1.second) {
-    repo.findAll map (xs => hub.send(xs.toJson.compactPrint))
+    repo.findAll map (xs => env.websocket.send(xs.toJson.compactPrint))
   }
 }

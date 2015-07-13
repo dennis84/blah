@@ -4,6 +4,7 @@ import akka.actor._
 import akka.util.Timeout
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.Http
+import blah.core.ServingEnv
 
 object Boot extends App {
   implicit val system = ActorSystem()
@@ -12,11 +13,10 @@ object Boot extends App {
 
   val port = sys.env.get("PORT") map (_.toInt) getOrElse 9002
 
-  val env = new Env(system)
-  val websocket = new WebsocketService
-  val example = new blah.example.Serving(env.conn, websocket.hub)
-
-  val route = websocket.route
+  val env = new ServingEnv(system)
+  val example = new blah.example.Serving(env)
+  val websocketService = new WebsocketService(env.websocket)
+  val route = websocketService.route
 
   Http().bindAndHandle(route, "0.0.0.0", port)
 }

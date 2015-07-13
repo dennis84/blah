@@ -7,10 +7,8 @@ import akka.stream.scaladsl.{Sink, Source, Flow}
 import Directives._
 import blah.core.WebsocketHub
 
-class WebsocketService(implicit system: ActorSystem) {
+class WebsocketService(hub: WebsocketHub)(implicit system: ActorSystem) {
   import system.dispatcher
-
-  val hub = new WebsocketHub(system)
 
   def route = (get & path("ws")) {
     handleWebsocketMessages(flow)
