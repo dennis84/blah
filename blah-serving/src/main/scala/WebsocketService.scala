@@ -5,6 +5,7 @@ import akka.http.scaladsl.server._
 import akka.http.scaladsl.model.ws.{Message, TextMessage}
 import akka.stream.scaladsl.{Sink, Source, Flow}
 import Directives._
+import blah.core.WebsocketHub
 
 class WebsocketService(implicit system: ActorSystem) {
   import system.dispatcher

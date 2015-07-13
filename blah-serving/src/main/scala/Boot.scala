@@ -14,7 +14,7 @@ object Boot extends App {
 
   val env = new Env(system)
   val websocket = new WebsocketService
-  val example = new blah.example.Serving(env.conn, websocket.hub.actor)
+  val example = new blah.example.Serving(env.conn, websocket.hub)
 
   val route = websocket.route
 

@@ -1,16 +1,16 @@
-package blah.serving
+package blah.core
 
 import akka.actor._
 import akka.stream.OverflowStrategy
 import akka.stream.scaladsl._
 
 class WebsocketHub(system: ActorSystem) {
-  trait Event
-  case class Join(member: ActorRef) extends Event
-  case object Leave extends Event
-  case class Message(text: String) extends Event
+  trait WebsocketEvent
+  case class Join(member: ActorRef) extends WebsocketEvent
+  case object Leave extends WebsocketEvent
+  case class Message(text: String) extends WebsocketEvent
 
-  val actor = system.actorOf(Props(new Actor {
+  private val actor = system.actorOf(Props(new Actor {
     var members = Set.empty[ActorRef]
 
     def receive: Receive = {
@@ -31,18 +31,22 @@ class WebsocketHub(system: ActorSystem) {
     def dispatch(msg: String): Unit = members.foreach(_ ! msg)
   }))
 
-  def inSink = Sink.actorRef[Event](actor, Leave)
+  private def inSink = Sink.actorRef[WebsocketEvent](actor, Leave)
 
-  def outSource = Source.actorRef[String](1, OverflowStrategy.fail)
+  private def outSource = Source.actorRef[String](1, OverflowStrategy.fail)
 
   def flow = Flow(inSink, outSource)(Keep.right) { implicit b ⇒
     (actorIn, actorOut) =>
       import FlowGraph.Implicits._
       val enveloper = b.add(Flow[String].map(Message))
-      val merge = b.add(Merge[Event](2))
+      val merge = b.add(Merge[WebsocketEvent](2))
       enveloper ~> merge.in(0)
       b.materializedValue ~> Flow[ActorRef].map(Join) ~> merge.in(1)
       merge ~> actorIn
       (enveloper.inlet, actorOut.outlet)
     } mapMaterializedValue (_ => ())
+
+  def send(text: String) {
+    actor ! Message(text)
+  }
 }
