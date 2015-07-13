@@ -1,22 +1,21 @@
 package blah.example
 
 import scala.concurrent.duration._
-import akka.actor.{ActorSystem, ActorRef}
 import akka.http.scaladsl.server._
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.model.ws.TextMessage
-import akka.stream.scaladsl.{Sink, Source, Flow}
 import spray.json._
-import com.datastax.driver.core.Session
-import blah.core.{ServingEnv, ServingWithRoute}
+import blah.core.{ServingEnv, Serving}
 
-class Serving(env: ServingEnv)(implicit system: ActorSystem)
-  extends ExampleJsonProtocol {
-  import system.dispatcher
+class ExampleServing(env: ServingEnv)
+  extends Serving
+  with ExampleJsonProtocol {
+  import env.system.dispatcher
 
-  val repo = new Repo(env.cassandraConnection)
+  def id = "example"
 
-  system.scheduler.schedule(1.second, 1.second) {
+  private val repo = new Repo(env.cassandraConnection)
+
+  env.system.scheduler.schedule(1.second, 1.second) {
     repo.findAll map (xs => env.websocket.send("example", xs.toJson.compactPrint))
   }
 }
