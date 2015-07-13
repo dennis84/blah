@@ -8,7 +8,8 @@ class WebsocketHub(system: ActorSystem) {
   trait WebsocketEvent
   case class Join(member: ActorRef) extends WebsocketEvent
   case object Leave extends WebsocketEvent
-  case class Message(text: String) extends WebsocketEvent
+  case object Noop extends WebsocketEvent
+  case class Message(event: String, text: String) extends WebsocketEvent
 
   private val actor = system.actorOf(Props(new Actor {
     var members = Set.empty[ActorRef]
@@ -17,15 +18,12 @@ class WebsocketHub(system: ActorSystem) {
       case Join(member) =>
         context.watch(member)
         members += member
-        dispatch("join!")
-      case Message(text) =>
-        dispatch(text)
-      case text: String =>
-        dispatch(text)
-      case Leave =>
-        dispatch("left!")
+      case Message(event, text) =>
+        dispatch(s"$event@$text")
       case Terminated(member) =>
         members -= member
+      case Leave =>
+      case Noop =>
     }
 
     def dispatch(msg: String): Unit = members.foreach(_ ! msg)
@@ -38,7 +36,7 @@ class WebsocketHub(system: ActorSystem) {
   def flow = Flow(inSink, outSource)(Keep.right) { implicit b ⇒
     (actorIn, actorOut) =>
       import FlowGraph.Implicits._
-      val enveloper = b.add(Flow[String].map(Message))
+      val enveloper = b.add(Flow[String].map(x => Noop))
       val merge = b.add(Merge[WebsocketEvent](2))
       enveloper ~> merge.in(0)
       b.materializedValue ~> Flow[ActorRef].map(Join) ~> merge.in(1)
@@ -46,7 +44,7 @@ class WebsocketHub(system: ActorSystem) {
       (enveloper.inlet, actorOut.outlet)
     } mapMaterializedValue (_ => ())
 
-  def send(text: String) {
-    actor ! Message(text)
+  def send(event: String, text: String) {
+    actor ! Message(event, text)
   }
 }

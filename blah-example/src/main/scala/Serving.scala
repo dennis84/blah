@@ -17,6 +17,6 @@ class Serving(env: ServingEnv)(implicit system: ActorSystem)
   val repo = new Repo(env.cassandraConnection)
 
   system.scheduler.schedule(1.second, 1.second) {
-    repo.findAll map (xs => env.websocket.send(xs.toJson.compactPrint))
+    repo.findAll map (xs => env.websocket.send("example", xs.toJson.compactPrint))
   }
 }
