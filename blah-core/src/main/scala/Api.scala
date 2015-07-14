@@ -3,6 +3,7 @@ package blah.core
 import akka.actor._
 import spray.json._
 import akka.pattern.pipe
+import akka.http.scaladsl.model.DateTime
 
 case class CreateEvent(
   val name: String,
@@ -13,7 +14,7 @@ class Api(producer: Producer[String]) extends Actor with JsonProtocol {
 
   def receive = {
     case CreateEvent(name, props) => {
-      val evt = Event(Id.generate, name, props)
+      val evt = Event(Id.generate, name, DateTime.now, props)
       producer.send(evt.toJson.compactPrint)
       sender ! evt
     }
