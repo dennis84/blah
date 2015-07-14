@@ -1,7 +1,8 @@
 package blah.example
 
 import spray.json._
+import blah.core.JsonProtocol
 
-trait ExampleJsonProtocol extends DefaultJsonProtocol {
-  implicit val example = jsonFormat2(Example)
+trait ExampleJsonProtocol extends JsonProtocol {
+  implicit val example = jsonFormat3(Example)
 }

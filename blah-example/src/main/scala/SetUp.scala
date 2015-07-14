@@ -16,8 +16,10 @@ trait SetUp {
 
     session.execute(
       """|CREATE TABLE IF NOT EXISTS blah.example (
-         | name text PRIMARY KEY,
-         | count COUNTER
+         | name text,
+         | date timestamp,
+         | count int,
+         | PRIMARY KEY ((name), date)
          |);""".stripMargin)
 
     session.close

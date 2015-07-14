@@ -1,7 +1,7 @@
 package blah.core
 
 import spray.json._
-import akka.http.scaladsl.model.DateTime
+import org.joda.time.DateTime
 
 case class Event(
   val id: String,

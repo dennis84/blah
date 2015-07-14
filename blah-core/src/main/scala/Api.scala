@@ -3,7 +3,7 @@ package blah.core
 import akka.actor._
 import spray.json._
 import akka.pattern.pipe
-import akka.http.scaladsl.model.DateTime
+import com.github.nscala_time.time.Imports._
 
 case class CreateEvent(
   val name: String,
