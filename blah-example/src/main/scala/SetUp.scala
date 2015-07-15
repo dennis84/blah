@@ -15,7 +15,7 @@ trait SetUp {
          |};""".stripMargin)
 
     session.execute(
-      """|CREATE TABLE IF NOT EXISTS blah.example (
+      """|CREATE TABLE IF NOT EXISTS blah.count (
          | name text,
          | date timestamp,
          | count int,

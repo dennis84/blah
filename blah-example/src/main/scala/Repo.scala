@@ -2,20 +2,17 @@ package blah.example
 
 import scala.concurrent._
 import scala.collection.JavaConversions._
-import com.datastax.driver.core.{Session, Row}
-import com.datastax.driver.core.querybuilder.QueryBuilder
-import org.joda.time.DateTime
+import com.datastax.driver.core.Session
 import blah.core.CassandraTweaks
 
-class Repo(conn: Session) extends CassandraTweaks {
+class Repo(conn: Session)(implicit ec: ExecutionContext) extends CassandraTweaks {
 
-  def findAll(implicit ec: ExecutionContext): Future[List[Example]] = {
-    val query = QueryBuilder.select.all.from("blah", "example")
-    conn.executeAsync(query) map (_.all.map(mkView).toList)
+  def count(q: CountQuery): Future[CountResult] = {
+    val cql = s"""|select count from blah.count
+                  |where name='${q.event}';
+                  |""".stripMargin
+    conn.executeAsync(cql) map { xs =>
+      CountResult(xs.all.map(_.getInt("count")).sum)
+    }
   }
-
-  private def mkView(r: Row) = Example(
-    r.getString("name"),
-    new DateTime(r.getDate("date")),
-    r.getInt("count"))
 }

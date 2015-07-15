@@ -22,7 +22,7 @@ object Worker extends App with JsonProtocol with SetUp {
   withSchema(cluster) {
     val conf = new SparkConf()
       .setMaster("local[*]")
-      .setAppName("example")
+      .setAppName("count")
       .set("spark.cassandra.connection.host", "127.0.0.1")
       .set("spark.cleaner.ttl", "5000")
     val ssc = new StreamingContext(conf, Seconds(1))
@@ -42,7 +42,7 @@ object Worker extends App with JsonProtocol with SetUp {
       .map(x => (x.name, x.date, 1))
       .reduce((a, b) => (a._1, a._2, a._3 + b._3))
 
-    events.saveToCassandra("blah", "example", SomeColumns("name", "date", "count"))
+    events.saveToCassandra("blah", "count", SomeColumns("name", "date", "count"))
     events.print()
 
     ssc.start()
