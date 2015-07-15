@@ -16,8 +16,6 @@ class CountServing(env: ServingEnv)
 
   private val repo = new Repo(env.cassandraConnection)
 
-  override def serve =
-    parameters('event, 'timeframe.?) { (event, timeframe) =>
-      complete(repo.count(CountQuery(event, timeframe)))
-    }
+  def serve(q: Map[String, String]) =
+    repo.count(q.toJson.convertTo[CountQuery])
 }

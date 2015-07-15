@@ -1,11 +1,17 @@
 package blah.core
 
+import scala.concurrent.Future
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server._
+import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import Directives._
 
 trait Serving {
   def id: String
-  def serve: Route = complete(NotImplemented -> "Not implemented!")
-  final def route = pathPrefix(id)(get(serve))
+
+  final def route = pathPrefix(id)(get(parameterMap { params =>
+    complete(serve(params))
+  }))
+
+  def serve(q: Map[String, String]): ToResponseMarshallable
 }
