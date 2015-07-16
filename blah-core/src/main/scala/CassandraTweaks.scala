@@ -1,10 +1,11 @@
 package blah.core
 
-import com.datastax.driver.core.{Row, BoundStatement, ResultSet, ResultSetFuture}
+import scala.language.implicitConversions
 import scala.concurrent.{CanAwait, Future, ExecutionContext}
-import scala.util.{Success, Try}
 import scala.concurrent.duration.Duration
+import scala.util.{Success, Try}
 import java.util.concurrent.TimeUnit
+import com.datastax.driver.core._
 
 private[core] trait CassandraResultSetOperations {
   private case class ExecutionContextExecutor(ec: ExecutionContext) extends java.util.concurrent.Executor {

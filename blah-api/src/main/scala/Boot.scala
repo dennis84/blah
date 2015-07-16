@@ -10,7 +10,7 @@ object Boot extends App {
   implicit val system = ActorSystem()
   implicit val executor = system.dispatcher
   implicit val materializer = ActorMaterializer()
-  implicit val timeout = Timeout(5 seconds)
+  implicit val timeout = Timeout(5.seconds)
 
   val port = sys.env.get("PORT") map (_.toInt) getOrElse 9000
   val env = new Env(system)
