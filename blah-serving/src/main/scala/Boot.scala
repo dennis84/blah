@@ -12,8 +12,9 @@ object Boot extends App {
   implicit val executor = system.dispatcher
   implicit val materializer = ActorMaterializer()
 
-  val port = sys.env.get("PORT") map (_.toInt) getOrElse 9002
-
+  val config = system.settings.config
+  val interface = config.getString("app.interface")
+  val port = config.getInt("app.port")
   val env = new ServingEnv(system)
   val websocketService = new WebsocketService(env.websocket)
   val services = Seq(new blah.example.CountServing(env))
@@ -28,5 +29,5 @@ object Boot extends App {
     websocketService.route
   }
 
-  Http().bindAndHandle(route, "0.0.0.0", port)
+  Http().bindAndHandle(route, interface, port)
 }

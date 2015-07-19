@@ -12,9 +12,11 @@ object Boot extends App {
   implicit val materializer = ActorMaterializer()
   implicit val timeout = Timeout(5.seconds)
 
-  val port = sys.env.get("PORT") map (_.toInt) getOrElse 9000
+  val config = system.settings.config
+  val interface = config.getString("app.interface")
+  val port = config.getInt("app.port")
   val env = new Env(system)
   val service = new Service(env)
 
-  Http().bindAndHandle(service.route, "0.0.0.0", port)
+  Http().bindAndHandle(service.route, interface, port)
 }
