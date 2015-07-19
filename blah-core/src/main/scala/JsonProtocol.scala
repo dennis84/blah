@@ -13,6 +13,6 @@ trait JsonProtocol extends DefaultJsonProtocol {
     }
   }
 
-  implicit val createEvent = jsonFormat2(CreateEvent)
+  implicit val createEvent = jsonFormat2(EventApi.Create)
   implicit val event = jsonFormat4(Event)
 }
