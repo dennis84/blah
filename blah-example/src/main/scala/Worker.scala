@@ -11,11 +11,6 @@ import spray.json._
 import blah.core._
 
 object Worker extends App with JsonProtocol with SetUp {
-  import org.apache.log4j.Logger
-  import org.apache.log4j.Level
-
-  Logger.getLogger("org").setLevel(Level.OFF)
-  Logger.getLogger("akka").setLevel(Level.OFF)
   lazy val cluster = DefaultCassandraCluster()
   lazy val conn = cluster.connect("blah")
 
