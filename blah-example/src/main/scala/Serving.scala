@@ -12,10 +12,11 @@ class CountServing(env: ServingEnv)
   with SprayJsonSupport {
   import env.system.dispatcher
 
-  def id = "count"
-
   private val repo = new Repo(env.cassandraConnection)
 
-  def serve(q: Map[String, String]) =
-    repo.count(q.toJson.convertTo[CountQuery])
+  def route = (get & path("count")) {
+    parameters('event, 'timeframe.?).as(CountQuery) { query =>
+      complete(repo count query)
+    }
+  }
 }
