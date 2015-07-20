@@ -34,7 +34,7 @@ object Worker extends App with JsonProtocol with SetUp {
 
     val events = stream
       .map(_.parseJson.convertTo[Event])
-      .map(x => (x.name, x.date, 1))
+      .map(x => (x.name, x.date.withTimeAtStartOfDay, 1))
       .reduce((a, b) => (a._1, a._2, a._3 + b._3))
 
     events.saveToCassandra("blah", "count", SomeColumns("name", "date", "count"))

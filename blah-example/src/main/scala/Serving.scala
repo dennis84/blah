@@ -15,8 +15,8 @@ class CountServing(env: ServingEnv)
   private val repo = new Repo(env.cassandraConnection)
 
   def route = (get & path("count")) {
-    parameters('event, 'timeframe.?).as(CountQuery) { query =>
-      complete(repo count query)
+    parameterMap { params =>
+      complete(repo count params.toJson.convertTo[CountQuery])
     }
   }
 }

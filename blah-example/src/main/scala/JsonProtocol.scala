@@ -5,5 +5,5 @@ import blah.core.JsonProtocol
 
 trait CountJsonProtocol extends JsonProtocol {
   implicit val countFmt = jsonFormat1(CountResult)
-  implicit val countQueryFmt = jsonFormat2(CountQuery)
+  implicit val countQueryFmt = jsonFormat4(CountQuery)
 }

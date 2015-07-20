@@ -18,7 +18,7 @@ trait SetUp {
       """|CREATE TABLE IF NOT EXISTS blah.count (
          | name text,
          | date timestamp,
-         | count int,
+         | count counter,
          | PRIMARY KEY ((name), date)
          |);""".stripMargin)
 
