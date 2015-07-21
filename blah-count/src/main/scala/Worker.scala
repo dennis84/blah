@@ -28,13 +28,15 @@ object Worker extends App with JsonProtocol with SetUp {
         "group.id" -> "1234",
         "zookeeper.connect" -> "localhost:2181",
         "auto.offset.reset" -> "smallest"),
-      topics = Map("events_1" -> 1),
+      topics = Map("events_2" -> 1),
       storageLevel = StorageLevel.MEMORY_ONLY
     ).map(_._2)
 
     val events = stream
       .map(_.parseJson.convertTo[Event])
-      .map(x => (x.name, x.date.withTimeAtStartOfDay, 1))
+      .filter(x => x.name == "track")
+      .filter(x => x.prop[String]("event").isDefined)
+      .map(x => (x.prop[String]("event").get, x.date.withTimeAtStartOfDay, 1))
       .reduce((a, b) => (a._1, a._2, a._3 + b._3))
 
     events.saveToCassandra("blah", "count", SomeColumns("name", "date", "count"))
