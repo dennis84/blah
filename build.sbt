@@ -23,7 +23,7 @@ lazy val commonSettings = Seq(
 )
 
 lazy val root = (project in file("."))
-  .aggregate(core, api, example)
+  .aggregate(core, api, count)
 
 lazy val core = (project in file("blah-core"))
   .settings(commonSettings: _*)
@@ -35,8 +35,8 @@ lazy val api = (project in file("blah-api"))
 
 lazy val serving = (project in file("blah-serving"))
   .settings(commonSettings: _*)
-  .dependsOn(core, example)
+  .dependsOn(core, count)
 
-lazy val example = (project in file("blah-example"))
+lazy val count = (project in file("blah-count"))
   .settings(commonSettings: _*)
   .dependsOn(core)

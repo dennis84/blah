@@ -1,4 +1,4 @@
-package blah.example
+package blah.count
 
 import org.joda.time.DateTime
 

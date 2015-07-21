@@ -17,7 +17,7 @@ object Boot extends App {
   val port = config.getInt("app.port")
   val env = new ServingEnv(system)
   val websocketService = new WebsocketService(env.websocket)
-  val services = Seq(new blah.example.CountServing(env))
+  val services = Seq(new blah.count.CountServing(env))
   val routes = services.map(_.route)
 
   val route = (for {

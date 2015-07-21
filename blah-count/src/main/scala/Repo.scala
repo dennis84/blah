@@ -1,4 +1,4 @@
-package blah.example
+package blah.count
 
 import scala.concurrent._
 import scala.collection.JavaConversions._

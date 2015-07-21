@@ -1,4 +1,4 @@
-package blah.example
+package blah.count
 
 import akka.http.scaladsl.server._
 import akka.http.scaladsl.server.Directives._

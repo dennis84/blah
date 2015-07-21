@@ -1,4 +1,4 @@
-package blah.example
+package blah.count
 
 import kafka.serializer.StringDecoder
 import org.apache.spark.{SparkContext, SparkConf}
