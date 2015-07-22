@@ -1,5 +1,6 @@
 package blah.count
 
+import scala.util.Try
 import kafka.serializer.StringDecoder
 import org.apache.spark.{SparkContext, SparkConf}
 import org.apache.spark.storage.StorageLevel
@@ -10,7 +11,7 @@ import com.datastax.spark.connector._
 import spray.json._
 import blah.core._
 
-object Worker extends App with JsonProtocol with SetUp {
+object Worker extends App with CountJsonProtocol with SetUp {
   lazy val cluster = DefaultCassandraCluster()
   lazy val conn = cluster.connect("blah")
 
@@ -33,10 +34,10 @@ object Worker extends App with JsonProtocol with SetUp {
     ).map(_._2)
 
     val events = stream
-      .map(_.parseJson.convertTo[Event])
-      .filter(x => x.name == "track")
-      .filter(x => x.prop[String]("event").isDefined)
-      .map(x => (x.prop[String]("event").get, x.date.withTimeAtStartOfDay, 1))
+      .map(x => Try(x.parseJson.convertTo[CountEvent]))
+      .filter(_.isSuccess)
+      .map(_.get)
+      .map(x => (x.props.event, x.date.withTimeAtStartOfDay, 1))
       .reduce((a, b) => (a._1, a._2, a._3 + b._3))
 
     events.saveToCassandra("blah", "count", SomeColumns("name", "date", "count"))
