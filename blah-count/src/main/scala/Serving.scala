@@ -1,6 +1,5 @@
 package blah.count
 
-import akka.http.scaladsl.server._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json._

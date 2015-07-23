@@ -1,6 +1,5 @@
 package blah.count
 
-import spray.json._
 import blah.core.JsonProtocol
 
 trait CountJsonProtocol extends JsonProtocol {

@@ -1,6 +1,5 @@
 package blah.api
 
-import scala.concurrent._
 import akka.actor.ActorSystem
 import akka.pattern.ask
 import akka.util.Timeout

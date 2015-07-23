@@ -3,7 +3,6 @@ package blah.count
 import scala.concurrent._
 import scala.collection.JavaConversions._
 import com.datastax.driver.core.Session
-import com.github.nscala_time.time.Imports._
 import blah.core.CassandraTweaks
 
 class Repo(conn: Session)(implicit ec: ExecutionContext) extends CassandraTweaks {
