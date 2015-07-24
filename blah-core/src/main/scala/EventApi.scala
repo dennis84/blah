@@ -10,7 +10,7 @@ class EventApi(producer: Producer[String]) extends Actor with JsonProtocol {
 
   def receive = {
     case EventApi.Create(name, props) => {
-      val evt = Event(Id.generate, name, DateTime.now, props)
+      val evt = Event(name, DateTime.now, props)
       producer.send(evt.toJson.compactPrint)
       sender ! evt
     }
