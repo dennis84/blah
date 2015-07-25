@@ -4,7 +4,7 @@ import spray.json._
 import org.joda.time.DateTime
 
 trait JsonProtocol extends DefaultJsonProtocol {
-  implicit val dateTime = new RootJsonFormat[DateTime] {
+  implicit val dateTimeFmt = new RootJsonFormat[DateTime] {
     def write(d: DateTime): JsValue = JsString(d.toString)
     def read(v: JsValue): DateTime = v match {
       case JsString(x) => new DateTime(x)
@@ -12,6 +12,8 @@ trait JsonProtocol extends DefaultJsonProtocol {
     }
   }
 
-  implicit val createEvent = jsonFormat2(EventApi.Create)
-  implicit val event = jsonFormat3(Event)
+  implicit val createEventFmt = jsonFormat2(EventApi.Create)
+  implicit val eventFmt = jsonFormat3(Event)
+  implicit val viewPropsFmt = jsonFormat2(ViewProps)
+  implicit val viewEventFmt = jsonFormat3(ViewEvent)
 }

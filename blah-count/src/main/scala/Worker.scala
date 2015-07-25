@@ -11,7 +11,7 @@ import com.datastax.spark.connector._
 import spray.json._
 import blah.core._
 
-object Worker extends App with CountJsonProtocol with SetUp {
+object Worker extends App with JsonProtocol with SetUp {
   lazy val cluster = DefaultCassandraCluster()
   lazy val conn = cluster.connect("blah")
 
@@ -21,7 +21,7 @@ object Worker extends App with CountJsonProtocol with SetUp {
       .setAppName("count")
       .set("spark.cassandra.connection.host", "127.0.0.1")
       .set("spark.cleaner.ttl", "5000")
-    val ssc = new StreamingContext(conf, Seconds(1))
+    val ssc = new StreamingContext(conf, Seconds(5))
 
     val stream = KafkaUtils.createStream[String, String, StringDecoder, StringDecoder](
       ssc = ssc,
@@ -34,7 +34,7 @@ object Worker extends App with CountJsonProtocol with SetUp {
     ).map(_._2)
 
     val events = stream
-      .map(x => Try(x.parseJson.convertTo[CountEvent]))
+      .map(x => Try(x.parseJson.convertTo[ViewEvent]))
       .filter(_.isSuccess)
       .map(_.get)
       .map(x => (x.props.event, x.date.withTimeAtStartOfDay, 1))
