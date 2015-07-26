@@ -24,21 +24,15 @@ object Worker extends App {
 
   val trainingSet = sc.parallelize(views)
 
-  val rows = trainingSet.map { case (u, i) =>
-    (u, (i, 1.0))
-  }.groupByKey().map { case (u, ir) =>
-    val irDedup: Map[Int, Double] = ir
-      .groupBy(_._1)
-      .map { case (i, irGroup) =>
-        val r = irGroup.reduce((a, b) => a)
+  val rows = trainingSet.map { case (u,i) =>
+      (u, (i, 1.0))
+    }.groupByKey().map { case (u, items) =>
+      val xs = items.groupBy(_._1).map { case (i, group) =>
+        val r = group.reduce((a,b) => a)//(a._1, a._2 + b._2))
         (i, r._2)
-      }
-
-    val irSorted = irDedup.toArray.sortBy(_._1)
-    val indexes = irSorted.map(_._1)
-    val values = irSorted.map(_._2)
-    Vectors.sparse(106, indexes, values)
-  }
+      }.toArray
+      Vectors.sparse(106, xs.map(_._1), xs.map(_._2))
+    }
 
   val mat = new RowMatrix(rows)
   val sim = mat.columnSimilarities(0.5)
