@@ -19,6 +19,6 @@ class EventApi(producer: Producer[String]) extends Actor with JsonProtocol {
 
 object EventApi {
   case class Create(
-    val name: String,
-    val props: Map[String, JsValue] = Map.empty)
+    name: String,
+    props: Map[String, JsValue] = Map.empty)
 }

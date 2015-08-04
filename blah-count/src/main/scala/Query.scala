@@ -3,6 +3,6 @@ package blah.count
 import org.joda.time.DateTime
 
 case class CountQuery(
-  val event: String,
-  val from: Option[DateTime] = None,
-  val to: Option[DateTime] = None)
+  event: String,
+  from: Option[DateTime] = None,
+  to: Option[DateTime] = None)

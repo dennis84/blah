@@ -1,3 +1,3 @@
 package blah.count
 
-case class CountResult(val count: Long)
+case class CountResult(count: Long)
