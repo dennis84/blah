@@ -1,5 +1,3 @@
-enablePlugins(JavaAppPackaging)
-
 val deps = Seq(
   "com.typesafe.akka"      %% "akka-actor"                             % "2.3.12",
   "com.typesafe.akka"      %  "akka-stream-experimental_2.11"          % "1.0",
@@ -19,7 +17,7 @@ val deps = Seq(
 lazy val commonSettings = Seq(
   organization  := "com.github.dennis84",
   version       := "0.1.0",
-  scalaVersion  := "2.11.7",
+  scalaVersion  := "2.11.6",
   scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 )
 
