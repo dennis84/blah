@@ -1,9 +1,8 @@
-package blah.count
+package blah.core
 
 import com.datastax.driver.core.Cluster
 
 trait SetUp {
-
   def withSchema(cluster: Cluster)(fn: => Unit) {
     val session = cluster.connect
 

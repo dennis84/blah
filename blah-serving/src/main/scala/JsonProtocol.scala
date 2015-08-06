@@ -1,8 +1,8 @@
-package blah.count
+package blah.serving
 
 import blah.core.JsonProtocol
 
-trait CountJsonProtocol extends JsonProtocol {
+trait ServingJsonProtocol extends JsonProtocol {
   implicit val countFmt = jsonFormat1(CountResult)
   implicit val countQueryFmt = jsonFormat3(CountQuery)
 }

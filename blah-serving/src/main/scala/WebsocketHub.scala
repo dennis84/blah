@@ -1,4 +1,4 @@
-package blah.core
+package blah.serving
 
 import akka.actor._
 import akka.stream.OverflowStrategy

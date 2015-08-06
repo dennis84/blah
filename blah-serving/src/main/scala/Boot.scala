@@ -5,7 +5,6 @@ import akka.stream.ActorMaterializer
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server._
 import akka.http.scaladsl.server.Directives._
-import blah.core.ServingEnv
 
 object Boot extends App {
   implicit val system = ActorSystem()
@@ -15,19 +14,18 @@ object Boot extends App {
   val config = system.settings.config
   val interface = config.getString("app.interface")
   val port = config.getInt("app.port")
-  val env = new ServingEnv(system)
-  val websocketService = new WebsocketService(env.websocket)
-  val services = Seq(new blah.count.CountServing(env))
+  val env = new Env(system)
+  val services = Seq(
+    new WebsocketService(env.websocket),
+    new CountService(env))
   val routes = services.map(_.route)
 
-  val route = (for {
+  (for {
     head <- routes.headOption
     tail = routes.tail
   } yield tail.foldLeft(head) {
     case (xs, x) => xs ~ x
-  } ~ websocketService.route) getOrElse {
-    websocketService.route
+  }) map { route =>
+    Http().bindAndHandle(route, interface, port)
   }
-
-  Http().bindAndHandle(route, interface, port)
 }

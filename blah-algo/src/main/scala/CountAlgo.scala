@@ -1,4 +1,4 @@
-package blah.count
+package blah.algo
 
 import scala.util.Try
 import kafka.serializer.StringDecoder
@@ -11,7 +11,7 @@ import com.datastax.spark.connector._
 import spray.json._
 import blah.core._
 
-object Worker extends App with JsonProtocol with SetUp {
+object CountAlgo extends App with JsonProtocol with SetUp {
   lazy val cluster = DefaultCassandraCluster()
   lazy val conn = cluster.connect("blah")
 

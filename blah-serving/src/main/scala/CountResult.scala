@@ -1,3 +1,3 @@
-package blah.count
+package blah.serving
 
 case class CountResult(count: Long)

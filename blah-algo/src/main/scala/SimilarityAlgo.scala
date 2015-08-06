@@ -4,7 +4,7 @@ import org.apache.spark.SparkContext
 import org.apache.spark.mllib.linalg.{Vectors, SparseVector}
 import org.apache.spark.mllib.linalg.distributed._
 
-object Worker extends App {
+object SimilarityAlgo extends App {
 
   val sc = new SparkContext("local[*]", "test")
 

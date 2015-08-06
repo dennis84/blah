@@ -5,9 +5,10 @@ import akka.http.scaladsl.server._
 import akka.http.scaladsl.model.ws.{Message, TextMessage}
 import akka.stream.scaladsl.{Sink, Source, Flow}
 import Directives._
-import blah.core.WebsocketHub
 
-class WebsocketService(hub: WebsocketHub)(implicit system: ActorSystem) {
+class WebsocketService(
+  hub: WebsocketHub
+)(implicit system: ActorSystem) extends Service {
   import system.dispatcher
 
   def route = (get & path("ws")) {
