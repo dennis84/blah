@@ -5,7 +5,7 @@ val deps = Seq(
   "com.typesafe.akka"      %  "akka-http-experimental_2.11"            % "1.0",
   "com.typesafe.akka"      %  "akka-http-spray-json-experimental_2.11" % "1.0",
   "org.apache.kafka"       %% "kafka"                                  % "0.8.2.1",
-  "org.apache.spark"       %% "spark-core"                             % "1.4.1",
+  "org.apache.spark"       %% "spark-core"                             % "1.4.1" % "provided",
   "org.apache.spark"       %% "spark-streaming"                        % "1.4.1",
   "org.apache.spark"       %% "spark-streaming-kafka"                  % "1.4.1",
   "org.apache.spark"       %% "spark-mllib"                            % "1.4.1",
@@ -34,7 +34,23 @@ lazy val api = (project in file("blah-api"))
 
 lazy val algo = (project in file("blah-algo"))
   .settings(commonSettings: _*)
-  .dependsOn(core % "provided")
+  .settings(
+    assemblyMergeStrategy in assembly := {
+      case PathList("org", "apache", xs @ _*) => MergeStrategy.first
+      case PathList("javax", "xml", xs @ _*) => MergeStrategy.first
+      case PathList("io", "netty", xs @ _*) => MergeStrategy.first
+      case PathList("com", "google", xs @ _*) => MergeStrategy.first
+      case PathList("com", "esotericsoftware", xs @ _*) => MergeStrategy.first
+      case PathList("com", "codahale", xs @ _*) => MergeStrategy.first
+      case PathList("akka", xs @ _*) => MergeStrategy.first
+      case "META-INF/io.netty.versions.properties" => MergeStrategy.first
+      case PathList(ps @ _*) if ps.last endsWith ".css"  => MergeStrategy.first
+      case x =>
+        val oldStrategy = (assemblyMergeStrategy in assembly).value
+        oldStrategy(x)
+    }
+  )
+  .dependsOn(core)
 
 lazy val serving = (project in file("blah-serving"))
   .settings(commonSettings: _*)

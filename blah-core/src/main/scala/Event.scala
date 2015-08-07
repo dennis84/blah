@@ -4,6 +4,7 @@ import spray.json._
 import org.joda.time.DateTime
 
 case class Event(
+  id: String,
   name: String,
   date: DateTime,
   props: Map[String, JsValue] = Map.empty) {
@@ -17,6 +18,7 @@ case class ViewProps(
   user: String)
 
 case class ViewEvent(
+  id: String,
   name: String,
   date: DateTime,
   props: ViewProps)

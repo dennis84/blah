@@ -1,18 +1,22 @@
 package blah.core
 
+import java.util.UUID
 import akka.actor._
-import spray.json._
 import akka.pattern.pipe
+import spray.json._
 import com.github.nscala_time.time.Imports._
 
-class EventApi(producer: Producer[String]) extends Actor with JsonProtocol {
+class EventApi(
+  repo: EventRepo,
+  producer: Producer[String]
+) extends Actor with JsonProtocol {
   implicit val executor = context.dispatcher
 
   def receive = {
     case EventApi.Create(name, props) => {
-      val evt = Event(name, DateTime.now, props)
+      val evt = Event(UUID.randomUUID.toString, name, DateTime.now, props)
       producer.send(evt.toJson.compactPrint)
-      sender ! evt
+      repo.insert(evt) pipeTo sender
     }
   }
 }
