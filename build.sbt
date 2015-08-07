@@ -34,7 +34,7 @@ lazy val api = (project in file("blah-api"))
 
 lazy val algo = (project in file("blah-algo"))
   .settings(commonSettings: _*)
-  .dependsOn(core)
+  .dependsOn(core % "provided")
 
 lazy val serving = (project in file("blah-serving"))
   .settings(commonSettings: _*)
