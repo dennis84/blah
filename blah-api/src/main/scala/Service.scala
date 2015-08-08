@@ -14,7 +14,7 @@ class Service(env: Env)(
   implicit system: ActorSystem,
   materializer: Materializer,
   timeout: Timeout
-) extends JsonProtocol with SprayJsonSupport {
+) extends ApiJsonProtocol with SprayJsonSupport {
   import system.dispatcher
 
   val route = pathPrefix("events") {

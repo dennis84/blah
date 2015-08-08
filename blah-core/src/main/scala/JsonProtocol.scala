@@ -12,7 +12,6 @@ trait JsonProtocol extends DefaultJsonProtocol {
     }
   }
 
-  implicit val createEventFmt = jsonFormat2(EventApi.Create)
   implicit val eventFmt = jsonFormat4(Event)
   implicit val viewPropsFmt = jsonFormat2(ViewProps)
   implicit val viewEventFmt = jsonFormat4(ViewEvent)
