@@ -3,7 +3,6 @@ package blah.serving
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.server._
 import akka.http.scaladsl.server.Directives._
 
 object Boot extends App {

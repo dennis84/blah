@@ -1,10 +1,7 @@
 package blah.algo
 
 import scala.util.Try
-import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.mllib.linalg.{Vectors, SparseVector}
-import org.apache.spark.mllib.linalg.distributed._
 import com.datastax.spark.connector._
 import spray.json._
 import blah.core._

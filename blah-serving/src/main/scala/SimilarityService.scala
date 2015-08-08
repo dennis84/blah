@@ -5,7 +5,6 @@ import akka.stream.Materializer
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json._
-import blah.core._
 
 class SimilarityService(env: Env)(
   implicit system: ActorSystem,

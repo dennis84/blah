@@ -13,11 +13,10 @@ class EventApi(
   implicit val executor = context.dispatcher
 
   def receive = {
-    case EventApi.Create(name, props) => {
+    case EventApi.Create(name, props) =>
       val evt = Event(UUID.randomUUID.toString, name, DateTime.now, props)
       producer.send(evt.toJson.compactPrint)
       repo.insert(evt) pipeTo sender
-    }
   }
 }
 
