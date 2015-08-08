@@ -1,55 +1,33 @@
 package blah.algo
 
+import scala.util.Try
+import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.rdd.RDD
+import org.apache.spark.mllib.linalg.{Vectors, SparseVector}
+import org.apache.spark.mllib.linalg.distributed._
+import com.datastax.spark.connector._
+import spray.json._
+import blah.core._
+import JsonProtocol._
+
 class CountAlgo extends Algo {
-  def train = println("CountAlgo: train")
+  def train {
+    val conf = new SparkConf()
+      .setAppName("count")
+      .set("spark.cassandra.connection.host", "127.0.0.1")
+    val sc = new SparkContext(conf)
+
+    val rdd = sc.textFile("hdfs://localhost:9000/user/dennis/blah/events/*")
+
+    val events = rdd
+      .map(x => Try(x.parseJson.convertTo[ViewEvent]))
+      .filter(_.isSuccess)
+      .map(_.get)
+      .map(x => ((x.props.event, x.date.withTimeAtStartOfDay), 1))
+      .reduceByKey(_ + _)
+      .map(x => (x._1._1, x._1._2, x._2))
+    
+    events.saveToCassandra("blah", "count", SomeColumns("name", "date", "count"))
+    sc.stop
+  }
 }
-
-// package blah.algo
-
-// import scala.util.Try
-// import kafka.serializer.StringDecoder
-// import org.apache.spark.{SparkContext, SparkConf}
-// import org.apache.spark.storage.StorageLevel
-// import org.apache.spark.streaming.{Seconds, StreamingContext}
-// import org.apache.spark.streaming.kafka.KafkaUtils
-// import com.datastax.spark.connector.streaming._
-// import com.datastax.spark.connector._
-// import spray.json._
-// import blah.core._
-
-// object CountAlgo extends App with JsonProtocol with SetUp {
-//   lazy val cluster = DefaultCassandraCluster()
-//   lazy val conn = cluster.connect("blah")
-
-//   withSchema(cluster) {
-//     val conf = new SparkConf()
-//       .setMaster("local[*]")
-//       .setAppName("count")
-//       .set("spark.cassandra.connection.host", "127.0.0.1")
-//       .set("spark.cleaner.ttl", "5000")
-//     val ssc = new StreamingContext(conf, Seconds(5))
-
-//     val stream = KafkaUtils.createStream[String, String, StringDecoder, StringDecoder](
-//       ssc = ssc,
-//       kafkaParams = Map(
-//         "group.id" -> "1234",
-//         "zookeeper.connect" -> "localhost:2181",
-//         "auto.offset.reset" -> "smallest"),
-//       topics = Map("events_2" -> 1),
-//       storageLevel = StorageLevel.MEMORY_ONLY
-//     ).map(_._2)
-
-//     val events = stream
-//       .map(x => Try(x.parseJson.convertTo[ViewEvent]))
-//       .filter(_.isSuccess)
-//       .map(_.get)
-//       .map(x => (x.props.event, x.date.withTimeAtStartOfDay, 1))
-//       .reduce((a, b) => (a._1, a._2, a._3 + b._3))
-
-//     events.saveToCassandra("blah", "count", SomeColumns("name", "date", "count"))
-//     events.print()
-
-//     ssc.start()
-//     ssc.awaitTermination()
-//   }
-// }

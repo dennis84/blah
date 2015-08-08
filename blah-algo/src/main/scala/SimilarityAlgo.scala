@@ -68,9 +68,7 @@ class SimilarityAlgo extends Algo {
         })
       }
 
-    out.foreach(println)
     out.saveToCassandra("blah", "sims", SomeColumns("user", "views"))
-
     sc.stop
   }
 }
