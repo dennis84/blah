@@ -2,6 +2,7 @@ package blah.algo
 
 import scala.util.Try
 import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.rdd.RDD
 import org.apache.spark.mllib.linalg.{Vectors, SparseVector}
 import org.apache.spark.mllib.linalg.distributed._
 import spray.json._
@@ -21,52 +22,51 @@ class SimilarityAlgo extends Algo {
       .map(_.get)
       .map(x => (x.props.user, x.props.event))
 
-    events.foreach(println)
+    val usersRDD = events.groupByKey()
+    val users = usersRDD.keys.collect.toList
+
+    val itemsRDD = events.groupBy(_._2)
+    val items = itemsRDD.keys.collect.toList
+
+    val views: RDD[(Int, Int)] = events
+      .map(x => (users.indexOf(x._1), items.indexOf(x._2)))
+
+    val rows = views.map { case (u,i) =>
+      (u, (i, 1.0))
+    }.groupByKey().map { case (u, is) =>
+      val xs = is.groupBy(_._1).map { case (i, group) =>
+        val r = group.reduce((a,b) => a)//(a._1, a._2 + b._2))
+        (i, r._2)
+      }.toArray
+      Vectors.sparse(items.length, xs.map(_._1), xs.map(_._2))
+    }
+
+    val mat = new RowMatrix(rows)
+    val sim = mat.columnSimilarities(0.5)
+
+    val all = sim.toIndexedRowMatrix.rows.flatMap { case IndexedRow(i,v) =>
+      val vector = v.asInstanceOf[SparseVector]
+      vector.indices.zip(vector.values).flatMap { case (j,s) =>
+        Seq((i.toInt,(j,s)), (j,(i.toInt,s)))
+      }
+    }.groupByKey.collectAsMap
+
+    val ord = Ordering[Double].reverse
+
+    val out = usersRDD
+      .map { case(u, elems) =>
+        (u, elems.flatMap { elem =>
+          all.get(items.indexOf(elem)) map { xs =>
+            xs.toList
+              .sortBy(_._2)(ord)
+              .map(x => items(x._1))
+              .filterNot(elems.toList.contains _)
+          } getOrElse Nil
+        })
+      }
+
+    out.foreach(println)
 
     sc.stop
-
-//     val views = Seq(
-//       (1, 100),
-//       (1, 100),
-//       (2, 100),
-//       (2, 101),
-//       (2, 102),
-//       (3, 102),
-//       (4, 103),
-//       (5, 103),
-//       (5, 104),
-//       (2, 104),
-//       (6, 105)
-//     )
-
-//     val trainingSet = sc.parallelize(views)
-
-//     val rows = trainingSet.map { case (u,i) =>
-//         (u, (i, 1.0))
-//       }.groupByKey().map { case (u, items) =>
-//         val xs = items.groupBy(_._1).map { case (i, group) =>
-//           val r = group.reduce((a,b) => a)//(a._1, a._2 + b._2))
-//           (i, r._2)
-//         }.toArray
-//         Vectors.sparse(106, xs.map(_._1), xs.map(_._2))
-//       }
-
-//     val mat = new RowMatrix(rows)
-//     val sim = mat.columnSimilarities(0.5)
-
-//     val all = sim.toIndexedRowMatrix.rows.flatMap { case IndexedRow(i,v) =>
-//       val vector = v.asInstanceOf[SparseVector]
-//       vector.indices.zip(vector.values).flatMap { case (j,s) =>
-//         Seq((i,(j,s)), (j,(i,s)))
-//       }
-//     }
-
-//     val ord = Ordering[Double].reverse
-
-//     for (i <- 100 to 105) {
-//       println(all.lookup(i).sortBy(_._2)(ord))
-//     }
-
-//     sc.stop()
   }
 }
