@@ -5,13 +5,16 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.mllib.linalg.{Vectors, SparseVector}
 import org.apache.spark.mllib.linalg.distributed._
+import com.datastax.spark.connector._
 import spray.json._
 import blah.core._
 import JsonProtocol._
 
 class SimilarityAlgo extends Algo {
   def train {
-    val conf = new SparkConf().setAppName("similarity")
+    val conf = new SparkConf()
+      .setAppName("similarity")
+      .set("spark.cassandra.connection.host", "127.0.0.1")
     val sc = new SparkContext(conf)
 
     val rdd = sc.textFile("hdfs://localhost:9000/user/dennis/blah/events/*")
@@ -66,6 +69,7 @@ class SimilarityAlgo extends Algo {
       }
 
     out.foreach(println)
+    out.saveToCassandra("blah", "sims", SomeColumns("user", "views"))
 
     sc.stop
   }
