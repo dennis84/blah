@@ -9,18 +9,15 @@ class SimilarityRepo(
   conn: Session
 )(implicit ec: ExecutionContext) extends CassandraTweaks {
 
-  def sims(q: SimilarityQuery): Future[Option[SimilarityResult]] = {
+  def sims(q: SimilarityQuery): Future[SimilarityResult] = {
     val cql = s"""|select * from blah.sims
                   |where user='${q.user}'
                   |;""".stripMargin
     conn.executeAsync(cql) map { res =>
-      if(res.isExhausted) None
-      else {
-        val row = res.one
-        Some(SimilarityResult(
-          row.getString("user"),
-          row.getList("views", classOf[String]).toList))
-      }
+      SimilarityResult(q.user,
+        if(!res.isExhausted)
+          res.one.getList("views", classOf[String]).toList
+        else Nil)
     }
   }
 }
