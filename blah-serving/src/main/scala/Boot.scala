@@ -17,7 +17,8 @@ object Boot extends App {
   val env = new Env(system)
   val services = Seq(
     new WebsocketService(env.websocket),
-    new CountService(env))
+    new CountService(env),
+    new SimilarityService(env))
   val routes = services.map(_.route)
 
   (for {

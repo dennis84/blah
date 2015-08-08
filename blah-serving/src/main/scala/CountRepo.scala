@@ -5,7 +5,9 @@ import scala.collection.JavaConversions._
 import com.datastax.driver.core.Session
 import blah.core.CassandraTweaks
 
-class CountRepo(conn: Session)(implicit ec: ExecutionContext) extends CassandraTweaks {
+class CountRepo(
+  conn: Session
+)(implicit ec: ExecutionContext) extends CassandraTweaks {
 
   def count(q: CountQuery): Future[CountResult] = {
     val from = q.from map (x => s"and date >= '${x.getMillis}'") getOrElse ""
