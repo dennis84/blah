@@ -11,14 +11,7 @@ import blah.core._
 import JsonProtocol._
 
 class CountAlgo extends Algo {
-  def train {
-    val conf = new SparkConf()
-      .setAppName("count")
-      .set("spark.cassandra.connection.host", "127.0.0.1")
-    val sc = new SparkContext(conf)
-
-    val rdd = sc.textFile("hdfs://localhost:9000/user/dennis/blah/events/*")
-
+  def train(rdd: RDD[String]) {
     val events = rdd
       .map(x => Try(x.parseJson.convertTo[ViewEvent]))
       .filter(_.isSuccess)
@@ -28,6 +21,5 @@ class CountAlgo extends Algo {
       .map(x => (x._1._1, x._1._2, x._2))
     
     events.saveToCassandra("blah", "count", SomeColumns("name", "date", "count"))
-    sc.stop
   }
 }

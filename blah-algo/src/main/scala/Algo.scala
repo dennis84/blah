@@ -1,5 +1,7 @@
 package blah.algo
 
+import org.apache.spark.rdd.RDD
+
 trait Algo {
-  def train: Unit
+  def train(rdd: RDD[String]): Unit
 }

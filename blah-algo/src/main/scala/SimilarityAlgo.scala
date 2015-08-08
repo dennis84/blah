@@ -11,14 +11,7 @@ import blah.core._
 import JsonProtocol._
 
 class SimilarityAlgo extends Algo {
-  def train {
-    val conf = new SparkConf()
-      .setAppName("similarity")
-      .set("spark.cassandra.connection.host", "127.0.0.1")
-    val sc = new SparkContext(conf)
-
-    val rdd = sc.textFile("hdfs://localhost:9000/user/dennis/blah/events/*")
-
+  def train(rdd: RDD[String]) {
     val events = rdd
       .map(x => Try(x.parseJson.convertTo[ViewEvent]))
       .filter(_.isSuccess)
@@ -69,6 +62,5 @@ class SimilarityAlgo extends Algo {
       }
 
     out.saveToCassandra("blah", "sims", SomeColumns("user", "views"))
-    sc.stop
   }
 }
