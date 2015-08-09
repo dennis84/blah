@@ -10,10 +10,11 @@ class CountRepo(
 )(implicit ec: ExecutionContext) extends CassandraTweaks {
 
   def count(q: CountQuery): Future[CountResult] = {
+    val where = q.event map (x => s"where name='$x'") getOrElse ""
     val from = q.from map (x => s"and date >= '${x.getMillis}'") getOrElse ""
     val to = q.to map (x => s"and date <= '${x.getMillis}'") getOrElse ""
     val cql = s"""|select count from blah.count
-                  |where name='${q.event}'
+                  |$where
                   |$from
                   |$to
                   |;""".stripMargin
