@@ -22,7 +22,7 @@ object SetUp {
       """|CREATE TABLE IF NOT EXISTS blah.count (
          | name text,
          | date timestamp,
-         | count counter,
+         | count bigint,
          | PRIMARY KEY ((name), date)
          |);""".stripMargin)
     session.close
