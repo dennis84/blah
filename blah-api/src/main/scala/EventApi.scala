@@ -16,8 +16,9 @@ class EventApi(
   def receive = {
     case EventApi.Create(name, props) =>
       val evt = Event(UUID.randomUUID.toString, name, DateTime.now, props)
-      producer.send(evt.toJson.compactPrint)
-      repo.insert(evt) pipeTo sender
+      repo.insert(evt) map { e =>
+        EventApi.Message("Event successfully created.")
+      } pipeTo sender
   }
 }
 
@@ -25,4 +26,5 @@ object EventApi {
   case class Create(
     name: String,
     props: Map[String, JsValue] = Map.empty)
+  case class Message(text: String)
 }

@@ -16,7 +16,7 @@ class CountAlgo extends Algo {
       .map(x => ((x.props.event, x.date.withTimeAtStartOfDay), 1))
       .reduceByKey(_ + _)
       .map(x => (x._1._1, x._1._2, x._2))
-    
+
     events.saveToCassandra("blah", "count", SomeColumns("name", "date", "count"))
   }
 }

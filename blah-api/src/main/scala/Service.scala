@@ -20,7 +20,7 @@ class Service(env: Env)(
   val route = pathPrefix("events") {
     (post & entity(as[EventApi.Create])) { req =>
       complete {
-        Created -> (env.api ? req).mapTo[Event]
+        Created -> (env.api ? req).mapTo[EventApi.Message]
       }
     }
   }
