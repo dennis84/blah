@@ -12,7 +12,6 @@ class Env(system: ActorSystem) {
   hadoopConf.addResource(new Path(s"${config.getString("hadoop.conf_dir")}/core-site.xml"))
   hadoopConf.addResource(new Path(s"${config.getString("hadoop.conf_dir")}/hdfs-site.xml"))
   private val hadoopFs = FileSystem.get(hadoopConf)
-  lazy val eventRepo = new EventRepo(hadoopFs)
   lazy val producer = Producer[String]("events_2")
-  lazy val api = system.actorOf(Props(new EventApi(eventRepo, producer)))
+  lazy val api = system.actorOf(Props(new EventApi(producer)))
 }
