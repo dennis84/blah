@@ -15,7 +15,7 @@ object SetUp {
     session.execute(
       """|CREATE TABLE IF NOT EXISTS blah.sims (
          | user text,
-         | views list<text>,
+         | views map<text, double>,
          | PRIMARY KEY ((user))
          |);""".stripMargin)
     session.execute(

@@ -27,10 +27,10 @@ class SimilarityAlgo extends Algo {
       .map(x => (users.indexOf(x._1), items.indexOf(x._2)))
 
     val rows = views.map { case (u,i) =>
-      (u, (i, 1.0))
+      (u, (i, 5.0))
     }.groupByKey().map { case (u, is) =>
       val xs = is.groupBy(_._1).map { case (i, group) =>
-        val r = group.reduce((a,b) => a)//(a._1, a._2 + b._2))
+        val r = group.reduce((a,b) => a) //(a._1, a._2 + b._2))
         (i, r._2)
       }.toArray
       Vectors.sparse(items.length, xs.map(_._1), xs.map(_._2))
@@ -53,9 +53,10 @@ class SimilarityAlgo extends Algo {
         (u, elems.flatMap { elem =>
           all.get(items.indexOf(elem)) map { xs =>
             xs.toList
+              .filter(_._2 >= 0.5)
+              .map(x => (items(x._1), x._2))
+              .filterNot(x => elems.toList.contains(x._1))
               .sortBy(_._2)(ord)
-              .map(x => items(x._1))
-              .filterNot(elems.toList.contains _)
           } getOrElse Nil
         })
       }
