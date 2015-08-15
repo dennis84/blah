@@ -14,10 +14,11 @@ class SimilarityRepo(
                   |where user='${q.user}'
                   |;""".stripMargin
     conn.executeAsync(cql) map { res =>
+      val views = if(!res.isExhausted)
+                    res.one.getList("views", classOf[String]).toList
+                  else Nil
       SimilarityResult(q.user,
-        if(!res.isExhausted)
-          res.one.getList("views", classOf[String]).toList
-        else Nil)
+          q.limit map (x => views take x.toInt) getOrElse views)
     }
   }
 }
