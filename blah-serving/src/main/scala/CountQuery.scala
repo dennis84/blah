@@ -6,3 +6,7 @@ case class CountQuery(
   event: Option[String] = None,
   from: Option[DateTime] = None,
   to: Option[DateTime] = None)
+
+case class CountAllQuery(
+  from: Option[DateTime] = None,
+  to: Option[DateTime] = None)
