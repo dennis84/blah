@@ -10,13 +10,16 @@ class CountRepo(
 )(implicit ec: ExecutionContext) extends CassandraTweaks {
 
   def count(q: CountQuery): Future[CountResult] = {
-    val where = q.event map (x => s"where name='$x'") getOrElse ""
-    val from = q.from map (x => s"and date >= '${x.getMillis}'") getOrElse ""
-    val to = q.to map (x => s"and date <= '${x.getMillis}'") getOrElse ""
+    val where = List(
+      q.event.map(x => s"name='$x'"),
+      q.from.map(x => s"date >= '${x.getMillis}'"),
+      q.to.map(x => s"date <= '${x.getMillis}'")
+    ).flatten.foldLeft("") {
+      case ("", x) => "where " + x
+      case (a, x)  => a + " and " + x
+    }
     val cql = s"""|select count from blah.count
-                  |$where
-                  |$from
-                  |$to
+                  |$where allow filtering
                   |;""".stripMargin
     conn.executeAsync(cql) map { xs =>
       CountResult(xs.all.map(_.getLong("count")).sum)
@@ -24,11 +27,15 @@ class CountRepo(
   }
 
   def countAll(q: CountAllQuery): Future[CountAllResult] = {
-    val from = q.from map (x => s"and date >= '${x.getMillis}'") getOrElse ""
-    val to = q.to map (x => s"and date <= '${x.getMillis}'") getOrElse ""
+    val where = List(
+      q.from.map(x => s"date >= '${x.getMillis}'"),
+      q.to.map(x => s"date <= '${x.getMillis}'")
+    ).flatten.foldLeft("") {
+      case ("", x) => "where " + x
+      case (a, x)  => a + " and " + x
+    }
     val cql = s"""|select name, count from blah.count
-                  |$from
-                  |$to
+                  |$where allow filtering
                   |;""".stripMargin
     conn.executeAsync(cql) map { xs =>
       val ys = xs.map(x => (x.getString("name"), x.getLong("count")))
