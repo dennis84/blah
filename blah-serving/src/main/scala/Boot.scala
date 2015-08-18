@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
+import blah.core.Consumer
 
 object Boot extends App {
   implicit val system = ActorSystem()
@@ -19,6 +20,9 @@ object Boot extends App {
     new CountService(env),
     new SimilarityService(env))
   val routes = services.map(_.route)
+
+  val consumer = Consumer("trainings")
+  consumer.read() foreach (x => println(x))
 
   (for {
     head <- routes.headOption

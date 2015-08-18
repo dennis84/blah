@@ -1,9 +1,11 @@
 package blah.algo
 
 import org.apache.spark.{SparkConf, SparkContext}
+import blah.core.Producer
 
 object Submit {
   def main(args: Array[String]) {
+    lazy val producer = Producer[String]("trainings")
     val algos = Map(
       "count" -> new CountAlgo,
       "similarity" -> new SimilarityAlgo)
@@ -14,6 +16,7 @@ object Submit {
     val sc = new SparkContext(conf)
     val rdd = sc.textFile("hdfs://localhost:9000/blah/events.*")
     algo.train(rdd)
+    producer.send(args(0))
     sc.stop
   }
 }
