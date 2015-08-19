@@ -11,7 +11,8 @@ val deps = Seq(
   "org.apache.spark"       %% "spark-mllib"                            % "1.4.1",
   "com.datastax.cassandra" %  "cassandra-driver-core"                  % "2.1.7",
   "com.datastax.spark"     %% "spark-cassandra-connector"              % "1.4.0-M2",
-  "com.github.nscala-time" %% "nscala-time"                            % "2.0.0"
+  "com.github.nscala-time" %% "nscala-time"                            % "2.0.0",
+  "com.softwaremill"       %% "reactive-kafka"                         % "0.7.0"
 )
 
 lazy val commonSettings = Seq(

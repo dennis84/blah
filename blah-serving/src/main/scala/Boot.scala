@@ -2,9 +2,9 @@ package blah.serving
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
+import akka.stream.scaladsl.{Source, Sink}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
-import blah.core.Consumer
 
 object Boot extends App {
   implicit val system = ActorSystem()
@@ -20,9 +20,12 @@ object Boot extends App {
     new CountService(env),
     new SimilarityService(env))
   val routes = services.map(_.route)
+  val wsFlow = new WebsocketFlow(system)
 
-  val consumer = Consumer("trainings")
-  consumer.read() foreach (x => println(x))
+  Source(env.consumer)
+    .via(wsFlow.flow)
+    .to(Sink.actorRef(env.websocket.actor, "completed"))
+    .run()
 
   (for {
     head <- routes.headOption
