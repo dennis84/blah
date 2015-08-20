@@ -16,16 +16,13 @@ object Boot extends App {
   val port = config.getInt("app.port")
   val env = new Env(system)
   val services = Seq(
-    new WebsocketService(env.websocket),
+    new WebsocketService(env.websocketRoom),
     new CountService(env),
     new SimilarityService(env))
   val routes = services.map(_.route)
-  val wsFlow = new WebsocketFlow(system)
 
   Source(env.consumer)
-    .via(wsFlow.flow)
-    .to(Sink.actorRef(env.websocket.actor, "completed"))
-    .run()
+    .runForeach(x => env.websocketHub ! x)
 
   (for {
     head <- routes.headOption

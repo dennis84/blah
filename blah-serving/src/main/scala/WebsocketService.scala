@@ -7,7 +7,7 @@ import akka.stream.scaladsl.{Sink, Source, Flow}
 import Directives._
 
 class WebsocketService(
-  hub: WebsocketHub
+  room: WebsocketRoom
 )(implicit system: ActorSystem) extends Service {
   import system.dispatcher
 
@@ -19,6 +19,6 @@ class WebsocketService(
     .collect {
       case TextMessage.Strict(msg) => msg
     }
-    .via(hub.flow)
+    .via(room.flow)
     .map(msg => TextMessage.Strict(msg))
 }

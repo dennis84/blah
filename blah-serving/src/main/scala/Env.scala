@@ -1,6 +1,6 @@
 package blah.serving
 
-import akka.actor.ActorSystem
+import akka.actor.{ActorSystem, Props}
 import kafka.serializer.StringDecoder
 import com.softwaremill.react.kafka.{ReactiveKafka, ConsumerProperties}
 import blah.core.DefaultCassandraCluster
@@ -10,7 +10,8 @@ class Env(val system: ActorSystem) {
   private val config = system.settings.config
   private lazy val cluster = DefaultCassandraCluster()
   lazy val cassandraConnection = cluster.connect("blah")
-  lazy val websocket = new WebsocketHub(system)
+  lazy val websocketRoom = new WebsocketRoom(system)
+  lazy val websocketHub = system.actorOf(Props(new WebsocketHub(websocketRoom)))
 
   lazy val kafka = new ReactiveKafka()
   lazy val consumer = kafka.consume(ConsumerProperties(
