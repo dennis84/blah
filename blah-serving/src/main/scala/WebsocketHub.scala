@@ -13,7 +13,7 @@ class WebsocketHub(system: ActorSystem) {
         context.watch(member)
         members += member
       case WebsocketHub.Message(event, text) =>
-        println("ws msg")
+        println(event, text)
         dispatch(s"$event@$text")
       case Terminated(member) =>
         members -= member
