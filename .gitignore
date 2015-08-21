@@ -1,3 +1,6 @@
 target/
 project/project/
 project/target/
+node_modules
+blah-app/assets/css/index.css
+blah-app/assets/js/index.js

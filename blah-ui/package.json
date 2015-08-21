@@ -1,0 +1,19 @@
+{
+  "name": "blah-ui",
+  "description": "...",
+  "dependencies": {
+    "browserify": "^11.0.1",
+    "emitter-component": "^1.1.1",
+    "gulp": "^3.9.0",
+    "gulp-streamify": "1.0.0",
+    "gulp-stylus": "^2.0.6",
+    "gulp-uglify": "^1.2.0",
+    "gulp-util": "^3.0.6",
+    "mocha": "^2.2.5",
+    "raf": "^3.1.0",
+    "vdom-thunk": "^3.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "virtual-dom": "2.1.1",
+    "watchify": "^3.3.1"
+  }
+}
