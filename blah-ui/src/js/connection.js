@@ -1,5 +1,4 @@
 var emitter = require('emitter-component')
-  , parse = require('./parse')
 
 function Connection(ws) {
   this.ws = ws
@@ -25,6 +24,17 @@ function connect(url) {
   }
 
   return conn
+}
+
+function parse(text) {
+  var res = text.match(/^([a-z-]+)@(.*)$/)
+    , data = null
+
+  try {
+    var data = JSON.parse(res[2])
+  } catch(e) {}
+
+  return {event: res[1], data: data}
 }
 
 module.exports = connect
