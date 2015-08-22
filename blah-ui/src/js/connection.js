@@ -1,4 +1,4 @@
-var emitter = require('emitter-component')
+import emitter from 'emitter-component'
 
 function Connection(ws) {
   this.ws = ws
@@ -10,15 +10,15 @@ function connect(url) {
   var ws = new WebSocket(url)
   var conn = new Connection(ws)
 
-  ws.onopen = function() {
+  ws.onopen = () => {
     conn.emit('opened', conn)
   }
 
-  ws.onclose = function() {
+  ws.onclose = () => {
     conn.emit('closed', conn)
   }
 
-  ws.onmessage = function(e) {
+  ws.onmessage = (e) => {
     var res = parse(e.data)
     conn.emit(res.event, res.data)
   }
@@ -37,4 +37,4 @@ function parse(text) {
   return {event: res[1], data: data}
 }
 
-module.exports = connect
+export default connect

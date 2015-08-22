@@ -1,6 +1,7 @@
 var gulp = require('gulp')
   , gutil = require('gulp-util')
   , browserify = require('browserify')
+  , babelify = require('babelify')
   , watchify = require('watchify')
   , source = require('vinyl-source-stream')
   , streamify = require('gulp-streamify')
@@ -12,12 +13,15 @@ var onError = function(error) {
 }
 
 gulp.task('js', function() {
-  var bundleStream = watchify(browserify('./src/js/index.js'))
+  var bundleStream = browserify('./src/js/index.js')
+      .transform(babelify)
+  bundleStream = watchify(bundleStream)
     .on('update', rebundle)
     .on('log', gutil.log)
 
   function rebundle() {
-    return bundleStream.bundle()
+    return bundleStream
+      .bundle()
       .on('error', onError)
       .pipe(source('index.js'))
       .pipe(streamify(uglify()))

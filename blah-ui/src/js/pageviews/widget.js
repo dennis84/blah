@@ -1,11 +1,11 @@
-var h = require('virtual-dom/h')
+import {h} from 'virtual-dom'
 var state = {
   i: 0
 }
 
 function main(conn) {
   var self = this
-  setInterval(function() {
+  setInterval(() => {
     self.shouldUpdate = true
     state.i ++
   }, 2000)

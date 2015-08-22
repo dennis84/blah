@@ -1,6 +1,6 @@
-var h = require('virtual-dom/h')
-var component = require('./component')
-var pageviewWidget = require('./pageviews/widget')
+import {h} from 'virtual-dom'
+import component from './component'
+import pageviewWidget from './pageviews/widget'
 
 function render(conn, text) {
   return h('div.dashboard', [
@@ -11,4 +11,4 @@ function render(conn, text) {
   ])
 }
 
-module.exports = render
+export default render
