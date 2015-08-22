@@ -6,7 +6,6 @@ var gulp = require('gulp')
   , source = require('vinyl-source-stream')
   , streamify = require('gulp-streamify')
   , stylus = require('gulp-stylus')
-  , uglify = require('gulp-uglify')
 
 var onError = function(error) {
   gutil.log(gutil.colors.red(error.message))
@@ -24,7 +23,6 @@ gulp.task('js', function() {
       .bundle()
       .on('error', onError)
       .pipe(source('index.js'))
-      .pipe(streamify(uglify()))
       .pipe(gulp.dest('./assets/js'))
   }
 
