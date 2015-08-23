@@ -1,27 +1,21 @@
 class Component {
-  constructor(main, args) {
-    this.shouldUpdate = true
-    this.main = main
+  constructor(...args) {
     this.args = args
-    this.fn = null
     this.type = 'Thunk'
+    this.state = null
+    this.fn = null
   }
 
   render(prev) {
     if(!prev) {
-      this.fn = this.main.apply(this, this.args)
+      this.fn = this.initialize.apply(this, this.args)
     } else {
       this.fn = prev.fn
+      this.state = prev.state
     }
 
-    if(!this.shouldUpdate) return prev.vnode
-    this.shouldUpdate = false
-    return this.fn.apply(null)
+    return this.fn.apply(this)
   }
 }
 
-function component(main, ...args) {
-  return new Component(main, args)
-}
-
-export default component
+export default Component

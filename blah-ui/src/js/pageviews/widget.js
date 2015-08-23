@@ -1,20 +1,19 @@
 import {h} from 'virtual-dom'
-var state = {
-  i: 0
+import Component from '../component'
+
+class PageviewWidget extends Component {
+  initialize(conn) {
+    this.state = {count:0}
+    setInterval(() => {
+      this.state.count ++
+    }, 2000)
+
+    return this.renderView.bind(this, this.state)
+  }
+
+  renderView(state) {
+    return h('h1', 'RV ' + state.count)
+  }
 }
 
-function main(conn) {
-  var self = this
-  setInterval(() => {
-    self.shouldUpdate = true
-    state.i ++
-  }, 2000)
-
-  return render.bind(null, state)
-}
-
-function render(s) {
-  return h('h1', 'Pageviews ' + s.i)
-}
-
-module.exports = main
+export default PageviewWidget
