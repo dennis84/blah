@@ -18,7 +18,7 @@ function update(model, action) {
 }
 
 function renderLoop(model) {
-  var tree = dashboard(conn, 'initial')
+  var tree = dashboard(conn, model)
   var node = createElement(tree)
   document.body.appendChild(node)
 
