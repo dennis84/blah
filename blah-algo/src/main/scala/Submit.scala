@@ -1,11 +1,21 @@
 package blah.algo
 
 import org.apache.spark.{SparkConf, SparkContext}
-import blah.core.Producer
+import kafka.serializer.StringEncoder
+import kafka.producer.KafkaProducer
+import com.softwaremill.react.kafka.ProducerProperties
+import com.typesafe.config.ConfigFactory
 
 object Submit {
   def main(args: Array[String]) {
-    lazy val producer = Producer[String]("trainings")
+    val config = ConfigFactory.load()
+    val producer = KafkaProducer[String](ProducerProperties(
+      brokerList = config.getString("producer.broker.list"),
+      topic = "trainings",
+      clientId = "websocket",
+      encoder = new StringEncoder()
+    ))
+
     val algos = Map(
       "count" -> new CountAlgo,
       "similarity" -> new SimilarityAlgo)
