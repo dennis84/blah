@@ -10,15 +10,20 @@ var channel = csp.chan()
 var model = {count: 0}
 
 function update(model, action) {
-  switch (action.actionType) {
+  switch (action.type) {
     case 'incr':
       model.count += 1
+      return model
+    case 'widget':
+      var id = action.args[0]
+      var m = action.args[1]
+      model[id] = m
       return model
   }
 }
 
 function renderLoop(model) {
-  var tree = dashboard(conn, model)
+  var tree = dashboard(model, channel)
   var node = createElement(tree)
   document.body.appendChild(node)
 
@@ -26,7 +31,7 @@ function renderLoop(model) {
     while (true) {
       var action = yield csp.take(channel)
       model = update(model, action)
-      var updated = dashboard(conn, model)
+      var updated = dashboard(model, channel)
         , patches = diff(tree, updated)
       node = patch(node, patches)
       tree = updated
@@ -38,6 +43,6 @@ renderLoop(model)
 
 setInterval(() => {
   csp.go(function* (){
-    yield csp.put(channel, {actionType: 'incr'})
+    yield csp.put(channel, {type: 'incr'})
   })
 }, 1000)

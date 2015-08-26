@@ -1,12 +1,12 @@
 import {h} from 'virtual-dom'
-import component from './component'
-import PageviewWidget from './pageviews/widget'
+import widget from './widget'
+import pageviews from './pageviews/widget'
 
-function render(conn, model) {
+function render(model, channel) {
   return h('div.dashboard', [
     h('h1', 'Dashboard ' + model.count),
     h('div.widgets', [
-      new PageviewWidget(conn)
+      widget(pageviews, model, channel)
     ])
   ])
 }
