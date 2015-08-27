@@ -1,15 +1,19 @@
 import clone from 'clone'
 
 function query(model) {
-  var m = clone(model)
-  m.count = 0
-  return m
+  return new Promise((resolve, reject) => {
+    var m = clone(model)
+    m.count = 0
+    resolve(m)
+  })
 }
 
 function incr(model) {
-  var m = clone(model)
-  m.count ++
-  return m
+  return new Promise((resolve, reject) => {
+    var m = clone(model)
+    m.count ++
+    resolve(m)
+  })
 }
 
 export {

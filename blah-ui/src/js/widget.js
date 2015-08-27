@@ -28,13 +28,16 @@ class Widget {
     return this.fn.apply(null, [this.model, this.update.bind(this)])
   }
 
+
   update(fn) {
     var that = this
-    var model = fn.call(null, this.model)
+    var resp = fn.call(null, this.model)
     csp.go(function*() {
-      yield csp.put(that.channel, {
-        type: 'widget',
-        args: [that.id, model]
+      resp.then((m) => {
+        csp.putAsync(that.channel, {
+          type: 'widget',
+          args: [that.id, m]
+        })
       })
     })
   }
