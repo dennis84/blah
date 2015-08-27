@@ -2,10 +2,11 @@ import csp from 'js-csp'
 import equal from 'deep-equal'
 
 class Widget {
-  constructor(fn, state, channel) {
+  constructor(fn, state, channel, args) {
     this.fn = fn
     this.state = state
     this.channel = channel
+    this.args = args
     this.model = {}
     this.type = 'Thunk'
     this.id = null
@@ -17,7 +18,7 @@ class Widget {
       this.id = prev.id
 
       if(shouldUpdate(this, prev)) {
-        return this.fn.apply(null, [this.model, this.update.bind(this)])
+        return this.renderWidget()
       }
 
       return prev.vnode
@@ -25,13 +26,12 @@ class Widget {
 
     this.id = 1
 
-    return this.fn.apply(null, [this.model, this.update.bind(this)])
+    return this.renderWidget()
   }
 
-
-  update(fn) {
+  update(fn, ...args) {
     var that = this
-    var resp = fn.call(null, this.model)
+    var resp = fn.apply(null, [this.model].concat(args))
     csp.go(function*() {
       resp.then((m) => {
         csp.putAsync(that.channel, {
@@ -41,6 +41,13 @@ class Widget {
       })
     })
   }
+
+  renderWidget() {
+    return this.fn.apply(null, [
+      this.model,
+      this.update.bind(this)
+    ].concat(this.args))
+  }
 }
 
 function shouldUpdate(curr, prev) {
@@ -48,8 +55,8 @@ function shouldUpdate(curr, prev) {
   return !equal(prev.model, curr.state[prev.id])
 }
 
-function widget(fn, state, channel) {
-  return new Widget(fn, state, channel)
+function widget(fn, state, channel, ...args) {
+  return new Widget(fn, state, channel, args)
 }
 
 export default widget

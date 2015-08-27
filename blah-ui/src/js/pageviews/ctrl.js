@@ -1,6 +1,6 @@
 import clone from 'clone'
 
-function query(model) {
+function query(model, options) {
   return new Promise((resolve, reject) => {
     var m = clone(model)
     m.count = 0
