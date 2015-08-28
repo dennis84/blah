@@ -6,7 +6,7 @@ import akka.stream.scaladsl.{Source, Sink}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 
-object Boot extends App {
+object Boot extends App with CorsSupport {
   implicit val system = ActorSystem()
   implicit val executor = system.dispatcher
   implicit val materializer = ActorMaterializer()
@@ -30,6 +30,6 @@ object Boot extends App {
   } yield tail.foldLeft(head) {
     case (xs, x) => xs ~ x
   }) map { route =>
-    Http().bindAndHandle(route, interface, port)
+    Http().bindAndHandle(corsHandler(route), interface, port)
   }
 }

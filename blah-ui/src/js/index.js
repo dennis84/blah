@@ -4,22 +4,14 @@ import createElement from 'virtual-dom/create-element'
 import csp from 'js-csp'
 import connect from './connection'
 import dashboard from './dashboard'
+import * as ctrl from './ctrl'
 
 var conn = connect('ws://localhost:8001/ws')
 var channel = csp.chan()
 var model = {count: 0}
 
 function update(model, action) {
-  switch (action.type) {
-    case 'incr':
-      model.count += 1
-      return model
-    case 'widget':
-      var id = action.args[0]
-      var m = action.args[1]
-      model[id] = m
-      return model
-  }
+  return ctrl[action.type].apply(null, [model].concat(action.args))
 }
 
 function renderLoop(model) {

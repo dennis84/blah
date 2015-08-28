@@ -1,5 +1,6 @@
 import csp from 'js-csp'
 import equal from 'deep-equal'
+import uuid from 'uuid'
 
 class Widget {
   constructor(fn, state, channel, args) {
@@ -24,9 +25,10 @@ class Widget {
       return prev.vnode
     }
 
-    this.id = 1
+    var vnode = this.renderWidget()
+    this.id = uuid.v4()
 
-    return this.renderWidget()
+    return vnode
   }
 
   update(fn, ...args) {
@@ -45,7 +47,8 @@ class Widget {
   renderWidget() {
     return this.fn.apply(null, [
       this.model,
-      this.update.bind(this)
+      this.update.bind(this),
+      this.id
     ].concat(this.args))
   }
 }
