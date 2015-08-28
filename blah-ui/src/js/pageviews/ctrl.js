@@ -13,10 +13,29 @@ import {get} from '../rest'
  *
  * @return {Promise} The model wrapped in a promise
  */
-function query(model, options) {
+function count(model, options) {
   return get('/count', options).then((data) => {
     var m = clone(model)
     m.count = data.count
+    return m
+  })
+}
+
+/**
+ * Fetch all pageviews from serving layer.
+ *
+ * `options.from`  Filter by date
+ * `options.to`    Filter by date
+ *
+ * @param {Object} The widget state
+ * @param {Object} Query options
+ *
+ * @return {Promise} The model wrapped in a promise
+ */
+function countAll(model, options) {
+  return get('/count-all', options).then((data) => {
+    var m = clone(model)
+    m.views = data.views
     return m
   })
 }
@@ -30,6 +49,7 @@ function incr(model) {
 }
 
 export {
-  query,
+  count,
+  countAll,
   incr
 }

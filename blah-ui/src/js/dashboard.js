@@ -1,13 +1,14 @@
 import {h} from 'virtual-dom'
 import widget from './widget'
-import pageviews from './pageviews/widget'
+import count from './pageviews/count'
+import countAll from './pageviews/count-all'
 
 function render(model, channel) {
-  return h('div.dashboard', [
-    h('h1', 'Dashboard ' + model.count),
+  return h('div.container', [
     h('div.widgets', [
-      widget(pageviews, model, channel, {event: 'page-1'}),
-      widget(pageviews, model, channel, {event: 'page-3'})
+      widget(count, model, channel, {event: 'page-1'}),
+      widget(count, model, channel, {event: 'page-3'}),
+      widget(countAll, model, channel)
     ])
   ])
 }
