@@ -15,7 +15,10 @@ class Widget {
 
   render(prev) {
     if(prev && null !== prev.id) {
-      this.model = this.state[prev.id]
+      if(undefined !== this.state[prev.id]) {
+        this.model = this.state[prev.id]
+      }
+
       this.id = prev.id
 
       if(shouldUpdate(this, prev)) {

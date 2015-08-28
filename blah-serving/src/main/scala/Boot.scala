@@ -1,5 +1,6 @@
 package blah.serving
 
+import scala.util.{Try, Success, Failure}
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Source, Sink}
@@ -21,8 +22,10 @@ object Boot extends App with CorsSupport {
     new SimilarityService(env))
   val routes = services.map(_.route)
 
-  Source(env.consumer)
-    .runForeach(x => env.websocketHub ! x)
+  Try(env.consumer) match {
+    case Success(c) => Source(c).runForeach(x => env.websocketHub ! x)
+    case Failure(e) => println("Unable to connect to zookeeper.")
+  }
 
   (for {
     head <- routes.headOption
