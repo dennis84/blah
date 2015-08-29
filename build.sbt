@@ -1,18 +1,24 @@
+val res = Seq(
+  "clojars" at "https://clojars.org/repo/"
+)
+
 val deps = Seq(
+  "org.scalatest"           % "scalatest_2.11"                         % "2.2.4" % "test",
   "com.typesafe.akka"      %% "akka-actor"                             % "2.3.12",
-  "com.typesafe.akka"      %  "akka-stream-experimental_2.11"          % "1.0",
-  "com.typesafe.akka"      %  "akka-http-core-experimental_2.11"       % "1.0",
-  "com.typesafe.akka"      %  "akka-http-experimental_2.11"            % "1.0",
-  "com.typesafe.akka"      %  "akka-http-spray-json-experimental_2.11" % "1.0",
+  "com.typesafe.akka"       % "akka-stream-experimental_2.11"          % "1.0",
+  "com.typesafe.akka"       % "akka-http-core-experimental_2.11"       % "1.0",
+  "com.typesafe.akka"       % "akka-http-experimental_2.11"            % "1.0",
+  "com.typesafe.akka"       % "akka-http-spray-json-experimental_2.11" % "1.0",
   "org.apache.kafka"       %% "kafka"                                  % "0.8.2.1",
   "org.apache.spark"       %% "spark-core"                             % "1.4.1" % "provided",
   "org.apache.spark"       %% "spark-streaming"                        % "1.4.1",
   "org.apache.spark"       %% "spark-streaming-kafka"                  % "1.4.1",
   "org.apache.spark"       %% "spark-mllib"                            % "1.4.1",
-  "com.datastax.cassandra" %  "cassandra-driver-core"                  % "2.1.7",
+  "com.datastax.cassandra"  % "cassandra-driver-core"                  % "2.1.7",
   "com.datastax.spark"     %% "spark-cassandra-connector"              % "1.4.0-M2",
   "com.github.nscala-time" %% "nscala-time"                            % "2.0.0",
-  "com.softwaremill"       %% "reactive-kafka"                         % "0.7.0"
+  "com.softwaremill"       %% "reactive-kafka"                         % "0.7.0",
+  "org.clojars.timewarrior" % "ua-parser"                              % "1.3.0"
 )
 
 lazy val commonSettings = Seq(
@@ -27,7 +33,9 @@ lazy val root = (project in file("."))
 
 lazy val core = (project in file("blah-core"))
   .settings(commonSettings: _*)
-  .settings(libraryDependencies ++= deps)
+  .settings(
+    libraryDependencies ++= deps,
+    resolvers ++= res)
 
 lazy val api = (project in file("blah-api"))
   .settings(commonSettings: _*)
