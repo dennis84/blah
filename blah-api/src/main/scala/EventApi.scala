@@ -4,11 +4,12 @@ import java.util.UUID
 import akka.actor._
 import akka.pattern.pipe
 import spray.json._
+import kafka.producer.KafkaProducer
 import com.github.nscala_time.time.Imports._
-import blah.core.{Event, Producer}
+import blah.core.Event
 
 class EventApi(
-  producer: Producer[String]
+  producer: KafkaProducer[String]
 ) extends Actor with ApiJsonProtocol {
   implicit val executor = context.dispatcher
 
