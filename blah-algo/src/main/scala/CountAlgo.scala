@@ -9,14 +9,27 @@ import JsonProtocol._
 
 class CountAlgo extends Algo {
   def train(rdd: RDD[String]) {
-    val events = rdd
+    val events: RDD[Count] = rdd
       .map(x => Try(x.parseJson.convertTo[ViewEvent]))
       .filter(_.isSuccess)
       .map(_.get)
-      .map(x => ((x.props.event, x.date.withTimeAtStartOfDay), 1))
+      .map { view =>
+        val ua = view.props.user_agent.map(x => UserAgent(x))
+        (Count(
+          view.props.event,
+          view.date.withTimeAtStartOfDay,
+          ua.map(_.browser.family),
+          ua.map(_.browser.major).flatten,
+          ua.map(_.browser.minor).flatten,
+          ua.map(_.os.family),
+          ua.map(_.os.major).flatten,
+          ua.map(_.os.minor).flatten,
+          ua.map(_.device.family)
+        ), 1L)
+      }
       .reduceByKey(_ + _)
-      .map(x => (x._1._1, x._1._2, x._2))
+      .map(x => x._1.copy(count = Some(x._2)))
 
-    events.saveToCassandra("blah", "count", SomeColumns("name", "date", "count"))
+    events.saveToCassandra("blah", "count")
   }
 }
