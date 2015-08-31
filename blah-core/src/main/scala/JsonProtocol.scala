@@ -12,14 +12,14 @@ trait JsonProtocol extends DefaultJsonProtocol {
     }
   }
 
-  implicit val eventFmt = jsonFormat4(Event)
-  implicit val viewPropsFmt = jsonFormat2(ViewProps)
-  implicit val viewEventFmt = jsonFormat4(ViewEvent)
-
   implicit val browserFmt = jsonFormat4(Browser)
   implicit val osFmt = jsonFormat5(OS)
   implicit val deviceFmt = jsonFormat1(Device)
   implicit val userAgentFmt = jsonFormat3(UserAgent.apply)
+
+  implicit val eventFmt = jsonFormat4(Event)
+  implicit val viewPropsFmt = jsonFormat3(ViewProps)
+  implicit val viewEventFmt = jsonFormat4(ViewEvent)
 }
 
 object JsonProtocol extends JsonProtocol
