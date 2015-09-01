@@ -14,7 +14,7 @@ class CountAlgo extends Algo {
       .filter(_.isSuccess)
       .map(_.get)
       .map { view =>
-        val ua = view.props.user_agent.map(x => UserAgent(x))
+        val ua = view.props.userAgent.map(x => UserAgent(x))
         (Count(
           view.props.event,
           view.date.withTimeAtStartOfDay,
