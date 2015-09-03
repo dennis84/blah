@@ -37,7 +37,7 @@ class SimilarityAlgo extends Algo {
     }
 
     val mat = new RowMatrix(rows)
-    val sim = mat.columnSimilarities(0.5)
+    val sim = mat.columnSimilarities()
 
     val all = sim.toIndexedRowMatrix.rows.flatMap { case IndexedRow(i,v) =>
       val vector = v.asInstanceOf[SparseVector]
@@ -51,14 +51,12 @@ class SimilarityAlgo extends Algo {
     val out = usersRDD
       .map { case(u, elems) =>
         (u, elems.flatMap { elem =>
-          all.get(items.indexOf(elem)) map { xs =>
-            xs.toList
-              .filter(_._2 >= 0.5)
-              .map(x => (items(x._1), x._2))
-              .filterNot(x => elems.toList.contains(x._1))
-              .sortBy(_._2)(ord)
-          } getOrElse Nil
-        })
+          all.get(items.indexOf(elem)) getOrElse Nil
+        }.toList
+          .map(x => (items(x._1), x._2))
+          .filterNot(x => elems.toList.contains(x._1))
+          .sortBy(_._2)(ord)
+          .take(10))
       }
 
     out.saveToCassandra("blah", "sims", SomeColumns("user", "views"))
