@@ -11,7 +11,7 @@ class CountRepo(
 
   def count(q: CountQuery): Future[CountResult] = {
     val where = List(
-      q.event.map(x => s"name='$x'"),
+      q.page.map(x => s"name='$x'"),
       q.from.map(x => s"date >= '${x.getMillis}'"),
       q.to.map(x => s"date <= '${x.getMillis}'")
     ).flatten.foldLeft("") {

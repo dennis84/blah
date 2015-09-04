@@ -16,8 +16,8 @@ class CountAlgo extends Algo {
       .map { view =>
         val ua = view.props.userAgent.map(x => UserAgent(x))
         (Count(
-          view.props.event,
-          view.date.withTimeAtStartOfDay,
+          view.props.page,
+          view.date.hourOfDay.roundFloorCopy,
           ua.map(_.browser.family),
           ua.map(_.browser.major).flatten,
           ua.map(_.browser.minor).flatten,

@@ -9,7 +9,7 @@ for i in $(seq 1000); do
     -X POST \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -d "{\"name\":\"view\",\"props\":{\"event\":\"${page}\",\"user\":\"${user}\",\"userAgent\":\"${ua}\"}}" \
+    -d "{\"name\":\"view\",\"props\":{\"page\":\"${page}\",\"user\":\"${user}\",\"userAgent\":\"${ua}\"}}" \
     http://localhost:8000/events \
     > /dev/null
 done
