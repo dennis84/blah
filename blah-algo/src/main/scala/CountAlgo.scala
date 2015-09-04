@@ -30,6 +30,8 @@ class CountAlgo extends Algo {
       .reduceByKey(_ + _)
       .map(x => x._1.copy(count = Some(x._2)))
 
-    events.saveToCassandra("blah", "count")
+    events.saveToCassandra("blah", "count_by_date")
+    events.saveToCassandra("blah", "count_by_browser")
+    events.saveToCassandra("blah", "count_by_os")
   }
 }

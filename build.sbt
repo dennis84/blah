@@ -63,4 +63,4 @@ lazy val algo = (project in file("blah-algo"))
 
 lazy val serving = (project in file("blah-serving"))
   .settings(commonSettings: _*)
-  .dependsOn(core)
+  .dependsOn(core % "compile->compile;test->test")

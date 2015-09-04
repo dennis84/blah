@@ -9,6 +9,11 @@ class CountRepo(
   conn: Session
 )(implicit ec: ExecutionContext) extends CassandraTweaks {
 
+  def query(q: Query) =
+    conn.executeAsync(QueryToCQL(q)) map { xs =>
+      CountResult(xs.all.map(_.getLong("count")).sum)
+    }
+
   def count(q: CountQuery): Future[CountResult] = {
     val where = List(
       q.page.map(x => s"name='$x'"),
