@@ -12,7 +12,7 @@ class SimilarityService(env: Env)(
 ) extends Service with ServingJsonProtocol with SprayJsonSupport {
   import system.dispatcher
 
-  private val repo = new SimilarityRepo(env.cassandraConnection)
+  private val repo = new SimilarityRepo
 
   def route = (get & path("similarity")) {
     parameterMap { params =>

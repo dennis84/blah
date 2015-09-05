@@ -1,8 +1,8 @@
 #!/bin/sh
 
 for i in $(seq 1000); do
-  page="page-$((RANDOM % 100))"
-  user="user-$((RANDOM % 100))"
+  page="page$((RANDOM % 100))"
+  user="user$((RANDOM % 100))"
   ua="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2496.0 Safari/537.36"
 
   curl --silent \

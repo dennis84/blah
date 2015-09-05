@@ -1,10 +1,12 @@
 package blah.algo
 
+import java.security.MessageDigest
 import scala.util.Try
 import org.apache.spark.rdd.RDD
 import org.apache.spark.mllib.linalg.{Vectors, SparseVector}
 import org.apache.spark.mllib.linalg.distributed._
-import com.datastax.spark.connector._
+import org.elasticsearch.spark._
+import org.elasticsearch.spark.rdd.Metadata._          
 import spray.json._
 import blah.core._
 import JsonProtocol._
@@ -50,15 +52,21 @@ class SimilarityAlgo extends Algo {
 
     val out = usersRDD
       .map { case(u, elems) =>
-        (u, elems.flatMap { elem =>
+        val doc = Map("user" -> u, "views" -> elems.flatMap { elem =>
           all.get(items.indexOf(elem)) getOrElse Nil
         }.toList
           .map(x => (items(x._1), x._2))
           .filterNot(x => elems.toList.contains(x._1))
           .sortBy(_._2)(ord)
-          .take(10))
+          .take(10)
+          .toMap)
+        val id = MessageDigest.getInstance("SHA-1")
+          .digest(u.hashCode.toString.getBytes("UTF-8"))
+          .map("%02x".format(_))
+          .mkString
+        (Map(ID -> id), doc)
       }
 
-    out.saveToCassandra("blah", "sims", SomeColumns("user", "views"))
+    out.saveToEsWithMeta("blah/sims")
   }
 }

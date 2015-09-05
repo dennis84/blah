@@ -12,7 +12,7 @@ class CountService(env: Env)(
 ) extends Service with ServingJsonProtocol with SprayJsonSupport {
   import system.dispatcher
 
-  private val repo = new CountRepo(env.cassandraConnection)
+  private val repo = new CountRepo
 
   def route =
     (post & path("count") & entity(as[Query])) { q =>
@@ -20,7 +20,8 @@ class CountService(env: Env)(
     } ~
     (get & path("count-all")) {
       parameterMap { params =>
-        complete(repo countAll params.toJson.convertTo[CountAllQuery])
+        //complete(repo countAll params.toJson.convertTo[CountAllQuery])
+        complete("TODO")
       }
     }
 }

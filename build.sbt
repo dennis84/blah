@@ -14,11 +14,11 @@ val deps = Seq(
   "org.apache.spark"       %% "spark-streaming"                        % "1.4.1",
   "org.apache.spark"       %% "spark-streaming-kafka"                  % "1.4.1",
   "org.apache.spark"       %% "spark-mllib"                            % "1.4.1",
-  "com.datastax.cassandra"  % "cassandra-driver-core"                  % "2.1.7",
-  "com.datastax.spark"     %% "spark-cassandra-connector"              % "1.4.0-M2",
+  "org.elasticsearch"      %% "elasticsearch-spark"                    % "2.1.1",
   "com.github.nscala-time" %% "nscala-time"                            % "2.0.0",
   "com.softwaremill"       %% "reactive-kafka"                         % "0.7.0",
-  "org.clojars.timewarrior" % "ua-parser"                              % "1.3.0"
+  "org.clojars.timewarrior" % "ua-parser"                              % "1.3.0",
+  "net.virtual-void"       %% "json-lenses"                            % "0.6.1"
 )
 
 lazy val commonSettings = Seq(

@@ -22,7 +22,6 @@ object Submit {
     val algo = algos(args(0))
     val conf = new SparkConf()
       .setAppName(args(0))
-      .set("spark.cassandra.connection.host", "127.0.0.1")
     val sc = new SparkContext(conf)
     val rdd = sc.textFile("hdfs://localhost:9000/blah/events.*")
     algo.train(rdd)
