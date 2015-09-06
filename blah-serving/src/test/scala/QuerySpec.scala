@@ -5,6 +5,7 @@ import spray.json._
 import ServingJsonProtocol._
 
 class QuerySpec extends FlatSpec with Matchers {
+
   "Query" should "from json" in {
     val json = """|{
                   |  "filterBy": {
@@ -20,14 +21,16 @@ class QuerySpec extends FlatSpec with Matchers {
       Some(List("date.hour"))))
   }
 
-  it should "to cql query" in {
+  it should "to es query" in {
     val q = Query(Some(Map(
       "page" -> "home",
       "user_agent.device.family" -> "iPhone",
+      "user_agent.browser.family" -> "Chrome",
+      "user_agent.browser.major" -> "47",
       "date.from" -> "2015-09-02",
       "date.to" -> "2015-09-04"
     )), Some(List("date.hour")))
 
-    println(QueryToCQL(q))
+    println(q.toEs)
   }
 }
