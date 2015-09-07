@@ -11,7 +11,8 @@ trait JsonTweaks {
         case (otherKey, otherValue) =>
           val maybeExistingValue = a1.get(otherKey)
           val newValue = (maybeExistingValue, otherValue) match {
-            case (Some(e: JsObject), o: JsObject) => e.merge(o)
+            case (Some(e: JsObject), o: JsObject) => e merge o
+            case (Some(e: JsArray), o: JsArray) => JsArray(e.elements ++ o.elements)
             case _ => otherValue
           }
           otherKey -> newValue

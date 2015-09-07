@@ -31,6 +31,21 @@ class QuerySpec extends FlatSpec with Matchers {
       "date.to" -> "2015-09-04"
     )), Some(List("date.hour")))
 
-    println(q.toEs)
+    q.toEs.parseJson should be(JsObject(
+      "filter" -> JsObject(
+        "range" -> JsObject(
+          "date" -> JsObject(
+            "gte" -> JsString("2015-09-02"),
+            "lte" -> JsString("2015-09-04")
+      ))),
+      "query" -> JsObject(
+        "bool" -> JsObject(
+          "must" -> JsArray(Vector(
+            JsObject("match" -> JsObject("page" -> JsString("home"))),
+            JsObject("match" -> JsObject("deviceFamily" -> JsString("iPhone"))),
+            JsObject("match" -> JsObject("browserFamily" -> JsString("Chrome"))),
+            JsObject("match" -> JsObject("browserMajor" -> JsString("47")))
+      ))))
+    ))
   }
 }

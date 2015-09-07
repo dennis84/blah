@@ -15,7 +15,8 @@ curl -XGET 'http://localhost:9200/blah/count/_count' -d '{
   "query": {
     "bool": {
       "must": [
-        {"match": {"page": "page1"}}
+        {"match": {"page": "page1"}},
+        {"match": {"deviceFamily": "Other"}}
       ]
     }
   }
