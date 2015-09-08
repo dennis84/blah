@@ -23,9 +23,11 @@ class CountAlgo extends Algo {
           "browserFamily" -> ua.map(_.browser.family),
           "browserMajor" -> ua.map(_.browser.major).flatten,
           "browserMinor" -> ua.map(_.browser.minor).flatten,
+          "browserPatch" -> ua.map(_.browser.patch).flatten,
           "osFamily" -> ua.map(_.os.family),
           "osMajor" -> ua.map(_.os.major).flatten,
           "osMinor" -> ua.map(_.os.minor).flatten,
+          "osPatch" -> ua.map(_.os.patch).flatten,
           "deviceFamily" -> ua.map(_.device.family))
         val id = MessageDigest.getInstance("SHA-1")
           .digest(doc.hashCode.toString.getBytes("UTF-8"))
