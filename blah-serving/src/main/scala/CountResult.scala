@@ -1,10 +1,8 @@
 package blah.serving
 
+import spray.json._
+
 case class CountResult(count: Long)
 
-case class CountAllResult(
-  views: List[PageView] = Nil)
-
-case class PageView(
-  name: String,
-  count: Long)
+case class GroupedCountResult(
+  items: List[Map[String, JsValue]] = Nil)

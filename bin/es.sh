@@ -34,10 +34,17 @@ curl -XPOST 'localhost:9200/blah/count/_search?pretty' -d '
       },
       "aggs": {
         "browserFamily": {
-          "terms": {"field": "browserFamily"}
-        },
-        "osFamily": {
-          "terms": {"field": "osFamily"}
+          "terms": {"field": "browserFamily"},
+          "aggs": {
+            "osFamily": {
+              "terms": {"field": "osFamily"},
+              "aggs": {
+                "osMajor": {
+                  "terms": {"field": "osMajor"}
+                }
+              }
+            }
+          }
         }
       }
     }

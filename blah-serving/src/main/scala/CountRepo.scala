@@ -11,15 +11,28 @@ import spray.json._
 import spray.json.lenses.JsonLenses._
 import ServingJsonProtocol._
 
-class CountRepo(implicit system: ActorSystem, mat: Materializer) extends SprayJsonSupport {
+class CountRepo(
+  implicit system: ActorSystem,
+  mat: Materializer
+) extends SprayJsonSupport {
   import system.dispatcher
 
-  def query(q: Query): Future[CountResult] =
+  def count(q: Query): Future[CountResult] =
     Http().singleRequest(HttpRequest(
       method = HttpMethods.POST,
       uri = "http://localhost:9200/blah/count/_count",
       entity = HttpEntity(ContentTypes.`application/json`, q.toEs)
     )).flatMap(resp => Unmarshal(resp.entity).to[JsValue]).map { json =>
       CountResult(json.extract[Long]('count))
+    }
+
+  def search(q: Query): Future[GroupedCountResult] =
+    Http().singleRequest(HttpRequest(
+      method = HttpMethods.POST,
+      uri = "http://localhost:9200/blah/count/_search",
+      entity = HttpEntity(ContentTypes.`application/json`, q.toEs)
+    )).flatMap(resp => Unmarshal(resp.entity).to[JsValue]).map { json =>
+      println(json.prettyPrint)
+      GroupedCountResult()
     }
 }

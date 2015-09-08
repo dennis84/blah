@@ -58,11 +58,11 @@ case class Query(
   groupBy: Option[List[String]] = None) {
 
   private def mustMatch(k: String, v: String) =
-    Map("query" -> Map("bool" -> Map("must" -> List(Map(
-      "match" -> Map(k -> v)
-    ))))).toJson.asJsObject
+    JsObject("query" -> JsObject("bool" -> JsObject("must" -> JsArray(JsObject(
+      "match" -> JsObject(k -> JsString(v))
+    )))))
 
-  def toEs = filterBy map (_.collect {
+  def createFilterByQuery: Option[List[JsObject]] = filterBy map (_.collect {
     case ("page", value: String)                      => mustMatch("page", value)
     case ("user_agent.device.family", value: String)  => mustMatch("deviceFamily", value)
     case ("user_agent.browser.family", value: String) => mustMatch("browserFamily", value)
@@ -74,8 +74,37 @@ case class Query(
     case ("user_agent.os.minor", value: String)       => mustMatch("osMinor", value)
     case ("user_agent.os.patch", value: String)       => mustMatch("osPatch", value)
     case ("date.from", value: String) =>
-      Map("filter" -> Map("range" -> Map("date" -> Map("gte" -> value)))).toJson.asJsObject
+      JsObject("filter" -> JsObject("range" -> JsObject("date" -> JsObject("gte" -> JsString(value)))))
     case ("date.to", value: String) =>
-      Map("filter" -> Map("range" -> Map("date" -> Map("lte" -> value)))).toJson.asJsObject
-  }.reduce(_ merge _).compactPrint) getOrElse "{}"
+      JsObject("filter" -> JsObject("range" -> JsObject("date" -> JsObject("lte" -> JsString(value)))))
+  }.toList)
+
+  def createGroupByQuery: Option[List[JsObject]] = groupBy map (List(
+    JsObject("size" -> JsNumber(0)),
+    JsObject("aggs" -> JsObject("pageviews" -> JsObject("date_histogram" -> JsObject(
+      "field"    -> JsString("date"),
+      "interval" -> JsString("day"),
+      "format"   -> JsString("yyyy-MM-dd")
+    ))))
+  ) ++ _.collect {
+    case "date.hour" =>
+      JsObject("aggs" -> JsObject("pageviews" -> JsObject("date_histogram" -> JsObject(
+        "field"    -> JsString("date"),
+        "interval" -> JsString("hour"),
+        "format"   -> JsString("yyyy-MM-dd H:i:s")
+      ))))
+    case "user_agent.browser.family" =>
+      JsObject("aggs" -> JsObject("pageviews" -> JsObject("aggs" -> JsObject(
+        "browserFamily" -> JsObject("terms" -> JsObject("field" -> JsString("browserFamily")))
+      ))))
+    case "user_agent.os.family" =>
+      JsObject("aggs" -> JsObject("pageviews" -> JsObject("aggs" -> JsObject(
+        "osFamily" -> JsObject("terms" -> JsObject("field" -> JsString("osFamily")))
+      )))).toJson.asJsObject
+  })
+
+  def toEs = List(
+    createFilterByQuery,
+    createGroupByQuery
+  ).flatten.flatten.reduce(_ merge _).compactPrint
 }

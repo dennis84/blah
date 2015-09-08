@@ -21,7 +21,7 @@ class QuerySpec extends FlatSpec with Matchers {
       Some(List("date.hour"))))
   }
 
-  it should "to es query" in {
+  it should "create a filterBy query" in {
     val q = Query(Some(Map(
       "page" -> "home",
       "user_agent.device.family" -> "iPhone",
@@ -29,7 +29,7 @@ class QuerySpec extends FlatSpec with Matchers {
       "user_agent.browser.major" -> "47",
       "date.from" -> "2015-09-02",
       "date.to" -> "2015-09-04"
-    )), Some(List("date.hour")))
+    )))
 
     q.toEs.parseJson should be(JsObject(
       "filter" -> JsObject(
@@ -46,6 +46,57 @@ class QuerySpec extends FlatSpec with Matchers {
             JsObject("match" -> JsObject("browserFamily" -> JsString("Chrome"))),
             JsObject("match" -> JsObject("browserMajor" -> JsString("47")))
       ))))
+    ))
+  }
+
+  it should "create the default grouped query" in {
+    val q = Query(Some(Map(
+      "page" -> "home"
+    )), Some(List()))
+
+    q.toEs.parseJson should be(JsObject(
+      "query" -> JsObject(
+        "bool" -> JsObject(
+          "must" -> JsArray(Vector(
+            JsObject("match" -> JsObject("page" -> JsString("home")))
+      )))),
+      "size" -> JsNumber(0),
+      "aggs" -> JsObject(
+        "pageviews" -> JsObject(
+          "date_histogram" -> JsObject(
+            "field" -> JsString("date"),
+            "interval" -> JsString("day"),
+            "format" -> JsString("yyyy-MM-dd")
+      )))
+    ))
+  }
+
+  it should "create a grouped query" in {
+    val q = Query(Some(Map(
+      "page" -> "home"
+    )), Some(List(
+      "date.hour",
+      "user_agent.browser.family",
+      "user_agent.os.family"
+    )))
+
+    q.toEs.parseJson should be(JsObject(
+      "query" -> JsObject(
+        "bool" -> JsObject(
+          "must" -> JsArray(Vector(
+            JsObject("match" -> JsObject("page" -> JsString("home")))
+      )))),
+      "size" -> JsNumber(0),
+      "aggs" -> JsObject(
+        "pageviews" -> JsObject(
+          "date_histogram" -> JsObject(
+            "field" -> JsString("date"),
+            "interval" -> JsString("hour"),
+            "format" -> JsString("yyyy-MM-dd H:i:s")),
+          "aggs" -> JsObject(
+            "browserFamily" -> JsObject("terms" -> JsObject("field" -> JsString("browserFamily"))),
+            "osFamily" -> JsObject("terms" -> JsObject("field" -> JsString("osFamily"))))
+      ))
     ))
   }
 }
