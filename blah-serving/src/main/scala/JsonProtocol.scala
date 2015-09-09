@@ -5,7 +5,6 @@ import blah.core.JsonProtocol
 
 trait ServingJsonProtocol extends JsonProtocol {
   implicit val queryFmt = jsonFormat2(Query)
-  implicit val pageViewFmt = jsonFormat11(PageView)
   implicit val countResultFmt = jsonFormat1(CountResult)
   implicit val groupedCountResultFmt = jsonFormat1(GroupedCountResult)
 

@@ -94,8 +94,11 @@ class QuerySpec extends FlatSpec with Matchers {
             "interval" -> JsString("hour"),
             "format" -> JsString("yyyy-MM-dd H:i:s")),
           "aggs" -> JsObject(
-            "browserFamily" -> JsObject("terms" -> JsObject("field" -> JsString("browserFamily"))),
-            "osFamily" -> JsObject("terms" -> JsObject("field" -> JsString("osFamily"))))
+            "browserFamily" -> JsObject(
+              "terms" -> JsObject("field" -> JsString("browserFamily")),
+              "aggs" -> JsObject(
+                "osFamily" -> JsObject("terms" -> JsObject("field" -> JsString("osFamily"))))
+            ))
       ))
     ))
   }
