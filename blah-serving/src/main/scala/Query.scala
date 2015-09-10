@@ -62,7 +62,7 @@ case class Query(
       "match" -> JsObject(k -> JsString(v))
     )))))
 
-  def createFilterByQuery: JsObject = filterBy map (_.collect {
+  def createFilterByQuery: JsObject = filterBy.map(_.collect {
     case ("page", value: String)                      => mustMatch("page", value)
     case ("user_agent.device.family", value: String)  => mustMatch("deviceFamily", value)
     case ("user_agent.browser.family", value: String) => mustMatch("browserFamily", value)
@@ -77,30 +77,41 @@ case class Query(
       JsObject("filter" -> JsObject("range" -> JsObject("date" -> JsObject("gte" -> JsString(value)))))
     case ("date.to", value: String) =>
       JsObject("filter" -> JsObject("range" -> JsObject("date" -> JsObject("lte" -> JsString(value)))))
-  }.reduce(_ merge _)) getOrElse JsObject()
+  }.reduceOption(_ merge _)).flatten getOrElse JsObject()
 
-  def createGroupByQuery: JsObject = groupBy map (List(
+  def createGroupByQuery: JsObject = groupBy.map(xs => (List(
     JsObject("size" -> JsNumber(0)),
-    JsObject("aggs" -> JsObject("pageviews" -> JsObject("date_histogram" -> JsObject(
-      "field"    -> JsString("date"),
-      "interval" -> JsString("day"),
-      "format"   -> JsString("yyyy-MM-dd")
-    ))))
-  ) ++ _.collect {
+    JsObject("aggs" -> JsObject("date" -> JsObject(
+      "date_histogram" -> JsObject(
+        "field"    -> JsString("date"),
+        "interval" -> JsString("day")
+      ),
+      "aggs" -> createNestedAggs
+    )))
+  ) ++ xs.collect {
     case "date.hour" =>
-      JsObject("aggs" -> JsObject("pageviews" -> JsObject(
+      JsObject("aggs" -> JsObject("date" -> JsObject(
         "date_histogram" -> JsObject(
           "field"    -> JsString("date"),
-          "interval" -> JsString("hour"),
-          "format"   -> JsString("yyyy-MM-dd H:i:s")
+          "interval" -> JsString("hour")
         ),
         "aggs" -> createNestedAggs
       )))
-  } reduce (_ merge _)) getOrElse JsObject()
+    case "date.month" =>
+      JsObject("aggs" -> JsObject("date" -> JsObject(
+        "date_histogram" -> JsObject(
+          "field"    -> JsString("date"),
+          "interval" -> JsString("month")
+        ),
+        "aggs" -> createNestedAggs
+      )))
+  }).reduceOption(_ merge _)).flatten getOrElse JsObject()
 
   def createNestedAggs = groupBy map (xs => mergeAggs(xs.collect {
     case "user_agent.browser.family" =>
       JsObject("browserFamily" -> JsObject("terms" -> JsObject("field" -> JsString("browserFamily"))))
+    case "user_agent.browser.major" =>
+      JsObject("browserMajor" -> JsObject("terms" -> JsObject("field" -> JsString("browserMajor"))))
     case "user_agent.os.family" =>
       JsObject("osFamily" -> JsObject("terms" -> JsObject("field" -> JsString("osFamily"))))
   })) getOrElse JsObject()

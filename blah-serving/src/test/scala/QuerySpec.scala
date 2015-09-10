@@ -62,12 +62,12 @@ class QuerySpec extends FlatSpec with Matchers {
       )))),
       "size" -> JsNumber(0),
       "aggs" -> JsObject(
-        "pageviews" -> JsObject(
+        "date" -> JsObject(
           "date_histogram" -> JsObject(
             "field" -> JsString("date"),
-            "interval" -> JsString("day"),
-            "format" -> JsString("yyyy-MM-dd")
-      )))
+            "interval" -> JsString("day")),
+          "aggs" -> JsObject()
+      ))
     ))
   }
 
@@ -88,11 +88,10 @@ class QuerySpec extends FlatSpec with Matchers {
       )))),
       "size" -> JsNumber(0),
       "aggs" -> JsObject(
-        "pageviews" -> JsObject(
+        "date" -> JsObject(
           "date_histogram" -> JsObject(
             "field" -> JsString("date"),
-            "interval" -> JsString("hour"),
-            "format" -> JsString("yyyy-MM-dd H:i:s")),
+            "interval" -> JsString("hour")),
           "aggs" -> JsObject(
             "browserFamily" -> JsObject(
               "terms" -> JsObject("field" -> JsString("browserFamily")),

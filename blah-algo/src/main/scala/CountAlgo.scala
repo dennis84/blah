@@ -20,15 +20,15 @@ class CountAlgo extends Algo {
         val doc = Map(
           "page" -> view.props.page,
           "date" -> view.date.hourOfDay.roundFloorCopy.toString,
-          "browserFamily" -> ua.map(_.browser.family),
-          "browserMajor" -> ua.map(_.browser.major).flatten,
-          "browserMinor" -> ua.map(_.browser.minor).flatten,
-          "browserPatch" -> ua.map(_.browser.patch).flatten,
-          "osFamily" -> ua.map(_.os.family),
-          "osMajor" -> ua.map(_.os.major).flatten,
-          "osMinor" -> ua.map(_.os.minor).flatten,
-          "osPatch" -> ua.map(_.os.patch).flatten,
-          "deviceFamily" -> ua.map(_.device.family))
+          "browserFamily" -> ua.map(_.browser.family).getOrElse("N/A"),
+          "browserMajor" -> ua.map(_.browser.major).flatten.getOrElse("N/A"),
+          "browserMinor" -> ua.map(_.browser.minor).flatten.getOrElse("N/A"),
+          "browserPatch" -> ua.map(_.browser.patch).flatten.getOrElse("N/A"),
+          "osFamily" -> ua.map(_.os.family).getOrElse("N/A"),
+          "osMajor" -> ua.map(_.os.major).flatten.getOrElse("N/A"),
+          "osMinor" -> ua.map(_.os.minor).flatten.getOrElse("N/A"),
+          "osPatch" -> ua.map(_.os.patch).flatten.getOrElse("N/A"),
+          "deviceFamily" -> ua.map(_.device.family).getOrElse("N/A"))
         val id = MessageDigest.getInstance("SHA-1")
           .digest(doc.hashCode.toString.getBytes("UTF-8"))
           .map("%02x".format(_))
