@@ -1,12 +1,11 @@
 package blah.serving
 
-import scala.util.Try
 import org.scalatest._
 import spray.json._
 import spray.json.lenses.JsonLenses._
 import ServingJsonProtocol._
 
-class ParseSpec extends FlatSpec with Matchers {
+class CountResponseParserSpec extends FlatSpec with Matchers {
 
   val resp = """|{
                 |  "_shards": {
@@ -144,31 +143,51 @@ class ParseSpec extends FlatSpec with Matchers {
                 |  }
                 |}""".stripMargin
 
-  "Parse" should "a" in {
+  "CountResponseParser" should "parse a es response" in {
     val json = resp.parseJson
-    val byDate = json.extract[JsValue]('aggregations)
-
+    val aggs = json.extract[JsValue]('aggregations)
     val groups = List("date", "browserFamily", "osFamily")
-    val res = extract(groups, byDate)
-
-    println(res)
-  }
-
-  def extract(
-    groups: List[String],
-    data: JsValue
-  ): Seq[JsObject] = groups match {
-    case Nil => Nil
-    case x :: Nil => data.extract[JsValue](x / 'buckets / *) map { bucket =>
-      val count = bucket.extract[JsValue]('doc_count)
-      val key = bucket.extract[JsValue]('key)
-      JsObject("count" -> count, x -> key)
-    }
-    case x :: xs => data.extract[JsValue](x / 'buckets / *) flatMap { bucket =>
-      extract(xs, bucket) map {
-        val key = bucket.extract[JsValue]('key)
-        obj => JsObject(obj.fields ++ Map(x -> key))
-      }
-    }
+    CountResponseParser.parse(groups, aggs) should be (Vector(
+      JsObject(
+        "count" -> JsNumber(100),
+        "date" -> JsNumber(1441411200000L),
+        "browserFamily" -> JsString("Chrome"),
+        "osFamily" -> JsString("Mac OS X")),
+      JsObject(
+        "count" -> JsNumber(100),
+        "date" -> JsNumber(1441497600000L),
+        "browserFamily" -> JsString("Chrome"),
+        "osFamily" -> JsString("Mac OS X")),
+      JsObject(
+        "count" -> JsNumber(100),
+        "date" -> JsNumber(1441584000000L),
+        "browserFamily" -> JsString("Firefox"),
+        "osFamily" -> JsString("Mac OS X")),
+      JsObject(
+        "count" -> JsNumber(186),
+        "date" -> JsNumber(1441670400000L),
+        "browserFamily" -> JsString("Firefox"),
+        "osFamily" -> JsString("Mac OS X")),
+      JsObject(
+        "count" -> JsNumber(61),
+        "date" -> JsNumber(1441670400000L),
+        "browserFamily" -> JsString("Firefox"),
+        "osFamily" -> JsString("Windows 2000")),
+      JsObject(
+        "count" -> JsNumber(132),
+        "date" -> JsNumber(1441670400000L),
+        "browserFamily" -> JsString("Chrome"),
+        "osFamily" -> JsString("Mac OS X")),
+      JsObject(
+        "count" -> JsNumber(65),
+        "date" -> JsNumber(1441670400000L),
+        "browserFamily" -> JsString("Other"),
+        "osFamily" -> JsString("Android")),
+      JsObject(
+        "count" -> JsNumber(58),
+        "date" -> JsNumber(1441670400000L),
+        "browserFamily" -> JsString("Chrome Mobile iOS"),
+        "osFamily" -> JsString("iOS"))
+    ))
   }
 }

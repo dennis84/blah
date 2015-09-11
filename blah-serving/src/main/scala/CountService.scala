@@ -15,8 +15,8 @@ class CountService(env: Env)(
   private val repo = new CountRepo
 
   def route =
-    (post & path("count") & entity(as[Query])) {
-      case q@Query(_, None) => complete(repo count q)
-      case q@Query(_, _)    => complete(repo search q)
+    (post & path("count") & entity(as[CountQuery])) {
+      case q@CountQuery(_, None) => complete(repo count q)
+      case q@CountQuery(_, _)    => complete(repo search q)
     }
 }

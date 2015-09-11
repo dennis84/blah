@@ -10,7 +10,7 @@ function render(model, update, id, options) {
     onclick: (e) => update(incr)
   }, [
     h('h3', 'Pageviews'),
-    h('div', 'name: ' + options.event),
+    h('div', 'name: ' + options.filterBy.page),
     h('div', 'count: ' + model.count)
   ])
 }

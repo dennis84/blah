@@ -2,27 +2,11 @@ package blah.serving
 
 import org.scalatest._
 import spray.json._
-import ServingJsonProtocol._
 
-class QuerySpec extends FlatSpec with Matchers {
+class CountQueryToEsSpec extends FlatSpec with Matchers {
 
-  "Query" should "from json" in {
-    val json = """|{
-                  |  "filterBy": {
-                  |    "page": "home",
-                  |    "user_agent.device.family": "iPhone"
-                  |  },
-                  |  "groupBy": [
-                  |    "date.hour"
-                  |  ]
-                  |}""".stripMargin
-    json.parseJson.convertTo[Query] should be(Query(
-      Some(Map("page" -> "home", "user_agent.device.family" -> "iPhone")),
-      Some(List("date.hour"))))
-  }
-
-  it should "create a filterBy query" in {
-    val q = Query(Some(Map(
+  "CountQueryToEs" should "convert filters to es" in {
+    val q = CountQuery(Some(Map(
       "page" -> "home",
       "user_agent.device.family" -> "iPhone",
       "user_agent.browser.family" -> "Chrome",
@@ -31,7 +15,7 @@ class QuerySpec extends FlatSpec with Matchers {
       "date.to" -> "2015-09-04"
     )))
 
-    q.toEs.parseJson should be(JsObject(
+    CountQueryToEs(q) should be(JsObject(
       "filter" -> JsObject(
         "range" -> JsObject(
           "date" -> JsObject(
@@ -49,12 +33,12 @@ class QuerySpec extends FlatSpec with Matchers {
     ))
   }
 
-  it should "create the default grouped query" in {
-    val q = Query(Some(Map(
+  it should "convert filters and empty groups to es" in {
+    val q = CountQuery(Some(Map(
       "page" -> "home"
-    )), Some(List()))
+    )), Some(Nil))
 
-    q.toEs.parseJson should be(JsObject(
+    CountQueryToEs(q) should be(JsObject(
       "query" -> JsObject(
         "bool" -> JsObject(
           "must" -> JsArray(Vector(
@@ -71,8 +55,8 @@ class QuerySpec extends FlatSpec with Matchers {
     ))
   }
 
-  it should "create a grouped query" in {
-    val q = Query(Some(Map(
+  it should "convert filters and groups to es" in {
+    val q = CountQuery(Some(Map(
       "page" -> "home"
     )), Some(List(
       "date.hour",
@@ -80,7 +64,7 @@ class QuerySpec extends FlatSpec with Matchers {
       "user_agent.os.family"
     )))
 
-    q.toEs.parseJson should be(JsObject(
+    CountQueryToEs(q) should be(JsObject(
       "query" -> JsObject(
         "bool" -> JsObject(
           "must" -> JsArray(Vector(

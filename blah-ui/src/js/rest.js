@@ -35,6 +35,29 @@ function get(path, params) {
   })
 }
 
+/**
+ * Makes a POST call.
+ *
+ * @param {String} path   The api path
+ * @param {Object} params Query params
+ *
+ * @return {Promise} A promise with parsed JSON data
+ */
+function post(path, params) {
+  return new Promise((resolve, reject) => {
+    xhr({
+      uri: url(SERVING_URL, path),
+      method: 'POST',
+      json: params,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    }, (err, resp, body) => resolve(body))
+  })
+}
+
 export {
-  get
+  get,
+  post
 }

@@ -1,12 +1,10 @@
 import clone from 'clone'
-import {get} from '../rest'
+import {get,post} from '../rest'
 
 /**
  * Fetch pageviews from serving layer.
  *
- * `options.event` Filter by a specific event e.g. homepage
- * `options.from`  Filter by date
- * `options.to`    Filter by date
+ * `options.filterBy` An object of filters.
  *
  * @param {Object} The widget state
  * @param {Object} Query options
@@ -14,7 +12,7 @@ import {get} from '../rest'
  * @return {Promise} The model wrapped in a promise
  */
 function count(model, options) {
-  return get('/count', options).then((data) => {
+  return post('/count', options).then((data) => {
     var m = clone(model)
     m.count = data.count
     return m
@@ -22,20 +20,20 @@ function count(model, options) {
 }
 
 /**
- * Fetch all pageviews from serving layer.
+ * Fetch grouped pageviews from serving layer.
  *
- * `options.from`  Filter by date
- * `options.to`    Filter by date
+ * `options.filterBy` Filter by a specific properties
+ * `options.groupBy` Group by a specific properties
  *
  * @param {Object} The widget state
  * @param {Object} Query options
  *
  * @return {Promise} The model wrapped in a promise
  */
-function countAll(model, options) {
-  return get('/count-all', options).then((data) => {
+function grouped(model, options) {
+  return post('/count', options).then((data) => {
     var m = clone(model)
-    m.views = data.views
+    m.groups = data
     return m
   })
 }
@@ -50,6 +48,6 @@ function incr(model) {
 
 export {
   count,
-  countAll,
+  grouped,
   incr
 }
