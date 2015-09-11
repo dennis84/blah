@@ -150,42 +150,42 @@ class CountResponseParserSpec extends FlatSpec with Matchers {
     CountResponseParser.parse(groups, aggs) should be (Vector(
       JsObject(
         "count" -> JsNumber(100),
-        "date" -> JsNumber(1441411200000L),
+        "date" -> JsString("2015-09-05"),
         "browserFamily" -> JsString("Chrome"),
         "osFamily" -> JsString("Mac OS X")),
       JsObject(
         "count" -> JsNumber(100),
-        "date" -> JsNumber(1441497600000L),
+        "date" -> JsString("2015-09-06"),
         "browserFamily" -> JsString("Chrome"),
         "osFamily" -> JsString("Mac OS X")),
       JsObject(
         "count" -> JsNumber(100),
-        "date" -> JsNumber(1441584000000L),
+        "date" -> JsString("2015-09-07"),
         "browserFamily" -> JsString("Firefox"),
         "osFamily" -> JsString("Mac OS X")),
       JsObject(
         "count" -> JsNumber(186),
-        "date" -> JsNumber(1441670400000L),
+        "date" -> JsString("2015-09-08"),
         "browserFamily" -> JsString("Firefox"),
         "osFamily" -> JsString("Mac OS X")),
       JsObject(
         "count" -> JsNumber(61),
-        "date" -> JsNumber(1441670400000L),
+        "date" -> JsString("2015-09-08"),
         "browserFamily" -> JsString("Firefox"),
         "osFamily" -> JsString("Windows 2000")),
       JsObject(
         "count" -> JsNumber(132),
-        "date" -> JsNumber(1441670400000L),
+        "date" -> JsString("2015-09-08"),
         "browserFamily" -> JsString("Chrome"),
         "osFamily" -> JsString("Mac OS X")),
       JsObject(
         "count" -> JsNumber(65),
-        "date" -> JsNumber(1441670400000L),
+        "date" -> JsString("2015-09-08"),
         "browserFamily" -> JsString("Other"),
         "osFamily" -> JsString("Android")),
       JsObject(
         "count" -> JsNumber(58),
-        "date" -> JsNumber(1441670400000L),
+        "date" -> JsString("2015-09-08"),
         "browserFamily" -> JsString("Chrome Mobile iOS"),
         "osFamily" -> JsString("iOS"))
     ))
