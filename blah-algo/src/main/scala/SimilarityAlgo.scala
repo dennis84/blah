@@ -60,11 +60,7 @@ class SimilarityAlgo extends Algo {
           .sortBy(_._2)(ord)
           .take(10)
           .toMap)
-        val id = MessageDigest.getInstance("SHA-1")
-          .digest(u.hashCode.toString.getBytes("UTF-8"))
-          .map("%02x".format(_))
-          .mkString
-        (Map(ID -> id), doc)
+        (Map(ID -> u), doc)
       }
 
     out.saveToEsWithMeta("blah/sims")

@@ -21,34 +21,36 @@
 #   }
 # }'
 
-curl -XPOST 'localhost:9200/blah/count/_search?pretty' -d '
-{
-  "size": 0,
-  "query": {"bool": {"must": []}},
-  "aggs": {
-    "pageviews": {
-      "date_histogram": {
-        "field": "date",
-        "interval": "day"
-      },
-      "aggs": {
-        "browserFamily": {
-          "terms": {"field": "browserFamily"},
-          "aggs": {
-            "osFamily": {
-              "terms": {"field": "osFamily"},
-              "aggs": {
-                "osMajor": {
-                  "terms": {"field": "osMajor"}
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}'
+# curl -XPOST 'localhost:9200/blah/count/_search?pretty' -d '
+# {
+#   "size": 0,
+#   "query": {"bool": {"must": []}},
+#   "aggs": {
+#     "pageviews": {
+#       "date_histogram": {
+#         "field": "date",
+#         "interval": "day"
+#       },
+#       "aggs": {
+#         "browserFamily": {
+#           "terms": {"field": "browserFamily"},
+#           "aggs": {
+#             "osFamily": {
+#               "terms": {"field": "osFamily"},
+#               "aggs": {
+#                 "osMajor": {
+#                   "terms": {"field": "osMajor"}
+#                 }
+#               }
+#             }
+#           }
+#         }
+#       }
+#     }
+#   }
+# }'
+
+curl -XGET 'http://localhost:9200/blah/sims/user1?pretty'
 
 # curl -XGET 'http://localhost:9200/blah/count/_search?pretty' -d '{
 #   "query": {

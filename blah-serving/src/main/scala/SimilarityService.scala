@@ -14,9 +14,8 @@ class SimilarityService(env: Env)(
 
   private val repo = new SimilarityRepo
 
-  def route = (get & path("similarity")) {
-    parameterMap { params =>
-      complete(repo sims params.toJson.convertTo[SimilarityQuery])
+  def route =
+    (post & path("similarity") & entity(as[SimilarityQuery])) {
+      q => complete(repo sims q)
     }
-  }
 }

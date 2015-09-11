@@ -19,13 +19,9 @@ class SimilarityRepo(
 
   def sims(q: SimilarityQuery): Future[SimilarityResult] =
     Http().singleRequest(HttpRequest(
-      method = HttpMethods.POST,
-      uri = "http://localhost:9200/blah/sims/_search",
-      entity = HttpEntity(ContentTypes.`application/json`, Map(
-        "query" -> Map("term" -> Map("user" -> q.user))
-      ).toJson.compactPrint)
+      method = HttpMethods.GET,
+      uri = "http://localhost:9200/blah/sims/" + q.user
     )).flatMap(resp => Unmarshal(resp.entity).to[JsValue]).map { json =>
-      val views = 'hits / 'hits / * / '_source
-      json.extract[SimilarityResult](views).head
+      json.extract[SimilarityResult]('_source)
     }
 }
