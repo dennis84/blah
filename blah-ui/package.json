@@ -15,6 +15,7 @@
     "mocha": "^2.2.5",
     "raf": "^3.1.0",
     "tape": "^4.2.0",
+    "uuid": "^2.0.1",
     "vdom-thunk": "^3.0.0",
     "vinyl-source-stream": "^1.1.0",
     "virtual-dom": "2.1.1",
