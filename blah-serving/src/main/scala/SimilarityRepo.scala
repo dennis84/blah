@@ -11,17 +11,17 @@ import spray.json._
 import spray.json.lenses.JsonLenses._
 import ServingJsonProtocol._
 
-class SimilarityRepo(
+class SimilarityRepo(client: ElasticClient)(
   implicit system: ActorSystem,
   mat: Materializer
 ) extends SprayJsonSupport {
   import system.dispatcher
 
   def sims(q: SimilarityQuery): Future[SimilarityResult] =
-    Http().singleRequest(HttpRequest(
+    client request HttpRequest(
       method = HttpMethods.GET,
-      uri = "http://localhost:9200/blah/sims/" + q.user
-    )).flatMap(resp => Unmarshal(resp.entity).to[JsValue]).map { json =>
+      uri = "/blah/sims/" + q.user
+    ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
       json.extract[SimilarityResult]('_source)
     }
 }

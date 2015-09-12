@@ -1,6 +1,5 @@
 package blah.serving
 
-import spray.json._
 import blah.core.JsonProtocol
 
 trait ServingJsonProtocol extends JsonProtocol {

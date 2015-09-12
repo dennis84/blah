@@ -25,7 +25,7 @@ lazy val commonSettings = Seq(
   organization  := "com.github.dennis84",
   version       := "0.1.0",
   scalaVersion  := "2.11.6",
-  scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
+  scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8", "-Ywarn-unused-import")
 )
 
 lazy val root = (project in file("."))

@@ -1,7 +1,6 @@
 package blah.serving
 
 import spray.json._
-import DefaultJsonProtocol._
 import blah.core.JsonTweaks._
 
 object CountQueryToEs {

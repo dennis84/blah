@@ -5,7 +5,6 @@ import kafka.producer.KafkaProducer
 import kafka.serializer.StringEncoder
 import com.softwaremill.react.kafka.ProducerProperties
 import com.typesafe.config.ConfigFactory
-import blah.core._
 
 class Env(system: ActorSystem) {
   import system.dispatcher
