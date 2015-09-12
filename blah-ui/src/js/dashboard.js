@@ -9,7 +9,8 @@ function render(model, channel) {
     h('div.widgets', [
       widget(count, model, channel, {filterBy: {page: 'page1'}}),
       widget(grouped, model, channel, {groupBy: ['user_agent.browser.family']}),
-      widget(recommendations, model, channel, {user: 'user1'})
+      widget(recommendations, model, channel, {user: 'user1'}),
+      widget(count, model, channel, {filterBy: {page: 'page2'}})
     ])
   ])
 }

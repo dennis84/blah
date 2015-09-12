@@ -8,11 +8,11 @@ function render(model, update, id, options) {
       if(null === id) update(count, options)
     }),
     onclick: (e) => update(incr)
-  }, [
+  }, h('div.wrapper', [
     h('h3', 'Pageviews'),
     h('div', 'name: ' + options.filterBy.page),
     h('div', 'count: ' + model.count)
-  ])
+  ]))
 }
 
 export default render

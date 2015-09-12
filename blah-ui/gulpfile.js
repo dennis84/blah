@@ -6,6 +6,7 @@ var gulp = require('gulp')
   , source = require('vinyl-source-stream')
   , streamify = require('gulp-streamify')
   , stylus = require('gulp-stylus')
+  , nib = require('nib')
 
 var onError = function(error) {
   gutil.log(gutil.colors.red(error.message))
@@ -31,7 +32,10 @@ gulp.task('js', function() {
 
 gulp.task('css', function() {
   gulp.src('src/css/index.styl')
-    .pipe(stylus({ compress: true }))
+    .pipe(stylus({
+      compress: true,
+      use: [nib()]
+    }))
     .pipe(gulp.dest('./assets/css'))
 })
 

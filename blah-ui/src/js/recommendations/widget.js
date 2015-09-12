@@ -17,11 +17,11 @@ function render(model, update, id, options) {
     init: hook((node) => {
       if(null === id) update(recommendations, options)
     })
-  }, [
+  }, h('div.wrapper', [
     h('h3', 'Recommendations'),
     h('div', 'user: ' + options.user),
     h('div', views(model.views))
-  ])
+  ]))
 }
 
 export default render

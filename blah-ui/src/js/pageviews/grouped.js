@@ -16,10 +16,9 @@ function render(model, update, id, options) {
     init: hook((node) => {
       if(null === id) update(grouped, options)
     })
-  }, [
+  }, h('div.wrapper', [
     h('h3', 'Grouped Pageviews'),
-    h('div', groups(model.groups))
-  ])
+  ].concat(groups(model.groups))))
 }
 
 export default render
