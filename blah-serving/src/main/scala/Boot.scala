@@ -15,7 +15,7 @@ object Boot extends App with CorsSupport {
   val config = system.settings.config
   val interface = config.getString("app.interface")
   val port = config.getInt("app.port")
-  val env = new Env(system)
+  val env = new Env
   val services = Seq(
     new WebsocketService(env.websocketRoom),
     new CountService(env),

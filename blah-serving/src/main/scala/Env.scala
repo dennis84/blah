@@ -1,11 +1,11 @@
 package blah.serving
 
 import akka.actor.{ActorSystem, Props}
+import akka.stream.Materializer
 import kafka.serializer.StringDecoder
 import com.softwaremill.react.kafka.{ReactiveKafka, ConsumerProperties}
 
-class Env(val system: ActorSystem) {
-  implicit val s = system
+class Env(implicit system: ActorSystem, mat: Materializer) {
   private val config = system.settings.config
   lazy val websocketRoom = new WebsocketRoom(system)
   lazy val websocketHub = system.actorOf(Props(new WebsocketHub(websocketRoom)))
@@ -18,4 +18,7 @@ class Env(val system: ActorSystem) {
     groupId = "websocket",
     decoder = new StringDecoder()
   ))
+
+  lazy val elasticClient = new ElasticClient(ElasticUri(
+    config.getString("elasticsearch.uri")))
 }
