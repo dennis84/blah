@@ -13,7 +13,7 @@ function views(xs) {
 }
 
 function render(model, update, id, options) {
-  return h('div.widget', {
+  return h('div.widget.widget-recommendations', {
     init: hook((node) => {
       if(null === id) update(recommendations, options)
     })

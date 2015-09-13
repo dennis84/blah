@@ -1,24 +1,29 @@
 import {h} from 'virtual-dom'
 import {grouped} from './ctrl'
 import hook from '../hook'
+import Chartist from 'chartist'
 
-function groups(xs) {
-  if(undefined === xs) return
-  return xs.map((x) => {
-    return h('div.view', Object.keys(x).map((key) => {
-      return h('div', key + ': ' + String(x[key]))
-    }))
+function chart(model) {
+  if(undefined === model.groups) return
+  var labels = model.groups.map((x) => x.date)
+  var data = model.groups.map((x) => x.count)
+
+  return h('div.chart', {
+    mount: hook(function(node) {
+      new Chartist.Line(node, {labels: labels, series: [data]}, {
+        fullWidth: true,
+        axisY: {showGrid: false}
+      })
+    })
   })
 }
 
 function render(model, update, id, options) {
-  return h('div.widget', {
+  return h('div.widget.widget-grouped', {
     init: hook((node) => {
       if(null === id) update(grouped, options)
     })
-  }, h('div.wrapper', [
-    h('h3', 'Grouped Pageviews'),
-  ].concat(groups(model.groups))))
+  }, chart(model))
 }
 
 export default render

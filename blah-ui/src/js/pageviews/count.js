@@ -3,15 +3,14 @@ import {count, incr} from './ctrl'
 import hook from '../hook'
 
 function render(model, update, id, options) {
-  return h('div.widget', {
+  return h('div.widget.widget-count', {
     init: hook((node) => {
       if(null === id) update(count, options)
     }),
     onclick: (e) => update(incr)
   }, h('div.wrapper', [
-    h('h3', 'Pageviews'),
-    h('div', 'name: ' + options.filterBy.page),
-    h('div', 'count: ' + model.count)
+    h('div.count', String(model.count)),
+    h('div.page', options.filterBy.page)
   ]))
 }
 
