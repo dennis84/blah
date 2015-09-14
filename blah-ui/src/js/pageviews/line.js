@@ -19,7 +19,7 @@ function chart(model) {
 }
 
 function render(model, update, id, options) {
-  return h('div.widget.widget-grouped', {
+  return h('div.widget.widget-line', {
     init: hook((node) => {
       if(null === id) update(grouped, options)
     })

@@ -7,10 +7,12 @@ object CountQueryToEs {
 
   private def mustMatch(k: String, v: String) =
     JsObject("query" ->
-      JsObject("bool" ->
-        JsObject("must" -> JsArray(
-          JsObject("match" -> JsObject(k -> JsString(v)))
-        ))))
+      JsObject("filtered" ->
+        JsObject("query" ->
+          JsObject("bool" ->
+            JsObject("must" -> JsArray(
+              JsObject("match" -> JsObject(k -> JsString(v)))
+            ))))))
 
   private def filterBy(xs: Map[String, String]): Option[JsObject] = xs collect {
     case ("page", value) => mustMatch("page", value)
@@ -24,9 +26,11 @@ object CountQueryToEs {
     case ("user_agent.os.minor", value: String) => mustMatch("osMinor", value)
     case ("user_agent.os.patch", value: String) => mustMatch("osPatch", value)
     case ("date.from", value: String) =>
-      JsObject("filter" -> JsObject("range" -> JsObject("date" -> JsObject("gte" -> JsString(value)))))
+      JsObject("query" -> JsObject("filtered" -> JsObject("filter" ->
+        JsObject("range" -> JsObject("date" -> JsObject("gte" -> JsString(value)))))))
     case ("date.to", value: String) =>
-      JsObject("filter" -> JsObject("range" -> JsObject("date" -> JsObject("lte" -> JsString(value)))))
+      JsObject("query" -> JsObject("filtered" -> JsObject("filter" ->
+        JsObject("range" -> JsObject("date" -> JsObject("lte" -> JsString(value)))))))
   } reduceOption (_ merge _)
 
   private def mergeAggs(xs: List[JsObject]): JsObject =

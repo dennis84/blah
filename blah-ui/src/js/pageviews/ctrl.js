@@ -12,7 +12,7 @@ import {get,post} from '../rest'
  * @return {Promise} The model wrapped in a promise
  */
 function count(model, options) {
-  return post('/count', options).then((data) => {
+  return post('/count', mkQuery(options)).then((data) => {
     var m = clone(model)
     m.count = data.count
     return m
@@ -31,11 +31,24 @@ function count(model, options) {
  * @return {Promise} The model wrapped in a promise
  */
 function grouped(model, options) {
-  return post('/count', options).then((data) => {
+  return post('/count', mkQuery(options)).then((data) => {
     var m = clone(model)
     m.groups = data
     return m
   })
+}
+
+function mkQuery(options) {
+  var query = {}
+  if(options.filterBy) {
+    query.filterBy = options.filterBy
+  }
+
+  if(options.groupBy) {
+    query.groupBy = options.groupBy
+  }
+
+  return query
 }
 
 function incr(model) {

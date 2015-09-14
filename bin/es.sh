@@ -50,7 +50,7 @@
 #   }
 # }'
 
-curl -XGET 'http://localhost:9200/blah/sims/user1?pretty'
+# curl -XGET 'http://localhost:9200/blah/sims/user1?pretty'
 
 # curl -XGET 'http://localhost:9200/blah/count/_search?pretty' -d '{
 #   "query": {
@@ -63,13 +63,20 @@ curl -XGET 'http://localhost:9200/blah/sims/user1?pretty'
 #   }
 # }'
 
-# curl -XGET 'http://localhost:9200/blah/count/_count?pretty' -d '{
-#   "query": {
-#     "bool": {
-#       "must": [
-#         {"match": {"page": "page1"}},
-#         {"match": {"deviceFamily": "Other"}}
-#       ]
-#     }
-#   }
-# }'
+curl -XGET 'http://localhost:9200/blah/count/_count?pretty' -d '{
+  "query": {
+    "filtered": {
+      "query": {
+        "bool": {
+          "must": [
+            {"match": {"page": "page1"}},
+            {"match": {"deviceFamily": "Other"}}
+          ]
+        }
+      },
+      "filter": {
+        "range": {"date": {"gte": "2015-09-13"}}
+      }
+    }
+  }
+}'
