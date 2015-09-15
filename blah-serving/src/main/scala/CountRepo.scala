@@ -20,7 +20,9 @@ class CountRepo(client: ElasticClient)(
   def count(q: CountQuery): Future[CountResult] = client request HttpRequest(
     method = HttpMethods.POST,
     uri = "/blah/count/_count",
-    entity = HttpEntity(ContentTypes.`application/json`, CountQueryToEs(q).compactPrint)
+    entity = HttpEntity(
+      ContentTypes.`application/json`,
+      CountQueryToEs(q).map(_.compactPrint).getOrElse(""))
   ) flatMap (resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
     CountResult(json.extract[Long]('count))
   }
@@ -28,7 +30,9 @@ class CountRepo(client: ElasticClient)(
   def search(q: CountQuery): Future[Seq[JsObject]] = client request HttpRequest(
     method = HttpMethods.POST,
     uri = "/blah/count/_search",
-    entity = HttpEntity(ContentTypes.`application/json`, CountQueryToEs(q).compactPrint)
+    entity = HttpEntity(
+      ContentTypes.`application/json`,
+      CountQueryToEs(q).map(_.compactPrint).getOrElse(""))
   ) flatMap (resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
     val aggs = json.extract[JsValue]('aggregations)
     CountResponseParser.parse(q.groupBy map ("date" :: _.collect {

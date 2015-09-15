@@ -79,10 +79,10 @@ object CountQueryToEs {
     )))
   ) reduceOption (_ merge _)
 
-  def apply(q: CountQuery): JsObject = List(
+  def apply(q: CountQuery): Option[JsObject] = List(
     q.filterBy map (filterBy),
     q.groupBy map (groupBy)
   ).flatten.flatten reduceOption {
     (a,b) => JsObject(a.fields ++ b.fields)
-  } getOrElse JsObject()
+  }
 }

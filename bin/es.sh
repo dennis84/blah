@@ -63,20 +63,22 @@
 #   }
 # }'
 
-curl -XGET 'http://localhost:9200/blah/count/_count?pretty' -d '{
-  "query": {
-    "filtered": {
-      "query": {
-        "bool": {
-          "must": [
-            {"match": {"page": "page1"}},
-            {"match": {"deviceFamily": "Other"}}
-          ]
-        }
-      },
-      "filter": {
-        "range": {"date": {"gte": "2015-09-13"}}
-      }
-    }
-  }
-}'
+# curl -XGET 'http://localhost:9200/blah/count/_count?pretty' -d '{
+#   "query": {
+#     "filtered": {
+#       "query": {
+#         "bool": {
+#           "must": [
+#             {"match": {"page": "page1"}},
+#             {"match": {"deviceFamily": "Other"}}
+#           ]
+#         }
+#       },
+#       "filter": {
+#         "range": {"date": {"gte": "2015-09-13"}}
+#       }
+#     }
+#   }
+# }'
+
+curl -XGET 'http://localhost:9200/blah/count/_count?pretty' -d ''

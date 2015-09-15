@@ -15,7 +15,7 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
       "date.to" -> "2015-09-04"
     )))
 
-    CountQueryToEs(q) should be(JsObject(
+    CountQueryToEs(q) should be(Some(JsObject(
       "query" -> JsObject(
         "filtered" -> JsObject(
           "filter" -> JsObject(
@@ -32,7 +32,7 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
                 JsObject("match" -> JsObject("browserFamily" -> JsString("Chrome"))),
                 JsObject("match" -> JsObject("browserMajor" -> JsString("47")))
           ))))
-    ))))
+    )))))
   }
 
   it should "convert filters and empty groups to es" in {
@@ -40,7 +40,7 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
       "page" -> "home"
     )), Some(Nil))
 
-    CountQueryToEs(q) should be(JsObject(
+    CountQueryToEs(q) should be(Some(JsObject(
       "query" -> JsObject(
         "filtered" -> JsObject(
           "query" -> JsObject(
@@ -56,7 +56,7 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
             "interval" -> JsString("day")),
           "aggs" -> JsObject()
       ))
-    ))
+    )))
   }
 
   it should "convert filters and groups to es" in {
@@ -68,7 +68,7 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
       "user_agent.os.family"
     )))
 
-    CountQueryToEs(q) should be(JsObject(
+    CountQueryToEs(q) should be(Some(JsObject(
       "query" -> JsObject(
         "filtered" -> JsObject(
           "query" -> JsObject(
@@ -89,6 +89,6 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
                 "osFamily" -> JsObject("terms" -> JsObject("field" -> JsString("osFamily"))))
             ))
       ))
-    ))
+    )))
   }
 }
