@@ -29,9 +29,7 @@ function get(path, params) {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       }
-    }, function(err, resp, body) {
-      resolve(JSON.parse(body))
-    })
+    }, (err, resp, body) => resolve(JSON.parse(body)))
   })
 }
 

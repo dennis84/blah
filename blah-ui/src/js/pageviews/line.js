@@ -9,7 +9,7 @@ function chart(model) {
   var data = model.groups.map((x) => x.count)
 
   return h('div.chart', {
-    mount: hook(function(node) {
+    mount: hook((node) => {
       new Chartist.Line(node, {labels: labels, series: [data]}, {
         fullWidth: true,
         axisY: {showGrid: false}

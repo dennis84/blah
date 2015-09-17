@@ -11,7 +11,7 @@ import recommendations from './recommendations/widget'
 function render(model, channel) {
   return h('div.container', [
     h('div.widgets', {
-      mount: hook(function(node) {
+      mount: hook((node) => {
         new Masonry(node, {
           itemSelector: '.widget',
           columnWidth: 220

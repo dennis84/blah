@@ -19,7 +19,7 @@ function renderLoop(model) {
   var node = createElement(tree)
   document.body.appendChild(node)
 
-  csp.go(function* () {
+  csp.go(function*() {
     while (true) {
       var action = yield csp.take(channel)
       model = update(model, action)
@@ -34,7 +34,7 @@ function renderLoop(model) {
 renderLoop(model)
 
 setInterval(() => {
-  csp.go(function* (){
+  csp.go(function*(){
     yield csp.put(channel, {type: 'incr'})
   })
 }, 1000)
