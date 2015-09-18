@@ -59,7 +59,9 @@ class SimilarityAlgo extends Algo {
           .filterNot(x => elems.toList.contains(x._1))
           .sortBy(_._2)(ord)
           .take(10)
-          .toMap)
+          .map {
+            case(page, score) => Map("page" -> page, "score" -> score)
+          })
         (Map(ID -> u), doc)
       }
 

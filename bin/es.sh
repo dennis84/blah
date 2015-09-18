@@ -21,6 +21,21 @@
 #   }
 # }'
 
+# curl -XDELETE 'http://localhost:9200/blah/_mapping/sims'
+# curl -XPUT 'http://localhost:9200/blah/_mapping/sims' -d '
+# {
+#   "properties" : {
+#     "user" : {"type": "string"},
+#     "views" : {
+#       "type": "nested",
+#       "properties": {
+#         "page" : {"type": "string"},
+#         "score" : {"type": "double"}
+#       }
+#     }
+#   }
+# }'
+
 # curl -XPOST 'localhost:9200/blah/count/_search?pretty' -d '
 # {
 #   "size": 0,
@@ -50,7 +65,7 @@
 #   }
 # }'
 
-# curl -XGET 'http://localhost:9200/blah/sims/user1?pretty'
+curl -XGET 'http://localhost:9200/blah/sims/user1?pretty'
 
 # curl -XGET 'http://localhost:9200/blah/count/_search?pretty' -d '{
 #   "query": {
@@ -81,4 +96,4 @@
 #   }
 # }'
 
-curl -XGET 'http://localhost:9200/blah/count/_count?pretty' -d ''
+# curl -XGET 'http://localhost:9200/blah/count/_count?pretty' -d ''
