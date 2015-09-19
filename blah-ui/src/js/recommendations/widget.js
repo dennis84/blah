@@ -4,10 +4,10 @@ import {recommendations} from './ctrl'
 
 function views(xs) {
   if(undefined === xs) return
-  return Object.keys(xs).map((key) => {
+  return xs.map((item) => {
     return h('div', [
-      h('div', 'page: ' + key),
-      h('div', 'score: ' + xs[key])
+      h('div', 'page: ' + item.page),
+      h('div', 'score: ' + item.score)
     ])
   })
 }
