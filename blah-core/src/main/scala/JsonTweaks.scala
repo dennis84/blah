@@ -5,11 +5,9 @@ import spray.json._
 trait JsonTweaks {
   implicit class Merge(a: JsObject) {
     def merge(b: JsObject): JsObject = {
-      val JsObject(a1) = a
-      val JsObject(b1) = b
-      val result = a1 ++ b1.map {
+      val result = a.fields ++ b.fields.map {
         case (otherKey, otherValue) =>
-          val maybeExistingValue = a1.get(otherKey)
+          val maybeExistingValue = a.fields.get(otherKey)
           val newValue = (maybeExistingValue, otherValue) match {
             case (Some(e: JsObject), o: JsObject) => e merge o
             case (Some(e: JsArray), o: JsArray) => JsArray(e.elements ++ o.elements)
