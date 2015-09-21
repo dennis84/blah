@@ -58,6 +58,13 @@ object CountQueryToEs {
           "interval" -> JsString("month")
         )
       )))
+    case "date.year" =>
+      JsObject("aggs" -> JsObject("date" -> JsObject(
+        "date_histogram" -> JsObject(
+          "field"    -> JsString("date"),
+          "interval" -> JsString("year")
+        )
+      )))
   } getOrElse {
     JsObject("aggs" -> JsObject("date" -> JsObject(
       "date_histogram" -> JsObject(

@@ -4,34 +4,53 @@
   height: 100%
 
 .widget
-  width: 200px
-  height: 200px
+  width: 320px
+  height: 320px
+  margin-right: 10px
+  margin-bottom: 10px
+  padding: 10px
   float: left
-  margin-bottom: 20px;
-  padding: 10px;
   background: base3
-  border: 1px solid base1
+  box-shadow: 0 1px 2px #ddd
   h3
     padding: 0
     margin: 0
+    margin-bottom: 20px
+    font-weight: 200
+    font-size: 32px
+    text-align: center
+
+  &.red
+    background: red
+    color: base3
+  &.cyan
+    background: cyan
+    color: base3
 
 .widget-count
   .count
-    font-size: 48px
+    font-weight: 200
+    font-size: 64px
     text-align: center
   .page
     text-align: center
 
-.widget-line
-  width: 420px
+.widget-count.dark
+  background: #666
+  color: #fff
+
+.widget-bar
+  height: auto
+  .chart
+    height: 300px
 
 .widget-pie
-  width: 420px
-  height: 420px
+  height: auto
   .chart
-    width: 100%
-    height: 100%
+    width: 300px
+    height: 300px
 
 .widget-recommendations
-  width: 420px
-  height: 420px
+  height: auto
+  .recommendations
+    margin-top: 20px

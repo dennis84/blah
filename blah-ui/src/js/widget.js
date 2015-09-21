@@ -43,7 +43,7 @@ class Widget {
           type: 'widget',
           args: [that.id, m]
         })
-      })
+      }).catch((r) => {})
     })
   }
 
