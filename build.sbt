@@ -1,3 +1,5 @@
+import com.typesafe.sbt.packager.docker._
+
 val res = Seq(
   "clojars" at "https://clojars.org/repo/"
 )
@@ -37,10 +39,6 @@ lazy val core = (project in file("blah-core"))
     libraryDependencies ++= deps,
     resolvers ++= res)
 
-lazy val api = (project in file("blah-api"))
-  .settings(commonSettings: _*)
-  .dependsOn(core)
-
 lazy val algo = (project in file("blah-algo"))
   .settings(commonSettings: _*)
   .settings(
@@ -61,6 +59,18 @@ lazy val algo = (project in file("blah-algo"))
   )
   .dependsOn(core)
 
-lazy val serving = (project in file("blah-serving"))
+lazy val api = (project in file("blah-api"))
   .settings(commonSettings: _*)
+  .dependsOn(core)
+
+lazy val serving = (project in file("blah-serving"))
+  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(DockerPlugin)
+  .settings(commonSettings: _*)
+  .settings(
+    packageName in Docker := "blah/serving",
+    version in Docker := version.value,
+    dockerBaseImage := "java:7",
+    dockerExposedPorts := Seq(8001)
+  )
   .dependsOn(core % "compile->compile;test->test")

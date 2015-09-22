@@ -11,7 +11,7 @@ function chart(model) {
   return [
     h('div.labels', labels.map((label, i) => {
       return h('div', h('span.label', {
-        className: 'label-series-' + String.fromCharCode(i+97)
+        className: 'label-series-' + String.fromCharCode(i + 97)
       }, label))
     })),
     h('div.chart', {
@@ -20,8 +20,7 @@ function chart(model) {
           donut: true,
           donutWidth: 50,
           labelInterpolationFnc: (value) => {
-            var sum = (a, b) => a + b
-            return Math.round(value / data.reduce(sum) * 100) + '%'
+            return Math.round(value / data.reduce((a,b) => a + b) * 100) + '%'
           }
         })
       })

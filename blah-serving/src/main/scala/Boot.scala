@@ -7,7 +7,7 @@ import akka.stream.scaladsl.{Source, Sink}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 
-object Boot extends App with CorsSupport {
+object Boot extends App with CorsSupport with ExceptionHandling {
   implicit val system = ActorSystem()
   implicit val executor = system.dispatcher
   implicit val materializer = ActorMaterializer()
@@ -17,6 +17,7 @@ object Boot extends App with CorsSupport {
   val port = config.getInt("app.port")
   val env = new Env
   val services = Seq(
+    new StatusService,
     new WebsocketService(env.websocketRoom),
     new CountService(env),
     new SimilarityService(env))

@@ -24,7 +24,7 @@ function render(model, update, id, options) {
     h('input.form-control.input-lg', {
       value: options.user,
       placeholder: 'Enter username',
-      oninput: debounce(function(e) {
+      oninput: debounce((e) => {
         update(recommendations, {user: e.target.value})
       }, 500)
     }),
