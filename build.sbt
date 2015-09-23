@@ -60,7 +60,15 @@ lazy val algo = (project in file("blah-algo"))
   .dependsOn(core)
 
 lazy val api = (project in file("blah-api"))
+  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(DockerPlugin)
   .settings(commonSettings: _*)
+  .settings(
+    packageName in Docker := "blah/api",
+    version in Docker := version.value,
+    dockerBaseImage := "java:7",
+    dockerExposedPorts := Seq(8000)
+  )
   .dependsOn(core)
 
 lazy val serving = (project in file("blah-serving"))

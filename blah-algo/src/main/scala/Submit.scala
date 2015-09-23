@@ -22,8 +22,9 @@ object Submit {
     val algo = algos(args(0))
     val conf = new SparkConf()
       .setAppName(args(0))
+    conf.set("es.nodes", "192.168.99.100:9200")
     val sc = new SparkContext(conf)
-    val rdd = sc.textFile("hdfs://localhost:9000/blah/events.*")
+    val rdd = sc.textFile("hdfs://192.168.99.100:9000/blah/events.*")
     algo.train(rdd)
     producer.send(args(0))
     sc.stop

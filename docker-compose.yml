@@ -1,4 +1,43 @@
-web:
+hadoop:
+  build: ./blah-hadoop
+  ports:
+    - "9000:9000"
+
+flume:
+  build: ./blah-flume
+  environment:
+    FLUME_AGENT_NAME: "a1"
+  links:
+    - hadoop
+    - kafka
+
+elasticsearch:
+  image: elasticsearch
+  command: elasticsearch --network.publish_host=192.168.99.100
+  ports:
+    - "9200:9200"
+    - "9300:9300"
+
+kafka:
+  image: spotify/kafka
+  ports:
+    - "2181:2181"
+    - "9092:9092"
+  environment:
+    ADVERTISED_HOST: 192.168.99.100
+    ADVERTISED_PORT: 9092
+
+api:
+  image: blah/api:0.1.0
+  ports:
+    - "8000:8000"
+  links:
+    - kafka
+  environment:
+    KAFKA_URL: "192.168.99.100:9092"
+    ZOOKEEPER_URL: "192.168.99.100:2181"
+
+serving:
   image: blah/serving:0.1.0
   ports:
     - "8001:8001"
@@ -8,16 +47,3 @@ web:
   environment:
     KAFKA_URL: "192.168.99.100:9092"
     ZOOKEEPER_URL: "192.168.99.100:2181"
-elasticsearch:
-  image: elasticsearch
-  ports:
-    - "9200:9200"
-    - "9300:9300"
-kafka:
-  image: spotify/kafka
-  ports:
-    - "2181:2181"
-    - "9092:9092"
-  environment:
-    ADVERTISED_HOST: 192.168.99.100
-    ADVERTISED_PORT: 9092
