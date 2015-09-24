@@ -1,7 +1,28 @@
 hadoop:
   build: ./blah-hadoop
+  #image: sequenceiq/hadoop-docker:2.7.0
+  #hostname: hadoop
   ports:
     - "9000:9000"
+    - "50070:50070"
+
+# hadoop_namenode:
+#   build: ./blah-hadoop
+#   hostname: namenode
+#   ports:
+#     - "9000:9000"
+#     - "8020:8020"
+#     - "50070:50070"
+#   command: -t namenode -r 3
+
+# hadoop_datanode1:
+#   build: ./blah-hadoop
+#   hostname: datanode1
+#   links:
+#     - hadoop_namenode
+#   ports:
+#     - "5001:50075"
+#   command: -t datanode -n dfs
 
 flume:
   build: ./blah-flume
