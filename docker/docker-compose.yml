@@ -4,7 +4,7 @@ hadoop:
     - "9000:9000"
     - "50070:50070"
   volumes:
-    - ./blah-algo/target/scala-2.11:/algo
+    - ../blah-algo/target/scala-2.11:/algo
   links:
     - kafka
     - elasticsearch
