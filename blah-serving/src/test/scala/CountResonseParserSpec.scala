@@ -143,7 +143,7 @@ class CountResponseParserSpec extends FlatSpec with Matchers {
                 |  }
                 |}""".stripMargin
 
-  "CountResponseParser" should "parse a es response" in {
+  "CountResponseParser" should "parse an aggregated response" in {
     val json = resp.parseJson
     val aggs = json.extract[JsValue]('aggregations)
     val groups = List("date", "browserFamily", "osFamily")
@@ -189,5 +189,18 @@ class CountResponseParserSpec extends FlatSpec with Matchers {
         "browserFamily" -> JsString("Chrome Mobile iOS"),
         "osFamily" -> JsString("iOS"))
     ))
+  }
+
+  it should "parse a count response" in {
+    val json = """|{
+                  |  "hits": {
+                  |    "hits": [
+                  |      {"_source": {"count": 1}},
+                  |      {"_source": {"count": 2}},
+                  |      {"_source": {"count": 3}}
+                  |    ]
+                  |  }
+                  |}""".stripMargin.parseJson
+    CountResponseParser.sum(json) should be (6)
   }
 }

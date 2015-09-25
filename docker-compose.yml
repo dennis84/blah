@@ -1,31 +1,19 @@
 hadoop:
-  build: ./blah-hadoop
-  #image: sequenceiq/hadoop-docker:2.7.0
-  #hostname: hadoop
+  image: blah/hadoop
   ports:
     - "9000:9000"
     - "50070:50070"
-
-# hadoop_namenode:
-#   build: ./blah-hadoop
-#   hostname: namenode
-#   ports:
-#     - "9000:9000"
-#     - "8020:8020"
-#     - "50070:50070"
-#   command: -t namenode -r 3
-
-# hadoop_datanode1:
-#   build: ./blah-hadoop
-#   hostname: datanode1
-#   links:
-#     - hadoop_namenode
-#   ports:
-#     - "5001:50075"
-#   command: -t datanode -n dfs
+  volumes:
+    - ./blah-algo/target/scala-2.11:/algo
+  links:
+    - kafka
+    - elasticsearch
+  environment:
+    KAFKA_URL: "kafka:9092"
+    ELASTICSEARCH_URL: "elasticsearch:9200"
 
 flume:
-  build: ./blah-flume
+  image: blah/flume
   environment:
     FLUME_AGENT_NAME: "a1"
   links:
@@ -55,8 +43,8 @@ api:
   links:
     - kafka
   environment:
-    KAFKA_URL: "192.168.99.100:9092"
-    ZOOKEEPER_URL: "192.168.99.100:2181"
+    KAFKA_URL: "kafka:9092"
+    ZOOKEEPER_URL: "kafka:2181"
 
 serving:
   image: blah/serving:0.1.0
@@ -66,5 +54,6 @@ serving:
     - kafka
     - elasticsearch
   environment:
-    KAFKA_URL: "192.168.99.100:9092"
-    ZOOKEEPER_URL: "192.168.99.100:2181"
+    KAFKA_URL: "kafka:9092"
+    ZOOKEEPER_URL: "kafka:2181"
+    ELASTICSEARCH_URL: "elasticsearch:9200"

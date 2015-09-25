@@ -23,6 +23,9 @@ object CountResponseParser {
     }
   }
 
+  def sum(data: JsValue) =
+    data.extract[Long]('hits / 'hits / * / '_source / 'count).sum
+
   private def extractKey(json: JsValue): JsValue = {
     json.extract[JsValue]('key_as_string.?) getOrElse {
       json.extract[JsValue]('key)
