@@ -8,24 +8,6 @@ RUN mkdir /opt/hadoop
 RUN wget -qO- http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz \
   | tar zxvf - -C /opt/hadoop --strip 1
 
-RUN mkdir /opt/spark
-RUN wget -qO- http://www.eu.apache.org/dist/spark/spark-1.5.0/spark-1.5.0.tgz \
-  | tar zxvf - -C /opt/spark --strip 1
-ENV SPARK_HOME /opt/spark
-
-RUN mkdir /opt/maven
-RUN wget -qO- http://www.eu.apache.org/dist/maven/maven-3/3.3.3/binaries/apache-maven-3.3.3-bin.tar.gz \
-  | tar zxvf - -C /opt/maven --strip 1
-RUN ls /opt/maven
-ENV PATH $PATH:/opt/maven/bin
-ENV MAVEN_OPTS -Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m
-
-RUN $SPARK_HOME/dev/change-scala-version.sh 2.11
-RUN cd $SPARK_HOME && mvn -Pyarn -Phadoop-2.4 -Dscala-2.11 -DskipTests clean package
-
-RUN mkdir /algo
-VOLUME /algo
-
 ENV HADOOP_PREFIX /opt/hadoop
 ENV HADOOP_HOME /opt/hadoop
 ENV HADOOP_COMMON_HOME /opt/hadoop

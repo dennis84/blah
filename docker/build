@@ -1,0 +1,14 @@
+#!/bin/bash
+
+cd "$(dirname "$0")" || exit
+
+cd .. || exit
+
+sbt api/docker:publishLocal
+sbt serving/docker:publishLocal
+
+cd - || exit
+
+docker build -t blah/flume blah-flume/
+docker build -t blah/hadoop blah-hadoop/
+docker build -t blah/spark blah-spark/
