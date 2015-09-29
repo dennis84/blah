@@ -1,24 +1,38 @@
-hadoop:
-  image: blah/hadoop
+sparkworker:
+  image: blah/spark-worker
+  links:
+    - sparkmaster
   ports:
-    - "9000:9000"
-    - "50070:50070"
-  volumes:
-    - ../blah-algo/target/scala-2.11:/algo
-  links:
-    - kafka
-    - elasticsearch
-  environment:
-    KAFKA_URL: "kafka:9092"
-    ELASTICSEARCH_URL: "elasticsearch:9200"
+    - "8888:8888"
+    - "8081:8081"
 
-flume:
-  image: blah/flume
-  environment:
-    FLUME_AGENT_NAME: "a1"
-  links:
-    - hadoop
-    - kafka
+sparkmaster:
+  image: blah/spark-master
+  hostname: sparkmaster
+  ports:
+    - "7077:7077"
+    - "8080:8080"
+
+# hadoop:
+#   image: blah/spark
+#   mem_limit: 4g
+#   ports:
+#     - "9000:9000"
+#     - "50070:50070"
+#   links:
+#     - kafka
+#     - elasticsearch
+#   environment:
+#     KAFKA_URL: "kafka:9092"
+#     ELASTICSEARCH_URL: "elasticsearch:9200"
+
+# flume:
+#   image: blah/flume
+#   environment:
+#     FLUME_AGENT_NAME: "a1"
+#   links:
+#     - hadoop
+#     - kafka
 
 elasticsearch:
   image: elasticsearch

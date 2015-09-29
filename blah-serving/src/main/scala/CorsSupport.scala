@@ -13,8 +13,11 @@ trait CorsSupport {
     mapResponseHeaders { headers =>
       allowedOriginHeader +:
         `Access-Control-Allow-Credentials`(true) +:
-        `Access-Control-Allow-Headers`("Token", "Content-Type", "X-Requested-With") +:
-        headers
+        `Access-Control-Allow-Headers`(
+          "Token",
+          "Content-Type",
+          "X-Requested-With"
+        ) +: headers
     }
 
   private def preflightRequestHandler: Route = options {
@@ -23,5 +26,6 @@ trait CorsSupport {
     ))
   }
 
-  def corsHandler(r: Route) = addAccessControlHeaders(preflightRequestHandler ~ r)
+  def corsHandler(r: Route) =
+    addAccessControlHeaders(preflightRequestHandler ~ r)
 }

@@ -10,7 +10,8 @@ import Directives._
 
 trait ExceptionHandling {
   implicit def exceptionHandler: ExceptionHandler = ExceptionHandler {
-    case _: Exception => complete(HttpResponse(InternalServerError, entity = "Oops!"))
+    case _: Exception => complete(
+      HttpResponse(InternalServerError, entity = "Oops!"))
   }
 }
 
