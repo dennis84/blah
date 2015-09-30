@@ -1,14 +1,5 @@
 #!/bin/bash
 
-$HADOOP_CONF_DIR/hadoop-env.sh
-
-sed s/HOSTNAME/$HOSTNAME/ $HADOOP_CONF_DIR/core-site.xml.template > $HADOOP_CONF_DIR/core-site.xml
-
-service ssh start
-
-start-dfs.sh
-start-yarn.sh
-
 export SPARK_MASTER_IP=$HOSTNAME
 start-master.sh -h $HOSTNAME
 

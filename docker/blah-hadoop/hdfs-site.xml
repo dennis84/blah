@@ -11,4 +11,14 @@
     <name>dfs.support.append</name>
     <value>true</value>
   </property>
+
+  <!-- <property> -->
+  <!--   <name>dfs.datanode.data.dir</name> -->
+  <!--   <value>file:///data/dfs/data</value> -->
+  <!-- </property> -->
+
+  <!-- <property> -->
+  <!--   <name>dfs.namenode.name.dir</name> -->
+  <!--   <value>file:///data/dfs/name</value> -->
+  <!-- </property> -->
 </configuration>

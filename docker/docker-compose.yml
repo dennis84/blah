@@ -1,3 +1,11 @@
+hadoop:
+  image: blah/hadoop
+  ports:
+    - "9000:9000"
+    - "50070:50070"
+  # volumes:
+  #   - "./blah-data:/data"
+
 sparkworker:
   image: blah/spark-worker
   links:
@@ -13,26 +21,13 @@ sparkmaster:
     - "7077:7077"
     - "8080:8080"
 
-# hadoop:
-#   image: blah/spark
-#   mem_limit: 4g
-#   ports:
-#     - "9000:9000"
-#     - "50070:50070"
-#   links:
-#     - kafka
-#     - elasticsearch
-#   environment:
-#     KAFKA_URL: "kafka:9092"
-#     ELASTICSEARCH_URL: "elasticsearch:9200"
-
-# flume:
-#   image: blah/flume
-#   environment:
-#     FLUME_AGENT_NAME: "a1"
-#   links:
-#     - hadoop
-#     - kafka
+flume:
+  image: blah/flume
+  environment:
+    FLUME_AGENT_NAME: "a1"
+  links:
+    - hadoop
+    - kafka
 
 elasticsearch:
   image: elasticsearch
