@@ -1,10 +1,22 @@
-hadoop:
-  image: blah/hadoop
+namenode:
+  image: blah/hadoop-master
+  hostname: namenode
   ports:
+    - "8020:8020"
     - "9000:9000"
     - "50070:50070"
-  # volumes:
-  #   - "./blah-data:/data"
+  volumes:
+    - ./blah-data:/data
+
+datanode1:
+  image: blah/hadoop-slave
+  hostname: datanode1
+  links:
+    - namenode
+  ports:
+    - "5001:50075"
+  volumes:
+    - ./blah-data:/data
 
 sparkworker:
   image: blah/spark-worker
@@ -26,7 +38,7 @@ flume:
   environment:
     FLUME_AGENT_NAME: "a1"
   links:
-    - hadoop
+    - namenode
     - kafka
 
 elasticsearch:

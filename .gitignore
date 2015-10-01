@@ -4,3 +4,5 @@ project/target/
 node_modules
 blah-ui/assets/css/index.css
 blah-ui/assets/js/index.js
+!docker/blah-data/.gitkeep
+docker/blah-data/

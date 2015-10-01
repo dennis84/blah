@@ -10,7 +10,9 @@ sbt serving/docker:publishLocal
 cd - || exit
 
 docker build -t blah/flume blah-flume/
-docker build -t blah/hadoop blah-hadoop/
+docker build -t blah/hadoop-base blah-hadoop-base/
+docker build -t blah/hadoop-master blah-hadoop-master/
+docker build -t blah/hadoop-slave blah-hadoop-slave/
 docker build -t blah/spark-base blah-spark-base/
 docker build -t blah/spark-master blah-spark-master/
 docker build -t blah/spark-worker blah-spark-worker/
