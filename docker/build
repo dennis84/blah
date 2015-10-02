@@ -16,3 +16,4 @@ docker build -t blah/hadoop-slave blah-hadoop-slave/
 docker build -t blah/spark-base blah-spark-base/
 docker build -t blah/spark-master blah-spark-master/
 docker build -t blah/spark-worker blah-spark-worker/
+docker build -t blah/spark-submit blah-spark-submit/

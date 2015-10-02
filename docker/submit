@@ -1,0 +1,9 @@
+#!/bin/bash
+
+docker run \
+  --rm \
+  --link=sparkmaster:sparkmaster \
+  --link=namenode:namenode \
+  --link=elasticsearch:elasticsearch \
+  --link=kafka:kafka \
+  blah/spark-submit

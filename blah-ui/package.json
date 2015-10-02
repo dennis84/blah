@@ -4,6 +4,7 @@
   "dependencies": {
     "babelify": "^6.2.0",
     "browserify": "^11.0.1",
+    "debounce": "^1.0.0",
     "deep-equal": "^1.0.0",
     "emitter-component": "^1.1.1",
     "gulp": "^3.9.0",

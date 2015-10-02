@@ -5,10 +5,15 @@ import csp from 'js-csp'
 import connect from './connection'
 import dashboard from './dashboard'
 import * as ctrl from './ctrl'
+import {SERVING_WS_URL} from './config'
 
-var conn = connect('ws://localhost:8001/ws')
+var conn = connect(SERVING_WS_URL)
 var channel = csp.chan()
 var model = {count: 0}
+
+conn.on('count', function() {
+  console.log('count')
+})
 
 function update(model, action) {
   return ctrl[action.type].apply(null, [model].concat(action.args))

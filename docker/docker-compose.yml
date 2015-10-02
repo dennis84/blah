@@ -1,5 +1,6 @@
 namenode:
   image: blah/hadoop-master
+  container_name: namenode
   hostname: namenode
   ports:
     - "8020:8020"
@@ -10,11 +11,10 @@ namenode:
 
 datanode1:
   image: blah/hadoop-slave
-  hostname: datanode1
   links:
     - namenode
   ports:
-    - "5001:50075"
+    - "50075:50075"
   volumes:
     - ./blah-data:/data
 
@@ -28,6 +28,7 @@ sparkworker:
 
 sparkmaster:
   image: blah/spark-master
+  container_name: sparkmaster
   hostname: sparkmaster
   ports:
     - "7077:7077"
@@ -43,13 +44,17 @@ flume:
 
 elasticsearch:
   image: elasticsearch
-  command: elasticsearch --network.publish_host=192.168.99.100
+  container_name: elasticsearch
+  hostname: elasticsearch
+  command: elasticsearch
   ports:
     - "9200:9200"
     - "9300:9300"
 
 kafka:
   image: spotify/kafka
+  container_name: kafka
+  hostname: kafka
   ports:
     - "2181:2181"
     - "9092:9092"

@@ -21,6 +21,4 @@ VOLUME /data
 ADD core-site.xml $HADOOP_CONF_DIR/core-site.xml
 ADD hdfs-site.xml $HADOOP_CONF_DIR/hdfs-site.xml
 
-RUN mkdir /data && hdfs namenode -format
-
-EXPOSE 9000 50070 50010 50020 50075 50090
+RUN mkdir -p /data && hdfs namenode -format

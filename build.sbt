@@ -42,6 +42,7 @@ lazy val core = (project in file("blah-core"))
 lazy val algo = (project in file("blah-algo"))
   .settings(commonSettings: _*)
   .settings(
+    target in assembly := file("docker/blah-spark-submit/"),
     assemblyMergeStrategy in assembly := {
       case PathList("org", "apache", xs @ _*) => MergeStrategy.first
       case PathList("javax", "xml", xs @ _*) => MergeStrategy.first
