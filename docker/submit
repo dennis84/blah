@@ -6,4 +6,4 @@ docker run \
   --link=namenode:namenode \
   --link=elasticsearch:elasticsearch \
   --link=kafka:kafka \
-  blah/spark-submit
+  blah/spark-submit "$@"

@@ -7,8 +7,7 @@ RUN wget -qO- http://www.eu.apache.org/dist/spark/spark-1.5.0/spark-1.5.0.tgz \
   | tar zxvf - -C /opt/spark --strip 1
 
 ENV SPARK_HOME /opt/spark
-ENV PATH $PATH:$SPARK_HOME/bin
-ENV PATH $PATH:$SPARK_HOME/sbin
+ENV PATH $PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
 
 RUN mkdir /opt/maven
 RUN wget -qO- http://www.eu.apache.org/dist/maven/maven-3/3.3.3/binaries/apache-maven-3.3.3-bin.tar.gz \
