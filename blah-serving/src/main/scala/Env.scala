@@ -20,5 +20,5 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
   ))
 
   lazy val elasticClient = new ElasticClient(ElasticUri(
-    config.getString("elasticsearch.uri")))
+    config.getString("elasticsearch.url")))
 }

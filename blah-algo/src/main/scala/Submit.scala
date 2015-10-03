@@ -22,9 +22,9 @@ object Submit {
     val algo = algos(args(0))
     val conf = new SparkConf()
       .setAppName(args(0))
-    conf.set("es.nodes", config.getString("elasticsearch.uri"))
+    conf.set("es.nodes", config.getString("elasticsearch.url"))
     val sc = new SparkContext(conf)
-    val rdd = sc.textFile("hdfs://" + config.getString("hadoop.hostname") + ":9000/blah/events.*")
+    val rdd = sc.textFile(config.getString("hadoop.url") + "/blah/events.*")
     algo.train(rdd)
     producer.send(args(0))
     sc.stop

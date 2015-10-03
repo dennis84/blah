@@ -2,8 +2,11 @@
 
 docker run \
   --rm \
-  --link=sparkmaster:sparkmaster \
-  --link=namenode:namenode \
-  --link=elasticsearch:elasticsearch \
-  --link=kafka:kafka \
+  --link sparkmaster:sparkmaster \
+  --link namenode:namenode \
+  --link elasticsearch:elasticsearch \
+  --link kafka:kafka \
+  --env KAFKA_URL=kafka:9092 \
+  --env HADOOP_URL=hdfs://namenode:9000 \
+  --env ELASTICSEARCH_URL=elasticsearch:9200 \
   blah/spark-submit "$@"
