@@ -17,7 +17,7 @@ function render(model, update, id, options) {
   if(undefined === options) options = {}
   return h('div.widget.widget-recommendations', {
     init: hook((node) => {
-      if(null === id) update(recommendations, options)
+      if(null === id && options.user) update(recommendations, options)
     })
   }, [
     h('h3', 'Recommendations'),
@@ -25,6 +25,7 @@ function render(model, update, id, options) {
       value: options.user,
       placeholder: 'Enter username',
       oninput: debounce((e) => {
+        if(!e.target.value) return
         update(recommendations, {user: e.target.value})
       }, 500)
     }),

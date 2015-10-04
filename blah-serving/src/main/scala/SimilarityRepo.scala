@@ -1,6 +1,7 @@
 package blah.serving
 
 import scala.concurrent._
+import scala.util.Try
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.http.scaladsl.Http
@@ -22,6 +23,6 @@ class SimilarityRepo(client: ElasticClient)(
       method = HttpMethods.GET,
       uri = "/blah/sims/" + q.user
     ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
-      json.extract[SimilarityResult]('_source)
+      Try(json.extract[SimilarityResult]('_source)) getOrElse SimilarityResult(q.user)
     }
 }
