@@ -37,7 +37,10 @@ class CountResponseParserSpec extends FlatSpec with Matchers {
                 |              "sum_other_doc_count": 0,
                 |              "buckets": [{
                 |                "key": "Mac OS X",
-                |                "doc_count": 100
+                |                "doc_count": 100,
+                |                "count": {
+                |                  "value": 200
+                |                }
                 |              }]
                 |            }
                 |          }]
@@ -57,7 +60,10 @@ class CountResponseParserSpec extends FlatSpec with Matchers {
                 |              "sum_other_doc_count": 0,
                 |              "buckets": [{
                 |                "key": "Mac OS X",
-                |                "doc_count": 100
+                |                "doc_count": 100,
+                |                "count": {
+                |                  "value": 200
+                |                }
                 |              }]
                 |            }
                 |          }]
@@ -77,7 +83,10 @@ class CountResponseParserSpec extends FlatSpec with Matchers {
                 |              "sum_other_doc_count": 0,
                 |              "buckets": [{
                 |                "key": "Mac OS X",
-                |                "doc_count": 100
+                |                "doc_count": 100,
+                |                "count": {
+                |                  "value": 200
+                |                }
                 |              }]
                 |            }
                 |          }]
@@ -97,10 +106,16 @@ class CountResponseParserSpec extends FlatSpec with Matchers {
                 |              "sum_other_doc_count": 0,
                 |              "buckets": [{
                 |                "key": "Mac OS X",
-                |                "doc_count": 186
+                |                "doc_count": 186,
+                |                "count": {
+                |                  "value": 286
+                |                }
                 |              }, {
                 |                "key": "Windows 2000",
-                |                "doc_count": 61
+                |                "doc_count": 61,
+                |                "count": {
+                |                  "value": 161
+                |                }
                 |              }]
                 |            }
                 |          }, {
@@ -111,7 +126,10 @@ class CountResponseParserSpec extends FlatSpec with Matchers {
                 |              "sum_other_doc_count": 0,
                 |              "buckets": [{
                 |                "key": "Mac OS X",
-                |                "doc_count": 132
+                |                "doc_count": 132,
+                |                "count": {
+                |                  "value": 232
+                |                }
                 |              }]
                 |            }
                 |          }, {
@@ -122,7 +140,10 @@ class CountResponseParserSpec extends FlatSpec with Matchers {
                 |              "sum_other_doc_count": 0,
                 |              "buckets": [{
                 |                "key": "Android",
-                |                "doc_count": 65
+                |                "doc_count": 65,
+                |                "count": {
+                |                  "value": 165
+                |                }
                 |              }]
                 |            }
                 |          }, {
@@ -133,7 +154,10 @@ class CountResponseParserSpec extends FlatSpec with Matchers {
                 |              "sum_other_doc_count": 0,
                 |              "buckets": [{
                 |                "key": "iOS",
-                |                "doc_count": 58
+                |                "doc_count": 58,
+                |                "count": {
+                |                  "value": 158
+                |                }
                 |              }]
                 |            }
                 |          }]
@@ -149,42 +173,42 @@ class CountResponseParserSpec extends FlatSpec with Matchers {
     val groups = List("date", "browserFamily", "osFamily")
     CountResponseParser.parse(groups, aggs) should be (Vector(
       JsObject(
-        "count" -> JsNumber(100),
+        "count" -> JsNumber(200),
         "date" -> JsString("2015-09-05"),
         "browserFamily" -> JsString("Chrome"),
         "osFamily" -> JsString("Mac OS X")),
       JsObject(
-        "count" -> JsNumber(100),
+        "count" -> JsNumber(200),
         "date" -> JsString("2015-09-06"),
         "browserFamily" -> JsString("Chrome"),
         "osFamily" -> JsString("Mac OS X")),
       JsObject(
-        "count" -> JsNumber(100),
+        "count" -> JsNumber(200),
         "date" -> JsString("2015-09-07"),
         "browserFamily" -> JsString("Firefox"),
         "osFamily" -> JsString("Mac OS X")),
       JsObject(
-        "count" -> JsNumber(186),
+        "count" -> JsNumber(286),
         "date" -> JsString("2015-09-08"),
         "browserFamily" -> JsString("Firefox"),
         "osFamily" -> JsString("Mac OS X")),
       JsObject(
-        "count" -> JsNumber(61),
+        "count" -> JsNumber(161),
         "date" -> JsString("2015-09-08"),
         "browserFamily" -> JsString("Firefox"),
         "osFamily" -> JsString("Windows 2000")),
       JsObject(
-        "count" -> JsNumber(132),
+        "count" -> JsNumber(232),
         "date" -> JsString("2015-09-08"),
         "browserFamily" -> JsString("Chrome"),
         "osFamily" -> JsString("Mac OS X")),
       JsObject(
-        "count" -> JsNumber(65),
+        "count" -> JsNumber(165),
         "date" -> JsString("2015-09-08"),
         "browserFamily" -> JsString("Other"),
         "osFamily" -> JsString("Android")),
       JsObject(
-        "count" -> JsNumber(58),
+        "count" -> JsNumber(158),
         "date" -> JsString("2015-09-08"),
         "browserFamily" -> JsString("Chrome Mobile iOS"),
         "osFamily" -> JsString("iOS"))

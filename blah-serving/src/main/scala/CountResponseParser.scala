@@ -11,7 +11,7 @@ object CountResponseParser {
   ): Seq[JsObject] = groups match {
     case Nil => Nil
     case x :: Nil => data.extract[JsValue](x / 'buckets / *) map { bucket =>
-      val count = bucket.extract[JsValue]('doc_count)
+      val count = bucket.extract[JsValue]('count / 'value)
       val key = extractKey(bucket)
       JsObject("count" -> count, x -> key)
     }

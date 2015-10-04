@@ -14,7 +14,7 @@ object CountQueryToEs {
               JsObject("match" -> JsObject(k -> JsString(v)))
             ))))))
 
-  private def filterBy(xs: Map[String, String]): Option[JsObject] = xs collect {
+  private def filterBy(xs: Map[String, String]): JsObject = xs collect {
     case ("page", value) => mustMatch("page", value)
     case ("user_agent.device.family", value: String)  => mustMatch("deviceFamily", value)
     case ("user_agent.browser.family", value: String) => mustMatch("browserFamily", value)
@@ -31,7 +31,7 @@ object CountQueryToEs {
     case ("date.to", value: String) =>
       JsObject("query" -> JsObject("filtered" -> JsObject("filter" ->
         JsObject("range" -> JsObject("date" -> JsObject("lte" -> JsString(value)))))))
-  } reduceOption (_ merge _)
+  } reduceOption (_ merge _) getOrElse JsObject()
 
   private def mergeAggs(xs: List[JsObject]): JsObject =
     xs.foldRight(JsObject()) {
@@ -43,53 +43,39 @@ object CountQueryToEs {
       }
     }
 
-  private def groupBy(xs: List[String]): Option[JsObject] = (xs collectFirst {
-    case "date.hour" =>
-      JsObject("aggs" -> JsObject("date" -> JsObject(
-        "date_histogram" -> JsObject(
-          "field"    -> JsString("date"),
-          "interval" -> JsString("hour")
-        )
-      )))
-    case "date.month" =>
-      JsObject("aggs" -> JsObject("date" -> JsObject(
-        "date_histogram" -> JsObject(
-          "field"    -> JsString("date"),
-          "interval" -> JsString("month")
-        )
-      )))
-    case "date.year" =>
-      JsObject("aggs" -> JsObject("date" -> JsObject(
-        "date_histogram" -> JsObject(
-          "field"    -> JsString("date"),
-          "interval" -> JsString("year")
-        )
-      )))
-  } getOrElse {
-    JsObject("aggs" -> JsObject("date" -> JsObject(
-      "date_histogram" -> JsObject(
-        "field"    -> JsString("date"),
-        "interval" -> JsString("day")
-      )
-    )))
-  }) :: List(
-    JsObject("size" -> JsNumber(0)),
-    JsObject("aggs" -> JsObject("date" -> JsObject(
-      "aggs" -> mergeAggs(xs collect {
+  private def withCountAgg(xs: List[JsObject]): List[JsObject] = xs map {
+    case x if x.fields == xs.last.fields => {
+      val (key, value: JsObject) = x.fields.head
+      JsObject(key -> JsObject(value.fields ++ Map("aggs" -> JsObject(
+        "count" -> JsObject("sum" -> JsObject("field" -> JsString("count")))
+      ))))
+    }
+    case x => x
+  }
+
+  private def groupBy(xs: List[String]): JsObject = JsObject(
+    "size" -> JsNumber(0),
+    "aggs" -> mergeAggs(withCountAgg(
+      JsObject("date" -> JsObject("date_histogram" -> getDateAgg(xs))) :: xs.collect {
         case "user_agent.browser.family" =>
           JsObject("browserFamily" -> JsObject("terms" -> JsObject("field" -> JsString("browserFamily"))))
         case "user_agent.browser.major" =>
           JsObject("browserMajor" -> JsObject("terms" -> JsObject("field" -> JsString("browserMajor"))))
         case "user_agent.os.family" =>
           JsObject("osFamily" -> JsObject("terms" -> JsObject("field" -> JsString("osFamily"))))
-      })
+      }
     )))
-  ) reduceOption (_ merge _)
+
+  private def getDateAgg(xs: List[String]) = xs collectFirst {
+    case "date.hour" => JsObject("field" -> JsString("date"), "interval" -> JsString("hour"))
+    case "date.month" => JsObject("field" -> JsString("date"), "interval" -> JsString("month"))
+    case "date.year" => JsObject("field" -> JsString("date"), "interval" -> JsString("year"))
+  } getOrElse JsObject("field" -> JsString("date"), "interval" -> JsString("day"))
 
   def apply(q: CountQuery): Option[JsObject] = List(
     q.filterBy map (filterBy),
     q.groupBy map (groupBy)
-  ).flatten.flatten reduceOption {
+  ).flatten reduceOption {
     (a,b) => JsObject(a.fields ++ b.fields)
   }
 }

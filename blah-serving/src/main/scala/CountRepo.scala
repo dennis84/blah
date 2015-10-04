@@ -19,7 +19,7 @@ class CountRepo(client: ElasticClient)(
 
   def count(q: CountQuery): Future[CountResult] = client request HttpRequest(
     method = HttpMethods.POST,
-    uri = "/blah/count/_search",
+    uri = "/blah/count/_search?size=100",
     entity = HttpEntity(
       ContentTypes.`application/json`,
       CountQueryToEs(q).map(_.compactPrint).getOrElse(""))

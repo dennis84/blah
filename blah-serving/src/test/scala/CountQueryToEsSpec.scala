@@ -54,7 +54,8 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
           "date_histogram" -> JsObject(
             "field" -> JsString("date"),
             "interval" -> JsString("day")),
-          "aggs" -> JsObject()
+          "aggs" -> JsObject(
+            "count" -> JsObject("sum" -> JsObject("field" -> JsString("count"))))
       ))
     )))
   }
@@ -86,8 +87,11 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
             "browserFamily" -> JsObject(
               "terms" -> JsObject("field" -> JsString("browserFamily")),
               "aggs" -> JsObject(
-                "osFamily" -> JsObject("terms" -> JsObject("field" -> JsString("osFamily"))))
-            ))
+                "osFamily" -> JsObject(
+                  "terms" -> JsObject("field" -> JsString("osFamily")),
+                  "aggs" -> JsObject(
+                    "count" -> JsObject("sum" -> JsObject("field" -> JsString("count")))))
+            )))
       ))
     )))
   }
