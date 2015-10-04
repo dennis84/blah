@@ -15,7 +15,7 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
       "date.to" -> "2015-09-04"
     )))
 
-    CountQueryToEs(q) should be(Some(JsObject(
+    CountQueryToEs.filtered(q) should be(JsObject(
       "query" -> JsObject(
         "filtered" -> JsObject(
           "filter" -> JsObject(
@@ -32,7 +32,9 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
                 JsObject("match" -> JsObject("browserFamily" -> JsString("Chrome"))),
                 JsObject("match" -> JsObject("browserMajor" -> JsString("47")))
           ))))
-    )))))
+      )),
+      "aggs" -> JsObject("count" -> JsObject("sum" -> JsObject("field" -> JsString("count"))))
+    ))
   }
 
   it should "convert filters and empty groups to es" in {
@@ -40,7 +42,7 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
       "page" -> "home"
     )), Some(Nil))
 
-    CountQueryToEs(q) should be(Some(JsObject(
+    CountQueryToEs.grouped(q) should be(JsObject(
       "query" -> JsObject(
         "filtered" -> JsObject(
           "query" -> JsObject(
@@ -48,7 +50,6 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
               "must" -> JsArray(Vector(
                 JsObject("match" -> JsObject("page" -> JsString("home")))
       )))))),
-      "size" -> JsNumber(0),
       "aggs" -> JsObject(
         "date" -> JsObject(
           "date_histogram" -> JsObject(
@@ -57,7 +58,7 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
           "aggs" -> JsObject(
             "count" -> JsObject("sum" -> JsObject("field" -> JsString("count"))))
       ))
-    )))
+    ))
   }
 
   it should "convert filters and groups to es" in {
@@ -69,7 +70,7 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
       "user_agent.os.family"
     )))
 
-    CountQueryToEs(q) should be(Some(JsObject(
+    CountQueryToEs.grouped(q) should be(JsObject(
       "query" -> JsObject(
         "filtered" -> JsObject(
           "query" -> JsObject(
@@ -77,7 +78,6 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
               "must" -> JsArray(Vector(
                 JsObject("match" -> JsObject("page" -> JsString("home")))
       )))))),
-      "size" -> JsNumber(0),
       "aggs" -> JsObject(
         "date" -> JsObject(
           "date_histogram" -> JsObject(
@@ -93,6 +93,6 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
                     "count" -> JsObject("sum" -> JsObject("field" -> JsString("count")))))
             )))
       ))
-    )))
+    ))
   }
 }

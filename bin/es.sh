@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# curl -XDELETE http://localhost:9200/blah
+# curl -XDELETE 'http://192.168.99.100:9200/blah'
 
 curl -XDELETE 'http://192.168.99.100:9200/blah/_mapping/count'
 curl -XPUT 'http://192.168.99.100:9200/blah/_mapping/count' -d '

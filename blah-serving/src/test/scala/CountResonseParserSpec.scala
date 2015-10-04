@@ -214,17 +214,4 @@ class CountResponseParserSpec extends FlatSpec with Matchers {
         "osFamily" -> JsString("iOS"))
     ))
   }
-
-  it should "parse a count response" in {
-    val json = """|{
-                  |  "hits": {
-                  |    "hits": [
-                  |      {"_source": {"count": 1}},
-                  |      {"_source": {"count": 2}},
-                  |      {"_source": {"count": 3}}
-                  |    ]
-                  |  }
-                  |}""".stripMargin.parseJson
-    CountResponseParser.sum(json) should be (6)
-  }
 }

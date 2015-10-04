@@ -35,26 +35,22 @@ object CountQueryToEs {
 
   private def mergeAggs(xs: List[JsObject]): JsObject =
     xs.foldRight(JsObject()) {
-      case (v,a) if a.fields.isEmpty => v
-      case (v,a) => v.fields.toList match {
-        case (k, v: JsObject) :: rest =>
-          JsObject(rest.toMap + (k -> JsObject(v.fields ++ Map("aggs" -> JsObject(a.fields)))))
-        case _ => a
+      case (x, a) if a.fields.isEmpty => x
+      case (x, a) => {
+        val (key, value: JsObject) = x.fields.head
+        JsObject(key -> (value merge JsObject("aggs" -> a)))
       }
     }
 
   private def withCountAgg(xs: List[JsObject]): List[JsObject] = xs map {
     case x if x.fields == xs.last.fields => {
       val (key, value: JsObject) = x.fields.head
-      JsObject(key -> JsObject(value.fields ++ Map("aggs" -> JsObject(
-        "count" -> JsObject("sum" -> JsObject("field" -> JsString("count")))
-      ))))
+      JsObject(key -> (value merge mkCountAgg))
     }
     case x => x
   }
 
   private def groupBy(xs: List[String]): JsObject = JsObject(
-    "size" -> JsNumber(0),
     "aggs" -> mergeAggs(withCountAgg(
       JsObject("date" -> JsObject("date_histogram" -> getDateAgg(xs))) :: xs.collect {
         case "user_agent.browser.family" =>
@@ -72,10 +68,19 @@ object CountQueryToEs {
     case "date.year" => JsObject("field" -> JsString("date"), "interval" -> JsString("year"))
   } getOrElse JsObject("field" -> JsString("date"), "interval" -> JsString("day"))
 
-  def apply(q: CountQuery): Option[JsObject] = List(
+  private def mkCountAgg =
+    JsObject("aggs" -> JsObject("count" -> JsObject(
+      "sum" -> JsObject("field" -> JsString("count")))))
+
+  def filtered(q: CountQuery) =
+    q.filterBy map {
+      filters => filterBy(filters) merge mkCountAgg
+    } getOrElse mkCountAgg
+
+  def grouped(q: CountQuery) = List(
     q.filterBy map (filterBy),
     q.groupBy map (groupBy)
   ).flatten reduceOption {
-    (a,b) => JsObject(a.fields ++ b.fields)
-  }
+    (a,b) => a merge b
+  } getOrElse JsObject()
 }
