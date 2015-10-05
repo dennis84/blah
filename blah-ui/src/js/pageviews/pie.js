@@ -1,7 +1,7 @@
 import {h} from 'virtual-dom'
 import Chartist from 'chartist'
 import {grouped} from './ctrl'
-import hook from '../hook'
+import {hook, mount} from '../hook'
 
 function chart(model) {
   if(undefined === model.groups) return
@@ -15,7 +15,7 @@ function chart(model) {
       }, label))
     })),
     h('div.chart', {
-      mount: hook((node) => {
+      hook: hook((node) => {
         new Chartist.Pie(node, {series: data}, {
           donut: true,
           donutWidth: 50,
@@ -28,11 +28,9 @@ function chart(model) {
   ]
 }
 
-function render(model, update, id, options) {
+function render(model, update, options) {
   return h('div.widget.widget-pie', {
-    init: hook((node) => {
-      if(null === id) update(grouped, options)
-    })
+    mount: mount((node) => update(grouped, options))
   }, [
     h('h3', options.title),
     chart(model)

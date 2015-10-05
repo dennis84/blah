@@ -50,8 +50,7 @@ class Widget {
   renderWidget() {
     return this.fn.apply(null, [
       this.model,
-      this.update.bind(this),
-      this.id
+      this.update.bind(this)
     ].concat(this.args))
   }
 }

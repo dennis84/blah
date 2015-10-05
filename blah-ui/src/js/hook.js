@@ -3,8 +3,15 @@ class Hook {
     this.fn = fn
   }
 
-  hook(...args) {
-    this.fn.apply(this, args)
+  hook(node, propName, prevValue) {
+    this.fn.apply(this, [node])
+  }
+}
+
+class MountHook extends Hook {
+  hook(node, propName, prevValue) {
+    if(undefined !== prevValue) return
+    this.fn.apply(this, [node])
   }
 }
 
@@ -12,4 +19,11 @@ function hook(fn) {
   return new Hook(fn)
 }
 
-export default hook
+function mount(fn) {
+  return new MountHook(fn)
+}
+
+export {
+  hook,
+  mount
+}

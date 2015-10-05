@@ -2,7 +2,7 @@ import {h} from 'virtual-dom'
 import moment from 'moment'
 import Masonry from 'masonry-layout'
 import widget from './widget'
-import hook from './hook'
+import {hook} from './hook'
 import count from './pageviews/count'
 import bar from './pageviews/bar'
 import pie from './pageviews/pie'
@@ -12,7 +12,7 @@ function render(model, channel) {
   return h('div.container', [
     h('h1.center-h', 'Dashboard'),
     h('div.widgets', {
-      mount: hook((node) => {
+      hook: hook((node) => {
         new Masonry(node, {
           itemSelector: '.widget',
           columnWidth: 330

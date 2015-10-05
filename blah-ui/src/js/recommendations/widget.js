@@ -1,5 +1,5 @@
 import {h} from 'virtual-dom'
-import hook from '../hook'
+import {mount} from '../hook'
 import {recommendations} from './ctrl'
 import debounce from 'debounce'
 
@@ -13,11 +13,11 @@ function views(xs) {
   })
 }
 
-function render(model, update, id, options) {
+function render(model, update, options) {
   if(undefined === options) options = {}
   return h('div.widget.widget-recommendations', {
-    init: hook((node) => {
-      if(null === id && options.user) update(recommendations, options)
+    mount: mount((node) => {
+      if(options.user) update(recommendations, options)
     })
   }, [
     h('h3', 'Recommendations'),

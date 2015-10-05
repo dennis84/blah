@@ -1,6 +1,6 @@
 import {h} from 'virtual-dom'
 import {count, incr} from './ctrl'
-import hook from '../hook'
+import {mount} from '../hook'
 
 function content(model, options) {
   if(undefined === model.count) return
@@ -10,12 +10,10 @@ function content(model, options) {
   ])
 }
 
-function render(model, update, id, options) {
+function render(model, update, options) {
   return h('div.widget.widget-count.center-hv', {
     className: options.className,
-    init: hook((node) => {
-      if(null === id) update(count, options)
-    }),
+    mount: mount((node) => update(count, options)),
     onclick: (e) => update(incr)
   }, content(model, options))
 }
