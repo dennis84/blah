@@ -8,7 +8,7 @@ import bar from './pageviews/bar'
 import pie from './pageviews/pie'
 import recommendations from './recommendations/widget'
 
-function render(model, channel) {
+function render(model, chan, conn) {
   return h('div.container', [
     h('h1.center-h', 'Dashboard'),
     h('div.widgets', {
@@ -19,12 +19,12 @@ function render(model, channel) {
         })
       })
     }, [
-      widget(recommendations, model, channel),
-      widget(bar, model, channel, {groupBy: [], title: 'Pageviews'}),
-      widget(count, model, channel, {filterBy: {page: 'page1'}, title: 'Page 1'}),
-      widget(count, model, channel, {title: 'All', className: 'red'}),
-      widget(count, model, channel, {filterBy: {page: 'page2'}, title: 'Page 2'}),
-      widget(pie, model, channel, {
+      widget(recommendations, model, chan, conn),
+      widget(bar, model, chan, conn, {groupBy: [], title: 'Pageviews'}),
+      widget(count, model, chan, conn, {filterBy: {page: 'page1'}, title: 'Page 1'}),
+      widget(count, model, chan, conn, {title: 'All', className: 'red'}),
+      widget(count, model, chan, conn, {filterBy: {page: 'page2'}, title: 'Page 2'}),
+      widget(pie, model, chan, conn, {
         filterBy: {'date.from': moment().subtract(1, 'year')},
         groupBy: ['date.year', 'user_agent.browser.family'],
         title: 'Browser Statistics Over a Year'

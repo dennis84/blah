@@ -8,7 +8,7 @@ import * as ctrl from './ctrl'
 import {SERVING_WS_URL} from './config'
 
 var conn = connect(SERVING_WS_URL)
-var channel = csp.chan()
+var chan = csp.chan()
 var model = {count: 0}
 
 conn.on('count', function() {
@@ -20,15 +20,15 @@ function update(model, action) {
 }
 
 function renderLoop(model) {
-  var tree = dashboard(model, channel)
+  var tree = dashboard(model, chan, conn)
   var node = createElement(tree)
   document.body.appendChild(node)
 
   csp.go(function*() {
     while (true) {
-      var action = yield csp.take(channel)
+      var action = yield csp.take(chan)
       model = update(model, action)
-      var updated = dashboard(model, channel)
+      var updated = dashboard(model, chan, conn)
         , patches = diff(tree, updated)
       node = patch(node, patches)
       tree = updated
@@ -40,6 +40,6 @@ renderLoop(model)
 
 setInterval(() => {
   csp.go(function*(){
-    yield csp.put(channel, {type: 'incr'})
+    yield csp.put(chan, {type: 'incr'})
   })
 }, 1000)

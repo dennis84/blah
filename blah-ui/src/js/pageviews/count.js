@@ -10,10 +10,13 @@ function content(model, options) {
   ])
 }
 
-function render(model, update, options) {
+function render(model, update, conn, options) {
   return h('div.widget.widget-count.center-hv', {
     className: options.className,
-    mount: mount((node) => update(count, options)),
+    mount: mount((node) => {
+      conn.on('count', (data) => update(count, options))
+      update(count, options)
+    }),
     onclick: (e) => update(incr)
   }, content(model, options))
 }

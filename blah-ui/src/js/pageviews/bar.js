@@ -19,7 +19,7 @@ function chart(model) {
   })
 }
 
-function render(model, update, options) {
+function render(model, update, conn, options) {
   return h('div.widget.widget-bar', {
     mount: mount((node) => update(grouped, options))
   }, [
