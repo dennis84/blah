@@ -19,7 +19,7 @@ function render(model, chan, conn) {
         })
       })
     }, [
-      widget(recommendations, model, chan, conn),
+      widget(recommendations, model, chan),
       widget(bar, model, chan, conn, {groupBy: [], title: 'Pageviews'}),
       widget(count, model, chan, conn, {filterBy: {page: 'page1'}, title: 'Page 1'}),
       widget(count, model, chan, conn, {title: 'All', className: 'red'}),

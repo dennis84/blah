@@ -13,7 +13,7 @@ function views(xs) {
   })
 }
 
-function render(model, update, conn, options) {
+function render(model, update, options) {
   if(undefined === options) options = {}
   return h('div.widget.widget-recommendations', {
     mount: mount((node) => {

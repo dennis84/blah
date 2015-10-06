@@ -30,7 +30,10 @@ function chart(model) {
 
 function render(model, update, conn, options) {
   return h('div.widget.widget-pie', {
-    mount: mount((node) => update(grouped, options))
+    mount: mount((node) => {
+      conn.on('count', (data) => update(grouped, options))
+      update(grouped, options)
+    })
   }, [
     h('h3', options.title),
     chart(model)
