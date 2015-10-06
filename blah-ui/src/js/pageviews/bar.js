@@ -6,7 +6,7 @@ import moment from 'moment'
 
 function chart(model) {
   if(undefined === model.groups) return
-  var labels = model.groups.map((x) => moment(x.date).format('ll'))
+  var labels = model.groups.map((x) => moment(x.date).format('h:mm:ss a'))
   var data = model.groups.map((x) => x.count)
 
   return h('div.chart', {
@@ -21,6 +21,7 @@ function chart(model) {
 
 function render(model, update, conn, options) {
   return h('div.widget.widget-bar', {
+    className: options.className,
     mount: mount((node) => {
       conn.on('count', (data) => update(grouped, options))
       update(grouped, options)
