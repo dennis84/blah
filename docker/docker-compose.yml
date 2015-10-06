@@ -7,7 +7,8 @@ namenode:
     - "9000:9000"
     - "50070:50070"
   volumes:
-    - ./blah-data:/data
+    - ./blah-data/dfs/name:/data/dfs/name
+    - ./blah-data/dfs/data:/data/dfs/data
 
 datanode1:
   image: blah/hadoop-slave
@@ -16,7 +17,8 @@ datanode1:
   ports:
     - "50075:50075"
   volumes:
-    - ./blah-data:/data
+    - ./blah-data/dfs/name:/data/dfs/name
+    - ./blah-data/dfs/data:/data/dfs/data
 
 sparkworker:
   image: blah/spark-worker

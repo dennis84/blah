@@ -16,9 +16,10 @@ ENV HADOOP_CONF_DIR /opt/hadoop/etc/hadoop
 ENV PATH $PATH:$HADOOP_PREFIX/bin
 ENV PATH $PATH:$HADOOP_PREFIX/sbin
 
-VOLUME /data
-
 ADD core-site.xml $HADOOP_CONF_DIR/core-site.xml
 ADD hdfs-site.xml $HADOOP_CONF_DIR/hdfs-site.xml
 
-RUN mkdir -p /data && hdfs namenode -format
+RUN mkdir -p /data/dfs/name
+RUN mkdir -p /data/dfs/data
+
+VOLUME ["/data/dfs/name", "/data/dfs/data"]
