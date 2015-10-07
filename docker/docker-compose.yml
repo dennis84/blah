@@ -45,13 +45,14 @@ flume:
     - kafka
 
 elasticsearch:
-  image: elasticsearch
+  image: blah/elasticsearch
   container_name: elasticsearch
   hostname: elasticsearch
-  command: elasticsearch
   ports:
     - "9200:9200"
     - "9300:9300"
+  volumes:
+    - ./blah-data/elasticsearch:/data
 
 kafka:
   image: spotify/kafka
