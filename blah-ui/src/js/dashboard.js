@@ -19,18 +19,18 @@ function render(model, chan, conn) {
         })
       })
     }, [
-      widget(count, model, chan, conn, {title: 'All', className: 'red'}),
+      widget(pie, model, chan, conn, {
+        filterBy: {'date.from': moment().subtract(1, 'year')},
+        groupBy: ['date.year', 'user_agent.browser.family'],
+        title: 'Browser Statistics Over a Year'
+      }),
       widget(bar, model, chan, conn, {
         filterBy: {'date.from': moment().subtract(1, 'day')},
         groupBy: ['date.hour'],
         title: 'Page Views in the past 24 hours',
         className: 'size-2of3'
       }),
-      widget(pie, model, chan, conn, {
-        filterBy: {'date.from': moment().subtract(1, 'year')},
-        groupBy: ['date.year', 'user_agent.browser.family'],
-        title: 'Browser Statistics Over a Year'
-      }),
+      widget(count, model, chan, conn, {title: 'All', className: 'red'}),
       widget(count, model, chan, conn, {filterBy: {page: 'page1'}, title: 'Page 1'}),
       widget(count, model, chan, conn, {filterBy: {page: 'page2'}, title: 'Page 2'}),
       widget(recommendations, model, chan)
