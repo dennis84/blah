@@ -10,9 +10,9 @@ function chart(model) {
 
   return [
     h('div.labels', labels.map((label, i) => {
-      return h('div', h('span.label', {
+      return h('span.label', {
         className: 'label-series-' + String.fromCharCode(i + 97)
-      }, label))
+      }, label)
     })),
     h('div.chart', {
       hook: hook((node) => {
