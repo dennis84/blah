@@ -52,9 +52,9 @@ class SimilarityAlgo extends Algo {
 
     val out = usersRDD
       .map { case(u, elems) =>
-        val doc = Map("user" -> u, "views" -> elems.flatMap { elem =>
-          all.get(items.indexOf(elem)) getOrElse Nil
-        }.toList
+        val doc = Map("user" -> u, "views" -> elems.toList.distinct.flatMap {
+          elem => all.get(items.indexOf(elem)) getOrElse Nil
+        }
           .map(x => (items(x._1), x._2))
           .filterNot(x => elems.toList.contains(x._1))
           .sortBy(_._2)(ord)
