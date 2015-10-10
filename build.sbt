@@ -40,9 +40,11 @@ lazy val core = (project in file("blah-core"))
     resolvers ++= res)
 
 lazy val algo = (project in file("blah-algo"))
+  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(DockerPlugin)
   .settings(commonSettings: _*)
   .settings(
-    target in assembly := file("docker/blah-spark-submit/"),
+    target in assembly := file("blah-algo/target/docker/stage/opt/docker/bin/"),
     assemblyMergeStrategy in assembly := {
       case PathList("org", "apache", xs @ _*) => MergeStrategy.first
       case PathList("javax", "xml", xs @ _*) => MergeStrategy.first
@@ -57,6 +59,15 @@ lazy val algo = (project in file("blah-algo"))
         val oldStrategy = (assemblyMergeStrategy in assembly).value
         oldStrategy(x)
     }
+  ).settings(
+    packageName in Docker := "blah/spark-submit",
+    version in Docker := version.value,
+    dockerBaseImage := "blah/spark-base",
+    dockerEntrypoint := Seq(
+      "spark-submit",
+      "--class", "blah.algo.Submit",
+      "--master", "spark://sparkmaster:7077",
+      "/opt/docker/bin/algo-assembly-0.1.0.jar")
   )
   .dependsOn(core)
 
