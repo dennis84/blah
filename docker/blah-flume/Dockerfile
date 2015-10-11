@@ -15,6 +15,8 @@ RUN wget -qO- http://archive.apache.org/dist/flume/1.6.0/apache-flume-1.6.0-bin.
 
 ADD start-flume /opt/flume/bin/start-flume
 ADD flume.conf /opt/flume/conf/flume.conf
+RUN sed -i '/zookeeperConnect/s/localhost/kafka/' /opt/flume/conf/flume.conf
+RUN sed -i '/hdfs.path/s/localhost/namenode/' /opt/flume/conf/flume.conf
 
 ENV PATH /opt/flume/bin:$PATH
 
