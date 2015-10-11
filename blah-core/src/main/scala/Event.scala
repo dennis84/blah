@@ -7,11 +7,7 @@ case class Event(
   id: String,
   name: String,
   date: DateTime,
-  props: Map[String, JsValue] = Map.empty) {
-
-  def prop[A : JsonReader](name: String): Option[A] =
-    props.get(name) map (_.convertTo[A])
-}
+  props: Map[String, JsValue] = Map.empty)
 
 case class ViewProps(
   page: String,

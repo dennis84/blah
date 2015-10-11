@@ -15,5 +15,4 @@ class Env(system: ActorSystem) {
     clientId = "events",
     encoder = new StringEncoder()
   ))
-  lazy val api = system.actorOf(Props(new EventApi(producer)))
 }
