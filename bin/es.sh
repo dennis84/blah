@@ -7,9 +7,9 @@ curl -XPUT 'http://192.168.99.100:9200/blah' -d '
 {
   "mapping": {
     "count": {
-      "properties" : {
-        "page" : {"type": "string"},
-        "date" : {"type": "date", "format": "dateOptionalTime"},
+      "properties": {
+        "page": {"type": "string"},
+        "date": {"type": "date", "format": "dateOptionalTime"},
         "browserFamily": {"type": "string", "index": "not_analyzed"},
         "browserMajor": {"type": "string", "index": "not_analyzed"},
         "browserMinor": {"type": "string", "index": "not_analyzed"},
@@ -23,15 +23,21 @@ curl -XPUT 'http://192.168.99.100:9200/blah' -d '
       }
     },
     "sims": {
-      "properties" : {
-        "user" : {"type": "string"},
-        "views" : {
+      "properties": {
+        "user": {"type": "string"},
+        "views": {
           "type": "nested",
           "properties": {
-            "page" : {"type": "string"},
-            "score" : {"type": "double"}
+            "page": {"type": "string"},
+            "score": {"type": "double"}
           }
         }
+      }
+    },
+    "users": {
+      "properties": {
+        "user": {"type": "string", "index": "not_analyzed"},
+        "ip": {"type": "string", "index": "not_analyzed"}
       }
     }
   }

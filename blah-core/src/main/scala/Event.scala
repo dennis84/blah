@@ -12,11 +12,17 @@ case class Event(
 case class ViewProps(
   page: String,
   user: String,
-  ip: Option[String] = None,
   userAgent: Option[String] = None)
-
 case class ViewEvent(
   id: String,
   name: String,
   date: DateTime,
   props: ViewProps)
+
+case class UserProps(
+  user: String,
+  ip: Option[String] = None)
+case class UserEvent(
+  id: String,
+  date: DateTime,
+  props: UserProps)

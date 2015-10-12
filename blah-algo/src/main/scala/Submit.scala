@@ -1,5 +1,6 @@
 package blah.algo
 
+import scala.util.{Try, Success, Failure}
 import org.apache.spark.{SparkConf, SparkContext}
 import kafka.serializer.StringEncoder
 import kafka.producer.KafkaProducer
@@ -18,7 +19,8 @@ object Submit {
 
     val algos = Map(
       "count" -> new CountAlgo,
-      "similarity" -> new SimilarityAlgo)
+      "similarity" -> new SimilarityAlgo,
+      "user" -> new UserAlgo)
     val algo = algos(args(0))
     val conf = new SparkConf()
       .setAppName(args(0))
@@ -27,7 +29,12 @@ object Submit {
     val sc = new SparkContext(conf)
     val rdd = sc.textFile(config.getString("hadoop.url") + "/blah/events.*.jsonl")
     algo.train(rdd)
-    producer.send(args(0))
+
+    Try(producer send args(0)) match {
+      case Success(_) => println("Successfully sent message")
+      case Failure(e) => println("Message could not be sent")
+    }
+
     sc.stop
   }
 }

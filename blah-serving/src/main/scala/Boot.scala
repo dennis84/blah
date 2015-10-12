@@ -20,7 +20,8 @@ object Boot extends App with CorsSupport with ExceptionHandling {
     new StatusService,
     new WebsocketService(env.websocketRoom),
     new CountService(env),
-    new SimilarityService(env))
+    new SimilarityService(env),
+    new UserService(env))
   val routes = services.map(_.route)
 
   Try(env.consumer) match {
