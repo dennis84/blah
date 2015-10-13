@@ -18,11 +18,11 @@ class UserRepo(client: ElasticClient)(
 ) extends SprayJsonSupport {
   import system.dispatcher
 
-  def list: Future[Seq[UserResult]] =
+  def list: Future[UserCount] =
     client request HttpRequest(
       method = HttpMethods.GET,
-      uri = "/blah/users/_search?q=*:*"
+      uri = "/blah/users/_count"
     ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
-      Try(json.extract[UserResult]('hits / 'hits / * / '_source)) getOrElse Nil
+      Try(UserCount(json.extract[Long]('count))) getOrElse UserCount(0)
     }
 }

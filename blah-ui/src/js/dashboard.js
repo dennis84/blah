@@ -32,7 +32,7 @@ function render(model, chan, conn) {
         className: 'size-2of3'
       }),
       widget(count, model, chan, conn, {title: 'All', className: 'red'}),
-      widget(userCount, model, chan, conn, {title: 'Nb Users'}),
+      widget(userCount, model, chan, conn, {title: 'Users'}),
       widget(count, model, chan, conn, {filterBy: {page: 'page1'}, title: 'Page 1'}),
       widget(count, model, chan, conn, {filterBy: {page: 'page2'}, title: 'Page 2'}),
       widget(recommendations, model, chan)

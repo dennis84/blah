@@ -3,9 +3,9 @@ import {count} from './ctrl'
 import {mount} from '../hook'
 
 function content(model, options) {
-  if(undefined === model.users) return
+  if(undefined === model.count) return
   return h('div', [
-    h('div.count', String(model.users.length)),
+    h('div.count', String(model.count)),
     h('div.title', options.title)
   ])
 }
