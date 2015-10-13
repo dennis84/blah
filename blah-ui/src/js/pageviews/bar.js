@@ -13,7 +13,8 @@ function chart(model) {
     hook: hook((node) => {
       new Chartist.Bar(node, {labels: labels, series: [data]}, {
         fullWidth: true,
-        axisX: {showGrid: false}
+        axisX: {showGrid: false},
+        axisY: {onlyInteger: true}
       })
     })
   })
