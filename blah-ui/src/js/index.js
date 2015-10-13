@@ -9,11 +9,7 @@ import {SERVING_WS_URL} from './config'
 
 var conn = connect(SERVING_WS_URL)
 var chan = csp.chan()
-var model = {count: 0}
-
-conn.on('count', function() {
-  console.log('count')
-})
+var model = {}
 
 function update(model, action) {
   return ctrl[action.type].apply(null, [model].concat(action.args))
@@ -25,7 +21,7 @@ function renderLoop(model) {
   document.body.appendChild(node)
 
   csp.go(function*() {
-    while (true) {
+    while(true) {
       var action = yield csp.take(chan)
       model = update(model, action)
       var updated = dashboard(model, chan, conn)
@@ -37,9 +33,3 @@ function renderLoop(model) {
 }
 
 renderLoop(model)
-
-setInterval(() => {
-  csp.go(function*(){
-    yield csp.put(chan, {type: 'incr'})
-  })
-}, 1000)

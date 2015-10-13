@@ -12,12 +12,6 @@ function widget(model, id, m) {
   return model
 }
 
-function incr(model) {
-  model.count += 1
-  return model
-}
-
 export {
-  widget,
-  incr
+  widget
 }
