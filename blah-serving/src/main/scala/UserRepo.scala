@@ -18,7 +18,7 @@ class UserRepo(client: ElasticClient)(
 ) extends SprayJsonSupport {
   import system.dispatcher
 
-  def list: Future[UserCount] =
+  def count(q: UserQuery): Future[UserCount] =
     client request HttpRequest(
       method = HttpMethods.GET,
       uri = "/blah/users/_count"
