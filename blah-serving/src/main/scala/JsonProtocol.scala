@@ -12,6 +12,8 @@ trait ServingJsonProtocol extends JsonProtocol {
 
   implicit val userQueryFmt = jsonFormat2(UserQuery)
   implicit val userResultFmt = jsonFormat1(UserCount)
+
+  implicit val statusFmt = jsonFormat1(Status)
 }
 
 object ServingJsonProtocol extends ServingJsonProtocol
