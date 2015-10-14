@@ -1,17 +1,15 @@
 package blah.serving
 
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server._
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import StatusCodes._
 import Directives._
 
-trait ExceptionHandling {
+trait ExceptionHandling extends SprayJsonSupport with ServingJsonProtocol {
   implicit def exceptionHandler: ExceptionHandler = ExceptionHandler {
-    case _: Exception => complete(
-      HttpResponse(InternalServerError, entity = "Oops!"))
+    case _: Exception => complete(InternalServerError -> Status("Internal Server Error"))
   }
 }
 
