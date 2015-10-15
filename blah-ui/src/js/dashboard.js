@@ -1,6 +1,7 @@
 import {h} from 'virtual-dom'
 import moment from 'moment'
 import Masonry from 'masonry-layout'
+import debounce from 'debounce'
 import widget from './widget'
 import {hook} from './hook'
 import count from './pageviews/count'
@@ -13,12 +14,17 @@ function render(model, chan, conn) {
   return h('div.container', [
     h('h1.center-h', 'Dashboard'),
     h('div.widgets', {
-      hook: hook((node) => {
-        new Masonry(node, {
-          itemSelector: '.widget',
-          columnWidth: 330
-        })
-      })
+      hook: hook(debounce((node) => {
+        if(undefined === node.masonry) {
+          node.masonry = new Masonry(node, {
+            itemSelector: '.widget',
+            columnWidth: 330
+          })
+        } else {
+          node.masonry.reloadItems()
+          node.masonry.layout()
+        }
+      }), 100)
     }, [
       widget(pie, model, chan, conn, {
         filterBy: {'date.from': moment().subtract(1, 'year')},
