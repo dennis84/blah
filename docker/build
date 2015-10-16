@@ -2,15 +2,6 @@
 
 cd "$(dirname "$0")" || exit
 
-cd .. || exit
-
-sbt api/docker:publishLocal || exit
-sbt serving/docker:publishLocal || exit
-sbt algo/assembly || exit
-sbt algo/docker:publishLocal || exit
-
-cd - || exit
-
 docker build -t blah/elasticsearch blah-elasticsearch/ || exit
 docker build -t blah/flume blah-flume/ || exit
 docker build -t blah/hadoop-base blah-hadoop-base/ || exit
@@ -20,3 +11,10 @@ docker build -t blah/spark-base blah-spark-base/ || exit
 docker build -t blah/spark-master blah-spark-master/ || exit
 docker build -t blah/spark-worker blah-spark-worker/ || exit
 docker build -t blah/spark-submit blah-spark-submit/ || exit
+
+cd .. || exit
+
+sbt api/docker:publishLocal || exit
+sbt serving/docker:publishLocal || exit
+sbt algo/assembly || exit
+sbt algo/docker:publishLocal || exit
