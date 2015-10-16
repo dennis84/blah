@@ -20,7 +20,7 @@ class UserAlgo extends Algo {
       .groupByKey
       .map { case(u, ips) =>
         val maybeIp = ips.flatten.lastOption
-        val geoIp = for {
+        val geoData = (for {
           ip <- maybeIp
           data <- GeoIp.find(ip)
         } yield Map(
@@ -29,8 +29,9 @@ class UserAlgo extends Algo {
           "country" -> data.country,
           "countryCode" -> data.countryCode,
           "city" -> data.city,
-          "zipCode" -> data.zipCode)
-        (Map(ID -> u), Map("user" -> u, "ip" -> maybeIp, "geoIp" -> geoIp))
+          "zipCode" -> data.zipCode
+        )) getOrElse Map.empty
+        (Map(ID -> u), Map("user" -> u, "ip" -> maybeIp) ++ geoData)
       }
 
     events.saveToEsWithMeta("blah/users")
