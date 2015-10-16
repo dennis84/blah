@@ -1,6 +1,6 @@
-FROM java:7
+FROM java:8
 
-ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
 RUN mkdir /opt/hadoop
 RUN wget -qO- http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.0/hadoop-2.7.0.tar.gz \

@@ -1,6 +1,6 @@
-FROM java:7
+FROM java:8
 
-ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
 RUN mkdir /opt/spark
 RUN wget -qO- http://www.eu.apache.org/dist/spark/spark-1.5.0/spark-1.5.0.tgz \

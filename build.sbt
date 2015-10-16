@@ -5,20 +5,20 @@ val res = Seq(
 )
 
 val deps = Seq(
-  "org.scalatest"           % "scalatest_2.11"                         % "2.2.4" % "test",
-  "com.typesafe.akka"      %% "akka-actor"                             % "2.3.12",
+  "org.scalatest"           % "scalatest_2.11"                         % "2.2.5" % "test",
+  "com.typesafe.akka"      %% "akka-actor"                             % "2.4.0",
   "com.typesafe.akka"       % "akka-stream-experimental_2.11"          % "1.0",
   "com.typesafe.akka"       % "akka-http-core-experimental_2.11"       % "1.0",
   "com.typesafe.akka"       % "akka-http-experimental_2.11"            % "1.0",
   "com.typesafe.akka"       % "akka-http-spray-json-experimental_2.11" % "1.0",
-  "org.apache.kafka"       %% "kafka"                                  % "0.8.2.1",
-  "org.apache.spark"       %% "spark-core"                             % "1.4.1" % "provided",
-  "org.apache.spark"       %% "spark-streaming"                        % "1.4.1",
-  "org.apache.spark"       %% "spark-streaming-kafka"                  % "1.4.1",
-  "org.apache.spark"       %% "spark-mllib"                            % "1.4.1",
+  "org.apache.kafka"       %% "kafka"                                  % "0.8.2.2",
+  "org.apache.spark"       %% "spark-core"                             % "1.5.1" % "provided",
+  "org.apache.spark"       %% "spark-streaming"                        % "1.5.1",
+  "org.apache.spark"       %% "spark-streaming-kafka"                  % "1.5.1",
+  "org.apache.spark"       %% "spark-mllib"                            % "1.5.1",
   "org.elasticsearch"      %% "elasticsearch-spark"                    % "2.1.1",
-  "com.github.nscala-time" %% "nscala-time"                            % "2.0.0",
-  "com.softwaremill"       %% "reactive-kafka"                         % "0.7.0",
+  "com.github.nscala-time" %% "nscala-time"                            % "2.2.0",
+  "com.softwaremill"       %% "reactive-kafka"                         % "0.7.2",
   "org.clojars.timewarrior" % "ua-parser"                              % "1.3.0",
   "net.virtual-void"       %% "json-lenses"                            % "0.6.1"
 )
@@ -26,7 +26,7 @@ val deps = Seq(
 lazy val commonSettings = Seq(
   organization  := "com.github.dennis84",
   version       := "0.1.0",
-  scalaVersion  := "2.11.6",
+  scalaVersion  := "2.11.7",
   scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8", "-Ywarn-unused-import")
 )
 
@@ -78,7 +78,7 @@ lazy val api = (project in file("blah-api"))
   .settings(
     packageName in Docker := "blah/api",
     version in Docker := version.value,
-    dockerBaseImage := "java:7",
+    dockerBaseImage := "java:8",
     dockerExposedPorts := Seq(8000)
   )
   .dependsOn(core)
@@ -90,7 +90,7 @@ lazy val serving = (project in file("blah-serving"))
   .settings(
     packageName in Docker := "blah/serving",
     version in Docker := version.value,
-    dockerBaseImage := "java:7",
+    dockerBaseImage := "java:8",
     dockerExposedPorts := Seq(8001)
   )
   .dependsOn(core % "compile->compile;test->test")

@@ -1,4 +1,4 @@
-FROM java:7
+FROM java:8
 
 RUN mkdir /opt/elasticsearch
 RUN wget -qO- https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.2.tar.gz \

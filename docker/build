@@ -2,11 +2,11 @@
 
 cd "$(dirname "$0")" || exit
 
-docker build -t blah/elasticsearch blah-elasticsearch/ || exit
-docker build -t blah/flume blah-flume/ || exit
-docker build -t blah/hadoop-base blah-hadoop-base/ || exit
-docker build -t blah/hadoop-master blah-hadoop-master/ || exit
-docker build -t blah/hadoop-slave blah-hadoop-slave/ || exit
+# docker build -t blah/elasticsearch blah-elasticsearch/ || exit
+# docker build -t blah/flume blah-flume/ || exit
+# docker build -t blah/hadoop-base blah-hadoop-base/ || exit
+# docker build -t blah/hadoop-master blah-hadoop-master/ || exit
+# docker build -t blah/hadoop-slave blah-hadoop-slave/ || exit
 docker build -t blah/spark-base blah-spark-base/ || exit
 docker build -t blah/spark-master blah-spark-master/ || exit
 docker build -t blah/spark-worker blah-spark-worker/ || exit
