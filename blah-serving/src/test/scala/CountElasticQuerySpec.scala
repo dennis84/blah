@@ -3,9 +3,9 @@ package blah.serving
 import org.scalatest._
 import spray.json._
 
-class CountQueryToEsSpec extends FlatSpec with Matchers {
+class CountElasticQuerySpec extends FlatSpec with Matchers {
 
-  "CountQueryToEs" should "convert filters to es" in {
+  "CountElasticQuery" should "convert filters to es" in {
     val q = CountQuery(Some(Map(
       "page" -> "home",
       "user_agent.device.family" -> "iPhone",
@@ -15,7 +15,7 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
       "date.to" -> "2015-09-04"
     )))
 
-    CountQueryToEs.filtered(q) should be(JsObject(
+    CountElasticQuery.filtered(q) should be(JsObject(
       "query" -> JsObject(
         "filtered" -> JsObject(
           "filter" -> JsObject(
@@ -42,7 +42,7 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
       "page" -> "home"
     )), Some(Nil))
 
-    CountQueryToEs.grouped(q) should be(JsObject(
+    CountElasticQuery.grouped(q) should be(JsObject(
       "query" -> JsObject(
         "filtered" -> JsObject(
           "query" -> JsObject(
@@ -70,7 +70,7 @@ class CountQueryToEsSpec extends FlatSpec with Matchers {
       "user_agent.os.family"
     )))
 
-    CountQueryToEs.grouped(q) should be(JsObject(
+    CountElasticQuery.grouped(q) should be(JsObject(
       "query" -> JsObject(
         "filtered" -> JsObject(
           "query" -> JsObject(

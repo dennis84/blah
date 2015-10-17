@@ -3,7 +3,7 @@ package blah.serving
 import spray.json._
 import blah.core.JsonTweaks._
 
-object CountQueryToEs {
+object CountElasticQuery {
 
   private def mustMatch(k: String, v: String) =
     JsObject("query" ->

@@ -22,7 +22,7 @@ class CountRepo(client: ElasticClient)(
     uri = "/blah/count/_search?size=0",
     entity = HttpEntity(
       ContentTypes.`application/json`,
-      CountQueryToEs.filtered(q).compactPrint)
+      CountElasticQuery.filtered(q).compactPrint)
   ) flatMap (resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
     CountResult(json.extract[Long]('aggregations / 'count / 'value))
   }
@@ -32,7 +32,7 @@ class CountRepo(client: ElasticClient)(
     uri = "/blah/count/_search?size=0",
     entity = HttpEntity(
       ContentTypes.`application/json`,
-      CountQueryToEs.grouped(q).compactPrint)
+      CountElasticQuery.grouped(q).compactPrint)
   ) flatMap (resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
     val aggs = json.extract[JsValue]('aggregations)
     CountResponseParser.parse(q.groupBy map ("date" :: _.collect {
