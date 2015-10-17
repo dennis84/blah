@@ -15,6 +15,7 @@ class UserService(env: Env)(
 
   def route =
     (post & path("user") & entity(as[UserQuery])) {
-      q => complete(repo count q)
+      case q@UserQuery(_, None) => complete(repo count q)
+      case q@UserQuery(_, _)    => complete(repo search q)
     }
 }

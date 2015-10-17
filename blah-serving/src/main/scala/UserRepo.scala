@@ -25,4 +25,16 @@ class UserRepo(client: ElasticClient)(
     ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
       Try(UserCount(json.extract[Long]('count))) getOrElse UserCount(0)
     }
+
+  def search(q: UserQuery): Future[Seq[JsObject]] =
+    client request HttpRequest(
+      method = HttpMethods.POST,
+      uri = "/blah/users/_search?size=0",
+      entity = HttpEntity(
+        ContentTypes.`application/json`,
+        UserElasticQuery.grouped(q).compactPrint)
+    ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
+      val aggs = json.extract[JsValue]('aggregations)
+      UserResponseParser.parse(q.groupBy.getOrElse(Nil), aggs)
+    }
 }
