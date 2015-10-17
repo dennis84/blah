@@ -20,6 +20,25 @@ function count(model, options) {
   })
 }
 
+/**
+ * Fetch grouped users from serving layer.
+ *
+ * `options.filterBy` Not implemented
+ * `options.groupBy` Group by specific properties e.g. `country`
+ *
+ * @param {Object} The widget state
+ * @param {Object} Query options
+ *
+ * @return {Promise} The model wrapped in a promise
+ */
+function grouped(model, options) {
+  return post('/user', mkQuery(options)).then((data) => {
+    var m = clone(model)
+    m.users = data
+    return m
+  })
+}
+
 function mkQuery(options) {
   var query = {}
   if(options.filterBy) {
@@ -34,5 +53,6 @@ function mkQuery(options) {
 }
 
 export {
-  count
+  count,
+  grouped
 }

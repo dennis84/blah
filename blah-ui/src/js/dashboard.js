@@ -9,6 +9,7 @@ import bar from './pageviews/bar'
 import pie from './pageviews/pie'
 import recommendations from './recommendations/widget'
 import userCount from './user/count'
+import userBar from './user/bar'
 
 function render(model, chan, conn) {
   return h('div.container', [
@@ -36,6 +37,10 @@ function render(model, chan, conn) {
         groupBy: ['date.hour'],
         title: 'Page Views in the past 24 hours',
         className: 'size-2of3'
+      }),
+      widget(userBar, model, chan, conn, {
+        groupBy: ['country'],
+        title: 'Visitors'
       }),
       widget(count, model, chan, conn, {title: 'All', className: 'red'}),
       widget(userCount, model, chan, conn, {title: 'Unique Visitors'}),

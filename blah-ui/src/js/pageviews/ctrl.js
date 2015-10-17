@@ -22,8 +22,8 @@ function count(model, options) {
 /**
  * Fetch grouped pageviews from serving layer.
  *
- * `options.filterBy` Filter by a specific properties
- * `options.groupBy` Group by a specific properties
+ * `options.filterBy` Filter by specific properties
+ * `options.groupBy` Group by specific properties
  *
  * @param {Object} The widget state
  * @param {Object} Query options
@@ -51,16 +51,7 @@ function mkQuery(options) {
   return query
 }
 
-function incr(model) {
-  return new Promise((resolve, reject) => {
-    var m = clone(model)
-    m.count ++
-    resolve(m)
-  })
-}
-
 export {
   count,
-  grouped,
-  incr
+  grouped
 }

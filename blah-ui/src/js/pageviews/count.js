@@ -16,8 +16,7 @@ function render(model, update, conn, options) {
     mount: mount((node) => {
       conn.on('count', (data) => update(count, options))
       update(count, options)
-    }),
-    onclick: (e) => update(incr)
+    })
   }, content(model, options))
 }
 
