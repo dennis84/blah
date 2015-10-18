@@ -1,18 +1,8 @@
 package blah.serving
 
 import spray.json._
-import blah.core.JsonTweaks._
 
-object UserElasticQuery {
-
-  private def mergeAggs(xs: List[JsObject]): JsObject =
-    xs.foldRight(JsObject()) {
-      case (x, a) if a.fields.isEmpty => x
-      case (x, a) => {
-        val (key, value: JsObject) = x.fields.head
-        JsObject(key -> (value merge JsObject("aggs" -> a)))
-      }
-    }
+object UserElasticQuery extends ElasticQuery {
 
   private def filterBy(xs: Map[String, String]): JsObject = JsObject()
 
