@@ -4,6 +4,7 @@ import akka.actor.{ActorSystem, Props}
 import akka.stream.Materializer
 import kafka.serializer.StringDecoder
 import com.softwaremill.react.kafka.{ReactiveKafka, ConsumerProperties}
+import blah.elastic.{ElasticClient, ElasticUri}
 
 class Env(implicit system: ActorSystem, mat: Materializer) {
   private val config = system.settings.config

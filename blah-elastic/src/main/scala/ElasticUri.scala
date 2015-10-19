@@ -1,4 +1,4 @@
-package blah.serving
+package blah.elastic
 
 case class ElasticUri(hosts: List[(String, Int)])
 

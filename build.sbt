@@ -40,6 +40,10 @@ lazy val core = (project in file("blah-core"))
     libraryDependencies ++= deps,
     resolvers ++= res)
 
+lazy val elastic = (project in file("blah-elastic"))
+  .settings(commonSettings: _*)
+  .dependsOn(core % "compile->compile;test->test")
+
 lazy val algo = (project in file("blah-algo"))
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
@@ -95,3 +99,4 @@ lazy val serving = (project in file("blah-serving"))
     dockerExposedPorts := Seq(8001)
   )
   .dependsOn(core % "compile->compile;test->test")
+  .dependsOn(elastic)

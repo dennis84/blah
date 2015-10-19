@@ -10,6 +10,7 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json._
 import spray.json.lenses.JsonLenses._
+import blah.elastic.ElasticClient
 import ServingJsonProtocol._
 
 class UserRepo(client: ElasticClient)(

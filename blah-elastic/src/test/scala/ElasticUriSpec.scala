@@ -1,4 +1,4 @@
-package blah.serving
+package blah.elastic
 
 import org.scalatest._
 
