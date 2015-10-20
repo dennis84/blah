@@ -22,10 +22,10 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
           ("lte" -> "2015-09-04")
         ))) ~
         ("query" -> ("bool" -> ("must" -> List(
-          ("match" -> ("page" -> "home")),
-          ("match" -> ("deviceFamily" -> "iPhone")),
-          ("match" -> ("browserFamily" -> "Chrome")),
-          ("match" -> ("browserMajor" -> "47"))
+          ("term" -> ("page" -> "home")),
+          ("term" -> ("deviceFamily" -> "iPhone")),
+          ("term" -> ("browserFamily" -> "Chrome")),
+          ("term" -> ("browserMajor" -> "47"))
         ))))
       )) ~
       ("aggs" -> ("count" -> ("sum" -> ("field" -> "count"))))
@@ -39,7 +39,7 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
 
     CountElasticQuery.grouped(q) should be(
       ("query" -> ("filtered" -> ("query" -> ("bool" -> ("must" -> List(
-        ("match" -> ("page" -> "home"))
+        ("term" -> ("page" -> "home"))
       )))))) ~
       ("aggs" -> ("date" ->
         ("date_histogram" ->
@@ -61,7 +61,7 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
 
     CountElasticQuery.grouped(q) should be(
       ("query" -> ("filtered" -> ("query" -> ("bool" -> ("must" -> List(
-        ("match" -> ("page" -> "home"))
+        ("term" -> ("page" -> "home"))
       )))))) ~
       ("aggs" -> (
         ("date" ->

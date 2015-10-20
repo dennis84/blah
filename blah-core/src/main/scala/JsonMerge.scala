@@ -2,7 +2,7 @@ package blah.core
 
 import spray.json._
 
-trait JsonTweaks {
+trait JsonMerge {
   implicit class Merge(a: JsObject) {
     def merge(b: JsObject): JsObject = {
       val result = a.fields ++ b.fields.map {
@@ -19,5 +19,3 @@ trait JsonTweaks {
     }
   }
 }
-
-object JsonTweaks extends JsonTweaks

@@ -1,43 +1,43 @@
 package blah.serving
 
 import spray.json._
-import blah.core.JsonTweaks._
-import blah.elastic.FullDsl._
+import blah.core.JsonDsl._
+import blah.elastic.{QueryDsl => q}
+import blah.elastic.{FilterDsl => f}
+import blah.elastic.{AggregationDsl => a}
 
 object CountElasticQuery {
 
   private def filterBy(xs: Map[String, String]) = xs collect {
-    case ("page", value)                      => $match("page", value)
-    case ("user_agent.device.family", value)  => $match("deviceFamily", value)
-    case ("user_agent.browser.family", value) => $match("browserFamily", value)
-    case ("user_agent.browser.major", value)  => $match("browserMajor", value)
-    case ("user_agent.browser.minor", value)  => $match("browserMinor", value)
-    case ("user_agent.browser.patch", value)  => $match("browserPatch", value)
-    case ("user_agent.os.family", value)      => $match("osFamily", value)
-    case ("user_agent.os.major", value)       => $match("osMajor", value)
-    case ("user_agent.os.minor", value)       => $match("osMinor", value)
-    case ("user_agent.os.patch", value)       => $match("osPatch", value)
-    case ("date.from", value)                 => $gte("date", value)
-    case ("date.to", value)                   => $lte("date", value)
+    case ("page", value)                      => q.term("page", value)
+    case ("user_agent.device.family", value)  => q.term("deviceFamily", value)
+    case ("user_agent.browser.family", value) => q.term("browserFamily", value)
+    case ("user_agent.browser.major", value)  => q.term("browserMajor", value)
+    case ("user_agent.browser.minor", value)  => q.term("browserMinor", value)
+    case ("user_agent.browser.patch", value)  => q.term("browserPatch", value)
+    case ("user_agent.os.family", value)      => q.term("osFamily", value)
+    case ("user_agent.os.major", value)       => q.term("osMajor", value)
+    case ("user_agent.os.minor", value)       => q.term("osMinor", value)
+    case ("user_agent.os.patch", value)       => q.term("osPatch", value)
+    case ("date.from", value)                 => f.gte("date", value)
+    case ("date.to", value)                   => f.lte("date", value)
   } reduceOption (_ merge _) getOrElse JsObject()
 
   private def groupBy(xs: List[String]): JsObject =
-    nest(
-      ((xs collectFirst {
-        case "date.hour" => date("date", "hour")
-        case "date.month" => date("date", "month")
-        case "date.year" => date("date", "year")
-      } getOrElse date("date", "day")) :: xs.collect {
-        case "user_agent.browser.family" => term("browserFamily")
-        case "user_agent.browser.major" => term("browserMajor")
-        case "user_agent.os.family" => term("osFamily")
-      }) map (x => nest(x, sum("count")))
-    )
+    a.nest((xs collectFirst {
+      case "date.hour"  => a.dateHistogram("date", "hour")
+      case "date.month" => a.dateHistogram("date", "month")
+      case "date.year"  => a.dateHistogram("date", "year")
+    } getOrElse a.dateHistogram("date", "day") :: xs.collect {
+      case "user_agent.browser.family" => a.terms("browserFamily")
+      case "user_agent.browser.major"  => a.terms("browserMajor")
+      case "user_agent.os.family"      => a.terms("osFamily")
+    }) map (x => a.nest(x, a.sum("count"))))
 
   def filtered(q: CountQuery) =
     q.filterBy map {
-      filters => filterBy(filters) merge sum("count")
-    } getOrElse sum("count")
+      filters => filterBy(filters) merge a.sum("count")
+    } getOrElse a.sum("count")
 
   def grouped(q: CountQuery) = List(
     q.filterBy map (filterBy),

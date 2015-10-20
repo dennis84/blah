@@ -2,7 +2,7 @@ package blah.core
 
 import org.scalatest._
 import spray.json._
-import JsonTweaks._
+import JsonDsl._
 
 class JsonMergeSpec extends FlatSpec with Matchers {
 

@@ -1,16 +1,15 @@
 package blah.elastic
 
 import spray.json._
-import blah.core.JsonTweaks._
 import blah.core.JsonDsl._
 
 trait AggregationDsl {
-  def term(k: String): JsObject =
+  def terms(k: String): JsObject =
     ("aggs" -> (k ->
       ("terms" -> ("field" -> k))
     ))
 
-  def date(k: String, interval: String): JsObject =
+  def dateHistogram(k: String, interval: String): JsObject =
     ("aggs" -> (k ->
       ("date_histogram" -> ("field" -> k) ~ ("interval" -> interval))
     ))
@@ -30,3 +29,5 @@ trait AggregationDsl {
       }
     }
 }
+
+object AggregationDsl extends AggregationDsl

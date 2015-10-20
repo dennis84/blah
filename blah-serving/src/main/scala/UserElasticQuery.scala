@@ -1,15 +1,15 @@
 package blah.serving
 
 import spray.json._
-import blah.core.JsonTweaks._
-import blah.elastic.FullDsl._
+import blah.core.JsonDsl._
+import blah.elastic.{AggregationDsl => a}
 
 object UserElasticQuery {
   private def filterBy(xs: Map[String, String]): JsObject = JsObject()
 
   private def groupBy(xs: List[String]): JsObject =
-    nest(xs.collect {
-      case "country" => term("country")
+    a.nest(xs.collect {
+      case "country" => a.terms("country")
     })
 
   def filtered(q: UserQuery): JsObject = JsObject()

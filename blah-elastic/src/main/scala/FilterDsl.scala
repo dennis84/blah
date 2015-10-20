@@ -4,11 +4,14 @@ import spray.json._
 import blah.core.JsonDsl._
 
 trait FilterDsl {
-  def $gte(k: String, v: String): JsObject =
-    ("query" -> ("filtered" -> ("filter" -> ("range" ->
-      (k -> ("gte" -> v))))))
+  def filter(json: JsObject): JsObject =
+    ("query" -> ("filtered" -> ("filter" -> json)))
 
-  def $lte(k: String, v: String): JsObject =
-    ("query" -> ("filtered" -> ("filter" -> ("range" ->
-      (k -> ("lte" -> v))))))
+  def gte(k: String, v: JsValue): JsObject = 
+    filter("range" -> (k -> ("gte" -> v)))
+
+  def lte(k: String, v: JsValue): JsObject =
+    filter("range" -> (k -> ("lte" -> v)))
 }
+
+object FilterDsl extends FilterDsl
