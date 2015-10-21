@@ -40,7 +40,7 @@ function render(model, chan, conn) {
       }),
       widget(userBar, model, chan, conn, {
         groupBy: ['country'],
-        title: 'Visitors'
+        title: 'Visitors by Country'
       }),
       widget(count, model, chan, conn, {title: 'All', className: 'red'}),
       widget(userCount, model, chan, conn, {title: 'Unique Visitors'}),

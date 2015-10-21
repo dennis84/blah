@@ -1,4 +1,4 @@
-FROM blah/spark-base
+FROM dennis84/spark-base
 
 ENV SPARK_WORKER_PORT 8888
 EXPOSE 8888

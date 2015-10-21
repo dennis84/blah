@@ -24,11 +24,11 @@ object CountElasticQuery {
   } reduceOption (_ merge _) getOrElse JsObject()
 
   private def groupBy(xs: List[String]): JsObject =
-    a.nest((xs collectFirst {
+    a.nest(((xs collectFirst {
       case "date.hour"  => a.dateHistogram("date", "hour")
       case "date.month" => a.dateHistogram("date", "month")
       case "date.year"  => a.dateHistogram("date", "year")
-    } getOrElse a.dateHistogram("date", "day") :: xs.collect {
+    } getOrElse a.dateHistogram("date", "day")) :: xs.collect {
       case "user_agent.browser.family" => a.terms("browserFamily")
       case "user_agent.browser.major"  => a.terms("browserMajor")
       case "user_agent.os.family"      => a.terms("osFamily")

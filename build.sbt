@@ -65,9 +65,9 @@ lazy val algo = (project in file("blah-algo"))
         oldStrategy(x)
     }
   ).settings(
-    packageName in Docker := "blah/spark-submit",
+    packageName in Docker := "blah/algo",
     version in Docker := version.value,
-    dockerBaseImage := "blah/spark-base",
+    dockerBaseImage := "dennis84/spark-base",
     dockerEntrypoint := Seq(
       "spark-submit",
       "--class", "blah.algo.Submit",

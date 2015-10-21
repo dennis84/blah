@@ -1,4 +1,4 @@
-FROM blah/spark-base
+FROM dennis84/spark-base
 
 EXPOSE 7077 8080
 
