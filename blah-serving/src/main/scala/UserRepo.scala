@@ -34,7 +34,7 @@ class UserRepo(client: ElasticClient)(
       uri = "/blah/users/_search?size=0",
       entity = HttpEntity(
         ContentTypes.`application/json`,
-        UserElasticQuery.grouped(q).compactPrint)
+        UserElasticQuery(q).compactPrint)
     ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
       val aggs = json.extract[JsValue]('aggregations)
       AggregationParser.parseTo[UserCount](aggs)

@@ -1,11 +1,18 @@
 package blah.serving
 
 import org.scalatest._
+import spray.json._
 import blah.core.JsonDsl._
 
 class CountElasticQuerySpec extends FlatSpec with Matchers {
 
-  "CountElasticQuery" should "convert filters to es" in {
+  "CountElasticQuery" should "convert empty query object" in {
+    val empty: JsObject = ("aggs" -> ("count" -> ("sum" -> ("field" -> "count"))))
+    CountElasticQuery(CountQuery(None, None)) should be(empty)
+    CountElasticQuery(CountQuery(Some(Map.empty), None)) should be(empty)
+  }
+
+  it should "convert filters to es" in {
     val q = CountQuery(Some(Map(
       "page" -> "home",
       "user_agent.device.family" -> "iPhone",
@@ -15,7 +22,7 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
       "date.to" -> "2015-09-04"
     )))
 
-    CountElasticQuery.filtered(q) should be(
+    CountElasticQuery(q) should be(
       ("query" -> ("filtered" ->
         ("filter" -> ("range" -> ("date" ->
           ("gte" -> "2015-09-02") ~
@@ -37,7 +44,7 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
       "page" -> "home"
     )), Some(Nil))
 
-    CountElasticQuery.grouped(q) should be(
+    CountElasticQuery(q) should be(
       ("query" -> ("filtered" -> ("query" -> ("bool" -> ("must" -> List(
         ("term" -> ("page" -> "home"))
       )))))) ~
@@ -59,7 +66,7 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
       "user_agent.os.family"
     )))
 
-    CountElasticQuery.grouped(q) should be(
+    CountElasticQuery(q) should be(
       ("query" -> ("filtered" -> ("query" -> ("bool" -> ("must" -> List(
         ("term" -> ("page" -> "home"))
       )))))) ~

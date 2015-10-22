@@ -34,15 +34,12 @@ object CountElasticQuery {
       case "user_agent.os.family"      => a.terms("osFamily")
     }) map (x => a.nest(x, a.sum("count"))))
 
-  def filtered(q: CountQuery) =
-    q.filterBy map {
-      filters => filterBy(filters) merge a.sum("count")
-    } getOrElse a.sum("count")
-
-  def grouped(q: CountQuery) = List(
-    q.filterBy map (filterBy),
-    q.groupBy map (groupBy)
-  ).flatten reduceOption {
-    (a,b) => a merge b
-  } getOrElse JsObject()
+  def apply(q: CountQuery) = q match {
+    case CountQuery(Some(filters), None) =>
+      filterBy(filters) merge a.sum("count")
+    case CountQuery(None, Some(groups)) => groupBy(groups)
+    case CountQuery(Some(filters), Some(groups)) =>
+      filterBy(filters) merge groupBy(groups)
+    case _ => a.sum("count")
+  }
 }
