@@ -3,23 +3,12 @@ package blah.serving
 import org.scalatest._
 import spray.json._
 import spray.json.lenses.JsonLenses._
+import blah.elastic.AggregationParser
 import ServingJsonProtocol._
 
-class CountResponseParserSpec extends FlatSpec with Matchers {
+class ParseCountResponseSpec extends FlatSpec with Matchers {
 
   val resp = """|{
-                |  "_shards": {
-                |    "total": 5,
-                |    "successful": 5,
-                |    "failed": 0
-                |  },
-                |  "timed_out": false,
-                |  "took": 8,
-                |  "hits": {
-                |    "total": 802,
-                |    "max_score": 0.0,
-                |    "hits": []
-                |  },
                 |  "aggregations": {
                 |    "date": {
                 |      "buckets": [{
@@ -167,11 +156,10 @@ class CountResponseParserSpec extends FlatSpec with Matchers {
                 |  }
                 |}""".stripMargin
 
-  "CountResponseParser" should "parse an aggregated response" in {
+  "AggregationParser" should "parse a count response" in {
     val json = resp.parseJson
     val aggs = json.extract[JsValue]('aggregations)
-    val groups = List("date", "browserFamily", "osFamily")
-    CountResponseParser.parse(groups, aggs) should be (Vector(
+    AggregationParser.parse(aggs) should be (List(
       JsObject(
         "count" -> JsNumber(200),
         "date" -> JsString("2015-09-05"),

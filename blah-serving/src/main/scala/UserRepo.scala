@@ -11,6 +11,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json._
 import spray.json.lenses.JsonLenses._
 import blah.elastic.ElasticClient
+import blah.elastic.AggregationParser
 import ServingJsonProtocol._
 
 class UserRepo(client: ElasticClient)(
@@ -27,7 +28,7 @@ class UserRepo(client: ElasticClient)(
       Try(UserCount(json.extract[Long]('count))) getOrElse UserCount(0)
     }
 
-  def search(q: UserQuery): Future[Seq[JsObject]] =
+  def search(q: UserQuery) =
     client request HttpRequest(
       method = HttpMethods.POST,
       uri = "/blah/users/_search?size=0",
@@ -36,6 +37,6 @@ class UserRepo(client: ElasticClient)(
         UserElasticQuery.grouped(q).compactPrint)
     ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
       val aggs = json.extract[JsValue]('aggregations)
-      UserResponseParser.parse(q.groupBy.getOrElse(Nil), aggs)
+      AggregationParser.parse(aggs)
     }
 }

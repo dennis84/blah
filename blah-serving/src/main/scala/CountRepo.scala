@@ -10,6 +10,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json._
 import spray.json.lenses.JsonLenses._
 import blah.elastic.ElasticClient
+import blah.elastic.AggregationParser
 import ServingJsonProtocol._
 
 class CountRepo(client: ElasticClient)(
@@ -36,10 +37,6 @@ class CountRepo(client: ElasticClient)(
       CountElasticQuery.grouped(q).compactPrint)
   ) flatMap (resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
     val aggs = json.extract[JsValue]('aggregations)
-    CountResponseParser.parse(q.groupBy map ("date" :: _.collect {
-      case "user_agent.browser.family" => "browserFamily"
-      case "user_agent.browser.major" => "browserMajor"
-      case "user_agent.os.family" => "osFamily"
-    }) getOrElse Nil, aggs)
+    AggregationParser.parse(aggs)
   }
 }

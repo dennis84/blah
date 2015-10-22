@@ -3,25 +3,12 @@ package blah.serving
 import org.scalatest._
 import spray.json._
 import spray.json.lenses.JsonLenses._
+import blah.elastic.AggregationParser
 import ServingJsonProtocol._
 
-class UserResponseParserSpec extends FlatSpec with Matchers {
+class ParseUserResponseSpec extends FlatSpec with Matchers {
 
   val resp = """|{
-                |  "took":2,
-                |  "timed_out":false,
-                |  "_shards":{
-                |    "total":5,
-                |    "successful":5,
-                |    "failed":0
-                |  },
-                |  "hits":{
-                |    "total":4,
-                |    "max_score":0.0,
-                |    "hits":[
-                |
-                |    ]
-                |  },
                 |  "aggregations":{
                 |    "country":{
                 |      "doc_count_error_upper_bound":0,
@@ -40,11 +27,10 @@ class UserResponseParserSpec extends FlatSpec with Matchers {
                 |  }
                 |}""".stripMargin
 
-  "UserResponseParser" should "parse an aggregated response" in {
+  "AggregationParser" should "parse a user response" in {
     val json = resp.parseJson
     val aggs = json.extract[JsValue]('aggregations)
-    val groups = List("country")
-    UserResponseParser.parse(groups, aggs) should be (Vector(
+    AggregationParser.parse(aggs) should be (List(
       JsObject(
         "count" -> JsNumber(3),
         "country" -> JsString("Germany")),
