@@ -28,7 +28,7 @@ class UserRepo(client: ElasticClient)(
       Try(UserCount(json.extract[Long]('count))) getOrElse UserCount(0)
     }
 
-  def search(q: UserQuery) =
+  def search(q: UserQuery): Future[List[UserCount]] =
     client request HttpRequest(
       method = HttpMethods.POST,
       uri = "/blah/users/_search?size=0",
@@ -37,6 +37,6 @@ class UserRepo(client: ElasticClient)(
         UserElasticQuery.grouped(q).compactPrint)
     ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
       val aggs = json.extract[JsValue]('aggregations)
-      AggregationParser.parse(aggs)
+      AggregationParser.parseTo[UserCount](aggs)
     }
 }

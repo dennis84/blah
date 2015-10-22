@@ -32,4 +32,7 @@ object AggregationParser {
       }
     case _ => Nil
   }
+
+  def parseTo[A: JsonReader](data: JsValue): List[A] =
+    parse(data) map (_.convertTo[A])
 }

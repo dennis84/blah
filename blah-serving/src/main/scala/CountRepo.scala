@@ -19,24 +19,23 @@ class CountRepo(client: ElasticClient)(
 ) extends SprayJsonSupport {
   import system.dispatcher
 
-  def count(q: CountQuery): Future[CountResult] = client request HttpRequest(
+  def count(q: CountQuery): Future[Count] = client request HttpRequest(
     method = HttpMethods.POST,
     uri = "/blah/count/_search?size=0",
     entity = HttpEntity(
       ContentTypes.`application/json`,
       CountElasticQuery.filtered(q).compactPrint)
   ) flatMap (resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
-    CountResult(json.extract[Long]('aggregations / 'count / 'value))
+    Count(json.extract[Long]('aggregations / 'count / 'value))
   }
 
-  def search(q: CountQuery): Future[Seq[JsObject]] = client request HttpRequest(
+  def search(q: CountQuery): Future[List[Count]] = client request HttpRequest(
     method = HttpMethods.POST,
     uri = "/blah/count/_search?size=0",
     entity = HttpEntity(
       ContentTypes.`application/json`,
       CountElasticQuery.grouped(q).compactPrint)
   ) flatMap (resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
-    val aggs = json.extract[JsValue]('aggregations)
-    AggregationParser.parse(aggs)
+    AggregationParser.parseTo[Count](json.extract[JsValue]('aggregations))
   }
 }
