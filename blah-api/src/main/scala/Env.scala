@@ -11,7 +11,7 @@ class Env(system: ActorSystem) {
   private val config = system.settings.config
   lazy val producer = KafkaProducer[String](ProducerProperties(
     brokerList = config.getString("producer.broker.list"),
-    topic = "events_2",
+    topic = "events",
     clientId = "events",
     encoder = new StringEncoder()
   ))
