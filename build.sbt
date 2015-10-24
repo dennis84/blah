@@ -5,23 +5,23 @@ val res = Seq(
 )
 
 val deps = Seq(
-  "org.scalatest"           % "scalatest_2.11"                         % "2.2.5" % "test",
-  "com.typesafe.akka"      %% "akka-actor"                             % "2.4.0",
-  "com.typesafe.akka"       % "akka-stream-experimental_2.11"          % "1.0",
-  "com.typesafe.akka"       % "akka-http-core-experimental_2.11"       % "1.0",
-  "com.typesafe.akka"       % "akka-http-experimental_2.11"            % "1.0",
-  "com.typesafe.akka"       % "akka-http-spray-json-experimental_2.11" % "1.0",
-  "org.apache.kafka"       %% "kafka"                                  % "0.8.2.2",
-  "org.apache.spark"       %% "spark-core"                             % "1.5.1" % "provided",
-  "org.apache.spark"       %% "spark-streaming"                        % "1.5.1",
-  "org.apache.spark"       %% "spark-streaming-kafka"                  % "1.5.1",
-  "org.apache.spark"       %% "spark-mllib"                            % "1.5.1",
-  "org.elasticsearch"      %% "elasticsearch-spark"                    % "2.1.1",
-  "com.github.nscala-time" %% "nscala-time"                            % "2.2.0",
-  "com.softwaremill"       %% "reactive-kafka"                         % "0.7.2",
-  "org.clojars.timewarrior" % "ua-parser"                              % "1.3.0",
-  "net.virtual-void"       %% "json-lenses"                            % "0.6.1",
-  "com.maxmind.geoip2"      % "geoip2"                                 % "2.3.1"
+  "org.scalatest"                   % "scalatest_2.11"                         % "2.2.5" % "test",
+  "com.typesafe.akka"              %% "akka-actor"                             % "2.4.0",
+  "com.typesafe.akka"               % "akka-stream-experimental_2.11"          % "1.0",
+  "com.typesafe.akka"               % "akka-http-core-experimental_2.11"       % "1.0",
+  "com.typesafe.akka"               % "akka-http-experimental_2.11"            % "1.0",
+  "com.typesafe.akka"               % "akka-http-spray-json-experimental_2.11" % "1.0",
+  "org.apache.kafka"               %% "kafka"                                  % "0.8.2.2",
+  "org.apache.spark"               %% "spark-core"                             % "1.5.1" % "provided",
+  "org.apache.spark"               %% "spark-streaming"                        % "1.5.1",
+  "org.apache.spark"               %% "spark-streaming-kafka"                  % "1.5.1",
+  "org.apache.spark"               %% "spark-mllib"                            % "1.5.1",
+  "org.elasticsearch"              %% "elasticsearch-spark"                    % "2.1.1",
+  "com.github.nscala-time"         %% "nscala-time"                            % "2.2.0",
+  "com.softwaremill.reactivekafka" %% "reactive-kafka-core" % "0.8.1",
+  "org.clojars.timewarrior"         % "ua-parser"                              % "1.3.0",
+  "net.virtual-void"               %% "json-lenses"                            % "0.6.1",
+  "com.maxmind.geoip2"              % "geoip2"                                 % "2.3.1"
 )
 
 lazy val commonSettings = Seq(
