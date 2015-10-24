@@ -1,6 +1,5 @@
 package blah.elastic
 
-import scala.util.{Try, Success, Failure}
 import spray.json._
 import spray.json.lenses.JsonLenses._
 import DefaultJsonProtocol._
