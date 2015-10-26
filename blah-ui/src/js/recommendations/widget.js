@@ -4,13 +4,13 @@ import {recommendations} from './ctrl'
 import debounce from 'debounce'
 
 function views(xs) {
-  if(undefined === xs) return
-  return xs.map((item) => {
+  if(undefined === xs || 0 == xs.length) return
+  return h('div.recommendations', xs.map((item) => {
     return h('div', [
       h('span', item.page),
-      h('span.label.label-danger.pull-right', String(item.score))
+      h('span.label.label-danger.pull-right', String(parseFloat(item.score).toFixed(2)))
     ])
-  })
+  }))
 }
 
 function render(model, update, options) {
@@ -29,7 +29,7 @@ function render(model, update, options) {
         update(recommendations, {user: e.target.value})
       }, 500)
     }),
-    h('div.recommendations', views(model.views))
+    views(model.views)
   ])
 }
 
