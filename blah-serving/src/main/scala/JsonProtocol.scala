@@ -4,7 +4,7 @@ import blah.core.JsonProtocol
 
 trait ServingJsonProtocol extends JsonProtocol {
   implicit val countQueryFmt = jsonFormat2(CountQuery)
-  implicit val countFmt = jsonFormat5(Count)
+  implicit val countFmt = jsonFormat6(Count)
 
   implicit val similarityQueryFmt = jsonFormat2(SimilarityQuery)
   implicit val similarityItemFmt = jsonFormat2(SimilarityItem)

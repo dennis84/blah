@@ -7,4 +7,5 @@ case class Count(
   date: Option[DateTime] = None,
   browserFamily: Option[String] = None,
   browserMajor: Option[String] = None,
-  osFamily: Option[String] = None)
+  osFamily: Option[String] = None,
+  deviceFamily: Option[String] = None)
