@@ -3,8 +3,6 @@ package blah.api
 import java.util.UUID
 import scala.util.{Try, Success, Failure}
 import akka.actor.ActorSystem
-import akka.pattern.ask
-import akka.util.Timeout
 import akka.stream.Materializer
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.StatusCodes._
@@ -16,8 +14,7 @@ import Directives._
 
 class Service(env: Env)(
   implicit system: ActorSystem,
-  materializer: Materializer,
-  timeout: Timeout
+  materializer: Materializer
 ) extends ApiJsonProtocol with SprayJsonSupport {
   import system.dispatcher
 

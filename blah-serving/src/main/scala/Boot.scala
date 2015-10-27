@@ -3,7 +3,7 @@ package blah.serving
 import scala.util.{Try, Success, Failure}
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{Source, Sink}
+import akka.stream.scaladsl.Source
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 

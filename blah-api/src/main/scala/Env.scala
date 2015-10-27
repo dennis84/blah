@@ -1,10 +1,9 @@
 package blah.api
 
-import akka.actor._
+import akka.actor.ActorSystem
 import kafka.producer.KafkaProducer
 import kafka.serializer.StringEncoder
 import com.softwaremill.react.kafka.ProducerProperties
-import com.typesafe.config.ConfigFactory
 
 class Env(system: ActorSystem) {
   import system.dispatcher
@@ -13,6 +12,6 @@ class Env(system: ActorSystem) {
     brokerList = config.getString("producer.broker.list"),
     topic = "events",
     clientId = "events",
-    encoder = new StringEncoder()
+    encoder = new StringEncoder
   ))
 }

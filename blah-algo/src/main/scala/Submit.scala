@@ -14,7 +14,7 @@ object Submit {
       brokerList = config.getString("producer.broker.list"),
       topic = "trainings",
       clientId = "websocket",
-      encoder = new StringEncoder()
+      encoder = new StringEncoder
     ))
 
     val algos = Map(

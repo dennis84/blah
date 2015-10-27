@@ -28,7 +28,7 @@ function connect(url) {
 
 function parse(text) {
   var res = text.match(/^([a-z-]+)@(.*)$/)
-    , data = null
+  var data = null
 
   try {
     var data = JSON.parse(res[2])

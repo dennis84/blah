@@ -5,7 +5,7 @@ import spray.json.lenses.JsonLenses._
 import DefaultJsonProtocol._
 
 object AggregationParser {
-  
+
   private def extractKey(json: JsValue): JsValue =
     json.extract[JsValue]('key_as_string.?) getOrElse json.extract[JsValue]('key)
 

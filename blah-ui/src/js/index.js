@@ -25,11 +25,11 @@ function renderLoop(model) {
       var action = yield csp.take(chan)
       model = update(model, action)
       var updated = dashboard(model, chan, conn)
-        , patches = diff(tree, updated)
+      var patches = diff(tree, updated)
       node = patch(node, patches)
       tree = updated
     }
-  });
+  })
 }
 
 renderLoop(model)

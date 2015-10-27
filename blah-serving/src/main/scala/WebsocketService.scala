@@ -1,10 +1,9 @@
 package blah.serving
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.server._
+import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.model.ws.{Message, TextMessage}
-import akka.stream.scaladsl.{Sink, Source, Flow}
-import Directives._
+import akka.stream.scaladsl.Flow
 
 class WebsocketService(
   room: WebsocketRoom

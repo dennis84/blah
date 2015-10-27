@@ -16,7 +16,7 @@ class CountAlgo extends Algo {
       .filter(_.isSuccess)
       .map(_.get)
       .map { view =>
-        val ua = view.props.userAgent.map(x => UserAgent(x))
+        val ua = view.props.userAgent.map(UserAgent(_))
         val doc = Map(
           "page" -> view.props.page,
           "date" -> view.date.hourOfDay.roundFloorCopy.toString,

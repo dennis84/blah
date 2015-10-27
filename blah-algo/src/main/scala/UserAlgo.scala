@@ -14,9 +14,7 @@ class UserAlgo extends Algo {
       .map(x => Try(x.parseJson.convertTo[UserEvent]))
       .filter(_.isSuccess)
       .map(_.get)
-      .map { event =>
-        (event.props.user, event.props.ip)
-      }
+      .map(x => (x.props.user, x.props.ip))
       .groupByKey
       .map { case(u, ips) =>
         val maybeIp = ips.flatten.lastOption

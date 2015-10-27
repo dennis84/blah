@@ -1,13 +1,11 @@
 package blah.elastic
 
-import scala.util.Try
-import scala.concurrent.Future
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.stream.scaladsl._
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpRequest
- 
+
 class ElasticClient(uri: ElasticUri)(
   implicit system: ActorSystem,
   mat: Materializer) {

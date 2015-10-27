@@ -1,12 +1,12 @@
 var gulp = require('gulp')
-  , gutil = require('gulp-util')
-  , browserify = require('browserify')
-  , babelify = require('babelify')
-  , watchify = require('watchify')
-  , source = require('vinyl-source-stream')
-  , streamify = require('gulp-streamify')
-  , stylus = require('gulp-stylus')
-  , nib = require('nib')
+var gutil = require('gulp-util')
+var browserify = require('browserify')
+var babelify = require('babelify')
+var watchify = require('watchify')
+var source = require('vinyl-source-stream')
+var streamify = require('gulp-streamify')
+var stylus = require('gulp-stylus')
+var nib = require('nib')
 
 var onError = function(error) {
   gutil.log(gutil.colors.red(error.message))
@@ -14,7 +14,7 @@ var onError = function(error) {
 
 gulp.task('js', function() {
   var bundleStream = browserify('./src/js/index.js')
-      .transform(babelify)
+    .transform(babelify)
   bundleStream = watchify(bundleStream)
     .on('update', rebundle)
     .on('log', gutil.log)

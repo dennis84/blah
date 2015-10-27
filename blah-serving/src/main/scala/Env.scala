@@ -11,13 +11,13 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
   lazy val websocketRoom = new WebsocketRoom(system)
   lazy val websocketHub = system.actorOf(Props(new WebsocketHub(websocketRoom)))
 
-  lazy val kafka = new ReactiveKafka()
+  lazy val kafka = new ReactiveKafka
   lazy val consumer = kafka.consume(ConsumerProperties(
     brokerList = config.getString("consumer.broker.list"),
     zooKeeperHost = config.getString("consumer.zookeeper.connect"),
     topic = "trainings",
     groupId = "websocket",
-    decoder = new StringDecoder()
+    decoder = new StringDecoder
   ))
 
   lazy val elasticClient = new ElasticClient(ElasticUri(
