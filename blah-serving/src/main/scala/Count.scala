@@ -8,4 +8,5 @@ case class Count(
   browserFamily: Option[String] = None,
   browserMajor: Option[String] = None,
   osFamily: Option[String] = None,
-  deviceFamily: Option[String] = None)
+  deviceFamily: Option[String] = None,
+  platform: Option[String] = None)

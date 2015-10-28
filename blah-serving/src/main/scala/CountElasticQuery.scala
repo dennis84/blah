@@ -33,6 +33,7 @@ object CountElasticQuery {
       case "user_agent.browser.major"  => a.terms("browserMajor")
       case "user_agent.os.family"      => a.terms("osFamily")
       case "user_agent.device.family"  => a.terms("deviceFamily")
+      case "user_agent.platform"       => a.terms("platform")
     }) map (x => a.nest(x, a.sum("count"))))
 
   def apply(q: CountQuery) = q match {

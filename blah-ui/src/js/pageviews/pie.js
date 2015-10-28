@@ -1,4 +1,5 @@
 import {h} from 'virtual-dom'
+import clone from 'clone'
 import Chartist from 'chartist'
 import {grouped} from './ctrl'
 import {hook, mount} from '../hook'
@@ -6,7 +7,12 @@ import {hook, mount} from '../hook'
 function chart(model) {
   if(undefined === model.groups) return
   var data = model.groups.map((x) => x.count)
-  var labels = model.groups.map((x) => x.browserFamily)
+  var labels = model.groups.map((x) => {
+    var y = clone(x)
+    delete y['count']
+    delete y['date']
+    return Object.values(y).join(', ')
+  })
 
   return [
     h('div.labels', labels.map((label, i) => {

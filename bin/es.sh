@@ -18,6 +18,11 @@ curl -PUT 'http://192.168.99.100:9200/blah' -d '
         "osMinor": {"type": "string", "index": "not_analyzed"},
         "osPatch": {"type": "string", "index": "not_analyzed"},
         "deviceFamily": {"type": "string", "index": "not_analyzed"},
+        "platform": {"type": "string", "index": "not_analyzed"},
+        "isMobile": {"type": "boolean"},
+        "isTablet": {"type": "boolean"},
+        "isMobileDevice": {"type": "boolean"},
+        "isComputer": {"type": "boolean"},
         "count": {"type": "integer"}
       }
     },

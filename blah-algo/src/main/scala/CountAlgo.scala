@@ -17,6 +17,7 @@ class CountAlgo extends Algo {
       .map(_.get)
       .map { view =>
         val ua = view.props.userAgent.map(UserAgent(_))
+        val uac = ua.map(UserAgentClassifier.classify)
         val doc = Map(
           "page" -> view.props.page,
           "date" -> view.date.hourOfDay.roundFloorCopy.toString,
@@ -28,7 +29,16 @@ class CountAlgo extends Algo {
           "osMajor" -> ua.map(_.os.major).flatten.getOrElse("N/A"),
           "osMinor" -> ua.map(_.os.minor).flatten.getOrElse("N/A"),
           "osPatch" -> ua.map(_.os.patch).flatten.getOrElse("N/A"),
-          "deviceFamily" -> ua.map(_.device.family).getOrElse("N/A"))
+          "deviceFamily" -> ua.map(_.device.family).getOrElse("N/A"),
+          "isMobile" -> uac.map(_.mobile).getOrElse(false),
+          "isTablet" -> uac.map(_.tablet).getOrElse(false),
+          "isMobileDevice" -> uac.map(_.mobileDevice).getOrElse(false),
+          "isComputer" -> uac.map(_.computer).getOrElse(true),
+          "platform" -> uac.map {
+            case c if c.mobile => "Mobile"
+            case c if c.spider => "Spider"
+            case _             => "Computer"
+          }.getOrElse("Computer"))
         val id = MessageDigest.getInstance("SHA-1")
           .digest(doc.hashCode.toString.getBytes("UTF-8"))
           .map("%02x".format(_))

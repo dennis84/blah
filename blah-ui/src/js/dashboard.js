@@ -42,8 +42,13 @@ function render(model, chan, conn) {
         groupBy: ['country'],
         title: 'Visitors by Country'
       }),
-      widget(count, model, chan, conn, {title: 'All', className: 'red'}),
       widget(userCount, model, chan, conn, {title: 'Unique Visitors'}),
+      widget(count, model, chan, conn, {title: 'All', className: 'red'}),
+      widget(pie, model, chan, conn, {
+        filterBy: {'date.from': moment().subtract(1, 'year')},
+        groupBy: ['date.year', 'user_agent.platform'],
+        title: 'Platform Statistics'
+      }),
       widget(count, model, chan, conn, {filterBy: {page: 'page1'}, title: 'Page 1'}),
       widget(count, model, chan, conn, {filterBy: {page: 'page2'}, title: 'Page 2'}),
       widget(recommendations, model, chan)
