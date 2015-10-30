@@ -9,9 +9,9 @@ object UserElasticQuery {
       case "country" => a.terms("country")
     })
 
-  def apply(q: UserQuery): JsObject = q match {
-    case UserQuery(None, Some(groups)) => groupBy(groups)
-    case UserQuery(Some(filters), Some(groups)) => groupBy(groups)
+  def apply(q: Query): JsObject = q match {
+    case Query(None, Some(groups)) => groupBy(groups)
+    case Query(Some(filters), Some(groups)) => groupBy(groups)
     case _ => JsObject()
   }
 }

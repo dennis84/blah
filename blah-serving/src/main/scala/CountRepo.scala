@@ -17,7 +17,7 @@ class CountRepo(client: ElasticClient)(
 ) extends SprayJsonSupport with ServingJsonProtocol {
   import system.dispatcher
 
-  def count(q: CountQuery): Future[Count] = client request HttpRequest(
+  def count(q: Query): Future[Count] = client request HttpRequest(
     method = HttpMethods.POST,
     uri = "/blah/count/_search?size=0",
     entity = HttpEntity(
@@ -27,7 +27,7 @@ class CountRepo(client: ElasticClient)(
     Count(json.extract[Long]('aggregations / 'count / 'value))
   }
 
-  def search(q: CountQuery): Future[List[Count]] = client request HttpRequest(
+  def search(q: Query): Future[List[Count]] = client request HttpRequest(
     method = HttpMethods.POST,
     uri = "/blah/count/_search?size=0",
     entity = HttpEntity(

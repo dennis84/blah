@@ -8,18 +8,18 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
 
   "CountElasticQuery" should "convert empty query object" in {
     val empty: JsObject = ("aggs" -> ("count" -> ("sum" -> ("field" -> "count"))))
-    CountElasticQuery(CountQuery(None, None)) should be(empty)
-    CountElasticQuery(CountQuery(Some(Map.empty), None)) should be(empty)
+    CountElasticQuery(Query(None, None)) should be(empty)
+    CountElasticQuery(Query(Some(Nil), None)) should be(empty)
   }
 
   it should "convert filters to es" in {
-    val q = CountQuery(Some(Map(
-      "page" -> "home",
-      "user_agent.device.family" -> "iPhone",
-      "user_agent.browser.family" -> "Chrome",
-      "user_agent.browser.major" -> "47",
-      "date.from" -> "2015-09-02",
-      "date.to" -> "2015-09-04"
+    val q = Query(Some(List(
+      Filter("page", "eq", "home"),
+      Filter("user_agent.device.family", "eq", "iPhone"),
+      Filter("user_agent.browser.family", "eq", "Chrome"),
+      Filter("user_agent.browser.major", "eq", "47"),
+      Filter("date.from", "gte", "2015-09-02"),
+      Filter("date.to", "lte", "2015-09-04")
     )))
 
     CountElasticQuery(q) should be(
@@ -40,8 +40,8 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
   }
 
   it should "convert filters and empty groups to es" in {
-    val q = CountQuery(Some(Map(
-      "page" -> "home"
+    val q = Query(Some(List(
+      Filter("page", "eq", "home")
     )), Some(Nil))
 
     CountElasticQuery(q) should be(
@@ -58,8 +58,8 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
   }
 
   it should "convert filters and groups to es" in {
-    val q = CountQuery(Some(Map(
-      "page" -> "home"
+    val q = Query(Some(List(
+      Filter("page", "eq", "home")
     )), Some(List(
       "date.hour",
       "user_agent.browser.family",
