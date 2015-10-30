@@ -18,12 +18,12 @@ class Service(env: Env)(
 ) extends ApiJsonProtocol with SprayJsonSupport {
   import system.dispatcher
 
-  val route = pathPrefix("events") {
-    (post & entity(as[Service.Create])) { req =>
+  val route = path("events" / Segment) { name =>
+    (post & entity(as[Map[String, JsValue]])) { props =>
       complete {
         val evt = Event(
-          UUID.randomUUID.toString, req.name,
-          DateTime.now, req.props)
+          UUID.randomUUID.toString, name,
+          DateTime.now, props)
         Try(env.producer.send(evt.toJson.compactPrint)) match {
           case Success(_) =>
             Created -> Service.Message("Event successfully created.")
