@@ -15,14 +15,11 @@ open ./index.html
 ## Collecting
 
 ```bash
-curl -POST -H 'Content-Type: application/json' "http://$BOOT2DOCKER_IP:8000/events" -d '{
-  "name":"view",
-  "props":{
-    "page":"home",
-    "user":"user1",
-    "ip": "",
-    "userAgent": ""
-  }
+curl -POST -H 'Content-Type: application/json' "http://$BOOT2DOCKER_IP:8000/events/view" -d '{
+  "page":"home",
+  "user":"user1",
+  "ip": "",
+  "userAgent": ""
 }
 ```
 

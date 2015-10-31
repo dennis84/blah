@@ -19,6 +19,7 @@ object CountElasticQuery {
     case Filter("user_agent.os.major", "eq", value)       => q.term("osMajor", value)
     case Filter("user_agent.os.minor", "eq", value)       => q.term("osMinor", value)
     case Filter("user_agent.os.patch", "eq", value)       => q.term("osPatch", value)
+    case Filter("user_agent.platform", "ne", value)       => q.notTerm("platform", value)
     case Filter("date.from", "gte", value)                => f.gte("date", value)
     case Filter("date.to", "lte", value)                  => f.lte("date", value)
   } reduceOption (_ merge _) getOrElse JsObject()
