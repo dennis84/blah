@@ -27,7 +27,7 @@ object Submit {
     conf.set("es.nodes", config.getString("elasticsearch.url"))
     conf.set("es.index.auto.create", "false")
     val sc = new SparkContext(conf)
-    val rdd = sc.textFile(config.getString("hadoop.url") + "/blah/events.*.jsonl")
+    val rdd = sc.textFile(config.getString("hadoop.url") + "/events/*/*/*/*.jsonl")
     algo.train(rdd)
 
     Try(producer send args(0)) match {
