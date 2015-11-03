@@ -22,12 +22,14 @@ object Submit {
       "similarity" -> new SimilarityAlgo,
       "user" -> new UserAlgo)
     val algo = algos(args(0))
+    val path = args.lift(1).getOrElse("*/*/*")
     val conf = new SparkConf()
       .setAppName(args(0))
     conf.set("es.nodes", config.getString("elasticsearch.url"))
     conf.set("es.index.auto.create", "false")
+    val hadoopUrl = config.getString("hadoop.url")
     val sc = new SparkContext(conf)
-    val rdd = sc.textFile(config.getString("hadoop.url") + "/events/*/*/*/*.jsonl")
+    val rdd = sc.textFile(s"$hadoopUrl/events/$path/*.jsonl")
     algo.train(rdd)
 
     Try(producer send args(0)) match {
