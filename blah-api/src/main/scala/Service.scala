@@ -36,8 +36,5 @@ class Service(env: Env)(
 }
 
 object Service {
-  case class Create(
-    name: String,
-    props: Map[String, JsValue] = Map.empty)
   case class Message(text: String)
 }
