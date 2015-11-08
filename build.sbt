@@ -100,3 +100,11 @@ lazy val serving = (project in file("blah-serving"))
   )
   .dependsOn(core % "compile->compile;test->test")
   .dependsOn(elastic)
+
+lazy val streaming = (project in file("blah-streaming"))
+  .settings(commonSettings: _*)
+  .settings(dependencyOverrides ++= Set(
+    "com.fasterxml.jackson.core" % "jackson-databind" % "2.4.6"
+  ))
+  .dependsOn(core % "compile->compile;test->test")
+  .dependsOn(algo)
