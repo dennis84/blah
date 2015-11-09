@@ -62,7 +62,7 @@ kafka:
     - "2181:2181"
     - "9092:9092"
   environment:
-    ADVERTISED_HOST: 192.168.99.100
+    ADVERTISED_HOST: 192.168.99.106
     ADVERTISED_PORT: 9092
 
 api:
@@ -86,3 +86,15 @@ serving:
     KAFKA_URL: "kafka:9092"
     ZOOKEEPER_URL: "kafka:2181"
     ELASTICSEARCH_URL: "elasticsearch:9200"
+
+streaming_count:
+  image: blah/streaming:0.1.0
+  links:
+    - sparkmaster
+    - elasticsearch
+    - kafka
+  environment:
+    ZOOKEEPER_URL: "kafka:2181"
+    ELASTICSEARCH_URL: "elasticsearch:9200"
+    SPARK_URL: "spark://sparkmaster:7077"
+  command: count

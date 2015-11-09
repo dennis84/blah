@@ -16,3 +16,4 @@ sbt api/docker:publishLocal || exit
 sbt serving/docker:publishLocal || exit
 sbt algo/assembly || exit
 sbt algo/docker:publishLocal || exit
+sbt streaming/docker:publishLocal || exit

@@ -44,38 +44,6 @@ lazy val elastic = (project in file("blah-elastic"))
   .settings(commonSettings: _*)
   .dependsOn(core % "compile->compile;test->test")
 
-lazy val algo = (project in file("blah-algo"))
-  .enablePlugins(JavaAppPackaging)
-  .enablePlugins(DockerPlugin)
-  .settings(commonSettings: _*)
-  .settings(
-    target in assembly := file("blah-algo/target/docker/stage/opt/docker/bin/"),
-    assemblyMergeStrategy in assembly := {
-      case PathList("org", "apache", xs @ _*) => MergeStrategy.first
-      case PathList("javax", "xml", xs @ _*) => MergeStrategy.first
-      case PathList("io", "netty", xs @ _*) => MergeStrategy.first
-      case PathList("com", "google", xs @ _*) => MergeStrategy.first
-      case PathList("com", "esotericsoftware", xs @ _*) => MergeStrategy.first
-      case PathList("com", "codahale", xs @ _*) => MergeStrategy.first
-      case PathList("akka", xs @ _*) => MergeStrategy.first
-      case "META-INF/io.netty.versions.properties" => MergeStrategy.first
-      case PathList(ps @ _*) if ps.last endsWith ".css"  => MergeStrategy.first
-      case x =>
-        val oldStrategy = (assemblyMergeStrategy in assembly).value
-        oldStrategy(x)
-    }
-  ).settings(
-    packageName in Docker := "blah/algo",
-    version in Docker := version.value,
-    dockerBaseImage := "dennis84/spark-base",
-    dockerEntrypoint := Seq(
-      "spark-submit",
-      "--class", "blah.algo.Submit",
-      "--master", "spark://sparkmaster:7077",
-      "/opt/docker/bin/algo-assembly-0.1.0.jar")
-  )
-  .dependsOn(core % "compile->compile;test->test")
-
 lazy val api = (project in file("blah-api"))
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
@@ -101,10 +69,70 @@ lazy val serving = (project in file("blah-serving"))
   .dependsOn(core % "compile->compile;test->test")
   .dependsOn(elastic)
 
+lazy val algo = (project in file("blah-algo"))
+  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(DockerPlugin)
+  .settings(commonSettings: _*)
+  .settings(
+    target in assembly := file("blah-algo/target/docker/stage/opt/docker/bin/"),
+    assemblyMergeStrategy in assembly := {
+      case PathList("org", "apache", xs @ _*) => MergeStrategy.first
+      case PathList("javax", "xml", xs @ _*) => MergeStrategy.first
+      case PathList("io", "netty", xs @ _*) => MergeStrategy.first
+      case PathList("com", "google", xs @ _*) => MergeStrategy.first
+      case PathList("com", "esotericsoftware", xs @ _*) => MergeStrategy.first
+      case PathList("com", "codahale", xs @ _*) => MergeStrategy.first
+      case PathList("akka", xs @ _*) => MergeStrategy.first
+      case "META-INF/io.netty.versions.properties" => MergeStrategy.first
+      case PathList(ps @ _*) if ps.last endsWith ".css"  => MergeStrategy.first
+      case x =>
+        val oldStrategy = (assemblyMergeStrategy in assembly).value
+        oldStrategy(x)
+    })
+  .settings(
+    packageName in Docker := "blah/algo",
+    version in Docker := version.value,
+    dockerBaseImage := "dennis84/spark-base",
+    dockerEntrypoint := Seq(
+      "spark-submit",
+      "--class", "blah.algo.Submit",
+      "--master", "spark://sparkmaster:7077",
+      "/opt/docker/bin/algo-assembly-0.1.0.jar")
+  )
+  .dependsOn(core % "compile->compile;test->test")
+
 lazy val streaming = (project in file("blah-streaming"))
+  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(DockerPlugin)
   .settings(commonSettings: _*)
   .settings(dependencyOverrides ++= Set(
     "com.fasterxml.jackson.core" % "jackson-databind" % "2.4.6"
   ))
+  .settings(
+    target in assembly := file("blah-algo/target/docker/stage/opt/docker/bin/"),
+    assemblyMergeStrategy in assembly := {
+      case PathList("org", "apache", xs @ _*) => MergeStrategy.first
+      case PathList("javax", "xml", xs @ _*) => MergeStrategy.first
+      case PathList("io", "netty", xs @ _*) => MergeStrategy.first
+      case PathList("com", "google", xs @ _*) => MergeStrategy.first
+      case PathList("com", "esotericsoftware", xs @ _*) => MergeStrategy.first
+      case PathList("com", "codahale", xs @ _*) => MergeStrategy.first
+      case PathList("akka", xs @ _*) => MergeStrategy.first
+      case "META-INF/io.netty.versions.properties" => MergeStrategy.first
+      case "application.conf" => MergeStrategy.first
+      case PathList(ps @ _*) if ps.last endsWith ".css"  => MergeStrategy.first
+      case x =>
+        val oldStrategy = (assemblyMergeStrategy in assembly).value
+        oldStrategy(x)
+    })
+  .settings(
+    packageName in Docker := "blah/streaming",
+    version in Docker := version.value,
+    dockerBaseImage := "dennis84/spark-base",
+    dockerEntrypoint := Seq(
+      "spark-submit",
+      "--class", "blah.streaming.StreamingApp",
+      "--master", "spark://sparkmaster:7077",
+      "/opt/docker/bin/streaming-assembly-0.1.0.jar"))
   .dependsOn(core % "compile->compile;test->test")
   .dependsOn(algo)
