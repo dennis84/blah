@@ -20,13 +20,21 @@ datanode1:
     - ./blah-data/dfs/name:/data/dfs/name
     - ./blah-data/dfs/data:/data/dfs/data
 
-sparkworker:
+sparkworker1:
   image: blah/spark-worker
   links:
     - sparkmaster
   ports:
     - "8888:8888"
     - "8081:8081"
+
+sparkworker2:
+  image: blah/spark-worker
+  links:
+    - sparkmaster
+  ports:
+    - "8889:8888"
+    - "8082:8081"
 
 sparkmaster:
   image: blah/spark-master
@@ -62,7 +70,7 @@ kafka:
     - "2181:2181"
     - "9092:9092"
   environment:
-    ADVERTISED_HOST: 192.168.99.106
+    ADVERTISED_HOST: 192.168.99.100
     ADVERTISED_PORT: 9092
 
 api:
@@ -96,5 +104,4 @@ streaming_count:
   environment:
     ZOOKEEPER_URL: "kafka:2181"
     ELASTICSEARCH_URL: "elasticsearch:9200"
-    SPARK_URL: "spark://sparkmaster:7077"
   command: count

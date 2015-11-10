@@ -15,22 +15,19 @@ object StreamingApp {
     val algo = algos(args(0))
     val config = ConfigFactory.load()
     val conf = new SparkConf()
-      .setMaster(config.getString("spark.master"))
-      .setAppName(args(0))
+      .setAppName(s"streaming-${args(0)}")
     conf.set("es.nodes", config.getString("elasticsearch.url"))
     conf.set("es.index.auto.create", "false")
     conf.set("es.write.operation", "upsert")
     conf.set("es.update.script", "ctx._source.count += count")
     conf.set("es.update.script.params", "count:count")
 
-    val ssc = new StreamingContext(conf, Seconds(5))
-    val stream = KafkaUtils.createStream[String, String, StringDecoder, StringDecoder](
-      ssc = ssc,
-      kafkaParams = Map(
-        "group.id" -> config.getString("consumer.group.id"),
-        "zookeeper.connect" -> config.getString("consumer.zookeeper.connect")),
-      topics = Map("events" -> 1),
-      storageLevel = StorageLevel.MEMORY_ONLY
+    val ssc = new StreamingContext(conf, Seconds(10))
+    val stream = KafkaUtils.createStream(
+      ssc,
+      config.getString("consumer.zookeeper.connect"),
+      config.getString("consumer.group.id"),
+      Map("events" -> 1)
     ).map(_._2)
 
     stream.foreachRDD(algo.train _)
