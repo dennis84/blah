@@ -94,15 +94,3 @@ serving:
     KAFKA_URL: "kafka:9092"
     ZOOKEEPER_URL: "kafka:2181"
     ELASTICSEARCH_URL: "elasticsearch:9200"
-
-streaming_count:
-  image: blah/streaming:0.1.0
-  links:
-    - sparkmaster
-    - elasticsearch
-    - kafka
-  environment:
-    KAFKA_URL: "kafka:9092"
-    ZOOKEEPER_URL: "kafka:2181"
-    ELASTICSEARCH_URL: "elasticsearch:9200"
-  command: count

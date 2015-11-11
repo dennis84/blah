@@ -13,7 +13,8 @@ import blah.algo._
 object StreamingApp {
   def main(args: Array[String]) {
     val algos = Map(
-      "count" -> new CountAlgo)
+      "count" -> new CountAlgo,
+      "user" -> new UserAlgo)
     val algo = algos(args(0))
     val config = ConfigFactory.load()
 

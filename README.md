@@ -29,4 +29,8 @@ curl -POST -H 'Content-Type: application/json' "http://$BOOT2DOCKER_IP:8000/even
 docker/submit count
 docker/submit user
 docker/submit similarity
+
+# Streaming
+docker/streaming count
+docker/streaming user
 ```
