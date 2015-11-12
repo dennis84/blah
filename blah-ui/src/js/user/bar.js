@@ -22,7 +22,10 @@ function chart(model) {
 function render(model, update, conn, options) {
   return h('div.widget.widget-bar', {
     className: options.className,
-    mount: mount((node) => update(grouped, options))
+    mount: mount((node) => {
+      conn.on('user', (data) => update(grouped, options))
+      update(grouped, options)
+    })
   }, [
     h('h3', options.title),
     chart(model)

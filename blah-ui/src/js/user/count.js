@@ -13,7 +13,10 @@ function content(model, options) {
 function render(model, update, conn, options) {
   return h('div.widget.widget-users.center-hv', {
     className: options.className,
-    mount: mount((node) => update(count, options))
+    mount: mount((node) => {
+      conn.on('user', (data) => update(count, options))
+      update(count, options)
+    })
   }, content(model, options))
 }
 
