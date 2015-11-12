@@ -7,6 +7,7 @@ docker run \
   --link elasticsearch:elasticsearch \
   --link kafka:kafka \
   --env KAFKA_URL=kafka:9092 \
+  --env ZOOKEEPER_URL=kafka:2181 \
   --env HADOOP_URL=hdfs://namenode:9000 \
   --env ELASTICSEARCH_URL=elasticsearch:9200 \
   blah/algo:0.1.0 "$@"
