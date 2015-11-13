@@ -31,6 +31,6 @@ docker/submit user
 docker/submit similarity
 
 # Streaming
-docker/streaming count
-docker/streaming user
+docker/submit count-streaming
+docker/submit user-streaming
 ```

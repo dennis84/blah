@@ -1,7 +1,12 @@
 package blah.algo
 
 import org.apache.spark.SparkConf
+import com.typesafe.config.Config
 
 trait Job {
-  def run(conf: SparkConf, args: Array[String]): Unit
+  def run(
+    config: Config,
+    sparkConf: SparkConf,
+    args: Array[String]
+  ): Unit
 }

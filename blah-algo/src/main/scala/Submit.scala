@@ -19,26 +19,36 @@ object Submit {
     lazy val similarityAlgo = new SimilarityAlgo
     lazy val userAlgo = new UserAlgo
 
-    lazy val countBatch = new BatchJob(config, countAlgo, producer, "count")
-    lazy val similarityBatch = new BatchJob(config, similarityAlgo, producer, "similarity")
-    lazy val userBatch = new BatchJob(config, userAlgo, producer, "user")
-    lazy val countStream = new CountStreamingJob(config, countAlgo, producer, "count")
-    lazy val userStream = new StreamingJob(config, userAlgo, producer, "user")
+    lazy val countBatch = new BatchJob(countAlgo, producer, "count")
+    lazy val similarityBatch = new BatchJob(similarityAlgo, producer, "similarity")
+    lazy val userBatch = new BatchJob(userAlgo, producer, "user")
+    lazy val countStreaming = new CountStreamingJob(countAlgo, producer, "count")
+    lazy val userStreaming = new StreamingJob(userAlgo, producer, "user")
     
-    val conf = new SparkConf().setAppName(args(0))
-    conf.set("es.nodes", config.getString("elasticsearch.url"))
-    conf.set("es.index.auto.create", "false")
+    val sparkConf = new SparkConf().setAppName(args(0))
+    sparkConf.set("es.nodes", config.getString("elasticsearch.url"))
+    sparkConf.set("es.index.auto.create", "false")
 
     val jobs = Map(
       "count" -> countBatch,
       "similarity" -> similarityBatch,
       "user" -> userBatch,
-      "count-stream" -> countStream,
-      "user-stream" -> userStream)
+      "count-streaming" -> countStreaming,
+      "user-streaming" -> userStreaming)
 
-    for {
+    (for {
       algo <- args lift 0
       job <- jobs get algo
-    } yield job.run(conf, args)
+    } yield {
+      job.run(config, sparkConf, args)
+    }) getOrElse {
+      println("""|Usage:
+                 |  submit count           [path] e.g. "2015/*/*"
+                 |  submit similarity      [path] 
+                 |  submit user            [path]
+                 |  submit count-streaming
+                 |  submit user-streaming
+                 |""".stripMargin)
+    }
   }
 }

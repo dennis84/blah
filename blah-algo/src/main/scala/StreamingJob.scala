@@ -8,16 +8,15 @@ import kafka.producer.KafkaProducer
 import com.typesafe.config.Config
 
 class StreamingJob(
-  config: Config,
   algo: Algo,
   producer: KafkaProducer[String],
   message: String
 ) extends Job {
 
-  def run(conf: SparkConf, args: Array[String]) {
-    conf.set("es.write.operation", "upsert")
+  def run(config: Config, sparkConf: SparkConf, args: Array[String]) {
+    sparkConf.set("es.write.operation", "upsert")
 
-    val ssc = new StreamingContext(conf, Seconds(10))
+    val ssc = new StreamingContext(sparkConf, Seconds(10))
     val stream = KafkaUtils.createStream(ssc,
       config.getString("consumer.zookeeper.connect"),
       config.getString("consumer.group.id"),

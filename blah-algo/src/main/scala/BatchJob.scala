@@ -6,16 +6,15 @@ import kafka.producer.KafkaProducer
 import com.typesafe.config.Config
 
 class BatchJob(
-  config: Config,
   algo: Algo,
   producer: KafkaProducer[String],
   message: String
 ) extends Job {
 
-  def run(conf: SparkConf, args: Array[String]) {
+  def run(config: Config, sparkConf: SparkConf, args: Array[String]) {
     val path = args.lift(1).getOrElse("*/*/*")
     val hadoopUrl = config.getString("hadoop.url")
-    val sc = new SparkContext(conf)
+    val sc = new SparkContext(sparkConf)
     val rdd = sc.textFile(s"$hadoopUrl/events/$path/*.jsonl")
     algo.train(rdd)
 
