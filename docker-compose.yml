@@ -1,0 +1,37 @@
+zookeeper:
+  image: jplock/zookeeper:3.4.5
+  net: host
+
+mesos:
+  image: mesosphere/mesos-master:0.25.0-0.2.70.ubuntu1404
+  net: host
+  environment:
+    MESOS_ZK: "zk://192.168.99.100:2181/mesos"
+    MESOS_HOSTNAME: 192.168.99.100
+    MESOS_IP: 192.168.99.100
+    MESOS_QUORUM: 1
+    MESOS_WORK_DIR: /var/lib/mesos
+    MESOS_LOG_DIR: /var/log/mesos
+
+slave:
+  image: mesosphere/mesos-slave:0.25.0-0.2.70.ubuntu1404
+  net: host
+  environment:
+    MESOS_MASTER: "zk://192.168.99.100:2181/mesos"
+    MESOS_HOSTNAME: 192.168.99.100
+    MESOS_IP: 192.168.99.100
+    MESOS_EXECUTOR_REGISTRATION_TIMEOUT: "5mins"
+    MESOS_CONTAINERIZERS: "docker,mesos"
+    MESOS_RESOURCES: "ports(*):[31000-31100]"
+  volumes:
+    - /sys/fs/cgroup:/sys/fs/cgroup
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /usr/local/bin/docker:/usr/bin/docker
+  privileged: true
+
+marathon:
+  image: mesosphere/marathon
+  net: host
+  environment: 
+    MARATHON_MASTER: "zk://192.168.99.100:2181/mesos"
+    MARATHON_ZK: "zk://192.168.99.100:2181/marathon"
