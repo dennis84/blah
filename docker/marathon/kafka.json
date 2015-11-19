@@ -1,0 +1,17 @@
+{
+  "id": "kafka",
+  "cpus": 0.2,
+  "mem": 128.0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "ches/kafka",
+      "network": "HOST"
+    }
+  },
+  "env": {
+    "ZOOKEEPER_IP": "192.168.99.100",
+    "KAFKA_ADVERTISED_HOST_NAME": "192.168.99.100"
+  }
+}

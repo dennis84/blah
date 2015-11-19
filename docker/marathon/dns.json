@@ -1,0 +1,14 @@
+{
+  "id": "mesos-dns",
+  "instances": 1,
+  "cpus": 0.2,
+  "mem": 50,
+  "cmd": "/mesos-dns -config=/config.json",
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "blah/mesos-dns",
+      "network": "HOST"
+    }
+  }
+}

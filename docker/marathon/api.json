@@ -1,0 +1,16 @@
+{
+  "id": "api",
+  "cpus": 0.2,
+  "mem": 128.0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "blah/api:0.1.0",
+      "network": "HOST"
+    }
+  },
+  "env": {
+    "KAFKA_URL": "kafka.marathon.mesos:9092"
+  }
+}

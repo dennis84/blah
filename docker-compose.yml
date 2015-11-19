@@ -23,6 +23,7 @@ slave:
     MESOS_EXECUTOR_REGISTRATION_TIMEOUT: "5mins"
     MESOS_CONTAINERIZERS: "docker,mesos"
     MESOS_RESOURCES: "ports(*):[31000-31100]"
+    MESOS_LOG_DIR: /var/log/mesos
   volumes:
     - /sys/fs/cgroup:/sys/fs/cgroup
     - /var/run/docker.sock:/var/run/docker.sock
