@@ -1,0 +1,18 @@
+{
+  "id": "namenode",
+  "cpus": 0.1,
+  "mem": 50.0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "blah/hadoop-master",
+      "network": "BRIDGE",
+      "portMappings": [
+        {"containerPort": 8020, "hostPort": 0, "servicePort": 8020, "protocol": "tcp"},
+        {"containerPort": 9000, "hostPort": 0, "servicePort": 9000, "protocol": "tcp"},
+        {"containerPort": 50070, "hostPort": 0, "servicePort": 50070, "protocol": "tcp"}
+      ]
+    }
+  }
+}

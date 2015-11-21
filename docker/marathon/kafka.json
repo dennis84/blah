@@ -1,17 +1,20 @@
 {
   "id": "kafka",
-  "cpus": 0.2,
-  "mem": 128.0,
+  "cpus": 0.1,
+  "mem": 50.0,
   "instances": 1,
   "container": {
     "type": "DOCKER",
     "docker": {
       "image": "ches/kafka",
-      "network": "HOST"
+      "network": "BRIDGE",
+      "portMappings": [
+        {"containerPort": 9092, "hostPort": 0, "servicePort": 9092, "protocol": "tcp"}
+      ]
     }
   },
   "env": {
-    "ZOOKEEPER_IP": "192.168.99.100",
-    "KAFKA_ADVERTISED_HOST_NAME": "192.168.99.100"
+    "ZOOKEEPER_CONNECTION_STRING": "zookeeper.marathon.mesos:2181/kafka",
+    "KAFKA_ADVERTISED_HOST_NAME": "kafka.marathon.mesos"
   }
 }

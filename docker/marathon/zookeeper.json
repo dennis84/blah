@@ -1,0 +1,16 @@
+{
+  "id": "zookeeper",
+  "cpus": 0.1,
+  "mem": 50.0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "jplock/zookeeper",
+      "network": "BRIDGE",
+      "portMappings": [
+        {"containerPort": 2181, "hostPort": 0, "servicePort": 2181, "protocol": "tcp"}
+      ]
+    }
+  }
+}

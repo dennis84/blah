@@ -1,10 +1,22 @@
 #!/bin/bash
 
 curl -H "Content-Type: application/json" \
+  -d @docker/marathon/dns.json http://192.168.99.100:8080/v2/apps
+
+curl -H "Content-Type: application/json" \
+  -d @docker/marathon/zookeeper.json http://192.168.99.100:8080/v2/apps
+
+curl -H "Content-Type: application/json" \
   -d @docker/marathon/kafka.json http://192.168.99.100:8080/v2/apps
 
 curl -H "Content-Type: application/json" \
   -d @docker/marathon/api.json http://192.168.99.100:8080/v2/apps
 
 curl -H "Content-Type: application/json" \
-  -d @docker/marathon/dns.json http://192.168.99.100:8080/v2/apps
+  -d @docker/marathon/namenode.json http://192.168.99.100:8080/v2/apps
+
+curl -H "Content-Type: application/json" \
+  -d @docker/marathon/datanode.json http://192.168.99.100:8080/v2/apps
+
+curl -H "Content-Type: application/json" \
+  -d @docker/marathon/flume.json http://192.168.99.100:8080/v2/apps

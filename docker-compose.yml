@@ -27,7 +27,8 @@ slave:
   volumes:
     - /sys/fs/cgroup:/sys/fs/cgroup
     - /var/run/docker.sock:/var/run/docker.sock
-    - /usr/local/bin/docker:/usr/bin/docker
+    - /usr/local/bin/docker:/usr/bin/docker:ro
+    - /proc:/host/proc:ro
   privileged: true
 
 marathon:

@@ -1,0 +1,16 @@
+{
+  "id": "flume",
+  "cpus": 0.1,
+  "mem": 50.0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "blah/flume",
+      "network": "BRIDGE"
+    }
+  },
+  "env": {
+    "FLUME_AGENT_NAME": "a1"
+  }
+}

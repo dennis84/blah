@@ -1,0 +1,16 @@
+{
+  "id": "datanode",
+  "cpus": 0.1,
+  "mem": 50.0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "blah/hadoop-slave",
+      "network": "BRIDGE",
+      "portMappings": [
+        {"containerPort": 50075, "hostPort": 0, "servicePort": 50075, "protocol": "tcp"}
+      ]
+    }
+  }
+}
