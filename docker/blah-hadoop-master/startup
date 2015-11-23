@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sed -i s/0.0.0.0/$HOSTNAME/ $HADOOP_CONF_DIR/core-site.xml
+
 hdfs namenode -format -nonInteractive
 hdfs namenode
 
