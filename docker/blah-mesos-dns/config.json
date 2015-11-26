@@ -1,6 +1,5 @@
 {
-  "zk": "zk://192.168.99.100:2181/mesos",
-  "masters": ["192.168.99.100:5050"],
+  "zk": "ZOOKEEPER_URL",
   "refreshSeconds": 60,
   "ttl": 60,
   "domain": "mesos",

@@ -41,13 +41,14 @@ object Submit {
       sparkConf.set("es.index.auto.create", "false")
       job.run(config, sparkConf, args)
     }) getOrElse {
-      println("""|Usage:
-                 |  submit count           [path] e.g. "2015/*/*"
-                 |  submit similarity      [path] 
-                 |  submit user            [path]
-                 |  submit count-streaming
-                 |  submit user-streaming
-                 |""".stripMargin)
+      println(s"""|No such command: ${args.mkString(" ")}
+                  |Usage:
+                  |  submit count           [path] e.g. "2015/*/*"
+                  |  submit similarity      [path] 
+                  |  submit user            [path]
+                  |  submit count-streaming
+                  |  submit user-streaming
+                  |""".stripMargin)
     }
   }
 }

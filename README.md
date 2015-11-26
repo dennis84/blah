@@ -27,6 +27,6 @@ curl -POST -H 'Content-Type: application/json' "http://$BOOT2DOCKER_IP:<API-PORT
 ## Training
 
 ```bash
-# Streaming
+bin/create-jobs
 bin/create-streaming-apps
 ```

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+curl -H 'Content-Type: application/json' \
+  -d @chronos/count.json http://192.168.99.100:8081/scheduler/iso8601

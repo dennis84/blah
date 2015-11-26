@@ -1,0 +1,7 @@
+#!/bin/bash
+
+ZK=${ZOOKEEPER_URL:-"zk://localhost:2181/mesos"}
+
+sed -i s#ZOOKEEPER_URL#${ZK}# /config.json
+
+/mesos-dns -config=/config.json

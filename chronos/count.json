@@ -8,11 +8,12 @@
     "image": "blah/algo:0.1.0",
     "network": "BRIDGE"
   },
-  "args": ["count"],
-  "env": {
-    "KAFKA_URL": "kafka.marathon.mesos:9092",
-    "ZOOKEEPER_URL": "zookeeper.marathon.mesos:2181",
-    "HADOOP_URL": "hdfs://namenode.marathon.mesos:8020",
-    "ELASTICSEARCH_URL": "elasticsearch.marathon.mesos:9200"
-  }
+  "shell": false,
+  "command": "count",
+  "environmentVariables": [
+    {"name": "KAFKA_URL", "value": "kafka.marathon.mesos:9092"},
+    {"name": "ZOOKEEPER_URL", "value": "zookeeper.marathon.mesos:2181"},
+    {"name": "HADOOP_URL", "value": "hdfs://namenode.marathon.mesos:8020"},
+    {"name": "ELASTICSEARCH_URL", "value": "elasticsearch.marathon.mesos:9200"}
+  ]
 }
