@@ -25,10 +25,6 @@ object Submit {
     lazy val countStreaming = new CountStreamingJob(countAlgo, producer, "count")
     lazy val userStreaming = new StreamingJob(userAlgo, producer, "user")
     
-    val sparkConf = new SparkConf().setAppName(args(0))
-    sparkConf.set("es.nodes", config.getString("elasticsearch.url"))
-    sparkConf.set("es.index.auto.create", "false")
-
     val jobs = Map(
       "count" -> countBatch,
       "similarity" -> similarityBatch,
@@ -40,6 +36,9 @@ object Submit {
       algo <- args lift 0
       job <- jobs get algo
     } yield {
+      val sparkConf = new SparkConf().setAppName(algo)
+      sparkConf.set("es.nodes", config.getString("elasticsearch.url"))
+      sparkConf.set("es.index.auto.create", "false")
       job.run(config, sparkConf, args)
     }) getOrElse {
       println("""|Usage:

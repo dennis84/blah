@@ -1,0 +1,20 @@
+{
+  "id": "count-streaming",
+  "cpus": 0.5,
+  "mem": 512.0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "blah/algo:0.1.0",
+      "network": "BRIDGE"
+    }
+  },
+  "args": ["count-streaming"],
+  "env": {
+    "KAFKA_URL": "kafka.marathon.mesos:9092",
+    "ZOOKEEPER_URL": "zookeeper.marathon.mesos:2181",
+    "HADOOP_URL": "hdfs://namenode.marathon.mesos:8020",
+    "ELASTICSEARCH_URL": "elasticsearch.marathon.mesos:9200"
+  }
+}

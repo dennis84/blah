@@ -1,0 +1,28 @@
+#!/bin/bash
+
+curl -H "Content-Type: application/json" \
+  -d @marathon/dns.json http://192.168.99.100:8080/v2/apps
+
+curl -H "Content-Type: application/json" \
+  -d @marathon/zookeeper.json http://192.168.99.100:8080/v2/apps
+
+curl -H "Content-Type: application/json" \
+  -d @marathon/kafka.json http://192.168.99.100:8080/v2/apps
+
+curl -H "Content-Type: application/json" \
+  -d @marathon/api.json http://192.168.99.100:8080/v2/apps
+
+curl -H "Content-Type: application/json" \
+  -d @marathon/namenode.json http://192.168.99.100:8080/v2/apps
+
+curl -H "Content-Type: application/json" \
+  -d @marathon/datanode.json http://192.168.99.100:8080/v2/apps
+
+curl -H "Content-Type: application/json" \
+  -d @marathon/flume.json http://192.168.99.100:8080/v2/apps
+
+curl -H "Content-Type: application/json" \
+  -d @marathon/elasticsearch.json http://192.168.99.100:8080/v2/apps
+
+# curl -H "Content-Type: application/json" \
+#   -d @docker/marathon/count-streaming.json http://192.168.99.100:8080/v2/apps

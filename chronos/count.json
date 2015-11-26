@@ -1,0 +1,18 @@
+{
+  "schedule": "R/2015-11-26T00:00:00Z/PT2M",
+  "name": "count",
+  "cpus": "0.5",
+  "mem": "512",
+  "container": {
+    "type": "DOCKER",
+    "image": "blah/algo:0.1.0",
+    "network": "BRIDGE"
+  },
+  "args": ["count"],
+  "env": {
+    "KAFKA_URL": "kafka.marathon.mesos:9092",
+    "ZOOKEEPER_URL": "zookeeper.marathon.mesos:2181",
+    "HADOOP_URL": "hdfs://namenode.marathon.mesos:8020",
+    "ELASTICSEARCH_URL": "elasticsearch.marathon.mesos:9200"
+  }
+}

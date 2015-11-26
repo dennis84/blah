@@ -14,7 +14,7 @@
     }
   },
   "env": {
-    "ZOOKEEPER_CONNECTION_STRING": "zookeeper.marathon.mesos:2181/kafka",
+    "ZOOKEEPER_CONNECTION_STRING": "zookeeper.marathon.mesos:2181",
     "KAFKA_ADVERTISED_HOST_NAME": "kafka.marathon.mesos"
   }
 }
