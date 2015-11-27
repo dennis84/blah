@@ -7,8 +7,6 @@ docker build -t blah/flume blah-flume/ || exit
 docker build -t blah/hadoop-base blah-hadoop-base/ || exit
 docker build -t blah/hadoop-master blah-hadoop-master/ || exit
 docker build -t blah/hadoop-slave blah-hadoop-slave/ || exit
-docker build -t blah/spark-master blah-spark-master/ || exit
-docker build -t blah/spark-worker blah-spark-worker/ || exit
 docker build -t blah/mesos-dns blah-mesos-dns/ || exit
 
 cd .. || exit

@@ -1,6 +1,0 @@
-#!/bin/bash
-
-export SPARK_MASTER_IP=$HOSTNAME
-start-master.sh -h $HOSTNAME
-
-while true; do sleep 1000; done
