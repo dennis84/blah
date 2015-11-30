@@ -1,0 +1,21 @@
+{
+  "id": "serving",
+  "cpus": 0.1,
+  "mem": 50.0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "blah/serving:0.1.0",
+      "network": "BRIDGE",
+      "portMappings": [
+        {"containerPort": 8001, "hostPort": 0, "servicePort": 8001, "protocol": "tcp"}
+      ]
+    }
+  },
+  "env": {
+    "ZOOKEEPER_URL": "zookeeper.marathon.mesos:2181",
+    "KAFKA_URL": "kafka.marathon.mesos:9092",
+    "ELASTICSEARCH_URL": "elasticsearch.marathon.mesos:9200"
+  }
+}
