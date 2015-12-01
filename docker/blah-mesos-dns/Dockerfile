@@ -5,4 +5,6 @@ COPY config.json .
 
 ADD startup /startup
 
+EXPOSE 53
+
 CMD ["/startup"]

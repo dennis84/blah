@@ -4,7 +4,7 @@
   "ttl": 60,
   "domain": "mesos",
   "port": 53,
-  "resolvers": ["8.8.8.8"],
+  "resolvers": ["10.0.2.3"],
   "timeout": 5,
   "email": "root.mesos-dns.mesos"
 }
