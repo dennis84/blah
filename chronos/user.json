@@ -1,6 +1,6 @@
 {
   "schedule": "R/2015-11-26T00:00:00Z/PT10M",
-  "name": "count",
+  "name": "user",
   "cpus": "0.5",
   "mem": "512",
   "container": {
@@ -9,7 +9,7 @@
     "network": "BRIDGE"
   },
   "shell": false,
-  "command": "count",
+  "command": "user",
   "environmentVariables": [
     {"name": "KAFKA_URL", "value": "kafka.marathon.mesos:9092"},
     {"name": "ZOOKEEPER_URL", "value": "zookeeper.marathon.mesos:2181"},

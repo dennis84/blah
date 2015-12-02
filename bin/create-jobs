@@ -2,3 +2,9 @@
 
 curl -H 'Content-Type: application/json' \
   -d @chronos/count.json http://192.168.99.100:8081/scheduler/iso8601
+
+curl -H 'Content-Type: application/json' \
+  -d @chronos/user.json http://192.168.99.100:8081/scheduler/iso8601
+
+curl -H 'Content-Type: application/json' \
+  -d @chronos/similarity.json http://192.168.99.100:8081/scheduler/iso8601
