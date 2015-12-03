@@ -1,6 +1,7 @@
 package blah.serving
 
 import scala.util.{Try, Success, Failure}
+import akka.event.Logging
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
@@ -15,6 +16,7 @@ object Boot extends App
   implicit val system = ActorSystem()
   implicit val executor = system.dispatcher
   implicit val materializer = ActorMaterializer()
+  implicit val log = Logging.getLogger(system, this)
 
   val config = system.settings.config
   val interface = config.getString("app.interface")
