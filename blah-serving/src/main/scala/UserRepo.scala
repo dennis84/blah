@@ -1,7 +1,7 @@
 package blah.serving
 
 import scala.concurrent._
-import scala.util.Try
+import scala.util.{Try, Success, Failure}
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.http.scaladsl.model._
@@ -23,7 +23,7 @@ class UserRepo(client: ElasticClient)(
       method = HttpMethods.GET,
       uri = "/blah/users/_count"
     ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
-      Try(UserCount(json.extract[Long]('count))) getOrElse UserCount(0)
+      UserCount(Try(json.extract[Long]('count)) getOrElse 0)
     }
 
   def search(q: Query): Future[List[UserCount]] =
@@ -34,7 +34,9 @@ class UserRepo(client: ElasticClient)(
         ContentTypes.`application/json`,
         UserElasticQuery(q).compactPrint)
     ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
-      val aggs = json.extract[JsValue]('aggregations)
-      AggregationParser.parseTo[UserCount](aggs)
+      Try(json.extract[JsValue]('aggregations)) match {
+        case Success(aggs) => AggregationParser.parseTo[UserCount](aggs)
+        case Failure(_) => Nil
+      }
     }
 }

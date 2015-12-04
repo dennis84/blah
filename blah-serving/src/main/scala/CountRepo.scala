@@ -1,5 +1,6 @@
 package blah.serving
 
+import scala.util.{Try, Success, Failure}
 import scala.concurrent._
 import akka.actor.ActorSystem
 import akka.stream.Materializer
@@ -24,7 +25,8 @@ class CountRepo(client: ElasticClient)(
       ContentTypes.`application/json`,
       CountElasticQuery(q).compactPrint)
   ) flatMap (resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
-    Count(json.extract[Long]('aggregations / 'count / 'value))
+    val sum = 'aggregations / 'count / 'value
+    Count(Try(json.extract[Long](sum)) getOrElse 0)
   }
 
   def search(q: Query): Future[List[Count]] = client request HttpRequest(
@@ -34,6 +36,9 @@ class CountRepo(client: ElasticClient)(
       ContentTypes.`application/json`,
       CountElasticQuery(q).compactPrint)
   ) flatMap (resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
-    AggregationParser.parseTo[Count](json.extract[JsValue]('aggregations))
+    Try(json.extract[JsValue]('aggregations)) match {
+      case Success(aggs) => AggregationParser.parseTo[Count](aggs)
+      case Failure(_) => Nil
+    }
   }
 }
