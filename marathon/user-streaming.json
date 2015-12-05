@@ -1,5 +1,5 @@
 {
-  "id": "count-streaming",
+  "id": "user-streaming",
   "cpus": 0.1,
   "mem": 50,
   "instances": 1,
@@ -10,7 +10,7 @@
       "network": "BRIDGE"
     }
   },
-  "args": ["count-streaming"],
+  "args": ["user-streaming"],
   "env": {
     "KAFKA_URL": "kafka.marathon.mesos:9092",
     "ZOOKEEPER_URL": "zookeeper.marathon.mesos:2181",

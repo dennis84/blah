@@ -16,7 +16,7 @@ open ./index.html
 ## Collecting
 
 ```bash
-curl -POST -H 'Content-Type: application/json' "http://$BOOT2DOCKER_IP:<API-PORT>/events/view" -d '{
+curl -POST -H 'Content-Type: application/json' "http://serving.marathon.mesos:8001/events/view" -d '{
   "page":"home",
   "user":"user1",
   "ip": "",
