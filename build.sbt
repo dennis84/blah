@@ -98,11 +98,7 @@ lazy val algo = (project in file("blah-algo"))
     dockerEntrypoint := Seq(
       "/opt/spark/bin/spark-submit",
       "--class", "blah.algo.Submit",
-      "--master", "mesos://zk://192.168.99.100:2181/mesos",
-      "--conf", "spark.mesos.coarse=true",
       "--conf", "spark.mesos.executor.docker.image=dennis84/spark-mesos",
-      "--conf", "spark.cores.max=2",
-      "--executor-memory", "4g",
       "/opt/docker/bin/algo-assembly-0.1.0.jar")
   )
   .dependsOn(core % "compile->compile;test->test")

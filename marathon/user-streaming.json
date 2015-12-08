@@ -15,6 +15,7 @@
     "KAFKA_URL": "kafka.marathon.mesos:9092",
     "ZOOKEEPER_URL": "zookeeper.marathon.mesos:2181",
     "HADOOP_URL": "hdfs://namenode.marathon.mesos:8020",
-    "ELASTICSEARCH_URL": "elasticsearch.marathon.mesos:9200"
+    "ELASTICSEARCH_URL": "elasticsearch.marathon.mesos:9200",
+    "SPARK_MASTER": "mesos://zk://192.168.99.100:2181/mesos"
   }
 }

@@ -36,7 +36,9 @@ object Submit {
       algo <- args lift 0
       job <- jobs get algo
     } yield {
-      val sparkConf = new SparkConf().setAppName(algo)
+      val sparkConf = new SparkConf()
+        .setMaster(config.getString("spark.master"))
+        .setAppName(algo)
       sparkConf.set("es.nodes", config.getString("elasticsearch.url"))
       sparkConf.set("es.index.auto.create", "false")
       job.run(config, sparkConf, args)
