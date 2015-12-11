@@ -1,28 +1,33 @@
 #!/bin/bash
 
-curl -H "Content-Type: application/json" \
-  -d @marathon/dns.json http://192.168.99.100:8080/v2/apps
+set -e
 
-curl -H "Content-Type: application/json" \
-  -d @marathon/zookeeper.json http://192.168.99.100:8080/v2/apps
+create_app() {
+  declare name="$1"
+  echo "Create $name application"
+  curl -H "Content-Type: application/json" \
+    -d "@marathon/${name}.json" http://192.168.99.100:8080/v2/apps \
+    &> /dev/null
+}
 
-curl -H "Content-Type: application/json" \
-  -d @marathon/kafka.json http://192.168.99.100:8080/v2/apps
+ping_wait() {
+  declare hn="$1"
+  echo "Waiting for $hn"
+  while ! ping -c1 "$hn" &>/dev/null; do
+    echo -n "."
+    sleep 1
+  done
+  echo ""
+}
 
-curl -H "Content-Type: application/json" \
-  -d @marathon/api.json http://192.168.99.100:8080/v2/apps
-
-curl -H "Content-Type: application/json" \
-  -d @marathon/namenode.json http://192.168.99.100:8080/v2/apps
-
-curl -H "Content-Type: application/json" \
-  -d @marathon/datanode.json http://192.168.99.100:8080/v2/apps
-
-curl -H "Content-Type: application/json" \
-  -d @marathon/flume.json http://192.168.99.100:8080/v2/apps
-
-curl -H "Content-Type: application/json" \
-  -d @marathon/elasticsearch.json http://192.168.99.100:8080/v2/apps
-
-curl -H "Content-Type: application/json" \
-  -d @marathon/serving.json http://192.168.99.100:8080/v2/apps
+create_app dns
+create_app zookeeper
+ping_wait "zookeeper.marathon.mesos"
+create_app kafka
+create_app api
+create_app namenode
+ping_wait "namenode.marathon.mesos"
+create_app datanode
+create_app flume
+create_app elasticsearch
+create_app serving
