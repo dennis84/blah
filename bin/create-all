@@ -1,0 +1,5 @@
+#!/bin/bash
+
+./$(dirname $0)/create-apps
+./$(dirname $0)/create-streaming-apps
+./$(dirname $0)/create-jobs

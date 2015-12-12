@@ -1,10 +1,9 @@
 #!/bin/bash
 
-curl -H 'Content-Type: application/json' \
-  -d @chronos/count.json http://192.168.99.100:8081/scheduler/iso8601
+set -e
 
-curl -H 'Content-Type: application/json' \
-  -d @chronos/user.json http://192.168.99.100:8081/scheduler/iso8601
+source $(dirname $0)/functions.sh
 
-curl -H 'Content-Type: application/json' \
-  -d @chronos/similarity.json http://192.168.99.100:8081/scheduler/iso8601
+create_job count
+create_job user
+create_job similarity

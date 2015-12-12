@@ -5,7 +5,7 @@
 ```bash
 docker/build
 docker-compose up
-bin/create-apps
+bin/create-all
 
 cd blah-ui/
 npm install
@@ -22,13 +22,6 @@ curl -POST -H 'Content-Type: application/json' "http://serving.marathon.mesos:80
   "ip": "",
   "userAgent": ""
 }
-```
-
-## Training
-
-```bash
-bin/create-jobs
-bin/create-streaming-apps
 ```
 
 ## Troubleshooting
