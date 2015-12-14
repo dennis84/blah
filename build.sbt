@@ -72,6 +72,7 @@ lazy val algo = (project in file("blah-algo"))
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
   .settings(commonSettings: _*)
+  .settings(parallelExecution in Test := false)
   .settings(dependencyOverrides ++= Set(
     "com.fasterxml.jackson.core" % "jackson-databind" % "2.4.6"))
   .settings(

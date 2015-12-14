@@ -1,20 +1,15 @@
 package blah.algo
 
 import org.scalatest._
-import org.apache.spark.{SparkConf, SparkContext}
 import com.github.nscala_time.time.Imports._
 import spray.json._
 import blah.core._
 import JsonProtocol._
 
-class SimilarityAlgoSpec extends FlatSpec with Matchers {
+class SimilarityAlgoSpec extends FlatSpec with SparkFun {
 
-  "SimilarityAlgo" should "train" in {
+  "SimilarityAlgo" should "train" in withSparkContext { sc =>
     val algo = new SimilarityAlgo
-    val conf = new SparkConf()
-      .setMaster("local[2]")
-      .setAppName("test")
-    val sc = new SparkContext(conf)
     val input = sc.parallelize(List(
       Event("1", "view", DateTime.now, Map(
         "page" -> JsString("page1"),
@@ -43,15 +38,13 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers {
     docs collect {
       case Doc("user1", data) =>
         val views = data("views").asInstanceOf[List[Map[String,Any]]]
-        views.length should be(1)
-        views(0)("page") should be("page4")
+        assert(views.length == 1)
+        assert(views(0)("page") == "page4")
       case Doc("user2", data) =>
         val views = data("views").asInstanceOf[List[Map[String,Any]]]
-        views.length should be(2)
-        views(0)("page") should be("page3")
-        views(1)("page") should be("page2")
+        assert(views.length == 2)
+        assert(views(0)("page") == "page3")
+        assert(views(1)("page") == "page2")
     }
-
-    sc.stop()
   }
 }
