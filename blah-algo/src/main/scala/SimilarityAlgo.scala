@@ -12,7 +12,7 @@ import blah.core._
 import JsonProtocol._
 
 class SimilarityAlgo extends Algo {
-  def train(rdd: RDD[String]) {
+  def train(rdd: RDD[String]) = {
     val events = rdd
       .map(x => Try(x.parseJson.convertTo[ViewEvent]))
       .filter(_.isSuccess)
@@ -50,7 +50,7 @@ class SimilarityAlgo extends Algo {
 
     val ord = Ordering[Double].reverse
 
-    val out = usersRDD
+    usersRDD
       .map { case(u, elems) =>
         val doc = Map("user" -> u, "views" -> elems.flatMap {
           elem => all.get(items.indexOf(elem)) getOrElse Nil
@@ -67,9 +67,7 @@ class SimilarityAlgo extends Algo {
             case(page, score) => Map("page" -> page, "score" -> score)
           })
 
-        (Map(ID -> u), doc)
+        Doc(u, doc)
       }
-
-    out.saveToEsWithMeta("blah/sims")
   }
 }

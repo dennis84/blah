@@ -21,7 +21,7 @@ class UserRepo(client: ElasticClient)(
   def count(q: Query): Future[UserCount] =
     client request HttpRequest(
       method = HttpMethods.GET,
-      uri = "/blah/users/_count"
+      uri = "/blah/user/_count"
     ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
       UserCount(Try(json.extract[Long]('count)) getOrElse 0)
     }
@@ -29,7 +29,7 @@ class UserRepo(client: ElasticClient)(
   def search(q: Query): Future[List[UserCount]] =
     client request HttpRequest(
       method = HttpMethods.POST,
-      uri = "/blah/users/_search?size=0",
+      uri = "/blah/user/_search?size=0",
       entity = HttpEntity(
         ContentTypes.`application/json`,
         UserElasticQuery(q).compactPrint)

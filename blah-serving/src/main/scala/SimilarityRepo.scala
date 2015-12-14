@@ -20,7 +20,7 @@ class SimilarityRepo(client: ElasticClient)(
   def sims(q: SimilarityQuery): Future[SimilarityResult] =
     client request HttpRequest(
       method = HttpMethods.GET,
-      uri = "/blah/sims/" + q.user
+      uri = "/blah/similarity/" + q.user
     ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
       Try(json.extract[SimilarityResult]('_source)) getOrElse SimilarityResult(q.user)
     }

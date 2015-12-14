@@ -4,6 +4,8 @@ import scala.util.{Try, Success, Failure}
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming.kafka.KafkaUtils
+import org.elasticsearch.spark._
+import org.elasticsearch.spark.rdd.Metadata._
 import kafka.producer.KafkaProducer
 import com.typesafe.config.Config
 
@@ -24,7 +26,10 @@ class StreamingJob(
     ).map(_._2)
 
     stream.foreachRDD { rdd =>
-      algo.train(rdd)
+      algo.train(rdd).map { doc =>
+        (Map(ID -> doc.id), doc.data)
+      }.saveToEsWithMeta(s"blah/$message")
+
       Try(producer send message) match {
         case Success(_) => println("Successfully sent message")
         case Failure(e) => println("Message could not be sent")
