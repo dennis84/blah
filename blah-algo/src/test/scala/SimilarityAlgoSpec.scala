@@ -6,7 +6,7 @@ import spray.json._
 import blah.core._
 import JsonProtocol._
 
-class SimilarityAlgoSpec extends FlatSpec with SparkFun {
+class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
 
   "SimilarityAlgo" should "train" in withSparkContext { sc =>
     val algo = new SimilarityAlgo
@@ -35,16 +35,16 @@ class SimilarityAlgoSpec extends FlatSpec with SparkFun {
 
     val output = algo.train(input)
     val docs = output.collect()
-    docs collect {
+    docs foreach {
       case Doc("user1", data) =>
         val views = data("views").asInstanceOf[List[Map[String,Any]]]
-        assert(views.length == 1)
-        assert(views(0)("page") == "page4")
+        views.length should be (1)
+        views(0)("page") should be ("page4")
       case Doc("user2", data) =>
         val views = data("views").asInstanceOf[List[Map[String,Any]]]
-        assert(views.length == 2)
-        assert(views(0)("page") == "page3")
-        assert(views(1)("page") == "page2")
+        views.length should be (2)
+        views(0)("page") should be ("page3")
+        views(1)("page") should be ("page2")
     }
   }
 }

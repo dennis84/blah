@@ -1,14 +1,13 @@
 package blah.algo
 
 import org.scalatest._
-import org.scalatest.FunSuite
 import org.apache.spark.{SparkConf, SparkContext}
 import com.github.nscala_time.time.Imports._
 import spray.json._
 import blah.core._
 import JsonProtocol._
 
-class UserAlgoSpec extends FlatSpec with SparkFun {
+class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
 
   "UserAlgo" should "train" in withSparkContext { sc =>
     val algo = new UserAlgo
