@@ -95,11 +95,11 @@ lazy val algo = (project in file("blah-algo"))
   .settings(
     packageName in Docker := "blah/algo",
     version in Docker := version.value,
-    dockerBaseImage := "dennis84/spark-mesos",
+    dockerBaseImage := "blah/spark-mesos",
     dockerEntrypoint := Seq(
       "/opt/spark/bin/spark-submit",
       "--class", "blah.algo.Submit",
-      "--conf", "spark.mesos.executor.docker.image=dennis84/spark-mesos",
+      "--conf", "spark.mesos.executor.docker.image=blah/spark-mesos",
       "/opt/docker/bin/algo-assembly-0.1.0.jar")
   )
   .dependsOn(core % "compile->compile;test->test")

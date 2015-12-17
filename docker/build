@@ -8,6 +8,7 @@ docker build -t blah/hadoop-base blah-hadoop-base/ || exit
 docker build -t blah/hadoop-master blah-hadoop-master/ || exit
 docker build -t blah/hadoop-slave blah-hadoop-slave/ || exit
 docker build -t blah/mesos-dns blah-mesos-dns/ || exit
+docker build -t blah/spark-mesos blah-spark-mesos/ || exit
 
 cd .. || exit
 
