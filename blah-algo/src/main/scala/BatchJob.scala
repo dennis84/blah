@@ -8,9 +8,9 @@ import kafka.producer.KafkaProducer
 import com.typesafe.config.Config
 
 class BatchJob(
+  name: String,
   algo: Algo,
-  producer: KafkaProducer[String],
-  message: String
+  producer: KafkaProducer[String]
 ) extends Job {
 
   def run(config: Config, sparkConf: SparkConf, args: Array[String]) {
@@ -21,9 +21,9 @@ class BatchJob(
 
     algo.train(rdd).map { doc =>
       (Map(ID -> doc.id), doc.data)
-    }.saveToEsWithMeta(s"blah/$message")
+    }.saveToEsWithMeta(s"blah/$name")
 
-    Try(producer send message) match {
+    Try(producer send name) match {
       case Success(_) => println("Successfully sent message")
       case Failure(e) => println("Message could not be sent")
     }

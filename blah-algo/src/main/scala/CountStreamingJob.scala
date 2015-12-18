@@ -5,10 +5,10 @@ import kafka.producer.KafkaProducer
 import com.typesafe.config.Config
 
 class CountStreamingJob(
+  name: String,
   algo: Algo,
-  producer: KafkaProducer[String],
-  message: String
-) extends StreamingJob(algo, producer, message) {
+  producer: KafkaProducer[String]
+) extends StreamingJob(name, algo, producer) {
   override def run(
     config: Config,
     sparkConf: SparkConf,

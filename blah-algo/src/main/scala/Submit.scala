@@ -19,11 +19,11 @@ object Submit {
     lazy val similarityAlgo = new SimilarityAlgo
     lazy val userAlgo = new UserAlgo
 
-    lazy val countBatch = new BatchJob(countAlgo, producer, "count")
-    lazy val similarityBatch = new BatchJob(similarityAlgo, producer, "similarity")
-    lazy val userBatch = new BatchJob(userAlgo, producer, "user")
-    lazy val countStreaming = new CountStreamingJob(countAlgo, producer, "count")
-    lazy val userStreaming = new StreamingJob(userAlgo, producer, "user")
+    lazy val countBatch = new BatchJob("count", countAlgo, producer)
+    lazy val similarityBatch = new BatchJob("similarity", similarityAlgo, producer)
+    lazy val userBatch = new BatchJob("user", userAlgo, producer)
+    lazy val countStreaming = new CountStreamingJob("count", countAlgo, producer)
+    lazy val userStreaming = new StreamingJob("user", userAlgo, producer)
     
     val jobs = Map(
       "count" -> countBatch,
