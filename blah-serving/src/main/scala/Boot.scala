@@ -38,7 +38,7 @@ object Boot extends App
   (for {
     head <- routes.headOption
     tail = routes.tail
-  } yield tail.foldLeft(head) {
+  } yield (head /: tail) {
     case (xs, x) => xs ~ x
   }) map { route =>
     Http().bindAndHandle(corsHandler(route), interface, port)

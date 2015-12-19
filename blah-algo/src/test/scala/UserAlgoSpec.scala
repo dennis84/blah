@@ -1,7 +1,6 @@
 package blah.algo
 
 import org.scalatest._
-import org.apache.spark.{SparkConf, SparkContext}
 import com.github.nscala_time.time.Imports._
 import spray.json._
 import blah.core._

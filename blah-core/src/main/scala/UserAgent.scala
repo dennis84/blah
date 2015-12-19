@@ -10,15 +10,13 @@ object UserAgent {
         family = ua.userAgent.family,
         major = Option(ua.userAgent.major),
         minor = Option(ua.userAgent.minor),
-        patch = Option(ua.userAgent.patch)
-      ),
+        patch = Option(ua.userAgent.patch)),
       os = OS(
         family = ua.os.family,
         major = Option(ua.os.major),
         minor = Option(ua.os.minor),
         patch = Option(ua.os.patch),
-        patchMinor = Option(ua.os.patchMinor)
-      ),
+        patchMinor = Option(ua.os.patchMinor)),
       device = Device(ua.device.family)
     )
   }

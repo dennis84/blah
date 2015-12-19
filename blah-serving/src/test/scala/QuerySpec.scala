@@ -4,7 +4,7 @@ import org.scalatest._
 import spray.json._
 import ServingJsonProtocol._
 
-class CountQuerySpec extends FlatSpec with Matchers {
+class QuerySpec extends FlatSpec with Matchers {
 
   "Query" should "from json" in {
     val json = """|{
