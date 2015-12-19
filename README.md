@@ -3,7 +3,7 @@
 ## Running
 
 ```bash
-docker/build
+bin/build
 docker-compose up
 bin/create-all
 

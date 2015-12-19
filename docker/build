@@ -1,18 +1,20 @@
 #!/bin/bash
 
-cd "$(dirname "$0")" || exit
+set -e
 
-docker build -t blah/elasticsearch blah-elasticsearch/ || exit
-docker build -t blah/flume blah-flume/ || exit
-docker build -t blah/hadoop-base blah-hadoop-base/ || exit
-docker build -t blah/hadoop-master blah-hadoop-master/ || exit
-docker build -t blah/hadoop-slave blah-hadoop-slave/ || exit
-docker build -t blah/mesos-dns blah-mesos-dns/ || exit
-docker build -t blah/spark-mesos blah-spark-mesos/ || exit
+cd "$(dirname "$0")"
 
-cd .. || exit
+docker build -t blah/elasticsearch blah-elasticsearch/
+docker build -t blah/flume blah-flume/
+docker build -t blah/hadoop-base blah-hadoop-base/
+docker build -t blah/hadoop-master blah-hadoop-master/
+docker build -t blah/hadoop-slave blah-hadoop-slave/
+docker build -t blah/mesos-dns blah-mesos-dns/
+docker build -t blah/spark-mesos blah-spark-mesos/
 
-sbt api/docker:publishLocal || exit
-sbt serving/docker:publishLocal || exit
-sbt algo/assembly || exit
-sbt algo/docker:publishLocal || exit
+cd ..
+
+sbt api/docker:publishLocal
+sbt serving/docker:publishLocal
+sbt algo/assembly
+sbt algo/docker:publishLocal
