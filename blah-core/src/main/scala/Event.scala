@@ -11,7 +11,7 @@ case class Event(
 
 case class ViewProps(
   page: String,
-  user: String,
+  user: Option[String] = None,
   userAgent: Option[String] = None)
 case class ViewEvent(
   id: String,

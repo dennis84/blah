@@ -13,20 +13,16 @@ class CountAlgoSpec extends FlatSpec with Matchers with SparkFun {
     val algo = new CountAlgo
     val input = sc.parallelize(List(
       Event("1", "view", DateTime.now, Map(
-        "page" -> JsString("page1"),
-        "user" -> JsString("user1")
+        "page" -> JsString("page1")
       )).toJson.compactPrint,
       Event("2", "view", DateTime.now, Map(
-        "page" -> JsString("page1"),
-        "user" -> JsString("user1")
+        "page" -> JsString("page1")
       )).toJson.compactPrint,
       Event("3", "view", DateTime.now, Map(
-        "page" -> JsString("page2"),
-        "user" -> JsString("user1")
+        "page" -> JsString("page2")
       )).toJson.compactPrint,
       Event("4", "view", DateTime.now + 2.hours, Map(
-        "page" -> JsString("page1"),
-        "user" -> JsString("user1")
+        "page" -> JsString("page1")
       )).toJson.compactPrint
     ))
 

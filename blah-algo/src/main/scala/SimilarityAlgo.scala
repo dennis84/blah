@@ -17,7 +17,8 @@ class SimilarityAlgo extends Algo {
       .map(x => Try(x.parseJson.convertTo[ViewEvent]))
       .filter(_.isSuccess)
       .map(_.get)
-      .map(x => (x.props.user, x.props.page))
+      .filter(_.props.user.isDefined)
+      .map(x => (x.props.user.get, x.props.page))
 
     val usersRDD = events.groupByKey()
     val users = usersRDD.keys.collect.toList
