@@ -1,4 +1,4 @@
-import 'babelify/polyfill'
+import 'babel-polyfill'
 import {diff, patch} from 'virtual-dom'
 import createElement from 'virtual-dom/create-element'
 import csp from 'js-csp'

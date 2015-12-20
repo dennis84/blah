@@ -13,8 +13,7 @@ function views(xs) {
   }))
 }
 
-function render(model, update, options) {
-  if(undefined === options) options = {}
+function render(model, update, options = {}) {
   return h('div.widget.widget-recommendations', {
     mount: mount((node) => {
       if(options.user) update(recommendations, options)

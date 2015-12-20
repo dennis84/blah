@@ -56,8 +56,8 @@ class Widget {
 }
 
 function shouldUpdate(curr, prev) {
-  if(prev.model !== curr.state[prev.id]) return true
-  return !equal(prev.model, curr.state[prev.id])
+  if(prev.model === curr.model) return false
+  return !equal(prev.model, curr.model)
 }
 
 function widget(fn, state, channel, ...args) {
