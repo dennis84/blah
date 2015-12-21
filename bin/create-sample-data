@@ -1,0 +1,74 @@
+#!/bin/bash
+
+set -e
+
+rand_ua() {
+  case $(($RANDOM % 7)) in
+    0) echo "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 \
+       (KHTML, like Gecko) Ubuntu Chromium/45.0.2454.85 \
+       Chrome/45.0.2454.85 Safari/537.36"
+       ;;
+    1) echo "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) \
+       AppleWebKit/537.36 (KHTML, like Gecko) \
+       Chrome/47.0.2496.0 Safari/537.36"
+       ;;
+    2) echo "Mozilla/5.0 (Windows; U; Windows NT 5.0; es-ES; rv:1.8.0.3) \
+       Gecko/20060426 Firefox/1.5.0.3"
+       ;;
+    3) echo "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) \
+       AppleWebKit/537.75.14 (KHTML, like Gecko) \
+       Version/7.0.3 Safari/7046A194A"
+       ;;
+    4) echo "Mozilla/5.0 (Windows NT 10.0) \
+       AppleWebKit/537.36 (KHTML, like Gecko) \
+       Chrome/42.0.2311.135 Safari/537.36 Edge/12.10136"
+       ;;
+    5) echo "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_3 like Mac OS X; en-us) \
+       AppleWebKit/533.17.9 (KHTML, like Gecko) \
+       Version/5.0.2 Mobile/8J2 Safari/6533.18.5"
+       ;;
+    6) echo "Mozilla/5.0 (Linux; U; Android 2.2.1; en-us; Nexus One Build/FRG83) \
+       AppleWebKit/533.1 (KHTML, like Gecko) \
+       Version/4.0 Mobile Safari/533.1"
+       ;;
+  esac
+}
+
+rand_page() {
+  echo $(($RANDOM % 50))
+}
+
+rand_user() {
+  echo $(($RANDOM % 100))
+}
+
+rand_ip() {
+  echo "$(($RANDOM % 256)).$(($RANDOM % 256)).$(($RANDOM % 256)).$(($RANDOM % 256))"
+}
+
+new_event() {
+  declare index="$1"
+  local page="$(rand_page)"
+  local user="$(rand_user)"
+  local ip="$(rand_ip)"
+  local ua="$(rand_ua)"
+  printf '{
+    "page":"page-%s",
+    "user":"user-%s",
+    "ip": "%s",
+    "userAgent":"%s"
+  }' "$page" "$user" "$ip" "$ua"
+}
+
+main() {
+  declare nb=${1:-1}
+  for i in $(eval echo "{1..$nb}"); do
+    echo -ne "Processing $i/$nb\r"
+    curl -H 'Content-Type: application/json' \
+      -X POST "http://api.marathon.mesos:8000/events/view" \
+      -d "$(new_event $i)" &> /dev/null
+  done
+  echo -ne '\n'
+}
+
+[[ "$0" == "$BASH_SOURCE" ]] && main "$@"
