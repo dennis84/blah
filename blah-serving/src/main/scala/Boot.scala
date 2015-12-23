@@ -7,6 +7,7 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
+import blah.elastic.Mapping
 
 object Boot extends App
   with CorsSupport
@@ -33,6 +34,15 @@ object Boot extends App
   Try(env.consumer) match {
     case Success(c) => Source(c).runForeach(x => env.websocketHub ! x.message)
     case Failure(e) => println("Unable to connect to zookeeper.")
+  }
+
+  env.mappingUpdater.update("blah", env.elasticMapping) onSuccess {
+    case Mapping.Created(index) =>
+      println(s"Successfully initialized elasticsearch mapping (index: $index)")
+    case Mapping.Skipped(index) =>
+      println(s"Current elasticsearch mapping is up to date (index: $index)")
+    case Mapping.Updated(index) =>
+      println(s"Successfully updated elasticsearch mapping to a new version (index: $index)")
   }
 
   (for {

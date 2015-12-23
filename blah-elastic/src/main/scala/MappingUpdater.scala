@@ -28,40 +28,26 @@ class MappingUpdater(client: ElasticClient)(
         ContentTypes.`application/json`,
         mapping.compactPrint))
 
-  private def addAlias(index: String, alias: String) = {
-    val json: JsObject = ("actions" -> List(
-      ("add" -> ("index" -> index) ~ ("alias" -> alias))))
+  private def aliases(actions: List[JsObject]) =
     client request HttpRequest(
       method = HttpMethods.POST,
       uri = "_aliases",
       entity = HttpEntity(
         ContentTypes.`application/json`,
-        json.compactPrint))
-  }
+        ("actions" -> actions).compactPrint))
 
-  private def switchAlias(newIndex: String, oldIndex: String, alias: String) = {
-    val json: JsObject = ("actions" -> List(
-      ("remove" -> ("index" -> oldIndex) ~ ("alias" -> alias)) ~
-      ("add" -> ("index" -> newIndex) ~ ("alias" -> alias))))
-    client request HttpRequest(
-      method = HttpMethods.POST,
-      uri = "_aliases",
-      entity = HttpEntity(
-        ContentTypes.`application/json`,
-        json.compactPrint))
-  }
-
-  def update(index: String, data: JsObject): Future[MappingUpdater.Response] =
+  def update(index: String, data: JsObject): Future[Mapping.Result] =
     getMapping(index) flatMap {
       case HttpResponse(StatusCodes.NotFound, _, _, _) => for {
-        mapping <- putMapping(s"$index-1", data)
-        alias   <- addAlias(s"$index-1", index)
-      } yield MappingUpdater.Response("created", s"$index-1")
+        _ <- putMapping(s"$index-1", data)
+        _ <- aliases(List(
+          ("add" -> ("index" -> s"$index-1") ~ ("alias" -> index))))
+      } yield Mapping.Created(s"$index-1")
 
       case HttpResponse(StatusCodes.OK, _, entity, _) =>
         Unmarshal(entity).to[JsObject] flatMap { json =>
           val List((currentIndex, currentData: JsObject), _*) = json.fields.toList
-          if(currentData == data) Future(MappingUpdater.Response("skipped", currentIndex))
+          if(currentData == data) Future(Mapping.Skipped(currentIndex))
           else {
             val pattern = """.*-(\d+)""".r
             val n = currentIndex match {
@@ -69,14 +55,19 @@ class MappingUpdater(client: ElasticClient)(
             }
 
             for {
-              mapping <- putMapping(s"$index-$n", data)
-              alias   <- switchAlias(s"$index-$n", s"$currentIndex", index)
-            } yield MappingUpdater.Response("updated", s"$index-$n")
+              _ <- putMapping(s"$index-$n", data)
+              _ <- aliases(List(
+                ("add" -> ("index" -> s"$index-$n") ~ ("alias" -> index)),
+                ("remove" -> ("index" -> currentIndex) ~ ("alias" -> index))))
+            } yield Mapping.Updated(s"$index-$n")
           }
         }
     }
 }
 
-object MappingUpdater {
-  case class Response(status: String, index: String)
+object Mapping {
+  trait Result
+  case class Created(index: String) extends Result
+  case class Updated(index: String) extends Result
+  case class Skipped(index: String) extends Result
 }
