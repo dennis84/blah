@@ -14,4 +14,5 @@ ping_wait "namenode.marathon.mesos"
 create_app datanode
 create_app flume
 create_app elasticsearch
+ping_wait "elasticsearch.marathon.mesos"
 create_app serving
