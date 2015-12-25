@@ -18,8 +18,7 @@ function render(model, chan, conn) {
       hook: hook(debounce((node) => {
         if(undefined === node.masonry) {
           node.masonry = new Masonry(node, {
-            itemSelector: '.widget',
-            columnWidth: 330
+            itemSelector: '.widget'
           })
         } else {
           node.masonry.reloadItems()
