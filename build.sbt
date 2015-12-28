@@ -7,10 +7,10 @@ val res = Seq(
 val deps = Seq(
   "org.scalatest"                   % "scalatest_2.11"                         % "2.2.5" % "test",
   "com.typesafe.akka"              %% "akka-actor"                             % "2.4.1",
-  "com.typesafe.akka"               % "akka-stream-experimental_2.11"          % "1.0",
-  "com.typesafe.akka"               % "akka-http-core-experimental_2.11"       % "1.0",
-  "com.typesafe.akka"               % "akka-http-experimental_2.11"            % "1.0",
-  "com.typesafe.akka"               % "akka-http-spray-json-experimental_2.11" % "1.0",
+  "com.typesafe.akka"               % "akka-stream-experimental_2.11"          % "2.0.1",
+  "com.typesafe.akka"               % "akka-http-core-experimental_2.11"       % "2.0.1",
+  "com.typesafe.akka"               % "akka-http-experimental_2.11"            % "2.0.1",
+  "com.typesafe.akka"               % "akka-http-spray-json-experimental_2.11" % "2.0.1",
   "org.apache.spark"               %% "spark-core"                             % "1.5.2" % "provided",
   "org.apache.spark"               %% "spark-streaming"                        % "1.5.2" % "provided",
   "org.apache.spark"               %% "spark-streaming-kafka"                  % "1.5.2",
@@ -31,7 +31,7 @@ lazy val commonSettings = Seq(
 )
 
 lazy val root = (project in file("."))
-  .aggregate(core, api, serving)
+  .aggregate(core, api, serving, algo, elastic)
 
 lazy val core = (project in file("blah-core"))
   .settings(commonSettings: _*)
