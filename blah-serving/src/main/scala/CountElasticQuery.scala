@@ -5,6 +5,7 @@ import blah.core.JsonDsl._
 import blah.elastic.{QueryDsl => q}
 import blah.elastic.{FilterDsl => f}
 import blah.elastic.{AggregationDsl => a}
+import blah.elastic.AggregationMerge._
 
 object CountElasticQuery {
 
@@ -36,7 +37,7 @@ object CountElasticQuery {
   } reduceOption (_ merge _) getOrElse JsObject()
 
   private def groupBy(xs: List[String]): JsObject =
-    a.nest(((xs collectFirst {
+    (((xs collectFirst {
       case "date.hour"  => a.dateHistogram("date", "hour")
       case "date.month" => a.dateHistogram("date", "month")
       case "date.year"  => a.dateHistogram("date", "year")
@@ -46,8 +47,10 @@ object CountElasticQuery {
       case "user_agent.os.family"      => a.terms("osFamily")
       case "user_agent.device.family"  => a.terms("deviceFamily")
       case "user_agent.platform"       => a.terms("platform")
-    }) map (x => a.nest(x, a.sum("count"))))
-
+    } map (_ mergeAggregation a.sum("count"))) :\ JsObject()) {
+      _ mergeAggregation _
+    }
+  
   def apply(q: Query) = q match {
     case Query(Some(filters), None) =>
       filterBy(filters) merge a.sum("count")
