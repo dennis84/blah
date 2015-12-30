@@ -27,4 +27,12 @@ class UserAgentClassifierSpec extends FlatSpec with Matchers {
       Device("iPhone")
     )) should be(Classification(mobile = true, mobileDevice = true))
   }
+
+  it should "classify an BlackBerry" in {
+    UserAgentClassifier.classify(UserAgent(
+      Browser("Safari", None, None, None),
+      OS("BlackBerry OS", None, None, None),
+      Device("BlackBerry")
+    )) should be(Classification(mobile = true, mobileDevice = true))
+  }
 }

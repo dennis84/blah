@@ -9,7 +9,7 @@ case class Classification(
 
 object UserAgentClassifier {
   private val mobileOsFamilies = Seq(
-    "windows phone 6.5", "windows ce", "symbian os")
+    "windows phone 6.5", "windows ce", "symbian os", "blackberry os")
 
   private val mobileBrowsers = Seq(
     "firefox mobile", "opera mobile", "opera mini", "mobile safari", "webos",

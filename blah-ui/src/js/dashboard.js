@@ -65,6 +65,19 @@ function render(model, chan, conn) {
         operator: 'eq',
         value: 'page1'
       }], title: 'Page 1'}),
+      widget(pie, model, chan, conn, {
+        filterBy: [{
+          prop: 'date.from',
+          operator: 'gte',
+          value: moment().subtract(1, 'year')
+        }, {
+          prop: 'user_agent.platform',
+          operator: 'eq',
+          value: 'Mobile'
+        }],
+        groupBy: ['date.year', 'user_agent.os.family'],
+        title: 'Mobile Operating Systems'
+      }),
       widget(count, model, chan, conn, {filterBy: [{
         prop: 'page',
         operator: 'eq',
