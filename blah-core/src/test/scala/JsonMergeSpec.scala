@@ -6,7 +6,7 @@ import JsonDsl._
 
 class JsonMergeSpec extends FlatSpec with Matchers {
 
-  "JSON Merge" should "merge two objects" in {
+  "JsonMerge in scope" should "merge two objects" in {
     val x: JsObject = ("a" -> ("x" -> 1))
     val y: JsObject = ("a" -> ("x" -> 2))
     val z: JsObject = ("a" -> ("x" -> 2))

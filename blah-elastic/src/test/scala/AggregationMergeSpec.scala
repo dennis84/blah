@@ -7,7 +7,7 @@ import blah.elastic.AggregationMerge._
 
 class AggregationMergeSpec extends FlatSpec with Matchers {
 
-  "AggregationMerge" should "merge aggs" in {
+  "AggregationMerge in scope" should "merge two aggs" in {
     val x: JsObject = ("aggs" -> ("country" -> ("terms" -> "...")))
     val y: JsObject = ("aggs" -> ("city" -> ("terms" -> "...")))
     val z: JsObject = ("aggs" ->
@@ -18,7 +18,7 @@ class AggregationMergeSpec extends FlatSpec with Matchers {
     (x mergeAggregation y) should be (z)
   }
 
-  it should "merge a list" in {
+  it should "merge a list of aggs" in {
     val aggs: List[JsObject] = List(
       ("aggs" -> ("country" -> ("terms" -> "..."))),
       ("aggs" -> ("city" -> ("terms" -> "..."))),

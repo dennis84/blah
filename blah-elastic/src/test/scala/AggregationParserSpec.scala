@@ -39,7 +39,7 @@ class AggregationParserSpec extends FlatSpec with Matchers {
           ("count" -> ("value" -> 14)))))
     )))
 
-  "AggregationParser" should "parse a flat response" in {
+  "The AggregationParser" should "parse a flat response" in {
     AggregationParser.parse(flat) should be (List(
       ("count" -> 3) ~ ("country" -> "Germany"),
       ("count" -> 2) ~ ("country" -> "United States")))

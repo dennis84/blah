@@ -39,7 +39,7 @@ class MappingUpdaterSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
   implicit val mat = ActorMaterializer()
   import system.dispatcher
 
-  "MappingUpdater" should "create v1" in {
+  "The MappingUpdater" should "create the initial mapping" in {
     val client = new ElasticClient(ElasticUri("localhost:9200"))
     val updater = new MappingUpdater(client)
     val resp = Await.result(updater.update("test", mappingV1), 10.seconds)

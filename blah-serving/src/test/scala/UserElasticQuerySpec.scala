@@ -2,16 +2,18 @@ package blah.serving
 
 import org.scalatest._
 import spray.json._
+import blah.core.JsonDsl._
 
 class UserElasticQuerySpec extends FlatSpec with Matchers {
 
-  "UserElasticQuery" should "group empty query object" in {
-    UserElasticQuery(Query(None, None)) should be(JsObject())
+  "The UserElasticQuery" should "convert an empty query object to json" in {
+    UserElasticQuery(Query(None, None)) should be (JsObject())
+    UserElasticQuery(Query(Some(Nil), None)) should be (JsObject())
   }
 
-  it should "group" in {
+  it should "convert a query with groups to json" in {
     val query = Query(None, Option(List("country")))
-    UserElasticQuery(query) should be(JsObject("aggs" -> JsObject(
-      "country" -> JsObject("terms" -> JsObject("field" -> JsString("country"))))))
+    val json: JsObject = ("aggs" -> ("country" -> ("terms" -> ("field" -> "country"))))
+    UserElasticQuery(query) should be (json)
   }
 }

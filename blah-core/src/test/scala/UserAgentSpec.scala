@@ -4,20 +4,20 @@ import org.scalatest._
 
 class UserAgentSpec extends FlatSpec with Matchers {
 
-  val chrome = """|Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5)
-                  |AppleWebKit/537.36 (KHTML, like Gecko)
-                  |Chrome/47.0.2496.0 Safari/537.36""".stripMargin
-
-  "UserAgent" should "parse from empty string" in {
-    UserAgent("") should be(UserAgent(
+  "The UserAgent" should "parse an empty string" in {
+    UserAgent("") should be (UserAgent(
       Browser("Other"),
       OS("Other"),
       Device("Other")
     ))
   }
 
-  it should "parse from UA" in {
-    UserAgent(chrome) should be(UserAgent(
+  val chrome = """|Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5)
+                  |AppleWebKit/537.36 (KHTML, like Gecko)
+                  |Chrome/47.0.2496.0 Safari/537.36""".stripMargin
+
+  it should "parse an user agent string" in {
+    UserAgent(chrome) should be (UserAgent(
       Browser("Chrome", Some("47"), Some("0"), Some("2496")),
       OS("Mac OS X", Some("10"), Some("10"), Some("5")),
       Device("Other")

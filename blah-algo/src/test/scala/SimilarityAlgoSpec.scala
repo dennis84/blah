@@ -8,7 +8,7 @@ import JsonProtocol._
 
 class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
 
-  "SimilarityAlgo" should "train" in withSparkContext { sc =>
+  "The SimilarityAlgo" should "train" in withSparkContext { sc =>
     val algo = new SimilarityAlgo
     val input = sc.parallelize(List(
       Event("1", "view", DateTime.now, Map(

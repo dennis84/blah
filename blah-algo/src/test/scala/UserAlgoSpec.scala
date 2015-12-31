@@ -8,7 +8,7 @@ import JsonProtocol._
 
 class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
 
-  "UserAlgo" should "train" in withSparkContext { sc =>
+  "The UserAlgo" should "train" in withSparkContext { sc =>
     val algo = new UserAlgo
     val input = sc.parallelize(List(
       Event("1", "view", DateTime.now, Map(
@@ -23,6 +23,6 @@ class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
 
     val output = algo.train(input)
     val users = output.collect.toList
-    assert(users.length == 1)
+    users.length should be (1)
   }
 }
