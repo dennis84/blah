@@ -5,7 +5,7 @@ import Chartist from 'chartist'
 import moment from 'moment'
 
 function chart(model) {
-  if(undefined === model.groups) return
+  if(!model.groups || 0 === model.groups.length) return
   var labels = model.groups.map((x) => moment(x.date).format('h:mm a'))
   var data = model.groups.map((x) => x.count)
 

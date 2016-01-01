@@ -5,7 +5,7 @@ import {grouped} from './ctrl'
 import {hook, mount} from '../hook'
 
 function chart(model) {
-  if(undefined === model.groups) return
+  if(!model.groups || 0 === model.groups.length) return
   var data = model.groups.map((x) => x.count)
   var labels = model.groups.map((x) => {
     var y = clone(x)

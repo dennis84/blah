@@ -4,7 +4,7 @@ import {hook, mount} from '../hook'
 import Chartist from 'chartist'
 
 function chart(model) {
-  if(undefined === model.users) return
+  if(!model.users || 0 === model.users.length) return
   var labels = model.users.map((x) => x.country)
   var data = model.users.map((x) => x.count)
 
