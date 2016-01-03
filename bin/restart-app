@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -e
+
+source $(dirname $0)/functions.sh
+
+main() {
+  declare name="$1"
+  case "$name" in
+    serving)
+      sbt "$name/docker:publishLocal"
+      destroy_app "$name"
+      sleep 1
+      create_app "$name"
+      ;;
+    api)
+      sbt "$name/docker:publishLocal"
+      destroy_app "$name"
+      sleep 1
+      create_app "$name"
+      ;;
+    *)
+      echo "No such command: $name"
+      echo "Usage:"
+      echo "  serving"
+      echo "  api"
+      exit 1
+  esac
+}
+
+[[ "$0" == "$BASH_SOURCE" ]] && main "$@"

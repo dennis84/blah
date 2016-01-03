@@ -6,6 +6,13 @@ create_app() {
     &> /dev/null
 }
 
+destroy_app() {
+  declare name="$1"
+  echo "Destroy $name application"
+  curl -XDELETE "http://192.168.99.100:8080/v2/apps/$name" \
+    &> /dev/null
+}
+
 create_job() {
   declare name="$1"
   echo "Create $name job"
