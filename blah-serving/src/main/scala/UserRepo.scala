@@ -11,20 +11,28 @@ import spray.json._
 import spray.json.lenses.JsonLenses._
 import blah.elastic.ElasticClient
 import blah.elastic.AggregationParser
+import akka.event.LoggingAdapter
 
 class UserRepo(client: ElasticClient)(
   implicit system: ActorSystem,
+  log: LoggingAdapter,
   mat: Materializer
 ) extends SprayJsonSupport with ServingJsonProtocol {
   import system.dispatcher
 
-  def count(q: Query): Future[UserCount] =
+  def count(q: Query): Future[UserCount] = {
+    log.debug(UserElasticQuery(q).compactPrint)
     client request HttpRequest(
       method = HttpMethods.GET,
-      uri = "/blah/user/_count"
+      uri = "/blah/user/_count",
+      entity = HttpEntity(
+        ContentTypes.`application/json`,
+        UserElasticQuery(q).compactPrint)
     ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
+      log.debug(json.compactPrint)
       UserCount(Try(json.extract[Long]('count)) getOrElse 0)
     }
+  }
 
   def search(q: Query): Future[List[UserCount]] =
     client request HttpRequest(

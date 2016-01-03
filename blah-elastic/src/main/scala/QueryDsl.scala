@@ -11,6 +11,9 @@ trait QueryDsl {
   def notTerm(k: String, v: JsValue): JsObject =
     ("query" -> ("filtered" -> ("query" ->
       ("bool" -> ("must_not" -> List("term" -> (k -> v)))))))
+
+  def matchAll(): JsObject =
+    ("query" -> ("match_all" -> JsObject.empty))
 }
 
 object QueryDsl extends QueryDsl

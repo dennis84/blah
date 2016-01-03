@@ -11,10 +11,10 @@ class UserAlgo extends Algo {
     .map(x => Try(x.parseJson.convertTo[UserEvent]))
     .filter(_.isSuccess)
     .map(_.get)
-    .map(x => (x.props.user, x.props.ip))
+    .map(x => (x.props.user, (x.props.ip, x.date)))
     .groupByKey
-    .map { case(u, ips) =>
-      val maybeIp = ips.flatten.lastOption
+    .map { case(u, values) =>
+      val (maybeIp, date) = values.last
       val geoData = (for {
         ip <- maybeIp
         data <- GeoIp.find(ip)
@@ -26,6 +26,11 @@ class UserAlgo extends Algo {
         "city" -> data.city,
         "zipCode" -> data.zipCode
       )) getOrElse Map.empty
-      Doc(u, Map("user" -> u, "ip" -> maybeIp) ++ geoData)
+
+      Doc(u, Map(
+        "user" -> u,
+        "ip" -> maybeIp,
+        "date" -> date.toString
+      ) ++ geoData)
     }
 }

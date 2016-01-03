@@ -67,6 +67,7 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
           ("country" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("countryCode" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("city" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("zipCode" -> ("type" -> "string") ~ ("index" -> "not_analyzed"))
+          ("zipCode" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("date" -> ("type" -> "date") ~ ("format" -> "dateOptionalTime"))
       )))
 }

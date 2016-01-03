@@ -7,13 +7,45 @@ import blah.core.JsonDsl._
 class UserElasticQuerySpec extends FlatSpec with Matchers {
 
   "The UserElasticQuery" should "convert an empty query object to json" in {
-    UserElasticQuery(Query(None, None)) should be (JsObject())
-    UserElasticQuery(Query(Some(Nil), None)) should be (JsObject())
+    val empty: JsObject = ("query" -> ("match_all" -> JsObject.empty))
+    UserElasticQuery(Query(None, None)) should be (empty)
+    UserElasticQuery(Query(Some(Nil), None)) should be (empty)
   }
 
   it should "convert a query with groups to json" in {
     val query = Query(None, Option(List("country")))
-    val json: JsObject = ("aggs" -> ("country" -> ("terms" -> ("field" -> "country"))))
+    val json: JsObject =
+      ("aggs" -> ("country" ->
+        ("terms" -> ("field" -> "country"))
+      ))
+
+    UserElasticQuery(query) should be (json)
+  }
+
+  it should "convert a query with filters to json" in {
+    val query = Query(Some(List(
+      Filter("date.from", "gte", "2016-01-01")
+    )), Some(Nil))
+
+    val json: JsObject =
+      ("query" -> ("filtered" -> ("filter" ->
+        ("range" -> ("date" -> ("gte" -> "2016-01-01"))))))
+
+    UserElasticQuery(query) should be (json)
+  }
+
+  it should "convert a query with filters and groups to json" in {
+    val query = Query(Some(List(
+      Filter("date.from", "gte", "2016-01-01")
+    )), Option(List("country")))
+
+    val json: JsObject =
+      ("query" -> ("filtered" -> ("filter" ->
+        ("range" -> ("date" -> ("gte" -> "2016-01-01")))))) ~
+      ("aggs" -> ("country" ->
+        ("terms" -> ("field" -> "country"))
+      ))
+
     UserElasticQuery(query) should be (json)
   }
 }
