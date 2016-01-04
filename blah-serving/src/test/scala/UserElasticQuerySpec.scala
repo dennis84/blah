@@ -15,9 +15,10 @@ class UserElasticQuerySpec extends FlatSpec with Matchers {
   it should "convert a query with groups to json" in {
     val query = Query(None, Option(List("country")))
     val json: JsObject =
-      ("aggs" -> ("country" ->
-        ("terms" -> ("field" -> "country"))
-      ))
+      ("aggs" -> ("country" -> ("terms" -> 
+        ("field" -> "country") ~
+        ("size" -> 0)
+      )))
 
     UserElasticQuery(query) should be (json)
   }
@@ -42,9 +43,10 @@ class UserElasticQuerySpec extends FlatSpec with Matchers {
     val json: JsObject =
       ("query" -> ("filtered" -> ("filter" ->
         ("range" -> ("date" -> ("gte" -> "2016-01-01")))))) ~
-      ("aggs" -> ("country" ->
-        ("terms" -> ("field" -> "country"))
-      ))
+      ("aggs" -> ("country" -> ("terms" -> 
+        ("field" -> "country") ~
+        ("size" -> 0)
+      )))
 
     UserElasticQuery(query) should be (json)
   }

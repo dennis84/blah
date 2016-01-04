@@ -15,22 +15,16 @@ class UserAlgo extends Algo {
     .groupByKey
     .map { case(u, values) =>
       val (maybeIp, date) = values.last
-      val geoData = (for {
-        ip <- maybeIp
-        data <- GeoIp.find(ip)
-      } yield Map(
-        "lng" -> data.lng,
-        "lat" -> data.lat,
-        "country" -> data.country,
-        "countryCode" -> data.countryCode,
-        "city" -> data.city,
-        "zipCode" -> data.zipCode
-      )) getOrElse Map.empty
-
+      val geo = maybeIp.map(GeoIp.find _).flatten
       Doc(u, Map(
         "user" -> u,
-        "ip" -> maybeIp,
-        "date" -> date.toString
-      ) ++ geoData)
+        "date" -> date.toString,
+        "lng" -> geo.map(_.lng).getOrElse(0),
+        "lat" -> geo.map(_.lat).getOrElse(0),
+        "country" -> geo.map(_.country).flatten.getOrElse("N/A"),
+        "countryCode" -> geo.map(_.countryCode).flatten.getOrElse("N/A"),
+        "city" -> geo.map(_.city).flatten.getOrElse("N/A"),
+        "zipCode" -> geo.map(_.zipCode).flatten.getOrElse("N/A")
+      ))
     }
 }

@@ -80,11 +80,11 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
           ("aggs" ->
             ("count" -> ("sum" -> ("field" -> "count"))) ~
             ("browserFamily" ->
-              ("terms" -> ("field" -> "browserFamily")) ~
+              ("terms" -> ("field" -> "browserFamily") ~ ("size" -> 0)) ~
               ("aggs" ->
                 ("count" -> ("sum" -> ("field" -> "count"))) ~
                 ("osFamily" ->
-                  ("terms" -> ("field" -> "osFamily")) ~
+                  ("terms" -> ("field" -> "osFamily") ~ ("size" -> 0)) ~
                   ("aggs" -> ("count" -> ("sum" -> ("field" -> "count"))))
                 ))))))
 
