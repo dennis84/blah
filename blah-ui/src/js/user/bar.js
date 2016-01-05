@@ -3,10 +3,10 @@ import {grouped} from './ctrl'
 import {hook, mount} from '../hook'
 import Chartist from 'chartist'
 
-function chart(model) {
+function chart(model, limit = 10) {
   if(!model.users || 0 === model.users.length) return
-  var labels = model.users.map((x) => x.country)
-  var data = model.users.map((x) => x.count)
+  var labels = model.users.slice(0, limit).map(x => x.country)
+  var data = model.users.slice(0, limit).map(x => x.count)
 
   return h('div.chart', {
     hook: hook((node) => {
@@ -28,7 +28,7 @@ function render(model, update, conn, options) {
     })
   }, [
     h('h3', options.title),
-    chart(model)
+    chart(model, options.limit)
   ])
 }
 
