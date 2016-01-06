@@ -7,6 +7,7 @@ val res = Seq(
 val deps = Seq(
   "org.scalatest"                   % "scalatest_2.11"                         % "2.2.5" % "test",
   "com.typesafe.akka"              %% "akka-actor"                             % "2.4.1",
+  "com.typesafe.akka"              %% "akka-testkit"                           % "2.4.1",
   "com.typesafe.akka"               % "akka-stream-experimental_2.11"          % "2.0.1",
   "com.typesafe.akka"               % "akka-http-core-experimental_2.11"       % "2.0.1",
   "com.typesafe.akka"               % "akka-http-experimental_2.11"            % "2.0.1",
@@ -53,7 +54,7 @@ lazy val api = (project in file("blah-api"))
     dockerBaseImage := "java:8",
     dockerExposedPorts := Seq(8000)
   )
-  .dependsOn(core)
+  .dependsOn(core % "compile->compile;test->test")
 
 lazy val serving = (project in file("blah-serving"))
   .enablePlugins(JavaAppPackaging)
