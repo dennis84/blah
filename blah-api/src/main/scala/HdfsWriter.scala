@@ -5,37 +5,42 @@ import java.text.DecimalFormat
 import akka.actor._
 import spray.json._
 import com.github.nscala_time.time.Imports._
-import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
-import org.apache.hadoop.io.{SequenceFile, LongWritable, Text, IOUtils}
+import org.apache.hadoop.io.{SequenceFile, LongWritable, BytesWritable, IOUtils}
 import blah.core._
 import JsonProtocol._
 
-class Storage(dfs: FileSystem, config: StorageConfig) extends Actor {
+class HdfsWriter(
+  dfs: FileSystem,
+  config: HdfsWriterConfig
+) extends Actor with ActorLogging {
   import context.dispatcher
 
-  // context.system.scheduler.schedule(
-  //   DurationInt(10).seconds,
-  //   DurationInt(10).seconds,
-  //   self, Storage.Close)
+  context.system.scheduler.schedule(
+    DurationInt(10).seconds,
+    DurationInt(10).seconds,
+    self, HdfsWriter.Close)
 
-  def receive = active(newWriter, 0L)
+  def receive = {
+    case m@HdfsWriter.Write(e) =>
+      context become active(newWriter, 0L)
+      self ! m
+  }
 
   def active(writer: SequenceFile.Writer, bytesWritten: Long): Receive = {
-    case Storage.Write(e) if bytesWritten > config.batchSize =>
-      val key = new LongWritable(0L)
-      val value = new Text(e.toJson.compactPrint)
-      writer.append(key, value)
-      close(writer)
-      context become active(newWriter, 0L)
+    case HdfsWriter.Write(e) =>
+      log.debug("Write event")
+      val value = new BytesWritable(e.toJson.compactPrint.getBytes)
+      writer.append(new LongWritable(0L), value)
+      if(bytesWritten > config.batchSize) {
+        close(writer)
+        context become active(newWriter, 0L)
+      } else {
+        context become active(writer, bytesWritten + value.getLength)
+      }
 
-    case Storage.Write(e) =>
-      val key = new LongWritable(0L)
-      val value = new Text(e.toJson.compactPrint)
-      writer.append(key, value)
-      context become active(writer, bytesWritten + value.getLength)
-
-    case Storage.Close =>
+    case HdfsWriter.Close =>
+      log.debug("Close writer")
       close(writer)
       context become receive
   }
@@ -57,16 +62,16 @@ class Storage(dfs: FileSystem, config: StorageConfig) extends Actor {
     SequenceFile.createWriter(dfs.getConf,
       SequenceFile.Writer.stream(dfs.create(path)),
       SequenceFile.Writer.keyClass(classOf[LongWritable]),
-      SequenceFile.Writer.valueClass(classOf[Text]))
+      SequenceFile.Writer.valueClass(classOf[BytesWritable]))
   }
 }
 
-object Storage {
+object HdfsWriter {
   case class Write(event: Event)
   case object Close
 }
 
-case class StorageConfig(
+case class HdfsWriterConfig(
   path: String = "/events/%Y/%m/%d",
   filePrefix: String = "events",
   fileSuffix: String = ".jsonl",
