@@ -1,9 +1,12 @@
 package blah.api
 
-import akka.actor.ActorSystem
+import java.net.URI
+import akka.actor._
 import kafka.producer.KafkaProducer
 import kafka.serializer.StringEncoder
 import com.softwaremill.react.kafka.ProducerProperties
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.fs.{FileSystem, Path}
 
 class Env(system: ActorSystem) {
   import system.dispatcher
@@ -14,4 +17,11 @@ class Env(system: ActorSystem) {
     clientId = "events",
     encoder = new StringEncoder
   ))
+
+  private val dfs = FileSystem.get(
+    URI.create(config.getString("hadoop.url")),
+    new Configuration)
+
+  lazy val hdfs = system.actorOf(Props(
+    new HdfsWriter(dfs, HdfsWriterConfig())))
 }

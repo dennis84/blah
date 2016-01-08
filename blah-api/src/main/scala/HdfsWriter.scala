@@ -5,8 +5,8 @@ import java.text.DecimalFormat
 import akka.actor._
 import spray.json._
 import com.github.nscala_time.time.Imports._
-import org.apache.hadoop.fs.{FileSystem, Path}
-import org.apache.hadoop.io.{SequenceFile, LongWritable, BytesWritable, IOUtils}
+import org.apache.hadoop.fs.{FileSystem, Path, FSDataOutputStream}
+import org.apache.hadoop.io.{SequenceFile, LongWritable, BytesWritable}
 import blah.core._
 import JsonProtocol._
 
@@ -23,34 +23,39 @@ class HdfsWriter(
 
   def receive = {
     case m@HdfsWriter.Write(e) =>
-      context become active(newWriter, 0L)
+      val (writer, stream) = nextWriterAndStream
+      context become active(writer, stream, 0L)
       self ! m
   }
 
-  def active(writer: SequenceFile.Writer, bytesWritten: Long): Receive = {
+  def active(
+    writer: SequenceFile.Writer,
+    stream: FSDataOutputStream,
+    bytesWritten: Long
+  ): Receive = {
     case HdfsWriter.Write(e) =>
       log.debug("Write event")
       val value = new BytesWritable(e.toJson.compactPrint.getBytes)
       writer.append(new LongWritable(0L), value)
       if(bytesWritten > config.batchSize) {
-        close(writer)
-        context become active(newWriter, 0L)
+        writer.hflush()
+        writer.close()
+        stream.close()
+        val (nextWriter, nextStream) = nextWriterAndStream
+        context become active(nextWriter, nextStream, 0L)
       } else {
-        context become active(writer, bytesWritten + value.getLength)
+        context become active(writer, stream, bytesWritten + value.getLength)
       }
 
     case HdfsWriter.Close =>
       log.debug("Close writer")
-      close(writer)
+      writer.hflush()
+      writer.close()
+      stream.close()
       context become receive
   }
 
-  private def close(writer: SequenceFile.Writer) {
-    writer.hflush()
-    IOUtils.closeStream(writer)
-  }
-
-  private def newWriter() = {
+  private def nextWriterAndStream() = {
     val now = DateTime.now
     val df = new DecimalFormat("00")
     val file = Seq(config.filePrefix, now.getMillis, config.fileSuffix) mkString ""
@@ -59,10 +64,11 @@ class HdfsWriter(
       "%m" -> df.format(now.getMonthOfYear),
       "%d" -> df.format(now.getDayOfMonth)
     ).foldLeft(config.path + "/" + file) {_.replaceAll _ tupled(_)})
-    SequenceFile.createWriter(dfs.getConf,
-      SequenceFile.Writer.stream(dfs.create(path)),
+    val stream = dfs.create(path)
+    (SequenceFile.createWriter(dfs.getConf,
+      SequenceFile.Writer.stream(stream),
       SequenceFile.Writer.keyClass(classOf[LongWritable]),
-      SequenceFile.Writer.valueClass(classOf[BytesWritable]))
+      SequenceFile.Writer.valueClass(classOf[BytesWritable])), stream)
   }
 }
 

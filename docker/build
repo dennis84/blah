@@ -5,7 +5,6 @@ set -e
 cd "$(dirname "$0")"
 
 docker build -t blah/elasticsearch blah-elasticsearch/
-docker build -t blah/flume blah-flume/
 docker build -t blah/hadoop-base blah-hadoop-base/
 docker build -t blah/hadoop-master blah-hadoop-master/
 docker build -t blah/hadoop-slave blah-hadoop-slave/
