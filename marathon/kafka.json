@@ -6,7 +6,7 @@
   "container": {
     "type": "DOCKER",
     "docker": {
-      "image": "ches/kafka",
+      "image": "greytip/kafka",
       "network": "BRIDGE",
       "portMappings": [
         {"containerPort": 9092, "hostPort": 0, "servicePort": 9092, "protocol": "tcp"}

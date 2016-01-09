@@ -18,7 +18,7 @@ val deps = Seq(
   "org.apache.spark"               %% "spark-mllib"                            % "1.5.2",
   "org.elasticsearch"              %% "elasticsearch-spark"                    % "2.1.2",
   "com.github.nscala-time"         %% "nscala-time"                            % "2.6.0",
-  "com.softwaremill.reactivekafka" %% "reactive-kafka-core"                    % "0.8.3",
+  "com.softwaremill.reactivekafka" %% "reactive-kafka-core"                    % "0.9.0",
   "org.clojars.timewarrior"         % "ua-parser"                              % "1.3.0",
   "net.virtual-void"               %% "json-lenses"                            % "0.6.1",
   "com.maxmind.geoip2"              % "geoip2"                                 % "2.3.1"

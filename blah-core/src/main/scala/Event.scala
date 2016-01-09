@@ -1,12 +1,12 @@
 package blah.core
 
 import spray.json._
-import org.joda.time.DateTime
+import com.github.nscala_time.time.Imports._
 
 case class Event(
   id: String,
   name: String,
-  date: DateTime,
+  date: DateTime = DateTime.now,
   props: Map[String, JsValue] = Map.empty)
 
 case class ViewProps(
