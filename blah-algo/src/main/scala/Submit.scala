@@ -1,19 +1,19 @@
 package blah.algo
 
-import kafka.serializer.StringEncoder
-import kafka.producer.KafkaProducer
+import scala.concurrent.ExecutionContext.Implicits.global
 import org.apache.spark.SparkConf
+import org.apache.kafka.common.serialization.StringSerializer
 import com.softwaremill.react.kafka.ProducerProperties
 import com.typesafe.config.ConfigFactory
+import blah.core.KafkaProducer
 
 object Submit {
   def main(args: Array[String]) {
     val config = ConfigFactory.load()
-    val producer = KafkaProducer[String](ProducerProperties(
-      brokerList = config.getString("producer.broker.list"),
-      topic = "trainings",
-      clientId = "websocket",
-      encoder = new StringEncoder))
+    lazy val producer = KafkaProducer(ProducerProperties(
+      bootstrapServers = config.getString("producer.broker.list"),
+      valueSerializer = new StringSerializer,
+      topic = "trainings"))
 
     lazy val countAlgo = new CountAlgo
     lazy val similarityAlgo = new SimilarityAlgo

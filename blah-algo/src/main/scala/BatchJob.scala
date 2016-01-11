@@ -1,21 +1,26 @@
 package blah.algo
 
-import scala.util.{Try, Success, Failure}
+import scala.concurrent.ExecutionContext
+import scala.util.{Success, Failure}
 import akka.util.ByteString
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.hadoop.io.{LongWritable, BytesWritable}
 import org.elasticsearch.spark._
 import org.elasticsearch.spark.rdd.Metadata._
-import kafka.producer.KafkaProducer
 import com.typesafe.config.Config
+import blah.core.KafkaProducer
 
 class BatchJob(
   name: String,
   algo: Algo,
-  producer: KafkaProducer[String]
+  producer: KafkaProducer[Array[Byte], String]
 ) extends Job {
 
-  def run(config: Config, sparkConf: SparkConf, args: Array[String]) {
+  def run(
+    config: Config,
+    sparkConf: SparkConf,
+    args: Array[String]
+  )(implicit ec: ExecutionContext) {
     val path = args.lift(1).getOrElse("*/*/*")
     val hadoopUrl = s"${config getString "hadoop.url"}/events/$path/*.jsonl"
     val sc = new SparkContext(sparkConf)
@@ -26,7 +31,7 @@ class BatchJob(
       (Map(ID -> doc.id), doc.data)
     }.saveToEsWithMeta(s"blah/$name")
 
-    Try(producer send name) match {
+    (producer send name) onComplete {
       case Success(_) => println("Successfully sent message")
       case Failure(e) => println("Message could not be sent")
     }

@@ -32,7 +32,7 @@ object Boot extends App
   val routes = services.map(_.route)
 
   Try(env.consumer) match {
-    case Success(c) => Source.fromPublisher(c).runForeach(x => env.websocketHub ! x.message)
+    case Success(c) => Source.fromPublisher(c).runForeach(x => env.websocketHub ! x.value)
     case Failure(e) => log.warning("Unable to connect to zookeeper.")
   }
 

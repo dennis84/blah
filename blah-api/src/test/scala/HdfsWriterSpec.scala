@@ -41,19 +41,19 @@ class HdfsWriterSpec
     val event3 = Event(UUID.randomUUID.toString, "view")
 
     writer ! HdfsWriter.Write(event1)
-    expectNoMsg(100.milliseconds)
+    expectNoMsg(200.milliseconds)
 
     writer ! HdfsWriter.Write(event2)
-    expectNoMsg(100.milliseconds)
+    expectNoMsg(200.milliseconds)
 
     writer ! HdfsWriter.Close
-    expectNoMsg(100.milliseconds)
+    expectNoMsg(200.milliseconds)
 
     writer ! HdfsWriter.Write(event3)
-    expectNoMsg(100.milliseconds)
+    expectNoMsg(200.milliseconds)
 
     writer ! HdfsWriter.Close
-    expectNoMsg(100.milliseconds)
+    expectNoMsg(200.milliseconds)
 
     val statuses = dfs.globStatus(new Path("target/test/events/*/*/*/*"))
     statuses.length should be (2)

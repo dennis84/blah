@@ -1,5 +1,6 @@
 package blah.algo
 
+import scala.concurrent.ExecutionContext
 import org.apache.spark.SparkConf
 import com.typesafe.config.Config
 
@@ -8,5 +9,5 @@ trait Job {
     config: Config,
     sparkConf: SparkConf,
     args: Array[String]
-  ): Unit
+  )(implicit ec: ExecutionContext): Unit
 }

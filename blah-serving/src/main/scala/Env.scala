@@ -2,7 +2,7 @@ package blah.serving
 
 import akka.actor.{ActorSystem, Props}
 import akka.stream.Materializer
-import kafka.serializer.StringDecoder
+import org.apache.kafka.common.serialization.StringDeserializer
 import com.softwaremill.react.kafka.{ReactiveKafka, ConsumerProperties}
 import spray.json._
 import blah.elastic.{ElasticClient, ElasticUri, MappingUpdater}
@@ -15,12 +15,10 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
 
   lazy val kafka = new ReactiveKafka
   lazy val consumer = kafka.consume(ConsumerProperties(
-    brokerList = config.getString("consumer.broker.list"),
-    zooKeeperHost = config.getString("consumer.zookeeper.connect"),
+    bootstrapServers = config.getString("consumer.broker.list"),
     topic = "trainings",
     groupId = "websocket",
-    decoder = new StringDecoder
-  ))
+    valueDeserializer = new StringDeserializer))
 
   lazy val elasticClient = new ElasticClient(ElasticUri(
     config.getString("elasticsearch.url")))
