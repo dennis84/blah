@@ -10,7 +10,6 @@ trait ServingJsonProtocol extends JsonProtocol {
   implicit val similarityItemFmt = jsonFormat2(SimilarityItem)
   implicit val similarityResultFmt = jsonFormat2(SimilarityResult)
   implicit val userResultFmt = jsonFormat2(UserCount)
-  implicit val statusFmt = jsonFormat1(Status)
 }
 
 object ServingJsonProtocol extends ServingJsonProtocol
