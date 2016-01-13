@@ -25,7 +25,7 @@ object Submit {
     lazy val countStreaming = new CountStreamingJob("count", countAlgo, producer)
     lazy val userStreaming = new StreamingJob("user", userAlgo, producer)
     
-    val jobs = Map(
+    lazy val jobs = Map(
       "count" -> countBatch,
       "similarity" -> similarityBatch,
       "user" -> userBatch,
@@ -42,6 +42,7 @@ object Submit {
       sparkConf.set("es.nodes", config.getString("elasticsearch.url"))
       sparkConf.set("es.index.auto.create", "false")
       job.run(config, sparkConf, args)
+      sys exit 0
     }) getOrElse {
       println(s"""|No such command: ${args.mkString(" ")}
                   |Usage:
@@ -51,6 +52,7 @@ object Submit {
                   |  submit count-streaming
                   |  submit user-streaming
                   |""".stripMargin)
+      sys exit 1
     }
   }
 }
