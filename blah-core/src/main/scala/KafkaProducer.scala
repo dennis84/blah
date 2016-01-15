@@ -10,9 +10,7 @@ import org.apache.kafka.clients.producer.RecordMetadata
 
 class KafkaProducer[K,V](topic: String, producer: Producer[K,V]) {
   def send(message: V)(implicit ec: ExecutionContext): Future[RecordMetadata] =
-    Future.firstCompletedOf(Seq(
-      Future(producer.send(new ProducerRecord(topic, message))).map(_.get),
-      Future{Thread.sleep(2000); throw new TimeoutException}))
+    Future(producer.send(new ProducerRecord(topic, message))).map(_.get)
 }
 
 object KafkaProducer {
