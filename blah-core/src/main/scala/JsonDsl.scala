@@ -5,8 +5,9 @@ import spray.json._
 trait JsonDsl extends JsonMerge {
   implicit def int2Js(x: Int) = JsNumber(x)
   implicit def string2Js(x: String) = JsString(x)
-  implicit def seq2Js[A](xs: Traversable[A])(implicit ev: A => JsValue) =
-    JsArray(xs.toVector.map { x => val y: JsValue = x; y })
+  implicit def boolean2Js(x: Boolean) = JsBoolean(x)
+  implicit def traversable2Js[A](xs: Traversable[A])(implicit ev: A => JsValue) =
+    JsArray(xs.toVector map (x => x : JsValue))
   implicit def pair2Js[A](x: (String, A))(implicit ev: A => JsValue) =
     JsObject(fields = Map(x._1 -> x._2))
   implicit def pair2Assoc[A](x: (String, A))(implicit ev: A => JsValue) =
