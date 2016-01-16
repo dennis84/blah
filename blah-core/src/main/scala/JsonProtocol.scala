@@ -1,13 +1,13 @@
 package blah.core
 
 import spray.json._
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
 
 trait JsonProtocol extends DefaultJsonProtocol {
-  implicit val dateTimeFmt = new RootJsonFormat[DateTime] {
-    def write(d: DateTime): JsValue = JsString(d.toString)
-    def read(v: JsValue): DateTime = v match {
-      case JsString(x) => new DateTime(x)
+  implicit val zonedDateTimeFmt = new RootJsonFormat[ZonedDateTime] {
+    def write(d: ZonedDateTime): JsValue = JsString(d.toString)
+    def read(v: JsValue): ZonedDateTime = v match {
+      case JsString(x) => ZonedDateTime.parse(x)
       case _ => throw new DeserializationException("fail")
     }
   }

@@ -1,12 +1,12 @@
 package blah.core
 
+import java.time.{ZonedDateTime, ZoneOffset}
 import spray.json._
-import com.github.nscala_time.time.Imports._
 
 case class Event(
   id: String,
   name: String,
-  date: DateTime = DateTime.now,
+  date: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC),
   props: Map[String, JsValue] = Map.empty)
 
 case class ViewProps(
@@ -16,7 +16,7 @@ case class ViewProps(
 case class ViewEvent(
   id: String,
   name: String,
-  date: DateTime,
+  date: ZonedDateTime,
   props: ViewProps)
 
 case class UserProps(
@@ -24,5 +24,5 @@ case class UserProps(
   ip: Option[String] = None)
 case class UserEvent(
   id: String,
-  date: DateTime,
+  date: ZonedDateTime,
   props: UserProps)

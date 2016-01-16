@@ -1,10 +1,10 @@
 package blah.serving
 
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
 
 case class Count(
   count: Long,
-  date: Option[DateTime] = None,
+  date: Option[ZonedDateTime] = None,
   browserFamily: Option[String] = None,
   browserMajor: Option[String] = None,
   osFamily: Option[String] = None,

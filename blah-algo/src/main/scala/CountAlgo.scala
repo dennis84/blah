@@ -1,6 +1,7 @@
 package blah.algo
 
 import java.security.MessageDigest
+import java.time.temporal.ChronoUnit
 import scala.util.Try
 import org.apache.spark.rdd.RDD
 import org.elasticsearch.spark._
@@ -19,7 +20,7 @@ class CountAlgo extends Algo {
       val uac = ua.map(UserAgentClassifier.classify)
       val doc = Map(
         "page" -> view.props.page,
-        "date" -> view.date.hourOfDay.roundFloorCopy.toString,
+        "date" -> view.date.truncatedTo(ChronoUnit.HOURS).toString,
         "browserFamily" -> ua.map(_.browser.family).getOrElse("N/A"),
         "browserMajor" -> ua.map(_.browser.major).flatten.getOrElse("N/A"),
         "browserMinor" -> ua.map(_.browser.minor).flatten.getOrElse("N/A"),
