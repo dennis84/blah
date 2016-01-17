@@ -5,13 +5,13 @@ val res = Seq(
 )
 
 val deps = Seq(
-  "org.scalatest"                   % "scalatest_2.11"                         % "2.2.5" % "test",
+  "org.scalatest"                   % "scalatest_2.11"                         % "2.2.6" % "test",
   "com.typesafe.akka"              %% "akka-actor"                             % "2.4.1",
   "com.typesafe.akka"              %% "akka-testkit"                           % "2.4.1",
-  "com.typesafe.akka"               % "akka-stream-experimental_2.11"          % "2.0.1",
-  "com.typesafe.akka"               % "akka-http-core-experimental_2.11"       % "2.0.1",
-  "com.typesafe.akka"               % "akka-http-experimental_2.11"            % "2.0.1",
-  "com.typesafe.akka"               % "akka-http-spray-json-experimental_2.11" % "2.0.1",
+  "com.typesafe.akka"               % "akka-stream-experimental_2.11"          % "2.0.2",
+  "com.typesafe.akka"               % "akka-http-core-experimental_2.11"       % "2.0.2",
+  "com.typesafe.akka"               % "akka-http-experimental_2.11"            % "2.0.2",
+  "com.typesafe.akka"               % "akka-http-spray-json-experimental_2.11" % "2.0.2",
   "org.apache.spark"               %% "spark-core"                             % "1.6.0" % "provided",
   "org.apache.spark"               %% "spark-streaming"                        % "1.6.0" % "provided",
   "org.apache.spark"               %% "spark-streaming-kafka"                  % "1.6.0",
@@ -20,14 +20,14 @@ val deps = Seq(
   "com.softwaremill.reactivekafka" %% "reactive-kafka-core"                    % "0.9.0",
   "org.clojars.timewarrior"         % "ua-parser"                              % "1.3.0",
   "net.virtual-void"               %% "json-lenses"                            % "0.6.1",
-  "com.maxmind.geoip2"              % "geoip2"                                 % "2.3.1"
+  "com.maxmind.geoip2"              % "geoip2"                                 % "2.5.0"
 )
 
 lazy val commonSettings = Seq(
   organization  := "com.github.dennis84",
   version       := "0.1.0",
   scalaVersion  := "2.11.7",
-  scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
+  scalacOptions := Seq("-unchecked", "-feature", "-deprecation", "-encoding", "utf8")
 )
 
 lazy val root = (project in file("."))
