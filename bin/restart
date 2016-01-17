@@ -19,11 +19,22 @@ main() {
       sleep 1
       create_app "$name"
       ;;
+    algo)
+      sbt "$name/assembly"
+      destroy_job count
+      destroy_job user
+      destroy_job similarity
+      sleep 1
+      create_job count
+      create_job user
+      create_job similarity
+      ;;
     *)
       echo "No such command: $name"
       echo "Usage:"
       echo "  serving"
       echo "  api"
+      echo "  algo"
       exit 1
   esac
 }

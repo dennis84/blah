@@ -21,6 +21,14 @@ create_job() {
     &> /dev/null
 }
 
+destroy_job() {
+  declare name="$1"
+  echo "Destroy $name job"
+  curl -XDELETE -H "Content-Type: application/json" \
+    "http://192.168.99.100:8081/scheduler/job/$name" \
+    &> /dev/null
+}
+
 ping_wait() {
   declare hn="$1"
   echo "Waiting for $hn"
