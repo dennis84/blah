@@ -4,6 +4,7 @@ import scala.util.{Try, Success, Failure}
 import scala.concurrent._
 import akka.actor.ActorSystem
 import akka.stream.Materializer
+import akka.event.LoggingAdapter
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
@@ -14,6 +15,7 @@ import blah.elastic.AggregationParser
 
 class CountRepo(client: ElasticClient)(
   implicit system: ActorSystem,
+  log: LoggingAdapter,
   mat: Materializer
 ) extends SprayJsonSupport with ServingJsonProtocol {
   import system.dispatcher

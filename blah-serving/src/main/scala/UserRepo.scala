@@ -4,6 +4,7 @@ import scala.concurrent._
 import scala.util.{Try, Success, Failure}
 import akka.actor.ActorSystem
 import akka.stream.Materializer
+import akka.event.LoggingAdapter
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
@@ -11,7 +12,6 @@ import spray.json._
 import spray.json.lenses.JsonLenses._
 import blah.elastic.ElasticClient
 import blah.elastic.AggregationParser
-import akka.event.LoggingAdapter
 
 class UserRepo(client: ElasticClient)(
   implicit system: ActorSystem,
