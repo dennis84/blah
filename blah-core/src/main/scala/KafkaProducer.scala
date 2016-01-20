@@ -1,16 +1,12 @@
 package blah.core
 
-import java.util.concurrent.TimeoutException
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
 import com.softwaremill.react.kafka.ProducerProperties
 import org.apache.kafka.clients.producer.{KafkaProducer => Producer}
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.clients.producer.RecordMetadata
 
 class KafkaProducer[K,V](topic: String, producer: Producer[K,V]) {
-  def send(message: V)(implicit ec: ExecutionContext): Future[RecordMetadata] =
-    Future(producer.send(new ProducerRecord(topic, message))).map(_.get)
+  def send(message: V): Unit =
+    producer.send(new ProducerRecord(topic, message))
 }
 
 object KafkaProducer {

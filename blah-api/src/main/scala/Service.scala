@@ -1,7 +1,6 @@
 package blah.api
 
 import java.util.UUID
-import scala.util.{Success, Failure}
 import akka.actor.ActorSystem
 import akka.event.LoggingAdapter
 import akka.stream.Materializer
@@ -27,11 +26,7 @@ class Service(env: Env)(
       (post & entity(as[Map[String, JsValue]])) { props =>
         val evt = Event(UUID.randomUUID.toString, name, props = props)
         env.hdfs ! HdfsWriter.Write(evt)
-        (env.producer send evt.toJson.compactPrint) onComplete {
-          case Success(_) => log.debug("Message sent successfully.")
-          case Failure(_) => log.debug("Message could not be sent.")
-        }
-
+        env.producer send evt.toJson.compactPrint
         complete(OK -> Message("Event successfully created."))
       }
     }
