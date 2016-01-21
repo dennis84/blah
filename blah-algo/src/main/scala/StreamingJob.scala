@@ -34,11 +34,7 @@ class StreamingJob(
       algo.train(rdd).map { doc =>
         (Map(ID -> doc.id), doc.data)
       }.saveToEsWithMeta(s"blah/$name")
-
-      (producer send name) onComplete {
-        case Success(_) => println("Successfully sent message")
-        case Failure(e) => println("Message could not be sent")
-      }
+      producer send name
     }
 
     stream.print()
