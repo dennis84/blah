@@ -18,7 +18,7 @@ class SimilarityAlgo extends Algo {
       .filter(_.isSuccess)
       .map(_.get)
       .filter(_.props.user.isDefined)
-      .map(x => (x.props.user.get, x.props.page))
+      .map(x => (x.props.user.get, x.props.item))
 
     val usersRDD = events.groupByKey()
     val users = usersRDD.keys.collect.toList
@@ -65,7 +65,7 @@ class SimilarityAlgo extends Algo {
           .sortBy(_._2)(ord)
           .take(10)
           .map {
-            case(page, score) => Map("page" -> page, "score" -> score)
+            case(item, score) => Map("item" -> item, "score" -> score)
           })
 
         Doc(u, doc)

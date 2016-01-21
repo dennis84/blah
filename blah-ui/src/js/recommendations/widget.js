@@ -7,7 +7,7 @@ function views(xs) {
   if(undefined === xs || 0 == xs.length) return
   return h('div.recommendations', xs.map((item) => {
     return h('div', [
-      h('span', item.page),
+      h('span', item.item),
       h('span.label.label-danger.pull-right', String(parseFloat(item.score).toFixed(2)))
     ])
   }))

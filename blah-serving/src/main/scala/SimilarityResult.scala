@@ -5,5 +5,5 @@ case class SimilarityResult(
   views: List[SimilarityItem] = Nil)
 
 case class SimilarityItem(
-  page: String,
+  item: String,
   score: Double)

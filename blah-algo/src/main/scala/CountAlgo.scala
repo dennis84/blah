@@ -19,7 +19,7 @@ class CountAlgo extends Algo {
       val ua = view.props.userAgent.map(UserAgent(_))
       val uac = ua.map(UserAgentClassifier.classify)
       val doc = Map(
-        "page" -> view.props.page,
+        "item" -> view.props.item,
         "date" -> view.date.truncatedTo(ChronoUnit.HOURS).toString,
         "browserFamily" -> ua.map(_.browser.family).getOrElse("N/A"),
         "browserMajor" -> ua.map(_.browser.major).flatten.getOrElse("N/A"),

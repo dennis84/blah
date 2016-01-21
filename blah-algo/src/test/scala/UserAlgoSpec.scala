@@ -11,11 +11,11 @@ class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
     val algo = new UserAlgo
     val input = sc.parallelize(List(
       Event("1", "view", props = Map(
-        "page" -> JsString("page1"),
+        "item" -> JsString("page1"),
         "user" -> JsString("user1")
       )).toJson.compactPrint,
       Event("1", "view", props = Map(
-        "page" -> JsString("page2"),
+        "item" -> JsString("page2"),
         "user" -> JsString("user1")
       )).toJson.compactPrint
     ))

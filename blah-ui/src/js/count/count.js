@@ -6,7 +6,7 @@ function content(model, options) {
   if(undefined === model.count) return
   return h('div', [
     h('div.count', String(model.count)),
-    h('div.page', options.title)
+    h('div.item', options.title)
   ])
 }
 

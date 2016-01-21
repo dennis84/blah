@@ -9,7 +9,7 @@ class QuerySpec extends FlatSpec with Matchers {
   "A Query" should "create from json" in {
     val json = """|{
                   |  "filterBy": [
-                  |    {"prop": "page", "operator": "eq", "value": "home"},
+                  |    {"prop": "item", "operator": "eq", "value": "home"},
                   |    {"prop": "user_agent.device.family", "operator": "eq", "value": "iPhone"}
                   |  ],
                   |  "groupBy": [
@@ -17,7 +17,7 @@ class QuerySpec extends FlatSpec with Matchers {
                   |  ]
                   |}""".stripMargin
     json.parseJson.convertTo[Query] should be (Query(
-      Some(List(Filter("page", "eq", "home"), Filter("user_agent.device.family", "eq", "iPhone"))),
+      Some(List(Filter("item", "eq", "home"), Filter("user_agent.device.family", "eq", "iPhone"))),
       Some(List("date.hour"))))
   }
 }

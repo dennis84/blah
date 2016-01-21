@@ -29,7 +29,7 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
     ("mappings" ->
       ("count" ->
         ("properties" ->
-          ("page" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("item" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("date" -> ("type" -> "date") ~ ("format" -> "dateOptionalTime")) ~
           ("browserFamily" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("browserMajor" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
@@ -53,7 +53,7 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
           ("views" ->
             ("type" -> "nested") ~
             ("properties" ->
-              ("page" -> ("type" -> "string")) ~
+              ("item" -> ("type" -> "string")) ~
               ("score" -> ("type" -> "double"))
       )))) ~
       ("user" ->

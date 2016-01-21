@@ -46,7 +46,7 @@ rand_ua() {
   esac
 }
 
-rand_page() {
+rand_item() {
   echo $(($RANDOM % 50))
 }
 
@@ -60,16 +60,16 @@ rand_ip() {
 
 new_event() {
   declare index="$1"
-  local page="$(rand_page)"
+  local item="$(rand_item)"
   local user="$(rand_user)"
   local ip="$(rand_ip)"
   local ua="$(rand_ua)"
   printf '{
-    "page":"page-%s",
+    "item":"page-%s",
     "user":"user-%s",
     "ip": "%s",
     "userAgent":"%s"
-  }' "$page" "$user" "$ip" "$ua"
+  }' "$item" "$user" "$ip" "$ua"
 }
 
 main() {

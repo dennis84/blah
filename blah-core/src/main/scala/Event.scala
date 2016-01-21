@@ -10,7 +10,7 @@ case class Event(
   props: Map[String, JsValue] = Map.empty)
 
 case class ViewProps(
-  page: String,
+  item: String,
   user: Option[String] = None,
   userAgent: Option[String] = None)
 case class ViewEvent(

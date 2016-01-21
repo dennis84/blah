@@ -2,7 +2,7 @@ import clone from 'clone'
 import {get,post} from '../rest'
 
 /**
- * Fetch pageviews from serving layer.
+ * Fetch views from serving layer.
  *
  * `options.filterBy` An object of filters.
  *
@@ -20,7 +20,7 @@ function count(model, options) {
 }
 
 /**
- * Fetch grouped pageviews from serving layer.
+ * Fetch grouped views from serving layer.
  *
  * `options.filterBy` Filter by specific properties
  * `options.groupBy` Group by specific properties

@@ -66,7 +66,7 @@ function render(model, chan, conn) {
         title: 'Platform Statistics'
       }),
       widget(count, model, chan, conn, {filterBy: [{
-        prop: 'page',
+        prop: 'item',
         operator: 'eq',
         value: 'page-1'
       }], title: 'Page 1'}),
@@ -84,7 +84,7 @@ function render(model, chan, conn) {
         title: 'Mobile Operating Systems'
       }),
       widget(count, model, chan, conn, {filterBy: [{
-        prop: 'page',
+        prop: 'item',
         operator: 'eq',
         value: 'page-2'
       }], title: 'Page 2'}),

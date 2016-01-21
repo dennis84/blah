@@ -9,8 +9,8 @@ import blah.elastic.AggregationMerge._
 
 object CountElasticQuery {
   private def filterBy(xs: List[Filter]) = xs collect {
-    case Filter("page", "eq", value)                      => q.term("page", value)
-    case Filter("page", "ne", value)                      => q.notTerm("page", value)
+    case Filter("item", "eq", value)                      => q.term("item", value)
+    case Filter("item", "ne", value)                      => q.notTerm("item", value)
     case Filter("user_agent.device.family", "eq", value)  => q.term("deviceFamily", value)
     case Filter("user_agent.device.family", "ne", value)  => q.notTerm("deviceFamily", value)
     case Filter("user_agent.browser.family", "eq", value) => q.term("browserFamily", value)
