@@ -21,6 +21,7 @@ main() {
       ;;
     algo)
       sbt "$name/assembly"
+      sbt "$name/docker:publishLocal"
       destroy_job count
       destroy_job user
       destroy_job similarity

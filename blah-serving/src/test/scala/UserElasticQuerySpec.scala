@@ -8,12 +8,12 @@ class UserElasticQuerySpec extends FlatSpec with Matchers {
 
   "The UserElasticQuery" should "convert an empty query object to json" in {
     val empty: JsObject = ("query" -> ("match_all" -> JsObject.empty))
-    UserElasticQuery(Query(None, None)) should be (empty)
-    UserElasticQuery(Query(Some(Nil), None)) should be (empty)
+    UserElasticQuery(UserQuery(None, None)) should be (empty)
+    UserElasticQuery(UserQuery(Some(Nil), None)) should be (empty)
   }
 
   it should "convert a query with groups to json" in {
-    val query = Query(None, Option(List("country")))
+    val query = UserQuery(None, Option(List("country")))
     val json: JsObject =
       ("aggs" -> ("country" -> ("terms" -> 
         ("field" -> "country") ~
@@ -24,7 +24,7 @@ class UserElasticQuerySpec extends FlatSpec with Matchers {
   }
 
   it should "convert a query with filters to json" in {
-    val query = Query(Some(List(
+    val query = UserQuery(Some(List(
       Filter("date.from", "gte", "2016-01-01")
     )), Some(Nil))
 
@@ -36,7 +36,7 @@ class UserElasticQuerySpec extends FlatSpec with Matchers {
   }
 
   it should "convert a query with filters and groups to json" in {
-    val query = Query(Some(List(
+    val query = UserQuery(Some(List(
       Filter("date.from", "gte", "2016-01-01")
     )), Option(List("country")))
 

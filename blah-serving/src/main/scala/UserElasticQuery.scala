@@ -18,11 +18,11 @@ object UserElasticQuery {
       case "country" => a.terms("country")
     } :\ JsObject()) (_ mergeAggregation _)
 
-  def apply(query: Query): JsValue = (query match {
-    case Query(Some(filters), None) => filterBy(filters)
-    case Query(Some(filters), Some(Nil)) => filterBy(filters)
-    case Query(None, Some(groups)) => groupBy(groups)
-    case Query(Some(filters), Some(groups)) =>
+  def apply(query: UserQuery): JsValue = (query match {
+    case UserQuery(Some(filters), None) => filterBy(filters)
+    case UserQuery(Some(filters), Some(Nil)) => filterBy(filters)
+    case UserQuery(None, Some(groups)) => groupBy(groups)
+    case UserQuery(Some(filters), Some(groups)) =>
       filterBy(filters) merge groupBy(groups)
     case _ => JsObject()
   }) match {

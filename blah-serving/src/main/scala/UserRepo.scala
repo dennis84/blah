@@ -20,7 +20,7 @@ class UserRepo(client: ElasticClient)(
 ) extends SprayJsonSupport with ServingJsonProtocol {
   import system.dispatcher
 
-  def count(q: Query): Future[UserCount] =
+  def count(q: UserQuery): Future[UserCount] =
     client request HttpRequest(
       method = HttpMethods.GET,
       uri = "/blah/user/_count",
@@ -31,7 +31,7 @@ class UserRepo(client: ElasticClient)(
       UserCount(Try(json.extract[Long]('count)) getOrElse 0)
     }
 
-  def search(q: Query): Future[List[UserCount]] =
+  def search(q: UserQuery): Future[List[UserCount]] =
     client request HttpRequest(
       method = HttpMethods.POST,
       uri = "/blah/user/_search?size=0",

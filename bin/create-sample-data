@@ -77,7 +77,7 @@ main() {
   for i in $(eval echo "{1..$nb}"); do
     echo -ne "Processing $i/$nb\r"
     curl -H 'Content-Type: application/json' \
-      -X POST "http://api.marathon.mesos:8000/events/view" \
+      -X POST "http://api.marathon.mesos:8000/events/pageviews" \
       -d "$(new_event $i)" &> /dev/null
   done
   echo -ne '\n'

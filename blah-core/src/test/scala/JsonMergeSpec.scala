@@ -26,4 +26,11 @@ class JsonMergeSpec extends FlatSpec with Matchers {
     val z: JsObject = ("a" -> ("x" -> 2) ~ ("y" -> ("z" -> 3) ~ ("v" -> 4)))
     (x merge y) should be (z)
   }
+
+  it should "merge objects in a list" in {
+    val x: JsObject = ("a" -> List("x" -> 1))
+    val y: JsObject = ("a" -> List("x" -> 2))
+    val z: JsObject = ("a" -> List(("x" -> 1), ("x" -> 2)))
+    (x merge y) should be (z)
+  }
 }

@@ -48,6 +48,10 @@ function mkQuery(options) {
     query.groupBy = options.groupBy
   }
 
+  if(options.collection) {
+    query.collection = options.collection
+  }
+
   return query
 }
 

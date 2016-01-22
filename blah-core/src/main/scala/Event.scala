@@ -5,7 +5,7 @@ import spray.json._
 
 case class Event(
   id: String,
-  name: String,
+  collection: String,
   date: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC),
   props: Map[String, JsValue] = Map.empty)
 
@@ -15,7 +15,7 @@ case class ViewProps(
   userAgent: Option[String] = None)
 case class ViewEvent(
   id: String,
-  name: String,
+  collection: String,
   date: ZonedDateTime,
   props: ViewProps)
 

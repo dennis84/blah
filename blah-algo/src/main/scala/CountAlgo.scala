@@ -15,12 +15,13 @@ class CountAlgo extends Algo {
     .map(x => Try(x.parseJson.convertTo[ViewEvent]))
     .filter(_.isSuccess)
     .map(_.get)
-    .map { view =>
-      val ua = view.props.userAgent.map(UserAgent(_))
+    .map { event =>
+      val ua = event.props.userAgent.map(UserAgent(_))
       val uac = ua.map(UserAgentClassifier.classify)
       val doc = Map(
-        "item" -> view.props.item,
-        "date" -> view.date.truncatedTo(ChronoUnit.HOURS).toString,
+        "collection" -> event.collection,
+        "item" -> event.props.item,
+        "date" -> event.date.truncatedTo(ChronoUnit.HOURS).toString,
         "browserFamily" -> ua.map(_.browser.family).getOrElse("N/A"),
         "browserMajor" -> ua.map(_.browser.major).flatten.getOrElse("N/A"),
         "browserMinor" -> ua.map(_.browser.minor).flatten.getOrElse("N/A"),

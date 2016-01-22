@@ -27,6 +27,7 @@ function render(model, chan, conn) {
       }), 100)
     }, [
       widget(pie, model, chan, conn, {
+        collection: 'pageviews',
         filterBy: [{
           prop: 'date.from',
           operator: 'gte',
@@ -36,6 +37,7 @@ function render(model, chan, conn) {
         title: 'Browser Statistics Over a Year'
       }),
       widget(bar, model, chan, conn, {
+        collection: 'pageviews',
         filterBy: [{
           prop: 'date.from',
           operator: 'gte',
@@ -45,18 +47,26 @@ function render(model, chan, conn) {
         title: 'Page Views in the past 24 hours',
         className: 'size-2of3'
       }),
-      widget(userCount, model, chan, conn, {filterBy: [{
-        prop: 'date.from',
-        operator: 'gte',
-        value: moment().subtract(1, 'day')
-      }], title: 'Number of visitors today'}),
+      widget(userCount, model, chan, conn, {
+        filterBy: [{
+          prop: 'date.from',
+          operator: 'gte',
+          value: moment().subtract(1, 'day')
+        }],
+        title: 'Number of visitors today'
+      }),
       widget(userBar, model, chan, conn, {
         groupBy: ['country'],
         title: 'Visitors by Country'
       }),
       widget(userCount, model, chan, conn, {title: 'Unique Visitors'}),
-      widget(count, model, chan, conn, {title: 'All', className: 'red'}),
+      widget(count, model, chan, conn, {
+        collection: 'pageviews',
+        title: 'All',
+        className: 'red'
+      }),
       widget(pie, model, chan, conn, {
+        collection: 'pageviews',
         filterBy: [{
           prop: 'date.from',
           operator: 'gte',
@@ -65,12 +75,17 @@ function render(model, chan, conn) {
         groupBy: ['date.year', 'user_agent.platform'],
         title: 'Platform Statistics'
       }),
-      widget(count, model, chan, conn, {filterBy: [{
-        prop: 'item',
-        operator: 'eq',
-        value: 'page-1'
-      }], title: 'Page 1'}),
+      widget(count, model, chan, conn, {
+        collection: 'pageviews',
+        filterBy: [{
+          prop: 'item',
+          operator: 'eq',
+          value: 'page-1'
+        }],
+        title: 'Page 1'
+      }),
       widget(pie, model, chan, conn, {
+        collection: 'pageviews',
         filterBy: [{
           prop: 'date.from',
           operator: 'gte',
@@ -83,11 +98,15 @@ function render(model, chan, conn) {
         groupBy: ['date.year', 'user_agent.os.family'],
         title: 'Mobile Operating Systems'
       }),
-      widget(count, model, chan, conn, {filterBy: [{
-        prop: 'item',
-        operator: 'eq',
-        value: 'page-2'
-      }], title: 'Page 2'}),
+      widget(count, model, chan, conn, {
+        collection: 'pageviews',
+        filterBy: [{
+          prop: 'item',
+          operator: 'eq',
+          value: 'page-2'
+        }],
+        title: 'Page 2'
+      }),
       widget(recommendations, model, chan)
     ])
   ])

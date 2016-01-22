@@ -50,12 +50,13 @@ object CountElasticQuery {
       _ mergeAggregation _
     }
   
-  def apply(q: Query) = q match {
-    case Query(Some(filters), None) =>
-      filterBy(filters) merge a.sum("count")
-    case Query(None, Some(groups)) => groupBy(groups)
-    case Query(Some(filters), Some(groups)) =>
-      filterBy(filters) merge groupBy(groups)
-    case _ => a.sum("count")
-  }
+  def apply(query: CountQuery) =
+    q.term("collection", query.collection) merge (query match {
+      case CountQuery(coll, Some(filters), None) =>
+        filterBy(filters) merge a.sum("count")
+      case CountQuery(collection, None, Some(groups)) => groupBy(groups)
+      case CountQuery(coll, Some(filters), Some(groups)) =>
+        filterBy(filters) merge groupBy(groups)
+      case _ => a.sum("count")
+    })
 }
