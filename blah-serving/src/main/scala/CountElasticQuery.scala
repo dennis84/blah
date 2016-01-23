@@ -46,17 +46,17 @@ object CountElasticQuery {
       case "user_agent.os.family"      => a.terms("osFamily")
       case "user_agent.device.family"  => a.terms("deviceFamily")
       case "user_agent.platform"       => a.terms("platform")
-    } map (_ mergeAggregation a.sum("count"))) :\ JsObject()) {
+    } map (_ mergeAggregation a.sum("count", "count"))) :\ JsObject()) {
       _ mergeAggregation _
     }
   
   def apply(query: CountQuery) =
     q.term("collection", query.collection) merge (query match {
       case CountQuery(coll, Some(filters), None) =>
-        filterBy(filters) merge a.sum("count")
+        filterBy(filters) merge a.sum("count", "count")
       case CountQuery(collection, None, Some(groups)) => groupBy(groups)
       case CountQuery(coll, Some(filters), Some(groups)) =>
         filterBy(filters) merge groupBy(groups)
-      case _ => a.sum("count")
+      case _ => a.sum("count", "count")
     })
 }

@@ -19,7 +19,8 @@ class CountAlgoSpec extends FlatSpec with Matchers with SparkFun {
         "item" -> JsString("page1")
       )).toJson.compactPrint,
       Event("3", "purchases", props = Map(
-        "item" -> JsString("plan-a")
+        "item" -> JsString("plan-a"),
+        "price" -> JsNumber(20.0)
       )).toJson.compactPrint,
       Event("4", "view", ZonedDateTime.now(ZoneOffset.UTC).plusHours(2), Map(
         "item" -> JsString("page1")

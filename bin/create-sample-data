@@ -47,26 +47,41 @@ rand_ua() {
 }
 
 rand_item() {
-  echo $(($RANDOM % 50))
+  echo "item-$(($RANDOM % 50))"
 }
 
 rand_user() {
-  echo $(($RANDOM % 100))
+  echo "user-$(($RANDOM % 100))"
 }
 
 rand_ip() {
   echo "$(($RANDOM % 256)).$(($RANDOM % 256)).$(($RANDOM % 256)).$(($RANDOM % 256))"
 }
 
-new_event() {
+new_pageviews() {
   declare index="$1"
   local item="$(rand_item)"
   local user="$(rand_user)"
   local ip="$(rand_ip)"
   local ua="$(rand_ua)"
   printf '{
-    "item":"page-%s",
-    "user":"user-%s",
+    "item":"%s",
+    "user":"%s",
+    "ip": "%s",
+    "userAgent":"%s"
+  }' "$item" "$user" "$ip" "$ua"
+}
+
+new_purchases() {
+  declare index="$1"
+  local item="$(rand_item)"
+  local user="$(rand_user)"
+  local ip="$(rand_ip)"
+  local ua="$(rand_ua)"
+  printf '{
+    "item":"TICKET-%s",
+    "price": 20.00,
+    "user":"%s",
     "ip": "%s",
     "userAgent":"%s"
   }' "$item" "$user" "$ip" "$ua"
@@ -74,11 +89,12 @@ new_event() {
 
 main() {
   declare nb=${1:-1}
+  declare coll=${2:-"pageviews"}
   for i in $(eval echo "{1..$nb}"); do
     echo -ne "Processing $i/$nb\r"
     curl -H 'Content-Type: application/json' \
-      -X POST "http://api.marathon.mesos:8000/events/pageviews" \
-      -d "$(new_event $i)" &> /dev/null
+      -X POST "http://api.marathon.mesos:8000/events/$coll" \
+      -d "$(eval "new_$coll" $i)" &> /dev/null
   done
   echo -ne '\n'
 }

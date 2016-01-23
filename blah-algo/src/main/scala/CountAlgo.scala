@@ -12,15 +12,20 @@ import JsonProtocol._
 
 class CountAlgo extends Algo {
   def train(rdd: RDD[String]) = rdd
-    .map(x => Try(x.parseJson.convertTo[ViewEvent]))
+    .map(x => Try(x.parseJson.convertTo[Event]))
     .filter(_.isSuccess)
     .map(_.get)
     .map { event =>
-      val ua = event.props.userAgent.map(UserAgent(_))
+      val props = event.props collect {
+        case (k, JsString(v)) => (k, v)
+        case (k, JsNumber(v)) => (k, v)
+      }
+      val ua = props.get("userAgent") collect {
+        case x: String => UserAgent(x)
+      }
       val uac = ua.map(UserAgentClassifier.classify)
-      val doc = Map(
+      val doc = props ++ Map(
         "collection" -> event.collection,
-        "item" -> event.props.item,
         "date" -> event.date.truncatedTo(ChronoUnit.HOURS).toString,
         "browserFamily" -> ua.map(_.browser.family).getOrElse("N/A"),
         "browserMajor" -> ua.map(_.browser.major).flatten.getOrElse("N/A"),

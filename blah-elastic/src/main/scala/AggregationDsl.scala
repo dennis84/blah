@@ -15,8 +15,8 @@ trait AggregationDsl {
       ("date_histogram" -> ("field" -> k) ~ ("interval" -> interval))
     ))
 
-  def sum(k: String): JsObject =
-    ("aggs" -> (k -> ("sum" -> ("field" -> k))))
+  def sum(key: String, prop: String): JsObject =
+    ("aggs" -> (key -> ("sum" -> ("field" -> prop))))
 }
 
 object AggregationDsl extends AggregationDsl

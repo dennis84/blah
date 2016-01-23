@@ -10,6 +10,7 @@ import pie from './count/pie'
 import recommendations from './recommendations/widget'
 import userCount from './user/count'
 import userBar from './user/bar'
+import sum from './sum/sum'
 
 function render(model, chan, conn) {
   return h('div.container', [
@@ -98,14 +99,10 @@ function render(model, chan, conn) {
         groupBy: ['date.year', 'user_agent.os.family'],
         title: 'Mobile Operating Systems'
       }),
-      widget(count, model, chan, conn, {
-        collection: 'pageviews',
-        filterBy: [{
-          prop: 'item',
-          operator: 'eq',
-          value: 'page-2'
-        }],
-        title: 'Page 2'
+      widget(sum, model, chan, conn, {
+        collection: 'purchases',
+        prop: 'price',
+        title: 'Total Revenue'
       }),
       widget(recommendations, model, chan)
     ])

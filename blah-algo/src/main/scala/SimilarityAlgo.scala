@@ -40,7 +40,7 @@ class SimilarityAlgo extends Algo {
     }
 
     val mat = new RowMatrix(rows)
-    val sim = mat.columnSimilarities()
+    val sim = mat.columnSimilarities(0.1)
 
     val all = sim.toIndexedRowMatrix.rows.flatMap { case IndexedRow(i,v) =>
       val vector = v.asInstanceOf[SparseVector]

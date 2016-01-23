@@ -27,6 +27,7 @@ object Boot extends App
     new StatusService,
     new WebsocketService(env.websocketRoom),
     new CountService(env),
+    new SumService(env),
     new SimilarityService(env),
     new UserService(env))
   val routes = services.map(_.route)
