@@ -3,7 +3,8 @@
 set -e
 
 rand_ua() {
-  case $(($RANDOM % 10)) in
+  declare rand=${1:-"$(($RANDOM % 10))"}
+  case $rand in
     0) echo "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 \
        (KHTML, like Gecko) Ubuntu Chromium/45.0.2454.85 \
        Chrome/45.0.2454.85 Safari/537.36"

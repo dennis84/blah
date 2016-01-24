@@ -5,3 +5,5 @@ path:
   work: /data/work
 
 script.engine.groovy.inline.update: on
+script.inline: on
+script.indexed: on
