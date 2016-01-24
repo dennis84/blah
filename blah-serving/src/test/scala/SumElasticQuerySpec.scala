@@ -11,7 +11,7 @@ class SumElasticQuerySpec extends FlatSpec with Matchers {
       ("query" -> ("filtered" ->
         ("query" -> ("bool" -> ("must" -> List(
           "term" -> ("collection" -> "purchases"))))))) ~
-      ("aggs" -> ("sum" -> ("sum" -> ("field" -> "price"))))
+      ("aggs" -> ("sum" -> ("sum" -> ("script" -> "doc['price'].value * doc['count'].value"))))
     SumElasticQuery(SumQuery("purchases", "price", None)) should be (empty)
   }
 
@@ -31,7 +31,7 @@ class SumElasticQuerySpec extends FlatSpec with Matchers {
           ("term" -> ("collection" -> "purchases"))
         ))))
       )) ~
-      ("aggs" -> ("sum" -> ("sum" -> ("field" -> "price"))))
+      ("aggs" -> ("sum" -> ("sum" -> ("script" -> "doc['price'].value * doc['count'].value"))))
     SumElasticQuery(query) should be (json)
   }
 }
