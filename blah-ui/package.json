@@ -32,6 +32,6 @@
     "xhr": "^2.2.0"
   },
   "scripts": {
-    "test": "babel-tape-runner test/*"
+    "test": "./node_modules/babel-tape-runner/bin/babel-tape-runner test/*"
   }
 }
