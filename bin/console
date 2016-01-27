@@ -1,0 +1,159 @@
+#!/bin/bash
+
+set -e
+
+cd "$(dirname "$0")"
+source ./functions.sh
+
+cd ..
+
+create_apps() {
+  create_app dns
+  create_app zookeeper
+  ping_wait "zookeeper.marathon.mesos"
+  create_app kafka
+  create_app namenode
+  ping_wait "namenode.marathon.mesos"
+  create_app datanode
+  create_app api
+  create_app elasticsearch
+  ping_wait "elasticsearch.marathon.mesos"
+  create_app serving
+}
+
+create_streaming_apps() {
+  create_app "count-streaming"
+  create_app "user-streaming"
+}
+
+create_jobs() {
+  create_job count
+  create_job user
+  create_job similarity
+}
+
+build_apps() {
+  sbt api/docker:publishLocal
+  sbt serving/docker:publishLocal
+  sbt algo/assembly
+  sbt algo/docker:publishLocal
+}
+
+build_images() {
+  docker build -t blah/elasticsearch docker/blah-elasticsearch/
+  docker build -t blah/hadoop-base docker/blah-hadoop-base/
+  docker build -t blah/hadoop-master docker/blah-hadoop-master/
+  docker build -t blah/hadoop-slave docker/blah-hadoop-slave/
+  docker build -t blah/mesos-dns docker/blah-mesos-dns/
+  docker build -t blah/spark-mesos docker/blah-spark-mesos/
+}
+
+pull_images() {
+  docker pull greytip/kafka
+  docker pull jplock/zookeeper
+  docker pull mesosphere/mesos-master:0.25.0-0.2.70.ubuntu1404
+  docker pull mesosphere/mesos-slave:0.25.0-0.2.70.ubuntu1404
+  docker pull mesosphere/marathon
+  docker pull mesosphere/chronos
+}
+
+restart_app() {
+  declare app="$1"
+  case "$app" in
+    serving|api)
+      sbt "$app/docker:publishLocal"
+      destroy_app "$app"
+      sleep 1
+      create_app "$app"
+      ;;
+    algo)
+      sbt algo/assembly
+      sbt algo/docker:publishLocal
+      destroy_job count
+      destroy_job user
+      destroy_job similarity
+      sleep 1
+      create_job count
+      create_job user
+      create_job similarity
+      ;;
+    *)
+      echo "Error: App does not exist: $app"
+      echo "Usage:" 
+      echo "  console restart api"
+      echo "  console restart serving"
+      echo "  console restart algo"
+      exit 1
+  esac
+}
+
+create_sample_data() {
+  declare nb=${1:-1}
+  declare coll=${2:-"pageviews"}
+  for i in $(eval echo "{1..$nb}"); do
+    echo -ne "Processing $i/$nb\r"
+    curl -H 'Content-Type: application/json' \
+      -X POST "http://api.marathon.mesos:8000/events/$coll" \
+      -d "$(eval "new_$coll" $i)" &> /dev/null
+  done
+  echo -ne '\n'
+}
+
+main() {
+  local cmd="$1"; shift
+  case "$cmd" in
+    build-apps)
+      build_apps
+      ;;
+    build-images)
+      build_images
+      ;;
+    build-all)
+      build_images
+      build_apps
+      build_ui
+      pull_images
+      ;;
+    pull-images)
+      pull_images
+      ;;
+    create-apps)
+      create_apps
+      ;;
+    create-jobs)
+      create_jobs
+      ;;
+    create-streaming-apps)
+      create_streaming_apps
+      ;;
+    create-all)
+      create_apps
+      create_jobs
+      create_streaming_apps
+      ;;
+    restart)
+      restart_app "$@"
+      ;;
+    samples)
+      create_sample_data "$@"
+      ;;
+    *)
+      echo "Error: No such command: $command"
+      echo "Usage:"
+      echo "  console build-apps"
+      echo "  console build-images"
+      echo "  console build-all"
+      echo "  console pull-images"
+      echo "  console create-apps"
+      echo "  console create-streaming-apps"
+      echo "  console create-jobs"
+      echo "  console create-all"
+      echo "  console restart algo"
+      echo "  console restart serving"
+      echo "  console restart api"
+      echo "  console samples"
+      exit 1
+  esac
+}
+
+[[ "$0" == "$BASH_SOURCE" ]] && main "$@"

@@ -3,9 +3,9 @@
 ## Running
 
 ```bash
-bin/build
+bin/console build-all
 docker-compose up
-bin/create-all
+bin/console create-all
 
 cd blah-ui/
 npm install
@@ -16,7 +16,7 @@ open ./index.html
 ## Collecting
 
 ```bash
-bin/create-sample-data
+bin/console samples
 ```
 
 ## Troubleshooting
