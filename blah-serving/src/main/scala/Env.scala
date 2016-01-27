@@ -34,12 +34,8 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
           ("date" -> ("type" -> "date") ~ ("format" -> "dateOptionalTime")) ~
           ("browserFamily" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("browserMajor" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("browserMinor" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("browserPatch" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("osFamily" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("osMajor" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("osMinor" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("osPatch" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("deviceFamily" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("platform" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("isMobile" -> ("type" -> "boolean")) ~
