@@ -48,6 +48,13 @@ build_images() {
   docker build -t blah/spark-mesos docker/blah-spark-mesos/
 }
 
+build_ui() {
+  cd blah-ui
+  npm install
+  gulp build
+  cd ..
+}
+
 pull_images() {
   docker pull greytip/kafka
   docker pull jplock/zookeeper
@@ -100,13 +107,16 @@ create_sample_data() {
 }
 
 main() {
-  local cmd="$1"; shift
+  local cmd="$1"; shift || true
   case "$cmd" in
     build-apps)
       build_apps
       ;;
     build-images)
       build_images
+      ;;
+    build-ui)
+      build_ui
       ;;
     build-all)
       build_images
@@ -142,6 +152,7 @@ main() {
       echo "Usage:"
       echo "  console build-apps"
       echo "  console build-images"
+      echo "  console build-ui"
       echo "  console build-all"
       echo "  console pull-images"
       echo "  console create-apps"

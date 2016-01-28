@@ -8,14 +8,21 @@ var streamify = require('gulp-streamify')
 var stylus = require('gulp-stylus')
 var nib = require('nib')
 
-var onError = function(error) {
+var watch = false
+
+function onError(error) {
   gutil.log(gutil.colors.red(error.message))
 }
 
 gulp.task('js', function() {
   var bundleStream = browserify('./src/js/index.js')
     .transform(babelify)
-  bundleStream = watchify(bundleStream)
+
+  if(true === watch) {
+    bundleStream = watchify(bundleStream)
+  }
+
+  bundleStream
     .on('update', rebundle)
     .on('log', gutil.log)
 
@@ -31,7 +38,7 @@ gulp.task('js', function() {
 })
 
 gulp.task('css', function() {
-  gulp.src('src/css/index.styl')
+  return gulp.src('src/css/index.styl')
     .pipe(stylus({
       compress: true,
       use: [nib()]
@@ -40,7 +47,9 @@ gulp.task('css', function() {
 })
 
 gulp.task('watch', function() {
+  watch = true
   gulp.watch('src/css/**', ['css'])
 })
 
-gulp.task('default', ['watch', 'js', 'css'])
+gulp.task('build', ['css', 'js'])
+gulp.task('default', ['watch', 'css', 'js'])

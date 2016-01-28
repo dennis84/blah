@@ -6,10 +6,6 @@
 bin/console build-all
 docker-compose up
 bin/console create-all
-
-cd blah-ui/
-npm install
-gulp
 open ./index.html
 ```
 
