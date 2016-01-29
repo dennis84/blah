@@ -19,6 +19,7 @@ class SimilarityAlgo extends Algo {
       .map(_.get)
       .filter(_.props.user.isDefined)
       .map(x => (x.props.user.get, x.props.item))
+    require(!events.isEmpty, "view events cannot be empty")
 
     val usersRDD = events.groupByKey()
     val users = usersRDD.keys.collect.toList

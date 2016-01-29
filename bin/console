@@ -141,6 +141,9 @@ main() {
       create_jobs
       create_streaming_apps
       ;;
+    run-job)
+      run_job "$@"
+      ;;
     restart)
       restart_app "$@"
       ;;
@@ -159,6 +162,9 @@ main() {
       echo "  console create-streaming-apps"
       echo "  console create-jobs"
       echo "  console create-all"
+      echo "  console run-job count"
+      echo "  console run-job user"
+      echo "  console run-job similarity"
       echo "  console restart algo"
       echo "  console restart serving"
       echo "  console restart api"

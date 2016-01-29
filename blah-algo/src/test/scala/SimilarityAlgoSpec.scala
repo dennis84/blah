@@ -46,4 +46,23 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
         views(1)("item") should be ("page2")
     }
   }
+
+  it should "not fail with wrong data" in withSparkContext { sc =>
+    val algo = new SimilarityAlgo
+    val input = sc.parallelize(List(
+      Event("1", "foo", props = Map(
+        "x" -> JsString("bar")
+      )).toJson.compactPrint,
+      Event("1", "foo", props = Map(
+        "x" -> JsString("baz")
+      )).toJson.compactPrint
+    ))
+
+    val thrown = intercept[IllegalArgumentException] {
+      algo.train(input)
+    }
+
+    thrown.getMessage should be
+      ("requirement failed: view events cannot be empty")
+  }
 }

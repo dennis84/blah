@@ -41,8 +41,14 @@ object Submit {
         .setAppName(algo)
       sparkConf.set("es.nodes", config.getString("elasticsearch.url"))
       sparkConf.set("es.index.auto.create", "false")
-      job.run(config, sparkConf, args)
-      sys exit 0
+      try {
+        job.run(config, sparkConf, args)
+        sys exit 0
+      } catch {
+        case e: IllegalArgumentException =>
+          println(e.getMessage)
+          sys exit 1
+      }
     }) getOrElse {
       println(s"""|No such command: ${args.mkString(" ")}
                   |Usage:

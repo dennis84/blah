@@ -29,6 +29,14 @@ destroy_job() {
     &> /dev/null
 }
 
+run_job() {
+  declare name="$1"
+  echo "Run $name job"
+  curl -XPUT -H "Content-Type: application/json" \
+    "http://192.168.99.100:8081/scheduler/job/$name" \
+    &> /dev/null
+}
+
 ping_wait() {
   declare hn="$1"
   echo "Waiting for $hn"
