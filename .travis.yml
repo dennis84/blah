@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+- '0.12'
+script: npm run travis-test
+before_script:
+- "cd blah-ui"
+- "npm install"
+- "cd .."
+env:
+  global:
+  - secure: ibsXOz7zktcSHK17D90B9HlSYs35aBW/ROeu2BxGxcPYQBowt103Em5hEFn8MrftnHlgYi6qxiSsuXlBrLFcIoTNNVhOSsiOE42/Qc681zad1E3oDMMoJF+ZTEEn1uOs6afMqs5jTpDLBi9tYCkFkBRo9DDsf2PnGRMo6tRjBe4=
+  - secure: l5kz6KnnZWOk0n7QZCo/IWGU/IhV/FZTEVkvcsctKHbYWxRQpji29QxD/cAAZ2Xar7zqivklDF05V9ScsJ7+JBjUcq7xJAm3lWeugzJHwTuJZocmzWTjCupWG+z7x/Cz9VXE4e4VEN+kBWNz++716MV+tQqEuoYipMvAG8Wx7k4=
