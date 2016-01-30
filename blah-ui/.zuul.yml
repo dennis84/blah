@@ -1,0 +1,9 @@
+ui: tape
+concurrency: 1
+browsers:
+  - name: chrome
+    version: latest
+browserify:
+  - transform:
+      name: babelify
+      presets: es2015

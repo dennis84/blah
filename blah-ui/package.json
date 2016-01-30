@@ -32,6 +32,7 @@
     "xhr": "^2.2.0"
   },
   "scripts": {
-    "test": "./node_modules/babel-tape-runner/bin/babel-tape-runner test/*"
+    "test": "./node_modules/babel-tape-runner/bin/babel-tape-runner test/*",
+    "zuul": "./node_modules/zuul/bin/zuul --local 8080 -- test/*"
   }
 }

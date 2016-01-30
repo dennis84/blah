@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eo pipefail
 
 cd "$(dirname "$0")"
 source ./functions.sh
@@ -168,7 +168,7 @@ main() {
       echo "  console restart algo"
       echo "  console restart serving"
       echo "  console restart api"
-      echo "  console samples"
+      echo "  console samples [nb] [collection]"
       exit 1
   esac
 }
