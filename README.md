@@ -1,5 +1,8 @@
 ![Dashboard](/dashboard.png)
 
+[![Build Status](https://travis-ci.org/dennis84/blah.svg?branch=master)](https://travis-ci.org/dennis84/blah)
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/dennis84.svg)](https://saucelabs.com/u/dennis84)
+
 ## Running
 
 ```bash
