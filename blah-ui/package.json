@@ -33,6 +33,6 @@
   },
   "scripts": {
     "test": "./node_modules/babel-tape-runner/bin/babel-tape-runner test/*",
-    "travis-test": "./node_modules/zuul/bin/zuul -- test/*"
+    "travis-test": "zuul -- test/*"
   }
 }
