@@ -29,10 +29,11 @@
     "vinyl-source-stream": "^1.1.0",
     "virtual-dom": "2.1.1",
     "watchify": "^3.7.0",
-    "xhr": "^2.2.0"
+    "xhr": "^2.2.0",
+    "zuul": "^3.9.0"
   },
   "scripts": {
     "test": "./node_modules/babel-tape-runner/bin/babel-tape-runner test/*",
-    "travis-test": "zuul -- test/*"
+    "travis-test": "./node_modules/zuul/bin/zuul -- test/*"
   }
 }
