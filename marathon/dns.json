@@ -2,7 +2,7 @@
   "id": "mesos-dns",
   "instances": 1,
   "cpus": 0.1,
-  "mem": 50,
+  "mem": 128.0,
   "container": {
     "type": "DOCKER",
     "docker": {

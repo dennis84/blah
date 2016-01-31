@@ -1,7 +1,7 @@
 {
   "id": "elasticsearch",
   "cpus": 0.1,
-  "mem": 50.0,
+  "mem": 128.0,
   "instances": 1,
   "container": {
     "type": "DOCKER",
