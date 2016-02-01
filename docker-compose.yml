@@ -3,7 +3,7 @@ zookeeper:
   net: host
 
 mesos:
-  image: mesosphere/mesos-master:0.25.0-0.2.70.ubuntu1404
+  image: mesosphere/mesos-master:0.26.0-0.2.145.ubuntu1404
   net: host
   environment:
     MESOS_ZK: "zk://192.168.99.100:2181/mesos"
@@ -14,8 +14,10 @@ mesos:
     MESOS_LOG_DIR: /var/log/mesos
 
 slave1:
-  image: mesosphere/mesos-slave:0.25.0-0.2.70.ubuntu1404
+  image: mesosphere/mesos-slave:0.26.0-0.2.145.ubuntu1404
   net: host
+  pid: host
+  privileged: true
   environment:
     MESOS_MASTER: "zk://192.168.99.100:2181/mesos"
     MESOS_HOSTNAME: 192.168.99.100
@@ -23,17 +25,20 @@ slave1:
     MESOS_PORT: 5051
     MESOS_EXECUTOR_REGISTRATION_TIMEOUT: "5mins"
     MESOS_CONTAINERIZERS: "docker,mesos"
-    MESOS_RESOURCES: "ports(*):[31000-31100]"
+    MESOS_ISOLATION: "cgroups/cpu,cgroups/mem"
+    MESOS_RESOURCES: "cpus:2;mem:3062;disk:10000;ports(*):[31000-31100]"
     MESOS_LOG_DIR: /var/log/mesos
   volumes:
+    - /proc:/host/proc:ro
     - /sys/fs/cgroup:/sys/fs/cgroup
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/local/bin/docker:/usr/bin/docker:ro
-    - /proc:/host/proc:ro
 
 slave2:
-  image: mesosphere/mesos-slave:0.25.0-0.2.70.ubuntu1404
+  image: mesosphere/mesos-slave:0.26.0-0.2.145.ubuntu1404
   net: host
+  pid: host
+  privileged: true
   environment:
     MESOS_MASTER: "zk://192.168.99.100:2181/mesos"
     MESOS_HOSTNAME: 192.168.99.100
@@ -41,7 +46,8 @@ slave2:
     MESOS_PORT: 5052
     MESOS_EXECUTOR_REGISTRATION_TIMEOUT: "5mins"
     MESOS_CONTAINERIZERS: "docker,mesos"
-    MESOS_RESOURCES: "ports(*):[31000-31100]"
+    MESOS_ISOLATION: "cgroups/cpu,cgroups/mem"
+    MESOS_RESOURCES: "cpus:2;mem:3062;disk:10000;ports(*):[31000-31100]"
     MESOS_LOG_DIR: /var/log/mesos
   volumes_from:
     - slave1

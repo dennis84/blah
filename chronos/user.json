@@ -1,7 +1,7 @@
 {
   "schedule": "R/2015-11-26T00:00:00Z/PT10M",
   "name": "user",
-  "cpus": "0.5",
+  "cpus": "1",
   "mem": "1024",
   "container": {
     "type": "DOCKER",
