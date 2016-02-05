@@ -1,5 +1,5 @@
 {
-  "schedule": "R/2015-11-26T00:00:00Z/PT10M",
+  "schedule": "R/2015-11-26T00:00:00Z/PT30M",
   "name": "similarity",
   "cpus": "1",
   "mem": "1024",

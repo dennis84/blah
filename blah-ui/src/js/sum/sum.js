@@ -5,8 +5,14 @@ import {mount} from '../hook'
 function content(model, options) {
   if(undefined === model.sum) return
   var sum = String(model.sum.toFixed(2))
+  var value = sum
+
+  if(undefined !== options.template) {
+    value = new Function('sum', 'return `'+options.template+'`;')(sum)
+  }
+
   return h('div', [
-    h('div.sum', "$ " + sum),
+    h('div.sum', value),
     h('div.title', options.title)
   ])
 }

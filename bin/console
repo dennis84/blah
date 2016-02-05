@@ -133,6 +133,9 @@ main() {
     create-jobs)
       create_jobs
       ;;
+    create-job)
+      create_job "$@"
+      ;;
     create-streaming-apps)
       create_streaming_apps
       ;;
@@ -161,6 +164,7 @@ main() {
       echo "  console create-apps"
       echo "  console create-streaming-apps"
       echo "  console create-jobs"
+      echo "  console create-job NAME"
       echo "  console create-all"
       echo "  console run-job count"
       echo "  console run-job user"
