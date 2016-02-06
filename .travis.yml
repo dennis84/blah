@@ -1,10 +1,11 @@
-language: node_js
-node_js:
-- "0.12"
-script: npm run travis-test
+language: scala
+scala:
+  - 2.11.7
+script:
+  - "sbt test"
+  - "cd blah-ui && npm run travis-test && cd .."
 before_script:
-- "cd blah-ui"
-- "npm install"
+  - "cd blah-ui && npm install && cd .."
 env:
   global:
   - secure: ibsXOz7zktcSHK17D90B9HlSYs35aBW/ROeu2BxGxcPYQBowt103Em5hEFn8MrftnHlgYi6qxiSsuXlBrLFcIoTNNVhOSsiOE42/Qc681zad1E3oDMMoJF+ZTEEn1uOs6afMqs5jTpDLBi9tYCkFkBRo9DDsf2PnGRMo6tRjBe4=
