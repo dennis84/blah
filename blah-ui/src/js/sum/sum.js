@@ -8,7 +8,7 @@ function content(model, options) {
   var value = sum
 
   if(undefined !== options.template) {
-    value = new Function('sum', 'return `'+options.template+'`;')(sum)
+    value = options.template.replace('{sum}', sum)
   }
 
   return h('div', [

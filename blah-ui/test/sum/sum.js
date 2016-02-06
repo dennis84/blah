@@ -1,7 +1,7 @@
 import test from 'tape'
-import sum from '../src/js/sum/sum'
+import sum from '../../src/js/sum/sum'
 
-test("empty widget", (assert) => {
+test('empty widget', (assert) => {
   var node = sum({}, undefined, undefined, {
     className: 'test'
   })
@@ -12,9 +12,9 @@ test("empty widget", (assert) => {
   assert.end()
 })
 
-test("title and template options", (assert) => {
+test('title and template options', (assert) => {
   var node = sum({sum: 42}, undefined, undefined, {
-    template: '$ ${sum}',
+    template: '$ {sum}',
     title: 'Total'
   })
 
@@ -29,7 +29,7 @@ test("title and template options", (assert) => {
   assert.end()
 })
 
-test("no template", (assert) => {
+test('no template', (assert) => {
   var node = sum({sum: 42}, undefined, undefined, {
     title: 'Total'
   })

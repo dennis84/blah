@@ -101,7 +101,7 @@ function render(model, chan, conn) {
       }),
       widget(sum, model, chan, conn, {
         collection: 'purchases',
-        template: '$ ${sum}',
+        template: '$ {sum}',
         prop: 'price',
         title: 'Total Revenue'
       }),
