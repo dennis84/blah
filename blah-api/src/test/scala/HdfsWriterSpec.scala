@@ -15,6 +15,7 @@ import JsonProtocol._
 
 class HdfsWriterSpec
   extends TestKit(ActorSystem("test"))
+  with ImplicitSender
   with FlatSpecLike
   with Matchers
   with BeforeAndAfter {
@@ -33,7 +34,7 @@ class HdfsWriterSpec
   }
 
   "The HdfsWriter" should "write" in {
-    val writer = system.actorOf(Props(new HdfsWriter(dfs, HdfsWriterConfig(
+    val writer = TestActorRef(Props(new HdfsWriter(dfs, HdfsWriterConfig(
       path = "target/test/events/%Y/%m/%d"))))
 
     val event1 = Event(UUID.randomUUID.toString, "view")
@@ -41,19 +42,15 @@ class HdfsWriterSpec
     val event3 = Event(UUID.randomUUID.toString, "view")
 
     writer ! HdfsWriter.Write(event1)
-    expectNoMsg(200.milliseconds)
-
     writer ! HdfsWriter.Write(event2)
-    expectNoMsg(200.milliseconds)
 
     writer ! HdfsWriter.Close
-    expectNoMsg(200.milliseconds)
+    expectNoMsg
 
     writer ! HdfsWriter.Write(event3)
-    expectNoMsg(200.milliseconds)
 
     writer ! HdfsWriter.Close
-    expectNoMsg(200.milliseconds)
+    expectNoMsg
 
     val statuses = dfs.globStatus(new Path("target/test/events/*/*/*/*"))
     statuses.length should be (2)
@@ -87,7 +84,7 @@ class HdfsWriterSpec
   }
 
   it should "close stream after close delay" in {
-    val writer = system.actorOf(Props(new HdfsWriter(dfs, HdfsWriterConfig(
+    val writer = TestActorRef(Props(new HdfsWriter(dfs, HdfsWriterConfig(
       path = "target/test/events/%Y/%m/%d",
       closeDelay = 100.milliseconds))))
 
@@ -115,17 +112,16 @@ class HdfsWriterSpec
     val event = Event(UUID.randomUUID.toString, "view")
     val length = event.toJson.compactPrint.getBytes.length
 
-    val writer = system.actorOf(Props(new HdfsWriter(dfs, HdfsWriterConfig(
+    val writer = TestActorRef(Props(new HdfsWriter(dfs, HdfsWriterConfig(
       path = "target/test/events/%Y/%m/%d",
-      batchSize = length * 2,
-      closeDelay = 100.milliseconds))))
+      batchSize = length * 2))))
 
     writer ! HdfsWriter.Write(event)
     writer ! HdfsWriter.Write(event)
     writer ! HdfsWriter.Write(event)
     writer ! HdfsWriter.Write(event)
-
-    Thread sleep 500
+    writer ! HdfsWriter.Close
+    expectNoMsg
 
     val statuses = dfs.globStatus(new Path("target/test/events/*/*/*/*"))
     statuses.length should be (2)
