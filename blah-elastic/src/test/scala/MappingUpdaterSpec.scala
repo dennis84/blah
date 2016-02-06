@@ -9,6 +9,7 @@ import akka.http.scaladsl.model._
 import spray.json._
 import blah.core.JsonDsl._
 
+@Ignore
 class MappingUpdaterSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
 
   val mappingV1: JsObject =
