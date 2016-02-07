@@ -1,7 +1,7 @@
 import test from 'tape'
 import qs from '../src/js/querystring'
 
-test("query string", (assert) => {
+test('query string', (assert) => {
   assert.equal('', qs(''))
   assert.equal('', qs(true))
   assert.equal('', qs([]))

@@ -1,2 +1,5 @@
-import './querystring'
-import './sum/sum'
+require('babel-register')
+require('babel-polyfill')
+require('./querystring')
+require('./widget')
+require('./sum/sum')
