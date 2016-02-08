@@ -19,8 +19,10 @@ function connect(url) {
   }
 
   ws.onmessage = (e) => {
-    var res = parse(e.data)
-    conn.emit(res.event, res.data)
+    try {
+      var res = parse(e.data)
+      conn.emit(res.event, res.data)
+    } catch(e) {}
   }
 
   return conn
@@ -28,12 +30,7 @@ function connect(url) {
 
 function parse(text) {
   var res = text.match(/^([a-z-]+)@(.*)$/)
-  var data = null
-
-  try {
-    var data = JSON.parse(res[2])
-  } catch(e) {}
-
+  var data = JSON.parse(res[2])
   return {event: res[1], data: data}
 }
 

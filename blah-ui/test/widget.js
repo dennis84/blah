@@ -5,6 +5,8 @@ import {h, diff} from 'virtual-dom'
 import createElement from 'virtual-dom/create-element'
 
 test('render', (assert) => {
+  assert.plan(4)
+
   function render(model, update) {
     assert.equal(typeof model, "object")
     assert.equal(typeof update, "function")
