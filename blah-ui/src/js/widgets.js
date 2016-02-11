@@ -1,6 +1,7 @@
 import moment from 'moment'
 import widget from './widget'
 import count from './count/count'
+import countDiff from './count/count-diff'
 import bar from './count/bar'
 import pie from './count/pie'
 import recommendations from './recommendations/widget'
@@ -88,16 +89,36 @@ function makeWidgets(model, chan, conn) {
     }),
 
     // --------------------------------------------------------------
-    // Count: Page Views of `page-1`
+    // Count Diff: Page View Difference Between Yesterday and Today
     // --------------------------------------------------------------
-    widget(count, model, chan, conn, {
+    widget(countDiff, model, chan, conn, {
       collection: 'pageviews',
-      filterBy: [{
-        prop: 'item',
-        operator: 'eq',
-        value: 'page-1'
-      }],
-      title: 'Page 1'
+      percentage: true,
+      progressBar: true,
+      from: {
+        filterBy: [{
+          prop: 'date.from',
+          operator: 'gte',
+          value: moment().subtract(1, 'day').startOf('day')
+        }, {
+          prop: 'date.to',
+          operator: 'lte',
+          value: moment().subtract(1, 'day').endOf('hour')
+        }]
+      },
+      to: {
+        filterBy: [{
+          prop: 'date.from',
+          operator: 'gte',
+          value: moment().startOf('day')
+        }, {
+          prop: 'date.to',
+          operator: 'lte',
+          value: moment().endOf('hour')
+        }]
+      },
+      title: `Difference between ${moment().subtract(1, 'days').endOf('hour').calendar()}
+              and Today ${moment().endOf('hour').calendar()}`
     }),
 
     // --------------------------------------------------------------
@@ -127,6 +148,10 @@ function makeWidgets(model, chan, conn) {
       prop: 'price',
       title: 'Total Revenue'
     }),
+
+    // --------------------------------------------------------------
+    // Recommendations
+    // --------------------------------------------------------------
     widget(recommendations, model, chan)
   ]
 }

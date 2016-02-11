@@ -29,6 +29,9 @@
   .widget.size-2of3
     width: 650px
 
+// --------------------------------------------------------------
+// Widget Count
+// --------------------------------------------------------------
 .widget-count
   .count
     font-weight: 200
@@ -37,6 +40,31 @@
   .title
     text-align: center
 
+// --------------------------------------------------------------
+// Widget Diff
+// --------------------------------------------------------------
+.widget-diff
+  position: relative
+  .count
+    font-weight: 200
+    font-size: 64px
+    text-align: center
+  .title
+    text-align: center
+  .has-progress-bar
+    .title
+      padding: 0 50px
+  .circle-progress-bar
+    position: absolute
+    top: 10px
+    left: 10px
+    width: 300px
+    height: 300px
+    colorize('b', base2)
+
+// --------------------------------------------------------------
+// Widget Sum
+// --------------------------------------------------------------
 .widget-sum
   .sum
     font-weight: 800
@@ -45,6 +73,9 @@
   .title
     text-align: center
 
+// --------------------------------------------------------------
+// Widget Users
+// --------------------------------------------------------------
 .widget-users
   .count
     font-weight: 200
@@ -53,11 +84,17 @@
   .title
     text-align: center
 
+// --------------------------------------------------------------
+// Widget Bar
+// --------------------------------------------------------------
 .widget-bar
   height: auto
   .chart
     height: 300px
 
+// --------------------------------------------------------------
+// Widget Pie
+// --------------------------------------------------------------
 .widget-pie
   height: auto
   .chart
@@ -70,6 +107,9 @@
       display: inline-block
       margin: 2px
 
+// --------------------------------------------------------------
+// Widget Recommendations
+// --------------------------------------------------------------
 .widget-recommendations
   height: auto
   .recommendations

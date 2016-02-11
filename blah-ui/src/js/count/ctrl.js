@@ -4,7 +4,8 @@ import {get,post} from '../rest'
 /**
  * Fetch views from serving layer.
  *
- * `options.filterBy` An object of filters.
+ * `options.filterBy` An array of filters.
+ * `options.groupBy` Group by properties e.g. `user_agent.browser.family`
  *
  * @param {Object} The widget state
  * @param {Object} Query options
@@ -20,10 +21,44 @@ function count(model, options) {
 }
 
 /**
+ * Sends two count requests and returns a diff.
+ *
+ * `options.from`
+ * `options.to`
+ *
+ * @param {Object} The widget state
+ * @param {Object} Query options
+ *
+ * @return {Promise} The model wrapped in a promise
+ */
+function countDiff(model, options) {
+  var fromQuery = mkQuery(options.from)
+  var toQuery = mkQuery(options.to)
+  fromQuery.collection = options.collection
+  toQuery.collection = options.collection
+
+  var from = post('/count', fromQuery).then(data => data.count)
+  var to = post('/count', toQuery).then(data => data.count)
+
+  return Promise.all([from, to]).then(([a ,b]) => {
+    var m = clone(model)
+    m.from = a
+    m.to = b
+    if(true === options.percentage) {
+      m.diff = b / a * 100
+    } else {
+      m.diff = a - b
+    }
+
+    return m
+  })
+}
+
+/**
  * Fetch grouped views from serving layer.
  *
- * `options.filterBy` Filter by specific properties
- * `options.groupBy` Group by specific properties
+ * `options.filterBy` An array of filters.
+ * `options.groupBy` An array of groups.
  *
  * @param {Object} The widget state
  * @param {Object} Query options
@@ -57,5 +92,6 @@ function mkQuery(options) {
 
 export {
   count,
+  countDiff,
   grouped
 }

@@ -24,7 +24,7 @@ function count(model, options) {
  * Fetch grouped users from serving layer.
  *
  * `options.filterBy` Not implemented
- * `options.groupBy` Group by specific properties e.g. `country`
+ * `options.groupBy` Group by properties e.g. `country`
  *
  * @param {Object} The widget state
  * @param {Object} Query options
