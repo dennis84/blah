@@ -1,5 +1,5 @@
 import test from 'tape'
-import sum from '../../src/js/sum/sum'
+import sum from '../../../src/js/ui/sum/sum'
 
 test('empty widget', (assert) => {
   var node = sum({}, undefined, undefined, {
@@ -14,12 +14,12 @@ test('empty widget', (assert) => {
 
 test('title and template options', (assert) => {
   var node = sum({sum: 42}, undefined, undefined, {
-    template: '$ {sum}',
+    template: '$ {value}',
     title: 'Total'
   })
 
   var sumNode = node.children[0].children[0]
-  assert.equal('sum', sumNode.properties.className)
+  assert.equal('value', sumNode.properties.className)
   assert.equal('$ 42.00', sumNode.children[0].text)
   
   var titleNode = node.children[0].children[1]
@@ -35,7 +35,7 @@ test('no template', (assert) => {
   })
 
   var sumNode = node.children[0].children[0]
-  assert.equal('sum', sumNode.properties.className)
+  assert.equal('value', sumNode.properties.className)
   assert.equal('42.00', sumNode.children[0].text)
 
   assert.end()

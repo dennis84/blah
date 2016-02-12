@@ -1,5 +1,5 @@
 import {h} from 'virtual-dom'
-import {mount} from '../hook'
+import {mount} from '../../hook'
 import {recommendations} from './ctrl'
 import debounce from 'debounce'
 

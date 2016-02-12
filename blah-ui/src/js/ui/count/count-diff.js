@@ -1,8 +1,8 @@
 import {h} from 'virtual-dom'
 import {countDiff} from './ctrl'
-import {mount} from '../hook'
-import progressBar from '../component/progress-bar'
-import diff from '../component/diff'
+import {mount} from '../../hook'
+import progressBar from '../common/progress-bar'
+import diff from '../common/diff'
 
 function content(model, options) {
   if(undefined === model.diff) return

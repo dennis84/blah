@@ -1,5 +1,5 @@
 import clone from 'clone'
-import {post} from '../rest'
+import {post} from '../../http'
 
 /**
  * Fetch user recommendations from serving layer.

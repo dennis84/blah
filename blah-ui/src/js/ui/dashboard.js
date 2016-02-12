@@ -1,7 +1,7 @@
 import {h} from 'virtual-dom'
 import Masonry from 'masonry-layout'
 import debounce from 'debounce'
-import {hook} from './hook'
+import {hook} from '../hook'
 import makeWidgets from './widgets'
 
 function render(model, chan, conn) {

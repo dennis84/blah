@@ -2,10 +2,10 @@ import 'babel-polyfill'
 import {diff, patch} from 'virtual-dom'
 import createElement from 'virtual-dom/create-element'
 import csp from 'js-csp'
-import connect from './connection'
-import dashboard from './dashboard'
-import * as ctrl from './ctrl'
 import {SERVING_WS_URL} from './config'
+import connect from './connection'
+import * as ctrl from './ctrl'
+import dashboard from './ui/dashboard'
 
 var conn = connect(SERVING_WS_URL)
 var chan = csp.chan()

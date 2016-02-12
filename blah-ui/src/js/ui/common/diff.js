@@ -24,7 +24,7 @@ function diff(value, percentage = false) {
     value = plusMinus + Math.abs(value)
   }
 
-  return h('div.count', value)
+  return h('div.value', value)
 }
 
 export default diff

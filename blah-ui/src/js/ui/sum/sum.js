@@ -1,18 +1,15 @@
 import {h} from 'virtual-dom'
 import {sum} from './ctrl'
-import {mount} from '../hook'
+import {mount} from '../../hook'
 
 function content(model, options) {
   if(undefined === model.sum) return
-  var sum = String(model.sum.toFixed(2))
-  var value = sum
-
-  if(undefined !== options.template) {
-    value = options.template.replace('{sum}', sum)
-  }
+  var value = options.template ?
+    options.template.replace('{value}', model.sum.toFixed(2)) :
+    String(model.sum.toFixed(2))
 
   return h('div', [
-    h('div.sum', value),
+    h('div.value', value),
     h('div.title', options.title)
   ])
 }

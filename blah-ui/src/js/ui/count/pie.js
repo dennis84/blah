@@ -2,7 +2,7 @@ import {h} from 'virtual-dom'
 import clone from 'clone'
 import Chartist from 'chartist'
 import {grouped} from './ctrl'
-import {hook, mount} from '../hook'
+import {hook, mount} from '../../hook'
 
 function chart(model) {
   if(!model.groups || 0 === model.groups.length) return

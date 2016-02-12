@@ -1,5 +1,5 @@
 import moment from 'moment'
-import widget from './widget'
+import widget from '../widget'
 import count from './count/count'
 import countDiff from './count/count-diff'
 import bar from './count/bar'
@@ -144,7 +144,7 @@ function makeWidgets(model, chan, conn) {
     // --------------------------------------------------------------
     widget(sum, model, chan, conn, {
       collection: 'purchases',
-      template: '$ {sum}',
+      template: '$ {value}',
       prop: 'price',
       title: 'Total Revenue'
     }),

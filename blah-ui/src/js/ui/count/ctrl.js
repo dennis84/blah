@@ -1,5 +1,5 @@
 import clone from 'clone'
-import {get,post} from '../rest'
+import {post} from '../../http'
 
 /**
  * Fetch views from serving layer.

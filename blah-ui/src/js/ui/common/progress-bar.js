@@ -1,5 +1,5 @@
 import {h} from 'virtual-dom'
-import {hook} from '../hook'
+import {hook} from '../../hook'
 import Chartist from 'chartist'
 
 /**

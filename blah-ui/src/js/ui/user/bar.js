@@ -1,13 +1,12 @@
 import {h} from 'virtual-dom'
 import {grouped} from './ctrl'
-import {hook, mount} from '../hook'
+import {hook, mount} from '../../hook'
 import Chartist from 'chartist'
-import moment from 'moment'
 
-function chart(model) {
-  if(!model.groups || 0 === model.groups.length) return
-  var labels = model.groups.map((x) => moment(x.date).format('h:mm a'))
-  var data = model.groups.map((x) => x.count)
+function chart(model, limit = 10) {
+  if(!model.users || 0 === model.users.length) return
+  var labels = model.users.slice(0, limit).map(x => x.country)
+  var data = model.users.slice(0, limit).map(x => x.count)
 
   return h('div.chart', {
     hook: hook((node) => {
@@ -24,12 +23,12 @@ function render(model, update, conn, options) {
   return h('div.widget.widget-bar', {
     className: options.className,
     mount: mount((node) => {
-      conn.on('count', (data) => update(grouped, options))
+      conn.on('user', (data) => update(grouped, options))
       update(grouped, options)
     })
   }, [
     h('h3', options.title),
-    chart(model)
+    chart(model, options.limit)
   ])
 }
 
