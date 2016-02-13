@@ -6,9 +6,9 @@ import debounce from 'debounce'
 function views(xs) {
   if(undefined === xs || 0 == xs.length) return
   return h('div.recommendations', xs.map((item) => {
-    return h('div', [
+    return h('div.recommendation.clearfix', [
       h('span', item.item),
-      h('span.label.label-danger.pull-right', String(parseFloat(item.score).toFixed(2)))
+      h('span.label.label-red.pull-right', String(parseFloat(item.score).toFixed(2)))
     ])
   }))
 }
@@ -20,7 +20,7 @@ function render(model, update, options = {}) {
     })
   }, [
     h('h3', 'Recommendations'),
-    h('input.form-control.input-lg', {
+    h('input.input-text', {
       value: options.user,
       placeholder: 'Enter username',
       oninput: debounce((e) => {

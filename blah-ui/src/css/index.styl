@@ -1,10 +1,16 @@
 @import 'colors'
 @import 'fonts'
-@import 'bootstrap'
 @import 'chartist'
+
+html
+  box-sizing: border-box
+
+*, *:before, *:after
+  box-sizing: inherit
 
 body
   background: base2
+  font-size: 14px
   font-family: Roboto
   font-weight: 300
   color: base00
@@ -19,6 +25,7 @@ h1
 
 .container
   width: 320px
+  margin: 0 auto
   margin-top: 10px
   padding: 0
 @media (min-width: 660px)
@@ -38,4 +45,23 @@ h1
   align-items: center
   justify-content: center
 
+.clearfix
+  &:after
+    clear: both
+    content: " "
+    display: table
+
+.pull-right
+  float: right
+
+.label
+  padding: 2px 4px
+  color: #fff
+  font-size: 12px
+  font-weight: 700
+
+.label-red
+  background: red
+
+@import 'form'
 @import 'widget'

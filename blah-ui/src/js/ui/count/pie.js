@@ -24,7 +24,7 @@ function chart(model) {
       hook: hook((node) => {
         new Chartist.Pie(node, {series: data}, {
           donut: true,
-          donutWidth: 50,
+          donutWidth: 40,
           labelInterpolationFnc: (value) => {
             return Math.round(value / data.reduce((a,b) => a + b) * 100) + '%'
           }

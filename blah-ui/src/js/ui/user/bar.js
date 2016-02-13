@@ -3,7 +3,7 @@ import {grouped} from './ctrl'
 import {hook, mount} from '../../hook'
 import Chartist from 'chartist'
 
-function chart(model, limit = 10) {
+function chart(model, limit = 8) {
   if(!model.users || 0 === model.users.length) return
   var labels = model.users.slice(0, limit).map(x => x.country)
   var data = model.users.slice(0, limit).map(x => x.count)
