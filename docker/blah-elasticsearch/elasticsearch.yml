@@ -1,8 +1,9 @@
+network.host: 0.0.0.0
 path:
-  data: /data/data
-  logs: /data/log
-  plugins: /data/plugins
-  work: /data/work
+  data: /opt/elasticsearch/data/data
+  logs: /opt/elasticsearch/data/log
+  plugins: /opt/elasticsearch/data/plugins
+  work: /opt/elasticsearch/data/work
 
 script.engine.groovy.inline.update: on
 script.inline: on
