@@ -1,4 +1,4 @@
-package blah.api
+package blah.core
 
 import java.util.UUID
 import scala.concurrent.duration._
@@ -10,7 +10,6 @@ import spray.json._
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.io.{SequenceFile, LongWritable, BytesWritable}
-import blah.core._
 import JsonProtocol._
 
 class HdfsWriterSpec
@@ -35,24 +34,24 @@ class HdfsWriterSpec
 
   "The HdfsWriter" should "write" in {
     val writer = TestActorRef(Props(new HdfsWriter(dfs, HdfsWriterConfig(
-      path = "target/test/events/%Y/%m/%d"))))
+      path = "target/test/events"))))
 
     val event1 = Event(UUID.randomUUID.toString, "view")
     val event2 = Event(UUID.randomUUID.toString, "view")
     val event3 = Event(UUID.randomUUID.toString, "view")
 
     writer ! HdfsWriter.Write(event1)
+    expectNoMsg
     writer ! HdfsWriter.Write(event2)
-
+    expectNoMsg
     writer ! HdfsWriter.Close
     expectNoMsg
-
     writer ! HdfsWriter.Write(event3)
-
+    expectNoMsg
     writer ! HdfsWriter.Close
     expectNoMsg
 
-    val statuses = dfs.globStatus(new Path("target/test/events/*/*/*/*"))
+    val statuses = dfs.globStatus(new Path("target/test/events/*"))
     statuses.length should be (2)
 
     var reader = new SequenceFile.Reader(dfsConf,
@@ -85,14 +84,14 @@ class HdfsWriterSpec
 
   it should "close stream after close delay" in {
     val writer = TestActorRef(Props(new HdfsWriter(dfs, HdfsWriterConfig(
-      path = "target/test/events/%Y/%m/%d",
+      path = "target/test/events",
       closeDelay = 100.milliseconds))))
 
     val event1 = Event(UUID.randomUUID.toString, "view")
     writer ! HdfsWriter.Write(event1)
     Thread sleep 200
 
-    val statuses = dfs.globStatus(new Path("target/test/events/*/*/*/*"))
+    val statuses = dfs.globStatus(new Path("target/test/events/*"))
     statuses.length should be (1)
 
     var reader = new SequenceFile.Reader(dfsConf,
@@ -113,17 +112,21 @@ class HdfsWriterSpec
     val length = event.toJson.compactPrint.getBytes.length
 
     val writer = TestActorRef(Props(new HdfsWriter(dfs, HdfsWriterConfig(
-      path = "target/test/events/%Y/%m/%d",
+      path = "target/test/events",
       batchSize = length * 2))))
 
     writer ! HdfsWriter.Write(event)
+    expectNoMsg
     writer ! HdfsWriter.Write(event)
+    expectNoMsg
     writer ! HdfsWriter.Write(event)
+    expectNoMsg
     writer ! HdfsWriter.Write(event)
+    expectNoMsg
     writer ! HdfsWriter.Close
     expectNoMsg
 
-    val statuses = dfs.globStatus(new Path("target/test/events/*/*/*/*"))
+    val statuses = dfs.globStatus(new Path("target/test/events/*"))
     statuses.length should be (2)
 
     var reader = new SequenceFile.Reader(dfsConf,
@@ -142,5 +145,23 @@ class HdfsWriterSpec
 
     while(reader.next(key, value)) (nb += 1)
     nb should be (1)
+  }
+
+  it should "create tmp files until the writer is closed" in {
+    val writer = TestActorRef(Props(
+      new HdfsWriter(dfs, HdfsWriterConfig("target/test/events"))))
+    val event = Event(UUID.randomUUID.toString, "view")
+
+    writer ! HdfsWriter.Write(event)
+    expectNoMsg
+
+    dfs.globStatus(new Path("target/test/events/*.jsonl")).length should be (0)
+    dfs.globStatus(new Path("target/test/events/*.jsonl.tmp")).length should be (1)
+
+    writer ! HdfsWriter.Close
+    expectNoMsg
+
+    dfs.globStatus(new Path("target/test/events/*.jsonl")).length should be (1)
+    dfs.globStatus(new Path("target/test/events/*.jsonl.tmp")).length should be (0)
   }
 }

@@ -1,4 +1,4 @@
-package blah.api
+package blah.core
 
 import scala.concurrent.duration._
 

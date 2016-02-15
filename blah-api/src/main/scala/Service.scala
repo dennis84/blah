@@ -8,7 +8,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server._
 import spray.json._
-import blah.core.{Event, Message, JsonProtocol}
+import blah.core.{Event, Message, JsonProtocol, HdfsWriter}
 import Directives._
 
 class Service(env: Env)(

@@ -1,19 +1,22 @@
-package blah.api
+package blah.core
 
 import scala.reflect.ClassTag
 import org.apache.hadoop.fs.{FileSystem, FSDataOutputStream}
 import org.apache.hadoop.io.{SequenceFile, Writable}
 
 class HdfsSequenceFileWriter(
+  fs: FileSystem,
   writer: SequenceFile.Writer,
-  stream: FSDataOutputStream) {
+  stream: FSDataOutputStream,
+  path: HdfsWriterPath) {
 
   def write(k: Writable, v: Writable) = writer.append(k, v)
 
-  def close() = {
+  def close() {
     writer.hflush()
     writer.close()
     stream.close()
+    fs.rename(path, path.toClosed)
   }
 }
 
@@ -22,10 +25,12 @@ object HdfsSequenceFileWriter {
     fs: FileSystem,
     conf: HdfsWriterConfig
   )(implicit kt: ClassTag[A], vt: ClassTag[B]): HdfsSequenceFileWriter = {
-    val stream = fs.create(HdfsWriterPath(conf))
-    new HdfsSequenceFileWriter(SequenceFile.createWriter(fs.getConf,
+    val path = HdfsWriterPath(conf)
+    val stream = fs.create(path)
+    val writer = SequenceFile.createWriter(fs.getConf,
       SequenceFile.Writer.stream(stream),
       SequenceFile.Writer.keyClass(kt.runtimeClass),
-      SequenceFile.Writer.valueClass(vt.runtimeClass)), stream)
+      SequenceFile.Writer.valueClass(vt.runtimeClass))
+    new HdfsSequenceFileWriter(fs, writer, stream, path)
   }
 }

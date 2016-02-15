@@ -1,10 +1,9 @@
-package blah.api
+package blah.core
 
 import akka.actor._
 import spray.json._
 import org.apache.hadoop.fs.{FileSystem}
 import org.apache.hadoop.io.{LongWritable, BytesWritable}
-import blah.core._
 import JsonProtocol._
 
 class HdfsWriter(
