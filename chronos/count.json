@@ -11,8 +11,8 @@
   "shell": false,
   "command": "count",
   "environmentVariables": [
-    {"name": "KAFKA_URL", "value": "kafka.marathon.mesos:9092"},
-    {"name": "ZOOKEEPER_URL", "value": "zookeeper.marathon.mesos:2181"},
+    {"name": "KAFKA_URL", "value": "192.168.99.100:31000"},
+    {"name": "ZOOKEEPER_URL", "value": "192.168.99.100:2181"},
     {"name": "HADOOP_URL", "value": "hdfs://namenode.marathon.mesos:8020"},
     {"name": "ELASTICSEARCH_URL", "value": "elasticsearch.marathon.mesos:9200"},
     {"name": "SPARK_MASTER", "value": "mesos://zk://192.168.99.100:2181/mesos"}

@@ -13,6 +13,19 @@ destroy_app() {
     &> /dev/null
 }
 
+create_brokers() {
+  declare nb=$((${1:-3} - 1))
+  echo "Create 0..$nb kafka brokers"
+  curl "http://192.168.99.100:7000/api/broker/add?broker=0..$nb&cpus=1&mem=1024&options=advertised.host.name=192.168.99.100" \
+    &> /dev/null
+
+  for i in $(eval echo "{0..$nb}"); do
+    echo "Start broker: $i"
+    curl "http://192.168.99.100:7000/api/broker/start?broker=$i" \
+      &> /dev/null
+  done
+}
+
 create_job() {
   declare name="$1"
   echo "Create $name job"

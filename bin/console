@@ -8,10 +8,8 @@ source ./functions.sh
 cd ..
 
 create_apps() {
+  create_brokers 1
   create_app dns
-  create_app zookeeper
-  ping_wait "zookeeper.marathon.mesos"
-  create_app kafka
   create_app namenode
   ping_wait "namenode.marathon.mesos"
   create_app datanode
