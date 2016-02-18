@@ -133,7 +133,7 @@ function makeWidgets(model, chan, conn) {
       }, {
         prop: 'user_agent.platform',
         operator: 'eq',
-        value: 'Mobile'
+        value: 'mobile'
       }],
       groupBy: ['date.year', 'user_agent.os.family'],
       title: 'Mobile Operating Systems'

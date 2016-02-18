@@ -42,6 +42,7 @@ build_images() {
   docker build -t blah/hadoop-base docker/blah-hadoop-base/
   docker build -t blah/hadoop-master docker/blah-hadoop-master/
   docker build -t blah/hadoop-slave docker/blah-hadoop-slave/
+  docker build -t blah/kafka-mesos docker/blah-kafka-mesos/
   docker build -t blah/mesos-dns docker/blah-mesos-dns/
   docker build -t blah/spark-mesos docker/blah-spark-mesos/
 }
