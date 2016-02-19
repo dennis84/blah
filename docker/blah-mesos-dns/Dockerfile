@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM alpine:3.3
 
 COPY mesos-dns .
 COPY config.json .

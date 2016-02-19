@@ -1,9 +1,9 @@
 network.host: 0.0.0.0
 path:
-  data: /opt/elasticsearch/data/data
-  logs: /opt/elasticsearch/data/log
-  plugins: /opt/elasticsearch/data/plugins
-  work: /opt/elasticsearch/data/work
+  data: /usr/share/elasticsearch/data/data
+  logs: /usr/share/elasticsearch/data/log
+  plugins: /usr/share/elasticsearch/data/plugins
+  work: /usr/share/elasticsearch/data/work
 
 script.engine.groovy.inline.update: on
 script.inline: on

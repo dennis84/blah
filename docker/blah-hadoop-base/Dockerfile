@@ -1,12 +1,14 @@
-FROM java:8
+FROM blah/java
 
-ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+RUN apk add --update openssh
 
-RUN apt-get update && apt-get install openssh-server -y
+RUN wget http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz
 
-RUN mkdir /opt/hadoop
-RUN wget -qO- http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz \
-  | tar zxvf - -C /opt/hadoop --strip 1
+RUN tar -xvzf hadoop-2.7.1.tar.gz
+
+RUN mv hadoop-2.7.1 /usr/share/hadoop
+
+RUN rm hadoop-2.7.1.tar.gz
 
 ENV HADOOP_PREFIX /opt/hadoop
 ENV HADOOP_HOME /opt/hadoop
