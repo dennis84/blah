@@ -1,4 +1,7 @@
-FROM blah/java
+FROM alpine:3.3
+
+RUN apk upgrade --update && \
+    apk add --update bash wget openjdk8-jre
 
 RUN wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-2.2.0.tar.gz
 

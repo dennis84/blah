@@ -1,5 +1,5 @@
 zookeeper:
-  image: jplock/zookeeper
+  image: blah/zookeeper
   net: host
 
 mesos:

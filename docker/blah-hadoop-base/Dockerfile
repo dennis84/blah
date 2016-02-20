@@ -1,12 +1,17 @@
-FROM blah/java
+FROM alpine:3.3
 
-RUN apk add --update openssh
+RUN apk upgrade --update && \
+    apk add --update bash wget openjdk8 openrc openssh
+
+ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
 
 RUN wget http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz
 
 RUN tar -xvzf hadoop-2.7.1.tar.gz
 
-RUN mv hadoop-2.7.1 /usr/share/hadoop
+RUN mkdir opt
+
+RUN mv hadoop-2.7.1 /opt/hadoop
 
 RUN rm hadoop-2.7.1.tar.gz
 
@@ -23,5 +28,7 @@ ADD hdfs-site.xml $HADOOP_CONF_DIR/hdfs-site.xml
 
 RUN mkdir -p /data/dfs/name
 RUN mkdir -p /data/dfs/data
+
+RUN rc-update add sshd
 
 VOLUME ["/data/dfs/name", "/data/dfs/data"]

@@ -45,6 +45,7 @@ build_images() {
   docker build -t blah/kafka-mesos docker/blah-kafka-mesos/
   docker build -t blah/mesos-dns docker/blah-mesos-dns/
   docker build -t blah/spark-mesos docker/blah-spark-mesos/
+  docker build -t blah/zookeeper docker/blah-zookeeper/
 }
 
 build_ui() {
@@ -55,8 +56,6 @@ build_ui() {
 }
 
 pull_images() {
-  docker pull greytip/kafka
-  docker pull jplock/zookeeper
   docker pull mesosphere/mesos-master:0.26.0-0.2.145.ubuntu1404
   docker pull mesosphere/mesos-slave:0.26.0-0.2.145.ubuntu1404
   docker pull mesosphere/marathon
