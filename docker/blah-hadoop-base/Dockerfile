@@ -5,15 +5,15 @@ RUN apk upgrade --update && \
 
 ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
 
-RUN wget http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz
+RUN wget http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.2/hadoop-2.7.2.tar.gz
 
-RUN tar -xvzf hadoop-2.7.1.tar.gz
+RUN tar -xvzf hadoop-2.7.2.tar.gz
 
 RUN mkdir opt
 
-RUN mv hadoop-2.7.1 /opt/hadoop
+RUN mv hadoop-2.7.2 /opt/hadoop
 
-RUN rm hadoop-2.7.1.tar.gz
+RUN rm hadoop-2.7.2.tar.gz
 
 ENV HADOOP_PREFIX /opt/hadoop
 ENV HADOOP_HOME /opt/hadoop
