@@ -1,12 +1,5 @@
 #!/bin/bash
 
-set -eo pipefail
-
-cd "$(dirname "$0")"
-source ./functions.sh
-
-cd ..
-
 create_apps() {
   create_brokers 1
   create_app dns
@@ -49,10 +42,10 @@ build_images() {
 }
 
 build_ui() {
-  cd blah-ui
+  pushd "$(dirname $0)/../blah-ui" > /dev/null
   npm install
   gulp build
-  cd ..
+  popd > /dev/null
 }
 
 pull_images() {
@@ -93,19 +86,53 @@ restart_app() {
 }
 
 create_sample_data() {
+  if ! is_ok "http://api.marathon.mesos:8000"; then
+    echo "Error: Api is not running."
+    exit 1
+  fi
+
   declare nb=${1:-1}
   declare coll=${2:-"pageviews"}
   for i in $(eval echo "{1..$nb}"); do
     echo -ne "Processing $i/$nb\r"
-    curl -H 'Content-Type: application/json' \
+    curl -s -o /dev/null -H 'Content-Type: application/json' \
       -X POST "http://api.marathon.mesos:8000/events/$coll" \
-      -d "$(eval "new_$coll" $i)" &> /dev/null
+      -d "$(eval "new_$coll" $i)"
   done
   echo -ne '\n'
 }
 
 main() {
+  set -eo pipefail
+
+  source "$(dirname $0)/common.sh"
+  source "$(dirname $0)/chronos.sh"
+  source "$(dirname $0)/kafka.sh"
+  source "$(dirname $0)/marathon.sh"
+  source "$(dirname $0)/samples.sh"
+
+  if [[ ! -z "$DOCKER_MACHINE_NAME" ]]; then
+    export BLAH_HOST="$(docker-machine ip $DOCKER_MACHINE_NAME)"
+  fi
+
+  if [[ -z "$BLAH_HOST" ]]; then
+    echo "Error: \$BLAH_HOST is not set."
+    exit 1
+  fi
+
+  if ! is_ok "http://$BLAH_HOST:8080/ping"; then
+    echo 'Error: Marathon is not running.'
+    exit 1
+  elif ! is_ok "http://$BLAH_HOST:8081"; then
+    echo 'Error: Chronos is not running.'
+    exit 1
+  elif ! is_ok "http://$BLAH_HOST:7000/health"; then
+    echo 'Error: Kafka Mesos Framework is not running.'
+    exit 1
+  fi
+
   local cmd="$1"; shift || true
+
   case "$cmd" in
     build-apps)
       build_apps
@@ -152,25 +179,22 @@ main() {
       create_sample_data "$@"
       ;;
     *)
-      echo "Error: No such command: $command"
-      echo "Usage:"
-      echo "  console build-apps"
-      echo "  console build-images"
-      echo "  console build-ui"
-      echo "  console build-all"
-      echo "  console pull-images"
-      echo "  console create-apps"
-      echo "  console create-streaming-apps"
-      echo "  console create-jobs"
-      echo "  console create-job NAME"
-      echo "  console create-all"
-      echo "  console run-job count"
-      echo "  console run-job user"
-      echo "  console run-job similarity"
-      echo "  console restart algo"
-      echo "  console restart serving"
-      echo "  console restart api"
-      echo "  console samples [nb] [collection]"
+      echo "Error: No such command: $cmd"
+      echo "Usage: bin/console COMMAND [arg...]"
+      echo "Commands:"
+      echo "  build-apps                  Build application docker images"
+      echo "  build-images                Build docker images"
+      echo "  build-ui                    Build UI"
+      echo "  build-all                   Build all"
+      echo "  pull-images                 Pre-pull docker-compose images"
+      echo "  create-apps                 Create apps in marathon"
+      echo "  create-streaming-apps       Create streaming apps in marathon"
+      echo "  create-jobs                 Create all chronos jobs"
+      echo "  create-job NAME             Create a single chronos job"
+      echo "  create-all                  Create apps, streaming apps and jobs"
+      echo "  run-job NAME                Run a chronos job"
+      echo "  restart NAME                Compile and recreate an application"
+      echo "  samples [nb] [collection]   Create some sample data"
       exit 1
   esac
 }
