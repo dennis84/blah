@@ -50,7 +50,7 @@ lazy val api = (project in file("blah-api"))
   .settings(
     packageName in Docker := "blah/api",
     version in Docker := version.value,
-    dockerBaseImage := "java:8",
+    dockerBaseImage := "blah/java",
     dockerExposedPorts := Seq(8000)
   )
   .dependsOn(core % "compile->compile;test->test")
@@ -62,7 +62,7 @@ lazy val serving = (project in file("blah-serving"))
   .settings(
     packageName in Docker := "blah/serving",
     version in Docker := version.value,
-    dockerBaseImage := "java:8",
+    dockerBaseImage := "blah/java",
     dockerExposedPorts := Seq(8001)
   )
   .dependsOn(core % "compile->compile;test->test")

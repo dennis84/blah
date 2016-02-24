@@ -6,8 +6,8 @@ RUN apk upgrade --update && \
 COPY mesos-dns .
 COPY config.json .
 
-ADD startup /startup
+ADD docker-entrypoint /docker-entrypoint
 
 EXPOSE 53
 
-CMD ["/startup"]
+ENTRYPOINT ["/docker-entrypoint"]

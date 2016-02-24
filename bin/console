@@ -120,17 +120,6 @@ main() {
     exit 1
   fi
 
-  if ! is_ok "http://$BLAH_HOST:8080/ping"; then
-    echo 'Error: Marathon is not running.'
-    exit 1
-  elif ! is_ok "http://$BLAH_HOST:8081"; then
-    echo 'Error: Chronos is not running.'
-    exit 1
-  elif ! is_ok "http://$BLAH_HOST:7000/health"; then
-    echo 'Error: Kafka Mesos Framework is not running.'
-    exit 1
-  fi
-
   local cmd="$1"; shift || true
 
   case "$cmd" in

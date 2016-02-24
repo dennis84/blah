@@ -1,7 +1,7 @@
 FROM blah/hadoop-base
 
-ADD startup $HADOOP_PREFIX/bin/master-startup
+ADD docker-entrypoint /docker-entrypoint
 
 EXPOSE 8020 50070 50470
 
-CMD ["master-startup"]
+ENTRYPOINT ["/docker-entrypoint"]
