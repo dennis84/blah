@@ -1,6 +1,9 @@
-is_ok() {
-  [[ "200" == $(curl -s $1 -o /dev/null -w '%{http_code}\n') ]] && return 0
-  return 1
+is_open() {
+  if ! nc "$@" &> /dev/null; then
+    echo "Error: $@ is not reachable!"
+    return 1
+  fi
+  return 0
 }
 
 ping_wait() {
