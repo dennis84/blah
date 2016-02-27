@@ -14,6 +14,9 @@ case class SumQuery(
   prop: String,
   filterBy: Option[List[Filter]] = None)
 
+case class FunnelQuery(
+  name: String)
+
 case class Filter(
   val prop: String,
   val operator: String,
