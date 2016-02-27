@@ -11,6 +11,7 @@ case class Event(
 
 case class ViewProps(
   item: String,
+  referrer: Option[String],
   user: Option[String] = None,
   userAgent: Option[String] = None)
 case class ViewEvent(

@@ -42,8 +42,7 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
           ("isTablet" -> ("type" -> "boolean")) ~
           ("isMobileDevice" -> ("type" -> "boolean")) ~
           ("isComputer" -> ("type" -> "boolean")) ~
-          ("count" -> ("type" -> "integer"))
-      )) ~
+          ("count" -> ("type" -> "integer")))) ~
       ("similarity" ->
         ("properties" ->
           ("user" -> ("type" -> "string")) ~
@@ -51,8 +50,7 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
             ("type" -> "nested") ~
             ("properties" ->
               ("item" -> ("type" -> "string")) ~
-              ("score" -> ("type" -> "double"))
-      )))) ~
+              ("score" -> ("type" -> "double")))))) ~
       ("user" ->
         ("properties" ->
           ("user" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
@@ -63,6 +61,10 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
           ("countryCode" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("city" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("zipCode" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("date" -> ("type" -> "date") ~ ("format" -> "dateOptionalTime"))
-      )))
+          ("date" -> ("type" -> "date") ~ ("format" -> "dateOptionalTime")))) ~
+      ("funnel" ->
+        ("properties" ->
+          ("name" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("path" -> ("type" -> "string") ~ ("index_name" -> "item")) ~
+          ("count" -> ("type" -> "integer")))))
 }

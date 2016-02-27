@@ -18,10 +18,12 @@ object Submit {
     lazy val countAlgo = new CountAlgo
     lazy val similarityAlgo = new SimilarityAlgo
     lazy val userAlgo = new UserAlgo
+    lazy val funnelAlgo = new FunnelAlgo
 
     lazy val countBatch = new BatchJob("count", countAlgo, producer)
     lazy val similarityBatch = new BatchJob("similarity", similarityAlgo, producer)
     lazy val userBatch = new BatchJob("user", userAlgo, producer)
+    lazy val funnelBatch = new BatchJob("funnel", funnelAlgo, producer)
     lazy val countStreaming = new CountStreamingJob("count", countAlgo, producer)
     lazy val userStreaming = new StreamingJob("user", userAlgo, producer)
     
@@ -29,6 +31,7 @@ object Submit {
       "count" -> countBatch,
       "similarity" -> similarityBatch,
       "user" -> userBatch,
+      "funnel" -> funnelBatch,
       "count-streaming" -> countStreaming,
       "user-streaming" -> userStreaming)
 
@@ -55,6 +58,7 @@ object Submit {
                   |  submit count           [path] e.g. "2015/*/*"
                   |  submit similarity      [path] 
                   |  submit user            [path]
+                  |  submit funnel          [path]
                   |  submit count-streaming
                   |  submit user-streaming
                   |""".stripMargin)

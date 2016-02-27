@@ -1,0 +1,117 @@
+package blah.algo
+
+import org.scalatest._
+import java.time.{ZonedDateTime, ZoneOffset}
+import spray.json._
+import blah.core._
+import JsonProtocol._
+
+class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
+
+  val date1 = ZonedDateTime.now(ZoneOffset.UTC)
+  val date2 = ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(1)
+  val date3 = ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(2)
+  val date4 = ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(3)
+  val date5 = ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(4)
+
+  "The FunnelAlgo" should "match all steps" in withSparkContext { sc =>
+    val algo = new FunnelAlgo
+
+    val input = sc.parallelize(List(
+      Event("1", "view", date1, props = Map(
+        "item" -> JsString("home"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("2", "view", date2, props = Map(
+        "item" -> JsString("landingpage"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("3", "view", date3, props = Map(
+        "item" -> JsString("signup"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("4", "view", date4, props = Map(
+        "item" -> JsString("dashboard"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("5", "view", date5, props = Map(
+        "item" -> JsString("settings"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+
+      Event("2", "view", date2, props = Map(
+        "item" -> JsString("landingpage"),
+        "user" -> JsString("user2")
+      )).toJson.compactPrint,
+      Event("3", "view", date3, props = Map(
+        "item" -> JsString("signup"),
+        "user" -> JsString("user2")
+      )).toJson.compactPrint,
+      Event("4", "view", date4, props = Map(
+        "item" -> JsString("dashboard"),
+        "user" -> JsString("user2")
+      )).toJson.compactPrint
+    ))
+
+    val output = algo.train(input)
+    val docs = output.collect.toList
+
+    inside(docs) { case Doc(_, map) :: Nil =>
+      map should be (Map(
+        "name" -> "signup",
+        "path" -> List("landingpage", "signup", "dashboard"),
+        "count" -> 2
+      ))
+    }
+  }
+
+  it should "match two steps" in withSparkContext { sc =>
+    val algo = new FunnelAlgo
+    val input = sc.parallelize(List(
+      Event("1", "view", date2, props = Map(
+        "item" -> JsString("landingpage"),
+        "user" -> JsString("user1"),
+        "referrer" -> JsString("home")
+      )).toJson.compactPrint,
+      Event("2", "view", date3, props = Map(
+        "item" -> JsString("signup"),
+        "user" -> JsString("user1"),
+        "referrer" -> JsString("home")
+      )).toJson.compactPrint,
+      Event("3", "view", date4, props = Map(
+        "item" -> JsString("terms"),
+        "user" -> JsString("user1"),
+        "referrer" -> JsString("signup")
+      )).toJson.compactPrint
+    ))
+
+    val output = algo.train(input)
+    val docs = output.collect.toList
+
+    inside(docs) { case Doc(_, map) :: Nil =>
+      map should be (Map(
+        "name" -> "signup",
+        "path" -> List("landingpage", "signup"),
+        "count" -> 1
+      ))
+    }
+  }
+
+  it should "match no steps" in withSparkContext { sc =>
+    val algo = new FunnelAlgo
+    val input = sc.parallelize(List(
+      Event("1", "view", date1, props = Map(
+        "item" -> JsString("foo"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("2", "view", date2, props = Map(
+        "item" -> JsString("bar"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint
+    ))
+
+    val output = algo.train(input)
+    val docs = output.collect.toList
+    docs.length should be (0)
+  }
+}

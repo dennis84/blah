@@ -1,5 +1,5 @@
 is_open() {
-  if ! nc "$@" &> /dev/null; then
+  if ! nc -z "$@" &> /dev/null; then
     echo "Error: $@ is not reachable!"
     return 1
   fi
