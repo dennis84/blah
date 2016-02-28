@@ -33,11 +33,15 @@ class FunnelAlgo extends Algo {
 
     val paths = users
       .map { case(user, xs) =>
-        val ys = xs.map(_._1)
+        val ys = (xs.map(_._1) :\ List.empty[String])((x, a) => a match {
+          case h :: xs if(h == x) => a
+          case _ => x :: a
+        })
+
         allSteps collectFirst {
           case x if(x.length > 0 && ys.containsSlice(x)) =>
             val index = ys.indexOfSlice(x)
-            (xs.slice(index, index + x.length).map(_._1), 1)
+            (ys.slice(index, index + x.length), 1)
         } getOrElse (Nil, 0)
       }
 

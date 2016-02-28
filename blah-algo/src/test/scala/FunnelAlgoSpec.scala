@@ -114,4 +114,41 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
     val docs = output.collect.toList
     docs.length should be (0)
   }
+
+  it should "remove contiguous duplicates" in withSparkContext { sc =>
+    val algo = new FunnelAlgo
+    val input = sc.parallelize(List(
+      Event("1", "view", date1, props = Map(
+        "item" -> JsString("landingpage"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("2", "view", date2, props = Map(
+        "item" -> JsString("signup"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("2", "view", date2, props = Map(
+        "item" -> JsString("signup"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("2", "view", date2, props = Map(
+        "item" -> JsString("signup"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("2", "view", date2, props = Map(
+        "item" -> JsString("dashboard"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint
+    ))
+
+    val output = algo.train(input)
+    val docs = output.collect.toList
+
+    inside(docs) { case Doc(_, map) :: Nil =>
+      map should be (Map(
+        "name" -> "signup",
+        "path" -> List("landingpage", "signup", "dashboard"),
+        "count" -> 1
+      ))
+    }
+  }
 }
