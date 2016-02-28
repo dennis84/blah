@@ -8,9 +8,18 @@ import recommendations from './recommendations/widget'
 import userCount from './user/count'
 import userBar from './user/bar'
 import sum from './sum/sum'
+import funnel from './funnel/funnel'
 
 function makeWidgets(model, chan, conn) {
   return [
+    // --------------------------------------------------------------
+    // Funnel
+    // --------------------------------------------------------------
+    widget(funnel, model, chan, conn, {
+      name: 'signup',
+      title: 'Sign Up Funnel'
+    }),
+
     // --------------------------------------------------------------
     // Pie Chart: Browser Statistics Over a Year
     // --------------------------------------------------------------
