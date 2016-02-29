@@ -29,6 +29,6 @@ class FunnelRepo(client: ElasticClient)(
         FunnelElasticQuery(q).compactPrint)
     ) flatMap (resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
       val source = 'hits / 'hits / * / '_source
-      json.extract[Funnel](source).toList
+      Try(json.extract[Funnel](source).toList) getOrElse Nil
     }
 }

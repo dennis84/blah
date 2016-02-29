@@ -53,7 +53,8 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input)
+    val output = algo.train(input, Array(
+      "--name", "signup", "--steps", "landingpage,signup,dashboard"))
     val docs = output.collect.toList
 
     inside(docs) { case Doc(_, map) :: Nil =>
@@ -85,7 +86,8 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input)
+    val output = algo.train(input, Array(
+      "--name", "signup", "--steps", "landingpage,signup,dashboard"))
     val docs = output.collect.toList
 
     inside(docs) { case Doc(_, map) :: Nil =>
@@ -110,7 +112,8 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input)
+    val output = algo.train(input, Array(
+      "--name", "signup", "--steps", "landingpage,signup,dashboard"))
     val docs = output.collect.toList
     docs.length should be (0)
   }
@@ -140,13 +143,44 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input)
+    val output = algo.train(input, Array(
+      "--name", "signup", "--steps", "landingpage,signup,dashboard"))
     val docs = output.collect.toList
 
     inside(docs) { case Doc(_, map) :: Nil =>
       map should be (Map(
         "name" -> "signup",
         "path" -> List("landingpage", "signup", "dashboard"),
+        "count" -> 1
+      ))
+    }
+  }
+
+  it should "parse args" in withSparkContext { sc =>
+    val algo = new FunnelAlgo
+    val input = sc.parallelize(List(
+      Event("1", "view", date1, props = Map(
+        "item" -> JsString("foo"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("2", "view", date2, props = Map(
+        "item" -> JsString("bar"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("3", "view", date3, props = Map(
+        "item" -> JsString("baz"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint
+    ))
+
+    val output = algo.train(input,
+      Array("--name", "foobar", "--steps", "foo,bar,baz"))
+    val docs = output.collect.toList
+
+    inside(docs) { case Doc(_, map) :: Nil =>
+      map should be (Map(
+        "name" -> "foobar",
+        "path" -> List("foo", "bar", "baz"),
         "count" -> 1
       ))
     }

@@ -24,7 +24,8 @@ create_jobs() {
   create_job count
   create_job user
   create_job similarity
-  create_job funnel
+  create_job funnel-items
+  create_job funnel-signup
 }
 
 build_apps() {
@@ -75,12 +76,14 @@ restart_app() {
       destroy_job count
       destroy_job user
       destroy_job similarity
-      destroy_job funnel
+      destroy_job funnel-items
+      destroy_job funnel-signup
       sleep 1
       create_job count
       create_job user
       create_job similarity
-      create_job funnel
+      create_job funnel-items
+      create_job funnel-signup
       ;;
     *)
       echo "Error: App does not exist: $app"
@@ -88,7 +91,6 @@ restart_app() {
       echo "  console restart api"
       echo "  console restart serving"
       echo "  console restart algo"
-      echo "  console restart funnel"
       exit 1
   esac
 }

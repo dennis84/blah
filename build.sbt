@@ -20,7 +20,8 @@ val deps = Seq(
   "com.softwaremill.reactivekafka" %% "reactive-kafka-core"                    % "0.9.0",
   "org.clojars.timewarrior"         % "ua-parser"                              % "1.3.0",
   "net.virtual-void"               %% "json-lenses"                            % "0.6.1",
-  "com.maxmind.geoip2"              % "geoip2"                                 % "2.5.0"
+  "com.maxmind.geoip2"              % "geoip2"                                 % "2.5.0",
+  "com.github.scopt"               %% "scopt"                                  % "3.4.0"
 )
 
 lazy val commonSettings = Seq(

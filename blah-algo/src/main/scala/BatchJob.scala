@@ -21,13 +21,13 @@ class BatchJob(
     sparkConf: SparkConf,
     args: Array[String]
   )(implicit ec: ExecutionContext) {
-    val path = args.lift(1).getOrElse("*/*/*")
+    val path = args.lift(0).getOrElse("*/*/*")
     val hadoopUrl = s"${config getString "hadoop.url"}/events/$path/*.jsonl"
     val sc = new SparkContext(sparkConf)
     val rdd = sc.sequenceFile[LongWritable, BytesWritable](hadoopUrl)
       .map(x => ByteString(x._2.copyBytes).utf8String)
 
-    algo.train(rdd).map { doc =>
+    algo.train(rdd, args drop 1).map { doc =>
       (Map(ID -> doc.id), doc.data)
     }.saveToEsWithMeta(s"blah/$name")
 

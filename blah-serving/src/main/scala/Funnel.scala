@@ -2,5 +2,5 @@ package blah.serving
 
 case class Funnel(
   name: String,
-  path: List[String],
-  count: Long)
+  path: List[String] = Nil,
+  count: Long = 0)

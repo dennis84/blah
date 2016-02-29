@@ -13,14 +13,6 @@ import funnel from './funnel/funnel'
 function makeWidgets(model, chan, conn) {
   return [
     // --------------------------------------------------------------
-    // Funnel
-    // --------------------------------------------------------------
-    widget(funnel, model, chan, conn, {
-      name: 'signup',
-      title: 'Sign Up Funnel'
-    }),
-
-    // --------------------------------------------------------------
     // Pie Chart: Browser Statistics Over a Year
     // --------------------------------------------------------------
     widget(pie, model, chan, conn, {
@@ -161,7 +153,15 @@ function makeWidgets(model, chan, conn) {
     // --------------------------------------------------------------
     // Recommendations
     // --------------------------------------------------------------
-    widget(recommendations, model, chan)
+    widget(recommendations, model, chan),
+
+    // --------------------------------------------------------------
+    // Funnel
+    // --------------------------------------------------------------
+    widget(funnel, model, chan, conn, {
+      name: 'items',
+      title: 'Items 1-3 Funnel'
+    })
   ]
 }
 

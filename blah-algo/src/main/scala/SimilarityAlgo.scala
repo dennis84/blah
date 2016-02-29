@@ -12,7 +12,7 @@ import blah.core._
 import JsonProtocol._
 
 class SimilarityAlgo extends Algo {
-  def train(rdd: RDD[String]) = {
+  def train(rdd: RDD[String], args: Array[String] = Array.empty[String]) = {
     val events = rdd
       .map(x => Try(x.parseJson.convertTo[ViewEvent]))
       .filter(_.isSuccess)

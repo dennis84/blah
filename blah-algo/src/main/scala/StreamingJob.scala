@@ -31,7 +31,7 @@ class StreamingJob(
     ).map(_._2)
 
     stream.foreachRDD { rdd =>
-      algo.train(rdd).map { doc =>
+      algo.train(rdd, args).map { doc =>
         (Map(ID -> doc.id), doc.data)
       }.saveToEsWithMeta(s"blah/$name")
       producer send name

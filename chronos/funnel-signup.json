@@ -1,6 +1,6 @@
 {
   "schedule": "R/2015-11-26T00:00:00Z/PT10M",
-  "name": "funnel",
+  "name": "funnel-signup",
   "cpus": "1",
   "mem": "1024",
   "container": {
@@ -9,7 +9,7 @@
     "network": "BRIDGE"
   },
   "shell": false,
-  "command": "funnel",
+  "command": "funnel */*/* --name signup --steps landingpage,signup,dashboard",
   "environmentVariables": [
     {"name": "KAFKA_URL", "value": "192.168.99.100:31000"},
     {"name": "ZOOKEEPER_URL", "value": "192.168.99.100:2181"},

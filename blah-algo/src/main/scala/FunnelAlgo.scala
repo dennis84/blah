@@ -5,12 +5,33 @@ import java.time.{ZonedDateTime, ZoneOffset}
 import scala.util.Try
 import org.apache.spark.rdd.RDD
 import org.elasticsearch.spark._
+import scopt.OptionParser
 import spray.json._
 import blah.core._
 import JsonProtocol._
 
+case class FunnelConfig(
+  name: String = "",
+  steps: List[String] = Nil)
+
 class FunnelAlgo extends Algo {
-  def train(rdd: RDD[String]) = {
+  def train(rdd: RDD[String], args: Array[String] = Array.empty[String]) = {
+    val parser = new OptionParser[FunnelConfig]("funnel") {
+      opt[String]("name") action {
+        (x, c) => c.copy(name = x)
+      } required()
+      opt[Seq[String]]("steps") action {
+        (x, c) => c.copy(steps = x.toList)
+      } validate { x =>
+        if (x.length > 1) success
+        else failure("Option --steps should have 2 values or more.")
+      }
+    }
+
+    val config = parser.parse(args, FunnelConfig()) getOrElse {
+      throw new java.lang.IllegalArgumentException("Invalid arguments")
+    }
+
     val views = rdd
       .map(x => Try(x.parseJson.convertTo[ViewEvent]))
       .filter(_.isSuccess)
@@ -26,8 +47,7 @@ class FunnelAlgo extends Algo {
         (user, xs.toList.sortBy(_._3)(ord))
       }
 
-    val steps = List("landingpage", "signup", "dashboard")
-    val allSteps = (List(steps) /: steps) {
+    val allSteps = (List(config.steps) /: config.steps) {
       (a,x) => a ::: List(a.last dropRight 1)
     }
 
@@ -50,11 +70,11 @@ class FunnelAlgo extends Algo {
       .reduceByKey(_ + _)
       .map { case(path, count) =>
         val id = MessageDigest.getInstance("SHA-1")
-          .digest(s"signup${path.mkString}".getBytes("UTF-8"))
+          .digest((config.name + path.mkString).getBytes("UTF-8"))
           .map("%02x".format(_))
           .mkString
         Doc(id, Map(
-          "name" -> "signup",
+          "name" -> config.name,
           "path" -> path,
           "count" -> count
         ))

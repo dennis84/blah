@@ -9,6 +9,7 @@ import blah.core.KafkaProducer
 
 object Submit {
   def main(args: Array[String]) {
+    val arguments = args.map(_ split " ").flatten
     val config = ConfigFactory.load()
     lazy val producer = KafkaProducer(ProducerProperties(
       bootstrapServers = config.getString("producer.broker.list"),
@@ -36,7 +37,7 @@ object Submit {
       "user-streaming" -> userStreaming)
 
     (for {
-      algo <- args lift 0
+      algo <- arguments lift 0
       job <- jobs get algo
     } yield {
       val sparkConf = new SparkConf()
@@ -45,7 +46,7 @@ object Submit {
       sparkConf.set("es.nodes", config.getString("elasticsearch.url"))
       sparkConf.set("es.index.auto.create", "false")
       try {
-        job.run(config, sparkConf, args)
+        job.run(config, sparkConf, arguments drop 1)
         sys exit 0
       } catch {
         case e: IllegalArgumentException =>
@@ -53,7 +54,7 @@ object Submit {
           sys exit 1
       }
     }) getOrElse {
-      println(s"""|No such command: ${args.mkString(" ")}
+      println(s"""|No such command: ${arguments.mkString(" ")}
                   |Usage:
                   |  submit count           [path] e.g. "2015/*/*"
                   |  submit similarity      [path] 
