@@ -54,14 +54,15 @@ object Submit {
           sys exit 1
       }
     }) getOrElse {
-      println(s"""|No such command: ${arguments.mkString(" ")}
-                  |Usage:
-                  |  submit count           [path] e.g. "2015/*/*"
-                  |  submit similarity      [path] 
-                  |  submit user            [path]
-                  |  submit funnel          [path]
-                  |  submit count-streaming
-                  |  submit user-streaming
+      println(s"""|Error: No such command: ${arguments.mkString(" ")}
+                  |Usage: java -jar algo.jar submit COMMAND [OPTION]
+                  |Commands:
+                  |  count
+                  |  similarity
+                  |  user
+                  |  funnel
+                  |  count-streaming
+                  |  user-streaming
                   |""".stripMargin)
       sys exit 1
     }

@@ -5,10 +5,10 @@ import java.time.{ZonedDateTime, ZoneOffset}
 import scala.util.Try
 import org.apache.spark.rdd.RDD
 import org.elasticsearch.spark._
-import scopt.OptionParser
 import spray.json._
 import blah.core._
 import JsonProtocol._
+import FindOpt._
 
 case class FunnelConfig(
   name: String = "",
@@ -16,19 +16,12 @@ case class FunnelConfig(
 
 class FunnelAlgo extends Algo {
   def train(rdd: RDD[String], args: Array[String] = Array.empty[String]) = {
-    val parser = new OptionParser[FunnelConfig]("funnel") {
-      opt[String]("name") action {
-        (x, c) => c.copy(name = x)
-      } required()
-      opt[Seq[String]]("steps") action {
-        (x, c) => c.copy(steps = x.toList)
-      } validate { x =>
-        if (x.length > 1) success
-        else failure("Option --steps should have 2 values or more.")
-      }
-    }
-
-    val config = parser.parse(args, FunnelConfig()) getOrElse {
+    val config = (for {
+      name <- args opt "name"
+      steps <- args opt "steps" map (_ split ",")
+    } yield {
+      FunnelConfig(name, steps.toList)
+    }) getOrElse {
       throw new java.lang.IllegalArgumentException("Invalid arguments")
     }
 
