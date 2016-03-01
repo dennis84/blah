@@ -26,7 +26,7 @@ class CountAlgoSpec extends FlatSpec with Matchers with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input)
+    val output = algo.train(input, Array.empty[String])
     val docs = output.collect.toList
     docs.length should be (3)
   }

@@ -7,7 +7,7 @@ import blah.core._
 import JsonProtocol._
 
 class UserAlgo extends Algo {
-  def train(rdd: RDD[String], args: Array[String] = Array.empty[String]) = rdd
+  def train(rdd: RDD[String], args: Array[String]) = rdd
     .map(x => Try(x.parseJson.convertTo[UserEvent]))
     .filter(_.isSuccess)
     .map(_.get)

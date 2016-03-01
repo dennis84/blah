@@ -71,8 +71,7 @@ function makeWidgets(model, chan, conn) {
     // --------------------------------------------------------------
     widget(count, model, chan, conn, {
       collection: 'pageviews',
-      title: 'All',
-      className: 'red'
+      title: 'All'
     }),
 
     // --------------------------------------------------------------

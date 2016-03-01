@@ -11,11 +11,11 @@ import JsonProtocol._
 import FindOpt._
 
 case class FunnelConfig(
-  name: String = "",
+  name: String,
   steps: List[String] = Nil)
 
 class FunnelAlgo extends Algo {
-  def train(rdd: RDD[String], args: Array[String] = Array.empty[String]) = {
+  def train(rdd: RDD[String], args: Array[String]) = {
     val config = (for {
       name <- args opt "name"
       steps <- args opt "steps" map (_ split ",")

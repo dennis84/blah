@@ -11,7 +11,7 @@ import blah.core._
 import JsonProtocol._
 
 class CountAlgo extends Algo {
-  def train(rdd: RDD[String], args: Array[String] = Array.empty[String]) = rdd
+  def train(rdd: RDD[String], args: Array[String]) = rdd
     .map(x => Try(x.parseJson.convertTo[Event]))
     .filter(_.isSuccess)
     .map(_.get)

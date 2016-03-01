@@ -32,7 +32,7 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input)
+    val output = algo.train(input, Array.empty[String])
     val docs = output.collect()
     docs foreach {
       case Doc("user1", data) =>
@@ -59,7 +59,7 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
     ))
 
     val thrown = intercept[IllegalArgumentException] {
-      algo.train(input)
+      algo.train(input, Array.empty[String])
     }
 
     thrown.getMessage should be

@@ -20,7 +20,7 @@ class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input)
+    val output = algo.train(input, Array.empty[String])
     val users = output.collect.toList
     users.length should be (1)
   }
