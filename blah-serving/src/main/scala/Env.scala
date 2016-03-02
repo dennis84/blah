@@ -45,7 +45,7 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
           ("count" -> ("type" -> "integer")))) ~
       ("similarity" ->
         ("properties" ->
-          ("user" -> ("type" -> "string")) ~
+          ("user" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("views" ->
             ("type" -> "nested") ~
             ("properties" ->
@@ -65,6 +65,6 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
       ("funnel" ->
         ("properties" ->
           ("name" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("path" -> ("type" -> "string") ~ ("index_name" -> "item")) ~
+          ("path" -> ("type" -> "string")) ~
           ("count" -> ("type" -> "integer")))))
 }
