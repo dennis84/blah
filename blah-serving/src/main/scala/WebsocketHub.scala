@@ -10,5 +10,7 @@ class WebsocketHub(room: WebsocketRoom) extends Actor {
       room.send("similarity", "[]")
     case "user" =>
       room.send("user", "[]")
+    case "funnel" =>
+      room.send("funnel", "[]")
   }
 }
