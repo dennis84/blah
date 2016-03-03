@@ -38,13 +38,15 @@ object Boot extends App
     case Failure(e) => log.warning("Unable to connect to zookeeper.")
   }
 
-  env.mappingUpdater.update("blah", env.elasticMapping) onSuccess {
-    case Mapping.Created(index) =>
+  env.mappingUpdater.update("blah", env.elasticMapping) onComplete {
+    case Success(Mapping.Created(index)) =>
       log.debug(s"Successfully initialized elasticsearch mapping (index: $index)")
-    case Mapping.Skipped(index) =>
+    case Success(Mapping.Skipped(index)) =>
       log.debug(s"Current elasticsearch mapping is up to date (index: $index)")
-    case Mapping.Updated(index) =>
+    case Success(Mapping.Updated(index)) =>
       log.debug(s"Successfully updated elasticsearch mapping to a new version (index: $index)")
+    case Failure(e) =>
+      log.error(s"Mapping update failed: ${e.getMessage}")
   }
 
   (for {

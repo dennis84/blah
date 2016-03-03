@@ -14,6 +14,7 @@ class MappingUpdater(client: ElasticClient)(
   mat: Materializer
 ) extends SprayJsonSupport with DefaultJsonProtocol {
   import system.dispatcher
+  import Mapping._
 
   private def getMapping(index: String) =
     client request HttpRequest(
@@ -36,18 +37,20 @@ class MappingUpdater(client: ElasticClient)(
         ContentTypes.`application/json`,
         ("actions" -> actions).compactPrint))
 
-  def update(index: String, data: JsObject): Future[Mapping.Result] =
+  def update(index: String, data: JsObject): Future[Result] =
     getMapping(index) flatMap {
       case HttpResponse(StatusCodes.NotFound, _, _, _) => for {
-        _ <- putMapping(s"$index-1", data)
-        _ <- aliases(List(
+        r <- putMapping(s"$index-1", data)
+        _ = if(r.status.isFailure) throw UpdateFailed(r)
+        r <- aliases(List(
           ("add" -> ("index" -> s"$index-1") ~ ("alias" -> index))))
-      } yield Mapping.Created(s"$index-1")
+        _ = if(r.status.isFailure) throw UpdateFailed(r)
+      } yield Created(s"$index-1")
 
       case HttpResponse(StatusCodes.OK, _, entity, _) =>
         Unmarshal(entity).to[JsObject] flatMap { json =>
           val List((currentIndex, currentData: JsObject), _*) = json.fields.toList
-          if(currentData == data) Future(Mapping.Skipped(currentIndex))
+          if(currentData == data) Future(Skipped(currentIndex))
           else {
             val pattern = """.*-(\d+)""".r
             val n = currentIndex match {
@@ -55,11 +58,13 @@ class MappingUpdater(client: ElasticClient)(
             }
 
             for {
-              _ <- putMapping(s"$index-$n", data)
-              _ <- aliases(List(
+              r <- putMapping(s"$index-$n", data)
+              _ = if(r.status.isFailure) throw UpdateFailed(r)
+              r <- aliases(List(
                 ("add" -> ("index" -> s"$index-$n") ~ ("alias" -> index)),
                 ("remove" -> ("index" -> currentIndex) ~ ("alias" -> index))))
-            } yield Mapping.Updated(s"$index-$n")
+              _ = if(r.status.isFailure) throw UpdateFailed(r)
+            } yield Updated(s"$index-$n")
           }
         }
     }
@@ -70,4 +75,6 @@ object Mapping {
   case class Created(index: String) extends Result
   case class Updated(index: String) extends Result
   case class Skipped(index: String) extends Result
+  case class UpdateFailed(val response: HttpResponse)
+    extends Exception(response.entity.toString)
 }
