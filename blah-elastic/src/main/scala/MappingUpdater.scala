@@ -14,7 +14,7 @@ class MappingUpdater(client: ElasticClient)(
   mat: Materializer
 ) extends SprayJsonSupport with DefaultJsonProtocol {
   import system.dispatcher
-  import Mapping._
+  import MappingUpdater._
 
   private def getMapping(index: String) =
     client request HttpRequest(
@@ -49,28 +49,26 @@ class MappingUpdater(client: ElasticClient)(
 
       case HttpResponse(StatusCodes.OK, _, entity, _) =>
         Unmarshal(entity).to[JsObject] flatMap { json =>
-          val List((currentIndex, currentData: JsObject), _*) = json.fields.toList
-          if(currentData == data) Future(Skipped(currentIndex))
-          else {
-            val pattern = """.*-(\d+)""".r
-            val n = currentIndex match {
-              case pattern(x) => x.toInt + 1
-            }
-
-            for {
-              r <- putMapping(s"$index-$n", data)
-              _ = if(r.status.isFailure) throw UpdateFailed(r)
-              r <- aliases(List(
-                ("add" -> ("index" -> s"$index-$n") ~ ("alias" -> index)),
-                ("remove" -> ("index" -> currentIndex) ~ ("alias" -> index))))
-              _ = if(r.status.isFailure) throw UpdateFailed(r)
-            } yield Updated(s"$index-$n")
+          val pattern = """.*-(\d+)""".r
+          json.fields.toList match {
+            case (currentIndex, currentData) :: Nil if(currentData == data) =>
+              Future(Skipped(currentIndex))
+            case (currentIndex@pattern(x), currentData) :: Nil =>
+              val nextIndex = x.toInt + 1
+              for {
+                r <- putMapping(s"$index-$nextIndex", data)
+                _ = if(r.status.isFailure) throw UpdateFailed(r)
+                r <- aliases(List(
+                  ("add" -> ("index" -> s"$index-$nextIndex") ~ ("alias" -> index)),
+                  ("remove" -> ("index" -> currentIndex) ~ ("alias" -> index))))
+                _ = if(r.status.isFailure) throw UpdateFailed(r)
+              } yield Updated(s"$index-$nextIndex")
           }
         }
     }
 }
 
-object Mapping {
+object MappingUpdater {
   trait Result
   case class Created(index: String) extends Result
   case class Updated(index: String) extends Result

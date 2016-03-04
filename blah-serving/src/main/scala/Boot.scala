@@ -7,7 +7,7 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
-import blah.elastic.Mapping
+import blah.elastic.MappingUpdater
 
 object Boot extends App
   with CorsSupport
@@ -39,11 +39,11 @@ object Boot extends App
   }
 
   env.mappingUpdater.update("blah", env.elasticMapping) onComplete {
-    case Success(Mapping.Created(index)) =>
+    case Success(MappingUpdater.Created(index)) =>
       log.debug(s"Successfully initialized elasticsearch mapping (index: $index)")
-    case Success(Mapping.Skipped(index)) =>
+    case Success(MappingUpdater.Skipped(index)) =>
       log.debug(s"Current elasticsearch mapping is up to date (index: $index)")
-    case Success(Mapping.Updated(index)) =>
+    case Success(MappingUpdater.Updated(index)) =>
       log.debug(s"Successfully updated elasticsearch mapping to a new version (index: $index)")
     case Failure(e) =>
       log.error(s"Mapping update failed: ${e.getMessage}")

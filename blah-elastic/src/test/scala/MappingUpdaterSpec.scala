@@ -60,28 +60,28 @@ class MappingUpdaterSpec
     val client = new ElasticClient(ElasticUri("localhost:9200"))
     val updater = new MappingUpdater(client)
     val resp = Await.result(updater.update("test", mappingV1), 10.seconds)
-    resp should be (Mapping.Created("test-1"))
+    resp should be (MappingUpdater.Created("test-1"))
   }
 
   it should "update to v2" taggedAs(ElasticTest) in {
     val client = new ElasticClient(ElasticUri("localhost:9200"))
     val updater = new MappingUpdater(client)
     val resp = Await.result(updater.update("test", mappingV2), 10.seconds)
-    resp should be (Mapping.Updated("test-2"))
+    resp should be (MappingUpdater.Updated("test-2"))
   }
 
   it should "skip, because nothing has changed" taggedAs(ElasticTest) in {
     val client = new ElasticClient(ElasticUri("localhost:9200"))
     val updater = new MappingUpdater(client)
     val resp = Await.result(updater.update("test", mappingV2), 10.seconds)
-    resp should be (Mapping.Skipped("test-2"))
+    resp should be (MappingUpdater.Skipped("test-2"))
   }
 
   it should "update to v3" taggedAs(ElasticTest) in {
     val client = new ElasticClient(ElasticUri("localhost:9200"))
     val updater = new MappingUpdater(client)
     val resp = Await.result(updater.update("test", mappingV3), 10.seconds)
-    resp should be (Mapping.Updated("test-3"))
+    resp should be (MappingUpdater.Updated("test-3"))
   }
 
   it should "fail with v4" taggedAs(ElasticTest) in {
@@ -89,8 +89,8 @@ class MappingUpdaterSpec
     val updater = new MappingUpdater(client)
     val fut = updater.update("test", mappingV4)
     whenReady(fut.failed) { e =>
-      e shouldBe a [Mapping.UpdateFailed]
-      val exception = e.asInstanceOf[Mapping.UpdateFailed]
+      e shouldBe a [MappingUpdater.UpdateFailed]
+      val exception = e.asInstanceOf[MappingUpdater.UpdateFailed]
       exception.response.status should be (StatusCodes.BadRequest)
     }
   }
