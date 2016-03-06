@@ -5,7 +5,6 @@ import blah.core.JsonDsl._
 import blah.elastic.{QueryDsl => q}
 import blah.elastic.{FilterDsl => f}
 import blah.elastic.{AggregationDsl => a}
-import blah.elastic.AggregationMerge._
 
 object SumElasticQuery {
   private def filterBy(xs: List[Filter]) = xs collect {

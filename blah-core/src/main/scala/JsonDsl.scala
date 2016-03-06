@@ -1,5 +1,6 @@
 package blah.core
 
+import scala.language.implicitConversions
 import spray.json._
 
 trait JsonDsl extends JsonMerge {

@@ -87,7 +87,7 @@ restart_app() {
       ;;
     *)
       echo "Error: App does not exist: $app"
-      echo "Usage:" 
+      echo "Usage:"
       echo "  console restart api"
       echo "  console restart serving"
       echo "  console restart algo"

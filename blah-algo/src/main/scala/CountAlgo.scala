@@ -4,8 +4,6 @@ import java.security.MessageDigest
 import java.time.temporal.ChronoUnit
 import scala.util.Try
 import org.apache.spark.rdd.RDD
-import org.elasticsearch.spark._
-import org.elasticsearch.spark.rdd.Metadata._          
 import spray.json._
 import blah.core._
 import JsonProtocol._

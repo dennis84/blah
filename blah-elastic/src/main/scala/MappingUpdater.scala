@@ -69,7 +69,7 @@ class MappingUpdater(client: ElasticClient)(
 }
 
 object MappingUpdater {
-  trait Result
+  sealed trait Result
   case class Created(index: String) extends Result
   case class Updated(index: String) extends Result
   case class Skipped(index: String) extends Result
