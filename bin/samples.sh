@@ -55,31 +55,26 @@ rand_ip() {
   echo "$(($RANDOM % 256)).$(($RANDOM % 256)).$(($RANDOM % 256)).$(($RANDOM % 256))"
 }
 
-new_pageviews() {
-  declare index="$1"
-  local item="$(rand_item)"
-  local user="$(rand_user)"
-  local ip="$(rand_ip)"
-  local ua="$(rand_ua)"
+make_pageview() {
   printf '{
     "item":"%s",
     "user":"%s",
     "ip": "%s",
     "userAgent":"%s"
-  }' "$item" "$user" "$ip" "$ua"
+  }' "$(rand_item)" "$(rand_user)" "$(rand_ip)" "$(rand_ua)"
 }
 
-new_purchases() {
-  declare index="$1"
-  local item="$(rand_item)"
-  local user="$(rand_user)"
-  local ip="$(rand_ip)"
-  local ua="$(rand_ua)"
+make_purchase() {
   printf '{
-    "item":"TICKET-%s",
+    "item":"%s",
     "price": 20.00,
     "user":"%s",
     "ip": "%s",
     "userAgent":"%s"
-  }' "$item" "$user" "$ip" "$ua"
+  }' "$(rand_item)" "$(rand_user)" "$(rand_ip)" "$(rand_ua)"
+}
+
+create_event() {
+  curl -s -o /dev/null -H 'Content-Type: application/json' \
+    -X POST "http://api.marathon.mesos:8000/events/$1" -d "$2"
 }

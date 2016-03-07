@@ -1,7 +1,7 @@
 #!/bin/bash
 
 create_apps() {
-  ! is_open $BLAH_HOST 7000 8080 && exit 1
+  ! is_open "$BLAH_HOST" 7000 8080 && exit 1
   create_brokers 1
   create_app dns
   create_app namenode
@@ -14,13 +14,13 @@ create_apps() {
 }
 
 create_streaming_apps() {
-  ! is_open $BLAH_HOST 8080 && exit 1
+  ! is_open "$BLAH_HOST" 8080 && exit 1
   create_app "count-streaming"
   create_app "user-streaming"
 }
 
 create_jobs() {
-  ! is_open $BLAH_HOST 8081 && exit 1
+  ! is_open "$BLAH_HOST" 8081 && exit 1
   create_job count
   create_job user
   create_job similarity
@@ -47,7 +47,7 @@ build_images() {
 }
 
 build_ui() {
-  pushd "$(dirname $0)/../blah-ui" > /dev/null
+  pushd "$(dirname "$0")/../blah-ui" > /dev/null
   npm install
   gulp build
   popd > /dev/null
@@ -61,7 +61,7 @@ pull_images() {
 }
 
 restart_app() {
-  ! is_open $BLAH_HOST 8080 8081 && exit 1
+  ! is_open "$BLAH_HOST" 8080 8081 && exit 1
   declare app="$1"
   case "$app" in
     serving|api)
@@ -97,13 +97,24 @@ restart_app() {
 
 create_sample_data() {
   ! is_open "api.marathon.mesos" 8000 && exit 1
-  declare nb=${1:-1}
-  declare coll=${2:-"pageviews"}
+  declare nb=${1:-1} coll=${2:-"pageviews"}
   for i in $(eval echo "{1..$nb}"); do
     echo -ne "Processing $i/$nb\r"
-    curl -s -o /dev/null -H 'Content-Type: application/json' \
-      -X POST "http://api.marathon.mesos:8000/events/$coll" \
-      -d "$(eval "new_$coll" $i)"
+    case $coll in
+      pageviews)
+        create_event "$coll" $(make_pageview)
+        ;;
+      purchases)
+        create_event "$coll" $(make_purchase)
+        ;;
+      *)
+        echo "Error: Cannot create event: $coll"
+        echo "Usage: bin/console samples NB COLLECTION"
+        echo "Example:"
+        echo "  samples 100 pageviews"
+        echo "  samples 100 purchases"
+        exit 1
+    esac
   done
   echo -ne '\n'
 }
@@ -111,11 +122,11 @@ create_sample_data() {
 main() {
   set -eo pipefail
 
-  source "$(dirname $0)/common.sh"
-  source "$(dirname $0)/chronos.sh"
-  source "$(dirname $0)/kafka.sh"
-  source "$(dirname $0)/marathon.sh"
-  source "$(dirname $0)/samples.sh"
+  source "$(dirname "$0")/common.sh"
+  source "$(dirname "$0")/chronos.sh"
+  source "$(dirname "$0")/kafka.sh"
+  source "$(dirname "$0")/marathon.sh"
+  source "$(dirname "$0")/samples.sh"
 
   if [[ ! -z "$DOCKER_MACHINE_NAME" ]]; then
     export BLAH_HOST="$(docker-machine ip $DOCKER_MACHINE_NAME)"
