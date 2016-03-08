@@ -102,10 +102,10 @@ create_sample_data() {
     echo -ne "Processing $i/$nb\r"
     case $coll in
       pageviews)
-        create_event "$coll" $(make_pageview)
+        create_event "$coll" "$(make_pageview)"
         ;;
       purchases)
-        create_event "$coll" $(make_purchase)
+        create_event "$coll" "$(make_purchase)"
         ;;
       *)
         echo "Error: Cannot create event: $coll"
