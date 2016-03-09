@@ -12,6 +12,20 @@ function widget(model, id, m) {
   return model
 }
 
+/**
+ * Changes the URL path.
+ *
+ * @param {Object} The global state
+ * @param {String} The new path
+ *
+ * @return {Object} The global state
+ */
+function path(model, path) {
+  model.path = path
+  return model
+}
+
 export {
-  widget
+  widget,
+  path
 }

@@ -1,7 +1,7 @@
 import test from 'tape'
 import csp from 'js-csp'
 import createWidget from '../src/js/widget'
-import {h, diff} from 'virtual-dom'
+import {h, diff, patch} from 'virtual-dom'
 import createElement from 'virtual-dom/create-element'
 
 test('render', (assert) => {
@@ -76,7 +76,34 @@ test('rerender same state', (assert) => {
 
   var tree = render(state, chan)
   createElement(tree)
+  state[widget.id] = {}
   diff(tree, render(state, chan))
+
+  assert.end()
+})
+
+test('rerender other widget', (assert) => {
+  var state = {}
+  var chan = csp.chan()
+
+  function renderA(s, c) {
+    return createWidget((model, update) => {
+      return h('div', 'Widget A')
+    }, s, c)
+  }
+
+  function renderB(s, c) {
+    return createWidget((model, update) => {
+      return h('div', 'Widget B')
+    }, s, c)
+  }
+
+  var tree = renderA(state, chan)
+  var node = createElement(tree)
+  assert.equal('Widget A', node.childNodes[0].data)
+  var patches = diff(tree, renderB(state, chan))
+  node = patch(node, patches)
+  assert.equal('Widget B', node.childNodes[0].data)
 
   assert.end()
 })

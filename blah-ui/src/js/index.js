@@ -5,18 +5,20 @@ import csp from 'js-csp'
 import {SERVING_WS_URL} from './config'
 import connect from './connection'
 import * as ctrl from './ctrl'
-import dashboard from './ui/dashboard'
+import pageviews from './ui/pageviews'
+import user from './ui/user'
+import misc from './ui/misc'
 
 var conn = connect(SERVING_WS_URL)
 var chan = csp.chan()
-var model = {}
+var model = {path: location.hash}
 
 function update(model, action) {
   return ctrl[action.type].apply(null, [model].concat(action.args))
 }
 
-function renderLoop(model) {
-  var tree = dashboard(model, chan, conn)
+function renderLoop(render) {
+  var tree = render(model, chan, conn)
   var node = createElement(tree)
   document.body.appendChild(node)
 
@@ -24,7 +26,7 @@ function renderLoop(model) {
     while(true) {
       var action = yield csp.take(chan)
       model = update(model, action)
-      var updated = dashboard(model, chan, conn)
+      var updated = render(model, chan, conn)
       var patches = diff(tree, updated)
       node = patch(node, patches)
       tree = updated
@@ -32,4 +34,15 @@ function renderLoop(model) {
   })
 }
 
-renderLoop(model)
+function render() {
+  if('#/pageviews' === model.path) return pageviews(...arguments)
+  else if('#/user' === model.path) return user(...arguments)
+  else if('#/misc' === model.path) return misc(...arguments)
+  else return pageviews(...arguments)
+}
+
+window.addEventListener('hashchange', () => {
+  csp.putAsync(chan, {type: 'path', args: [location.hash]})
+})
+
+renderLoop(render)
