@@ -3,14 +3,14 @@ import * as widgets from './widgets'
 import masonry from './masonry'
 import nav from './nav'
 
-function render(model, chan, conn) {
+function render(update, conn, model) {
   return h('div.container', [
-    nav(model, chan, conn),
+    nav(model, update, conn),
     h('h1.center-hv', 'Misc'),
     masonry({className: 'widgets', itemSelector: '.widget'}, [
-      widgets.itemsFunnel(model, chan, conn),
-      widgets.totalRevenue(model, chan, conn),
-      widgets.recommendationsWidget(model, chan, conn)
+      widgets.itemsFunnel(model, update, conn),
+      widgets.totalRevenue(model, update, conn),
+      widgets.recommendationsWidget(model, update, conn)
     ])
   ])
 }

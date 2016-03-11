@@ -3,10 +3,10 @@ import equal from 'deep-equal'
 import uuid from 'uuid'
 
 class Widget {
-  constructor(fn, state, channel, args) {
+  constructor(fn, state, updateFn, args) {
     this.fn = fn
     this.state = state
-    this.channel = channel
+    this.updateFn = updateFn
     this.args = args
     this.model = {}
     this.type = 'Thunk'
@@ -15,11 +15,10 @@ class Widget {
 
   render(prev) {
     if(prev && null !== prev.id) {
-      if(undefined === this.state[prev.id]) {
-        return this.renderWidget()
+      if(undefined !== this.state[prev.id]) {
+        this.model = this.state[prev.id]
       }
 
-      this.model = this.state[prev.id]
       this.id = prev.id
 
       if(shouldUpdate(this, prev)) {
@@ -38,14 +37,9 @@ class Widget {
   update(fn, ...args) {
     var that = this
     var resp = fn.apply(null, [this.model].concat(args))
-    csp.go(function*() {
       resp.then((m) => {
-        csp.putAsync(that.channel, {
-          type: 'widget',
-          args: [that.id, m]
-        })
+        that.updateFn('widget', that.id, m)
       }).catch((r) => {})
-    })
   }
 
   renderWidget() {
@@ -57,12 +51,14 @@ class Widget {
 }
 
 function shouldUpdate(curr, prev) {
-  if(prev.model === curr.model) return false
-  return !equal(prev.model, curr.model)
+  if(prev.fn !== curr.fn) return true
+  if(!equal(prev.args, curr.args)) return true
+  if(!equal(prev.model, curr.model)) return true
+  return false
 }
 
-function widget(fn, state, channel, ...args) {
-  return new Widget(fn, state, channel, args)
+function widget(fn, state, updateFn, ...args) {
+  return new Widget(fn, state, updateFn, args)
 }
 
 export default widget

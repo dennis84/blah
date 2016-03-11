@@ -1,7 +1,6 @@
 import 'babel-polyfill'
-import {diff, patch} from 'virtual-dom'
-import createElement from 'virtual-dom/create-element'
-import csp from 'js-csp'
+import virtualDom from 'virtual-dom'
+import mainLoop from 'main-loop'
 import {SERVING_WS_URL} from './config'
 import connect from './connection'
 import * as ctrl from './ctrl'
@@ -10,28 +9,13 @@ import user from './ui/user'
 import misc from './ui/misc'
 
 var conn = connect(SERVING_WS_URL)
-var chan = csp.chan()
 var model = {path: location.hash}
 
-function update(model, action) {
-  return ctrl[action.type].apply(null, [model].concat(action.args))
-}
+var loop = mainLoop(model, render.bind(null, update, conn), virtualDom)
+document.body.appendChild(loop.target)
 
-function renderLoop(render) {
-  var tree = render(model, chan, conn)
-  var node = createElement(tree)
-  document.body.appendChild(node)
-
-  csp.go(function*() {
-    while(true) {
-      var action = yield csp.take(chan)
-      model = update(model, action)
-      var updated = render(model, chan, conn)
-      var patches = diff(tree, updated)
-      node = patch(node, patches)
-      tree = updated
-    }
-  })
+function update(action, ...args) {
+  return loop.update(ctrl[action].apply(null, [model].concat(args)))
 }
 
 function render() {
@@ -41,8 +25,4 @@ function render() {
   else return pageviews(...arguments)
 }
 
-window.addEventListener('hashchange', () => {
-  csp.putAsync(chan, {type: 'path', args: [location.hash]})
-})
-
-renderLoop(render)
+window.addEventListener('hashchange', () => update('path', location.hash))

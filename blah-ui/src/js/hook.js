@@ -8,10 +8,17 @@ class Hook {
   }
 }
 
+var elems = new Set
+if(typeof window !== 'undefined') {
+  window.addEventListener('hashchange', () => elems.clear())
+}
+
 class MountHook extends Hook {
-  hook(node, propName, prevValue) {
-    if(undefined !== prevValue) return
-    this.fn.apply(this, [node])
+  hook(node, propName, prev) {
+    if(!elems.has(node)) {
+      elems.add(node)
+      this.fn.apply(this, [node])
+    }
   }
 }
 

@@ -4,14 +4,14 @@ import * as widgets from './widgets'
 import masonry from './masonry'
 import nav from './nav'
 
-function render(model, chan, conn) {
+function render(update, conn, model) {
   return h('div.container', [
-    nav(model, chan, conn),
+    nav(model, update, conn),
     h('h1.center-hv', 'User Stats'),
     masonry({className: 'widgets', itemSelector: '.widget'}, [
-      widgets.visitorsToday(model, chan, conn),
-      widgets.visitorsByCountry(model, chan, conn),
-      widgets.uniqueVisitors(model, chan, conn)
+      widgets.visitorsToday(model, update, conn),
+      widgets.visitorsByCountry(model, update, conn),
+      widgets.uniqueVisitors(model, update, conn)
     ])
   ])
 }
