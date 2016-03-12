@@ -4,7 +4,7 @@ class Hook {
   }
 
   hook(node, propName, prevValue) {
-    this.fn.apply(this, [node])
+    this.fn(node)
   }
 }
 
@@ -17,7 +17,7 @@ class MountHook extends Hook {
   hook(node, propName, prev) {
     if(!elems.has(node)) {
       elems.add(node)
-      this.fn.apply(this, [node])
+      this.fn(node)
     }
   }
 }

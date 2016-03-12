@@ -9,7 +9,8 @@ function render(options = {}, items = []) {
     hook: hook(debounce((node) => {
       if(undefined === node.masonry) {
         node.masonry = new Masonry(node, {
-          itemSelector: options.itemSelector
+          itemSelector: options.itemSelector,
+          transitionDuration: 0
         })
       } else {
         node.masonry.reloadItems()

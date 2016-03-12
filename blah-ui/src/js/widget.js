@@ -36,17 +36,13 @@ class Widget {
 
   update(fn, ...args) {
     var that = this
-    var resp = fn.apply(null, [this.model].concat(args))
-      resp.then((m) => {
-        that.updateFn('widget', that.id, m)
-      }).catch((r) => {})
+    fn(this.model, ...args)
+      .then((m) => that.updateFn('widget', that.id, m))
+      .catch((r) => {})
   }
 
   renderWidget() {
-    return this.fn.apply(null, [
-      this.model,
-      this.update.bind(this)
-    ].concat(this.args))
+    return this.fn(this.model, this.update.bind(this), ...this.args)
   }
 }
 

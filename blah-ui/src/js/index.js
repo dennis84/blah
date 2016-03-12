@@ -15,7 +15,7 @@ var loop = mainLoop(model, render.bind(null, update, conn), virtualDom)
 document.body.appendChild(loop.target)
 
 function update(action, ...args) {
-  return loop.update(ctrl[action].apply(null, [model].concat(args)))
+  return loop.update(ctrl[action](model, ...args))
 }
 
 function render() {
