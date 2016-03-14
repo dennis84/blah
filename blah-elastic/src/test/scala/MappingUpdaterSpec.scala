@@ -13,20 +13,32 @@ import blah.core.JsonDsl._
 
 object ElasticTest extends Tag("blah.elastic.ElasticTest")
 
-class MappingUpdaterSpec
+class IndexUpdaterSpec
   extends FlatSpec
   with Matchers
   with ScalaFutures
   with BeforeAndAfterAll {
 
-  val mappingV1: JsObject =
+  val indexV1: JsObject =
+    ("settings" ->
+      ("analysis" -> ("analyzer" ->
+        ("lowercase_keyword" ->
+          ("type" -> "custom") ~
+          ("tokenizer" -> "keyword") ~
+          ("filter" -> "lowercase"))))) ~
     ("mappings" ->
       ("foo" ->
         ("properties" ->
           ("a" -> ("type" -> "string"))
         )))
 
-  val mappingV2: JsObject =
+  val indexV2: JsObject =
+    ("settings" ->
+      ("analysis" -> ("analyzer" ->
+        ("lowercase_keyword" ->
+          ("type" -> "custom") ~
+          ("tokenizer" -> "keyword") ~
+          ("filter" -> "lowercase"))))) ~
     ("mappings" ->
       ("foo" ->
         ("properties" ->
@@ -34,7 +46,13 @@ class MappingUpdaterSpec
           ("b" -> ("type" -> "string"))
         )))
 
-  val mappingV3: JsObject =
+  val indexV3: JsObject =
+    ("settings" ->
+      ("analysis" -> ("analyzer" ->
+        ("lowercase_keyword" ->
+          ("type" -> "custom") ~
+          ("tokenizer" -> "keyword") ~
+          ("filter" -> "lowercase"))))) ~
     ("mappings" ->
       ("foo" ->
         ("properties" ->
@@ -43,7 +61,7 @@ class MappingUpdaterSpec
           ("c" -> ("type" -> "string"))
         )))
 
-  val mappingV4: JsObject =
+  val indexV4: JsObject =
     ("mappings" ->
       ("foo" ->
         ("properties" ->
@@ -56,41 +74,41 @@ class MappingUpdaterSpec
   implicit val mat = ActorMaterializer()
   import system.dispatcher
 
-  "The MappingUpdater" should "create the initial mapping" taggedAs(ElasticTest) in {
+  "The IndexUpdater" should "create the initial index" taggedAs(ElasticTest) in {
     val client = new ElasticClient(ElasticUri("localhost:9200"))
-    val updater = new MappingUpdater(client)
-    val resp = Await.result(updater.update("test", mappingV1), 10.seconds)
-    resp should be (MappingUpdater.Created("test-1"))
+    val updater = new IndexUpdater(client)
+    val resp = Await.result(updater.update("test", indexV1), 10.seconds)
+    resp should be (IndexUpdater.Created("test-1"))
   }
 
   it should "update to v2" taggedAs(ElasticTest) in {
     val client = new ElasticClient(ElasticUri("localhost:9200"))
-    val updater = new MappingUpdater(client)
-    val resp = Await.result(updater.update("test", mappingV2), 10.seconds)
-    resp should be (MappingUpdater.Updated("test-2"))
+    val updater = new IndexUpdater(client)
+    val resp = Await.result(updater.update("test", indexV2), 10.seconds)
+    resp should be (IndexUpdater.Updated("test-2"))
   }
 
   it should "skip, because nothing has changed" taggedAs(ElasticTest) in {
     val client = new ElasticClient(ElasticUri("localhost:9200"))
-    val updater = new MappingUpdater(client)
-    val resp = Await.result(updater.update("test", mappingV2), 10.seconds)
-    resp should be (MappingUpdater.Skipped("test-2"))
+    val updater = new IndexUpdater(client)
+    val resp = Await.result(updater.update("test", indexV2), 10.seconds)
+    resp should be (IndexUpdater.Skipped("test-2"))
   }
 
   it should "update to v3" taggedAs(ElasticTest) in {
     val client = new ElasticClient(ElasticUri("localhost:9200"))
-    val updater = new MappingUpdater(client)
-    val resp = Await.result(updater.update("test", mappingV3), 10.seconds)
-    resp should be (MappingUpdater.Updated("test-3"))
+    val updater = new IndexUpdater(client)
+    val resp = Await.result(updater.update("test", indexV3), 10.seconds)
+    resp should be (IndexUpdater.Updated("test-3"))
   }
 
   it should "fail with v4" taggedAs(ElasticTest) in {
     val client = new ElasticClient(ElasticUri("localhost:9200"))
-    val updater = new MappingUpdater(client)
-    val fut = updater.update("test", mappingV4)
+    val updater = new IndexUpdater(client)
+    val fut = updater.update("test", indexV4)
     whenReady(fut.failed) { e =>
-      e shouldBe a [MappingUpdater.UpdateFailed]
-      val exception = e.asInstanceOf[MappingUpdater.UpdateFailed]
+      e shouldBe a [IndexUpdater.UpdateFailed]
+      val exception = e.asInstanceOf[IndexUpdater.UpdateFailed]
       exception.response.status should be (StatusCodes.BadRequest)
     }
   }

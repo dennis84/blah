@@ -7,6 +7,8 @@ trait JsonContains {
     def contains(b: JsObject): Boolean = b.fields forall {
       case (k, v) => a.fields get k map(_ == v) getOrElse(false)
     }
+
+    def notContains(b: JsObject): Boolean = ! contains(b)
   }
 }
 

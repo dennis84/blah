@@ -5,7 +5,7 @@ import akka.stream.Materializer
 import org.apache.kafka.common.serialization.StringDeserializer
 import com.softwaremill.react.kafka.{ReactiveKafka, ConsumerProperties}
 import spray.json._
-import blah.elastic.{ElasticClient, ElasticUri, MappingUpdater}
+import blah.elastic.{ElasticClient, ElasticUri, IndexUpdater}
 import blah.core.JsonDsl._
 
 class Env(implicit system: ActorSystem, mat: Materializer) {
@@ -23,9 +23,17 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
   lazy val elasticClient = new ElasticClient(ElasticUri(
     config.getString("elasticsearch.url")))
 
-  lazy val mappingUpdater = new MappingUpdater(elasticClient)
+  lazy val indexUpdater = new IndexUpdater(elasticClient)
 
-  lazy val elasticMapping: JsObject =
+  lazy val elasticIndex: JsObject =
+    ("settings" ->
+      ("analysis" ->
+        ("analyzer" ->
+          ("lowercase_keyword" ->
+            ("type" -> "custom") ~
+            ("tokenizer" -> "keyword") ~
+            ("filter" -> "lowercase")
+    )))) ~
     ("mappings" ->
       ("count" ->
         ("properties" ->
@@ -34,10 +42,10 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
           ("date" -> ("type" -> "date") ~ ("format" -> "dateOptionalTime")) ~
           ("browserFamily" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("browserMajor" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("osFamily" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("osFamily" -> ("type" -> "string") ~ ("analyzer" -> "lowercase_keyword")) ~
           ("osMajor" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("deviceFamily" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("platform" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("platform" -> ("type" -> "string") ~ ("analyzer" -> "lowercase_keyword")) ~
           ("isMobile" -> ("type" -> "boolean")) ~
           ("isTablet" -> ("type" -> "boolean")) ~
           ("isMobileDevice" -> ("type" -> "boolean")) ~

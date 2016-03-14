@@ -3,7 +3,7 @@ package blah.core
 import scala.language.implicitConversions
 import spray.json._
 
-trait JsonDsl extends JsonMerge {
+trait JsonDsl extends JsonMerge with JsonContains {
   implicit def int2Js(x: Int) = JsNumber(x)
   implicit def string2Js(x: String) = JsString(x)
   implicit def boolean2Js(x: Boolean) = JsBoolean(x)

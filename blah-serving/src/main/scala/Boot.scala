@@ -7,7 +7,7 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
-import blah.elastic.MappingUpdater
+import blah.elastic.IndexUpdater
 
 object Boot extends App
   with CorsSupport
@@ -38,15 +38,15 @@ object Boot extends App
     case Failure(e) => log.warning("Unable to connect to zookeeper.")
   }
 
-  env.mappingUpdater.update("blah", env.elasticMapping) onComplete {
-    case Success(MappingUpdater.Created(index)) =>
-      log.debug(s"Successfully initialized elasticsearch mapping (index: $index)")
-    case Success(MappingUpdater.Skipped(index)) =>
-      log.debug(s"Current elasticsearch mapping is up to date (index: $index)")
-    case Success(MappingUpdater.Updated(index)) =>
-      log.debug(s"Successfully updated elasticsearch mapping to a new version (index: $index)")
+  env.indexUpdater.update("blah", env.elasticIndex) onComplete {
+    case Success(IndexUpdater.Created(index)) =>
+      log.debug(s"Successfully initialized elasticsearch index (index: $index)")
+    case Success(IndexUpdater.Skipped(index)) =>
+      log.debug(s"Current elasticsearch index is up to date (index: $index)")
+    case Success(IndexUpdater.Updated(index)) =>
+      log.debug(s"Successfully updated elasticsearch index to a new version (index: $index)")
     case Failure(e) =>
-      log.error(s"Mapping update failed: ${e.getMessage}")
+      log.error(s"Index update failed: ${e.getMessage}")
   }
 
   (for {
