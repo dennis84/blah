@@ -7,6 +7,8 @@ import * as ctrl from './ctrl'
 import pageviews from './ui/pageviews'
 import user from './ui/user'
 import misc from './ui/misc'
+import custom from './ui/custom'
+import builder from './ui/builder'
 
 var conn = connect(SERVING_WS_URL)
 var model = {path: location.hash}
@@ -22,6 +24,8 @@ function render() {
   if('#/pageviews' === model.path) return pageviews(...arguments)
   else if('#/user' === model.path) return user(...arguments)
   else if('#/misc' === model.path) return misc(...arguments)
+  else if('#/custom' === model.path) return custom(...arguments)
+  else if('#/builder' === model.path) return builder(...arguments)
   else return pageviews(...arguments)
 }
 

@@ -3,12 +3,12 @@ import equal from 'deep-equal'
 import uuid from 'uuid'
 
 class Widget {
-  constructor(fn, state, updateFn, args) {
+  constructor(fn, state, updateFn, initial, args) {
     this.fn = fn
     this.state = state
     this.updateFn = updateFn
     this.args = args
-    this.model = {}
+    this.model = initial
     this.type = 'Thunk'
     this.id = null
   }
@@ -36,9 +36,12 @@ class Widget {
 
   update(fn, ...args) {
     var that = this
-    fn(this.model, ...args)
-      .then((m) => that.updateFn('widget', that.id, m))
-      .catch((r) => {})
+    var res = fn(this.model, ...args)
+    if(res instanceof Promise) {
+      res.then((m) => that.updateFn('widget', that.id, m)).catch((r) => {})
+    } else {
+      that.updateFn('widget', that.id, res)
+    }
   }
 
   renderWidget() {
@@ -53,8 +56,8 @@ function shouldUpdate(curr, prev) {
   return false
 }
 
-function widget(fn, state, updateFn, ...args) {
-  return new Widget(fn, state, updateFn, args)
+function widget(fn, state, updateFn, initial = {}, ...args) {
+  return new Widget(fn, state, updateFn, initial, args)
 }
 
 export default widget

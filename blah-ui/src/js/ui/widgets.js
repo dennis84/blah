@@ -14,7 +14,7 @@ import funnel from './funnel/funnel'
  * Pie Chart: Browser Statistics Over a Year
  */
 function browserStats(model, chan, conn) {
-  return widget(pie, model, chan, conn, {
+  return widget(pie, model, chan, {}, conn, {
     collection: 'pageviews',
     filterBy: [{
       prop: 'date.from',
@@ -30,7 +30,7 @@ function browserStats(model, chan, conn) {
  * Bar Chart: Page Views in the past 24 hours
  */
 function pageviews(model, chan, conn) {
-  return widget(bar, model, chan, conn, {
+  return widget(bar, model, chan, {}, conn, {
     collection: 'pageviews',
     filterBy: [{
       prop: 'date.from',
@@ -47,7 +47,7 @@ function pageviews(model, chan, conn) {
  * Count: Number of Visitors Today
  */
 function visitorsToday(model, chan, conn) {
-  return widget(userCount, model, chan, conn, {
+  return widget(userCount, model, chan, {}, conn, {
     filterBy: [{
       prop: 'date.from',
       operator: 'gte',
@@ -61,7 +61,7 @@ function visitorsToday(model, chan, conn) {
  * Bar Chart: Visitors by Country
  */
 function visitorsByCountry(model, chan, conn) {
-  return widget(userBar, model, chan, conn, {
+  return widget(userBar, model, chan, {}, conn, {
     groupBy: ['country'],
     title: 'Visitors by Country'
   })
@@ -71,14 +71,14 @@ function visitorsByCountry(model, chan, conn) {
  * Count: Unique Visitors
  */
 function uniqueVisitors(model, chan, conn) {
-  return widget(userCount, model, chan, conn, {title: 'Unique Visitors'})
+  return widget(userCount, model, chan, {}, conn, {title: 'Unique Visitors'})
 }
 
 /**
  * Count: All Page Views
  */
 function countAll(model, chan, conn) {
-  return widget(count, model, chan, conn, {
+  return widget(count, model, chan, {}, conn, {
     collection: 'pageviews',
     title: 'All'
   })
@@ -88,7 +88,7 @@ function countAll(model, chan, conn) {
  * Pie Chart: Platform Statistics
  */
 function platformStats(model, chan, conn) {
-  return widget(pie, model, chan, conn, {
+  return widget(pie, model, chan, {}, conn, {
     collection: 'pageviews',
     filterBy: [{
       prop: 'date.from',
@@ -104,7 +104,7 @@ function platformStats(model, chan, conn) {
  * Count Diff: Page View Difference Between Yesterday and Today
  */
 function pageviewDiff(model, chan, conn) {
-  return widget(countDiff, model, chan, conn, {
+  return widget(countDiff, model, chan, {}, conn, {
     collection: 'pageviews',
     percentage: true,
     from: {
@@ -138,7 +138,7 @@ function pageviewDiff(model, chan, conn) {
  * Pie Chart: Mobile Operating Statistics
  */
 function mobileOsStats(model, chan, conn) {
-  return widget(pie, model, chan, conn, {
+  return widget(pie, model, chan, {}, conn, {
     collection: 'pageviews',
     filterBy: [{
       prop: 'date.from',
@@ -158,7 +158,7 @@ function mobileOsStats(model, chan, conn) {
  * Sum: Total Revenue
  */
 function totalRevenue(model, chan, conn) {
-  return widget(sum, model, chan, conn, {
+  return widget(sum, model, chan, {}, conn, {
     collection: 'purchases',
     template: '$ {value}',
     prop: 'price',
@@ -170,14 +170,14 @@ function totalRevenue(model, chan, conn) {
  * Recommendations
  */
 function recommendationsWidget(model, chan, conn) {
-  return widget(recommendations, model, chan)
+  return widget(recommendations, model, chan, {})
 }
 
 /**
  * Funnel
  */
 function itemsFunnel(model, chan, conn) {
-  return widget(funnel, model, chan, conn, {
+  return widget(funnel, model, chan, {}, conn, {
     name: 'items',
     title: 'Items 1-3 Funnel'
   })

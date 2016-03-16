@@ -13,7 +13,8 @@
     "uuid": "^2.0.1",
     "vdom-thunk": "^3.0.0",
     "virtual-dom": "2.1.1",
-    "xhr": "^2.2.0"
+    "xhr": "^2.2.0",
+    "xtend": "^4.0.1"
   },
   "devDependencies": {
     "babel-polyfill": "^6.5.0",
