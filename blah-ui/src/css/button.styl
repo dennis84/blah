@@ -1,34 +1,22 @@
-.button-link
-  background: none
+.button
+  padding: 10px
   color: base0
   text-decoration: none
-  padding: 10px
   outline: none
-
-.button-red
   background: none
-  color: red
-  text-decoration: none
-  border: 1px solid red
+  border: 1px solid base0
   border-radius: 20px
-  padding: 10px
-  min-width: 36px
-  outline: none
+  display: inline-block 
+  cursor: pointer
 
-.button-red:hover,
-.button-red:active
-  color: red
-
-.button-red-filled
-  background: red
-  color: base3
-  text-decoration: none
-  border-radius: 20px
-  padding: 10px
+.button.is-link
   border: 0
-  min-width: 36px
-  outline: none
 
-.button-blue-filled:hover,
-.button-blue-filled:active
+.button.is-red
+  color: red
+  border-color: red
+
+.button.is-red.is-filled
   color: base3
+  background: red
+  border: 0

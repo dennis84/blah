@@ -6,13 +6,13 @@ import builder from './builder/builder'
 function render(update, conn, model) {
   return h('div.container', [
     nav(model, update, conn),
-    h('h1.center-hv', 'Custom'),
+    h('h1.center-hv', 'Widget Builder'),
     widget(builder, model, update, {
       title: '',
       type: 'count',
       collection: 'pageviews',
-      types: ['count', 'bar', 'pie'],
-      collections: ['pageviews', 'purchases'],
+      types: ['count', 'bar', 'pie', 'userCount', 'userBar'],
+      collections: ['pageviews'],
       filters: [],
       groups: [
         {value: 'date.year', selected: true},

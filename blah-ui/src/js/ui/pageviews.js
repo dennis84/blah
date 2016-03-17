@@ -1,5 +1,5 @@
 import {h} from 'virtual-dom'
-import * as widgets from './widgets'
+import * as samples from './samples'
 import masonry from './masonry'
 import nav from './nav'
 
@@ -8,12 +8,12 @@ function render(update, conn, model) {
     nav(model, update, conn),
     h('h1.center-hv', 'Pageviews'),
     masonry({className: 'widgets', itemSelector: '.widget'}, [
-      widgets.browserStats(model, update, conn),
-      widgets.pageviews(model, update, conn),
-      widgets.countAll(model, update, conn),
-      widgets.platformStats(model, update, conn),
-      widgets.pageviewDiff(model, update, conn),
-      widgets.mobileOsStats(model, update, conn)
+      samples.browserStats(model, update, conn),
+      samples.pageviews(model, update, conn),
+      samples.countAll(model, update, conn),
+      samples.platformStats(model, update, conn),
+      samples.pageviewDiff(model, update, conn),
+      samples.mobileOsStats(model, update, conn)
     ])
   ])
 }
