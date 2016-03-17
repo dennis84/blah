@@ -1,5 +1,4 @@
 import {h, create} from 'virtual-dom'
-import parse from 'form-parse'
 import debounce from 'debounce'
 import nav from '../nav'
 import {

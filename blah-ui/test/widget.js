@@ -18,7 +18,7 @@ test('render', (assert) => {
 
   var state = {}
 
-  var widget = createWidget(render, state, noop)
+  var widget = createWidget(render, state, noop, {})
   assert.equal(null, widget.id)
 
   createElement(widget)
@@ -46,7 +46,7 @@ test('rerender new state', (assert) => {
 
       round ++
       return h('div')
-    }, s, c)
+    }, s, c, {})
 
     return h('div', widget)
   }
@@ -71,7 +71,7 @@ test('rerender same state', (assert) => {
   }
 
   function render(s, c) {
-    widget = createWidget(renderWidget, s, c)
+    widget = createWidget(renderWidget, s, c, {})
     return h('div', widget)
   }
 
@@ -90,11 +90,11 @@ test('rerender other widget', (assert) => {
   }
 
   function renderA(s, c) {
-    return createWidget(renderWidget, s, c, 'A')
+    return createWidget(renderWidget, s, c, {}, 'A')
   }
 
   function renderB(s, c) {
-    return createWidget(renderWidget, s, c, 'B')
+    return createWidget(renderWidget, s, c, {}, 'B')
   }
 
   var tree = renderA(state, noop)
@@ -120,7 +120,7 @@ test('pass custom params', (assert) => {
 
   var state = {}
 
-  var widget = createWidget(render, state, noop, 1, '2', {foo: 'bar'})
+  var widget = createWidget(render, state, noop, {}, 1, '2', {foo: 'bar'})
   createElement(widget)
 
   assert.end()
