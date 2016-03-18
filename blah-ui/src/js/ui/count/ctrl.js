@@ -1,4 +1,5 @@
 import clone from 'clone'
+import xtend from 'xtend'
 import {post} from '../../http'
 
 /**
@@ -66,25 +67,29 @@ function countDiff(model, options) {
  * @return {Promise} The model wrapped in a promise
  */
 function grouped(model, options) {
-  return post('/count', mkQuery(options)).then((data) => {
+  return post('/count', mkQuery(options, model.builder)).then((data) => {
     var m = clone(model)
     m.groups = data
     return m
   })
 }
 
-function mkQuery(options) {
+function mkQuery(options, other) {
   var query = {}
   if(options.filterBy) {
     query.filterBy = options.filterBy
   }
 
-  if(options.groupBy) {
+  if(options.groupBy && options.groupBy.length > 0) {
     query.groupBy = options.groupBy
   }
 
   if(options.collection) {
     query.collection = options.collection
+  }
+
+  if(undefined !== other) {
+    query = xtend(query, mkQuery(other))
   }
 
   return query

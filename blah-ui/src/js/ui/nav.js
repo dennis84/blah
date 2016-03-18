@@ -6,7 +6,7 @@ function render(model, chan, conn) {
     h('div.nav-item', h('a.button.is-link', {href: '#/user'}, 'User Stats')),
     h('div.nav-item', h('a.button.is-link', {href: '#/misc'}, 'Misc')),
     h('div.nav-item', h('a.button.is-link', {href: '#/custom'}, 'Custom')),
-    h('div.nav-item', h('a.button.is-red', {href: '#/builder'}, 'Widget Builder'))
+    h('div.nav-item', h('a.button.is-red', {href: '#/segmentation'}, 'Segmentation'))
   ])
 }
 

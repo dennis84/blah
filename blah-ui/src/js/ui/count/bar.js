@@ -3,6 +3,7 @@ import {grouped} from './ctrl'
 import {hook, mount} from '../../hook'
 import Chartist from 'chartist'
 import moment from 'moment'
+import {filterBy, groupBy, form} from '../builder/all'
 
 function chart(model) {
   if(!model.groups || 0 === model.groups.length) return
@@ -29,6 +30,7 @@ function render(model, update, conn, options) {
     })
   }, [
     h('h3', options.title),
+    options.queryBuilder ? form(model, update, filterBy, groupBy) : null,
     chart(model)
   ])
 }
