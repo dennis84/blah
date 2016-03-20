@@ -27,10 +27,16 @@ function render(model, update, conn, options) {
     mount: mount((node) => {
       conn.on('count', (data) => update(grouped, options))
       update(grouped, options)
+    }),
+    hook: hook((node) => {
+      if(model.builder && model.builder.shouldUpdate) {
+        update(grouped, options)
+        model.builder.shouldUpdate = false
+      }
     })
   }, [
     h('h3', options.title),
-    options.queryBuilder ? form(model, update, filterBy, groupBy) : null,
+    model.builder ? form(model, update, filterBy, groupBy) : null,
     chart(model)
   ])
 }

@@ -30,9 +30,9 @@ function mkFilterRows(model, update) {
   ]))
 }
 
-function render(model, update, ctrlFn, options) {
+function render(model, update) {
   return h('div', [
-    mkFilterRows(model, update, ctrlFn),
+    mkFilterRows(model, update),
     h('div.control', h('a.button.is-red', {
       onclick: (e) => {
         e.preventDefault()

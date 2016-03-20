@@ -19,8 +19,7 @@ function render(update, conn, model) {
     }, conn, {
       collection: 'pageviews',
       groupBy: ['date.hour'],
-      className: 'size-3of3',
-      queryBuilder: true
+      className: 'size-3of3'
     })
   ])
 }

@@ -20,6 +20,7 @@ function addFilter(model) {
 function updateFilter(model, index, prop) {
   var m = clone(model)
   m.builder.filterBy[index] = xtend(m.builder.filterBy[index], prop)
+  m.builder.shouldUpdate = true
   return m
 }
 
@@ -43,6 +44,7 @@ function updateGroups(model, selected) {
 
   m.builder.groups = groups
   m.builder.groupBy = groupBy
+  m.builder.shouldUpdate = true
   return m
 }
 
