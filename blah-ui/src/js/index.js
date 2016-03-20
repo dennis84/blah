@@ -1,6 +1,6 @@
 import 'babel-polyfill'
 import virtualDom from 'virtual-dom'
-import mainLoop from 'main-loop'
+import main from './main'
 import {SERVING_WS_URL} from './config'
 import connect from './connection'
 import * as ctrl from './ctrl'
@@ -11,9 +11,8 @@ import segmentation from './ui/segmentation'
 
 var conn = connect(SERVING_WS_URL)
 var model = {path: location.hash}
-
-var loop = mainLoop(model, render.bind(null, update, conn), virtualDom)
-document.body.appendChild(loop.target)
+var renderFn = render.bind(null, update, conn)
+var loop = main(model, renderFn, document.body)
 
 function update(action, ...args) {
   return loop.update(ctrl[action](model, ...args))
@@ -27,4 +26,6 @@ function render() {
   else return pageviews(...arguments)
 }
 
-window.addEventListener('hashchange', () => update('path', location.hash))
+window.addEventListener('hashchange', () => {
+  return loop.update(ctrl.path(model, location.hash), true)
+})
