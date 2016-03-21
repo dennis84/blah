@@ -1,6 +1,6 @@
 import {h} from 'virtual-dom'
 import debounce from 'debounce'
-import * as samples from './samples'
+import * as widgets from './widgets'
 import masonry from './masonry'
 import nav from './nav'
 
@@ -9,9 +9,9 @@ function render(update, conn, model) {
     nav(model, update, conn),
     h('h1.center-hv', 'User Stats'),
     masonry({className: 'widgets', itemSelector: '.widget'}, [
-      samples.visitorsToday(model, update, conn),
-      samples.visitorsByCountry(model, update, conn),
-      samples.uniqueVisitors(model, update, conn)
+      widgets.visitorsToday(model, update, conn),
+      widgets.visitorsByCountry(model, update, conn),
+      widgets.uniqueVisitors(model, update, conn)
     ])
   ])
 }
