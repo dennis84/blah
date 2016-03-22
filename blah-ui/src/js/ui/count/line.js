@@ -15,17 +15,18 @@ function chart(model) {
 
   return h('div.chart', {
     hook: hook((node) => {
-      new Chartist.Bar(node, {labels: data.labels, series: data.series}, {
+      new Chartist.Line(node, {labels: data.labels, series: data.series}, {
         fullWidth: true,
         axisX: {showGrid: false},
-        axisY: {onlyInteger: true}
+        axisY: {onlyInteger: true},
+        lineSmooth: Chartist.Interpolation.none()
       })
     })
   })
 }
 
 function render(model, update, conn, options) {
-  return h('div.widget.widget-bar', {
+  return h('div.widget.widget-line', {
     className: options.className,
     mount: mount((node) => {
       conn.on('count', (data) => update(grouped, options))

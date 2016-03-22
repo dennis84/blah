@@ -1,13 +1,13 @@
 import {h} from 'virtual-dom'
 import nav from './nav'
 import widget from '../widget'
-import bar from './count/bar'
+import line from './count/line'
 
 function render(update, conn, model) {
   return h('div.container', [
     nav(model, update, conn),
     h('h1.center-hv', 'Segmentation'),
-    widget(bar, model, update, {
+    widget(line, model, update, {
       builder: {
         groups: [
           {value: 'date.year', selected: false},
