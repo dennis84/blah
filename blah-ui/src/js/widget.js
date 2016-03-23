@@ -1,4 +1,3 @@
-import csp from 'js-csp'
 import equal from 'deep-equal'
 import uuid from 'uuid'
 

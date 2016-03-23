@@ -2,8 +2,6 @@ import test from 'tape'
 import createWidget from '../src/js/widget'
 import {h, diff, patch} from 'virtual-dom'
 import createElement from 'virtual-dom/create-element'
-import virtualDom from 'main-loop'
-import mainLoop from 'main-loop'
 
 var noop = () => {}
 

@@ -16,10 +16,7 @@ function onError(error) {
 
 gulp.task('js', function() {
   var bundleStream = browserify('./src/js/index.js')
-    .transform(babelify, {
-      global: true,
-      ignore: /\/node_modules\/(?!js-csp\/)/
-    })
+    .transform(babelify)
 
   if(true === watch) {
     bundleStream = watchify(bundleStream)
