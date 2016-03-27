@@ -20,7 +20,7 @@ function render(model, update, options = {}) {
     })
   }, [
     h('h3', 'Recommendations'),
-    h('input.input-text', {
+    h('input.input', {
       value: options.user,
       placeholder: 'Enter username',
       oninput: debounce((e) => {

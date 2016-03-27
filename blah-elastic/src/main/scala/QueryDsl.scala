@@ -14,6 +14,10 @@ trait QueryDsl {
 
   def matchAll(): JsObject =
     ("query" -> ("match_all" -> JsObject.empty))
+
+  def prefix(k: String, v: JsValue): JsObject =
+    ("query" -> ("filtered" -> ("query" ->
+      ("bool" -> ("must" -> List("prefix" -> (k -> v)))))))
 }
 
 object QueryDsl extends QueryDsl

@@ -13,7 +13,7 @@ import {post} from '../../http'
  * @return {Promise} The model wrapped in a promise
  */
 function count(model, options) {
-  return post('/user', mkQuery(options)).then((data) => {
+  return post('/user-count', mkQuery(options)).then((data) => {
     var m = clone(model)
     m.count = data.count
     return m
@@ -32,7 +32,7 @@ function count(model, options) {
  * @return {Promise} The model wrapped in a promise
  */
 function grouped(model, options) {
-  return post('/user', mkQuery(options)).then((data) => {
+  return post('/user-count', mkQuery(options)).then((data) => {
     var m = clone(model)
     m.users = data
     return m

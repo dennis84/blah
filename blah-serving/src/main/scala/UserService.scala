@@ -16,8 +16,11 @@ class UserService(env: Env)(
   private val repo = new UserRepo(env.elasticClient)
 
   def route =
-    (post & path("user") & entity(as[UserQuery])) {
+    (post & path("users") & entity(as[UserQuery])) {
+      case q@UserQuery(_, None) => complete(repo search q)
+    } ~
+    (post & path("user-count") & entity(as[UserQuery])) {
       case q@UserQuery(_, None) => complete(repo count q)
-      case q@UserQuery(_, _)    => complete(repo search q)
+      case q@UserQuery(_, _)    => complete(repo grouped q)
     }
 }

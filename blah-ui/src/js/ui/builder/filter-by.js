@@ -22,7 +22,7 @@ function mkFilterRows(model, update) {
       h('option', {value: 'lte'}, 'lte'),
       h('option', {value: 'gte'}, 'gte')
     ]),
-    h('input.input-text', {
+    h('input.input', {
       oninput: debounce((e) => {
         update(updateFilter, index, {value: e.target.value})
       }, 500)

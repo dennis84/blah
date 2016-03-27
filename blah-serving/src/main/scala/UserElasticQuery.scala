@@ -11,6 +11,8 @@ object UserElasticQuery {
   private def filterBy(xs: List[Filter]) = xs collect {
     case Filter("date.from", "gte", value) => f.gte("date", value)
     case Filter("date.to", "lte", value)   => f.lte("date", value)
+    case Filter("user", "eq", value)       => q.term("user", value)
+    case Filter("user", "contains", value) => q.prefix("user", value)
   } reduceOption (_ merge _) getOrElse JsObject()
 
   private def groupBy(xs: List[String]): JsObject =

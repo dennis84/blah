@@ -7,6 +7,7 @@ import * as ctrl from './ctrl'
 import pageviews from './ui/pageviews'
 import user from './ui/user'
 import misc from './ui/misc'
+import people from './ui/people'
 import segmentation from './ui/segmentation'
 
 var conn = connect(SERVING_WS_URL)
@@ -22,6 +23,7 @@ function render() {
   if('#/pageviews' === model.path) return pageviews(...arguments)
   else if('#/user' === model.path) return user(...arguments)
   else if('#/misc' === model.path) return misc(...arguments)
+  else if('#/people' === model.path) return people(...arguments)
   else if('#/segmentation' === model.path) return segmentation(...arguments)
   else return pageviews(...arguments)
 }

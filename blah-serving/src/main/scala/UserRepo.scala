@@ -20,6 +20,17 @@ class UserRepo(client: ElasticClient)(
 ) extends SprayJsonSupport with ServingJsonProtocol {
   import system.dispatcher
 
+  def search(q: UserQuery): Future[List[User]] =
+    client request HttpRequest(
+      method = HttpMethods.GET,
+      uri = "/blah/user/_search?size=100",
+      entity = HttpEntity(
+        ContentTypes.`application/json`,
+        UserElasticQuery(q).compactPrint)
+    ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
+      Try(json.extract[User]('hits / 'hits / * / '_source).toList) getOrElse Nil
+    }
+
   def count(q: UserQuery): Future[UserCount] =
     client request HttpRequest(
       method = HttpMethods.GET,
@@ -31,7 +42,7 @@ class UserRepo(client: ElasticClient)(
       UserCount(Try(json.extract[Long]('count)) getOrElse 0)
     }
 
-  def search(q: UserQuery): Future[List[UserCount]] =
+  def grouped(q: UserQuery): Future[List[UserCount]] =
     client request HttpRequest(
       method = HttpMethods.POST,
       uri = "/blah/user/_search?size=0",
