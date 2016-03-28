@@ -4,7 +4,7 @@ import {addFilter, updateFilter} from './ctrl'
 
 function mkFilterRows(model, update) {
   if(undefined === model.filterBy) return
-  return model.filterBy.map((filter, index) => h('div.control', [
+  return model.filterBy.map((filter, index) => h('div.control.is-grouped', [
     h('select.select', {
       onchange: (e) => {
         update(updateFilter, index, {prop: e.target.value})

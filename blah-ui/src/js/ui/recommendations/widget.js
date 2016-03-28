@@ -20,14 +20,21 @@ function render(model, update, options = {}) {
     })
   }, [
     h('h3', 'Recommendations'),
-    h('input.input', {
-      value: options.user,
-      placeholder: 'Enter username',
-      oninput: debounce((e) => {
-        if(!e.target.value) return
-        update(recommendations, {user: e.target.value})
-      }, 500)
-    }),
+    h('div.control', [
+      h('input.input', {
+        value: options.user,
+        oninput: debounce((e) => {
+          if(!e.target.value) {
+            e.target.classList.remove('dirty')
+            return
+          }
+
+          update(recommendations, {user: e.target.value})
+          e.target.classList.add('dirty')
+        }, 500)
+      }),
+      h('label', 'Enter username')
+    ]),
     views(model.views)
   ])
 }
