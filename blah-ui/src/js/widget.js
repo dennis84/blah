@@ -37,7 +37,7 @@ class Widget {
     var that = this
     var res = fn(this.model, ...args)
     if(res instanceof Promise) {
-      res.then((m) => that.updateFn('widget', that.id, m)).catch((r) => {})
+      res.then((m) => that.updateFn('widget', that.id, m)).catch((r) => that.updateFn('error', r))
     } else {
       that.updateFn('widget', that.id, res)
     }
@@ -56,6 +56,7 @@ function shouldUpdate(curr, prev) {
 }
 
 function widget(fn, state, updateFn, initial = {}, ...args) {
+  if(state.error) return 
   return new Widget(fn, state, updateFn, initial, args)
 }
 

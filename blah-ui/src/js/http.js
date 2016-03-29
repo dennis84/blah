@@ -25,6 +25,7 @@ function get(path, params) {
     xhr({
       uri: url(path, params),
       method: 'GET',
+      timeout: 10000,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -47,11 +48,15 @@ function post(path, params) {
       uri: url(path),
       method: 'POST',
       json: params,
+      timeout: 10000,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       }
-    }, (err, resp, body) => resolve(body))
+    }, (err, resp, body) => {
+      if(0 === resp.statusCode) reject(resp)
+      resolve(body)
+    })
   })
 }
 
