@@ -2,12 +2,13 @@ import {h} from 'virtual-dom'
 import Chartist from 'chartist'
 import moment from 'moment'
 import {hook, mount} from '../../hook'
-import timeframe from '../../timeframe'
+import {timeframeD3} from '../../timeframe'
 import {filterBy, groupBy, form} from '../builder/all'
 import {grouped} from './ctrl'
+import line from '../chart/line'
 
 function chart(model) {
-  var data = timeframe(
+  var data = timeframeD3(
     model.groups,
     moment().subtract(1, 'day'),
     moment().add(1, 'hour')
@@ -15,12 +16,10 @@ function chart(model) {
 
   return h('div.chart', {
     hook: hook((node) => {
-      new Chartist.Line(node, {labels: data.labels, series: data.series}, {
-        fullWidth: true,
-        axisX: {showGrid: false},
-        axisY: {onlyInteger: true},
-        lineSmooth: Chartist.Interpolation.none()
-      })
+      setTimeout(() => {
+        node.innerHTML = ''
+        return line(node, data)
+      }, 0)
     })
   })
 }

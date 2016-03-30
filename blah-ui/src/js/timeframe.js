@@ -39,4 +39,26 @@ function timeframe(data, from, to, options = {}) {
   return {labels: labels, series: [series]}
 }
 
-export default timeframe
+/**
+ * Generates D3 data
+ */
+function timeframeD3(data, from, to, options = {}) {
+  options = xtend({step: 'hour', max: 24}, options)
+  from = from.startOf(options.step)
+  to = to.startOf(options.step)
+  var out = []
+
+  for(var d = moment(from); d.diff(to) < 0; d.add(1, options.step)) {
+    out.push({
+      date: moment(d).toDate(),
+      count: findCount(d, data) || 0
+    })
+  }
+
+  return out
+}
+
+export {
+  timeframe,
+  timeframeD3
+}

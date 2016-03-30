@@ -2,7 +2,7 @@ import {h} from 'virtual-dom'
 import Chartist from 'chartist'
 import moment from 'moment'
 import {hook, mount} from '../../hook'
-import timeframe from '../../timeframe'
+import {timeframe} from '../../timeframe'
 import {filterBy, groupBy, form} from '../builder/all'
 import {grouped} from './ctrl'
 
