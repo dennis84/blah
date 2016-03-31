@@ -43,15 +43,15 @@ function timeframe(data, from, to, options = {}) {
  * Generates D3 data
  */
 function timeframeD3(data, from, to, options = {}) {
-  options = xtend({step: 'hour', max: 24}, options)
+  options = xtend({step: 'hour', max: 24, format: 'ddd h:mm a'}, options)
   from = from.startOf(options.step)
   to = to.startOf(options.step)
   var out = []
 
   for(var d = moment(from); d.diff(to) < 0; d.add(1, options.step)) {
     out.push({
-      date: moment(d).toDate(),
-      count: findCount(d, data) || 0
+      key: d.format(options.format),
+      value: findCount(d, data) || 0
     })
   }
 

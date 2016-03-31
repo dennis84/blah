@@ -7,10 +7,10 @@ function render(node, data) {
 
   var x = d3.scale.ordinal()
     .domain(data.map((d) => d.key))
-    .rangePoints([0, width])
+    .rangeRoundBands([0, width], 0.1)
 
   var y = d3.scale.linear()
-    .domain(d3.extent(data, (d) => d.value))
+    .domain([0, d3.max(data, (d) => d.value)])
     .range([height, 0])
 
   var xAxis = d3.svg.axis()
@@ -24,18 +24,14 @@ function render(node, data) {
     .ticks(5)
     .innerTickSize(-width)
 
-  var line = d3.svg.line()
-    .x((d) => x(d.key))
-    .y((d) => y(d.value))
-
-  var graph = d3.select(node)
+  var svg = d3.select(node)
     .append('svg')
       .attr('width', width + margin[1] + margin[3])
       .attr('height', height + margin[0] + margin[2])
     .append('g')
       .attr('transform', `translate(${margin[3]},${margin[0]})`)
 
-  graph.append('g')
+  svg.append('g')
 		.attr('class', 'x axis')
 	  .attr('transform', `translate(0, ${height})`)
 	  .call(xAxis)
@@ -45,15 +41,17 @@ function render(node, data) {
       .attr('dy', '-6px')
       .attr('transform', 'rotate(-90)')
 
-  graph.append('g')
+  svg.append('g')
     .attr('class', 'y axis')
-    .attr('transform', 'translate(0,0)')
     .call(yAxis)
 
-  graph.append('path')
-    .datum(data)
-    .attr('class', 'line')
-    .attr('d', line)
+  svg.selectAll('.bar').data(data)
+    .enter().append('rect')
+      .attr('class', 'bar')
+      .attr('x', (d) => x(d.key))
+      .attr('width', x.rangeBand())
+      .attr('y', (d) => y(d.value))
+      .attr('height', (d) => height - y(d.value))
 }
 
 export default render

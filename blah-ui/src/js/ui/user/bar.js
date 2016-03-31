@@ -2,19 +2,20 @@ import {h} from 'virtual-dom'
 import {grouped} from './ctrl'
 import {hook, mount} from '../../hook'
 import Chartist from 'chartist'
+import bar from '../chart/bar'
 
 function chart(model, limit = 8) {
   if(!model.users || 0 === model.users.length) return
-  var labels = model.users.slice(0, limit).map(x => x.country)
-  var data = model.users.slice(0, limit).map(x => x.count)
+  var data = model.users.slice(0, limit).map((x) => {
+    return {key: x.country, value: x.count}
+  })
 
   return h('div.chart', {
     hook: hook((node) => {
-      new Chartist.Bar(node, {labels: labels, series: [data]}, {
-        fullWidth: true,
-        axisX: {showGrid: false},
-        axisY: {onlyInteger: true}
-      })
+      setTimeout(() => {
+        node.innerHTML = ''
+        return bar(node, data)
+      }, 0)
     })
   })
 }
