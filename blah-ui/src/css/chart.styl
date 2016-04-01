@@ -28,3 +28,32 @@ path
 
 .bar
   fill: red
+
+.arc text
+  font: 10px sans-serif
+  text-anchor: middle
+  fill base3
+
+.arc path
+  stroke-width: 0
+
+colorize(letter, color)
+  .arc .{letter}
+    fill: color
+
+colorize('a', red)
+colorize('b', red2)
+colorize('c', magenta)
+colorize('d', magenta2)
+colorize('e', violet)
+colorize('f', violet2)
+colorize('g', blue)
+colorize('h', blue2)
+colorize('i', cyan)
+colorize('j', cyan2)
+colorize('k', green)
+colorize('l', green2)
+colorize('m', yellow)
+colorize('n', yellow2)
+colorize('o', orange)
+colorize('p', orange2)

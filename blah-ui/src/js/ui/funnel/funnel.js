@@ -1,24 +1,22 @@
 import {h} from 'virtual-dom'
-import Chartist from 'chartist'
 import {search} from './ctrl'
 import {hook, mount} from '../../hook'
+import bar from '../chart/bar'
 
 function content(model, options) {
   if(undefined === model.steps || 0 === model.steps.length) return
-  var steps = model.steps.sort((a, b) => {
-    return a.path.length > b.path.length
-  })
-
-  var labels = steps.map(x => x.path.join(" > "))
-  var data = steps.map(x => x.count)
+  var data = model.steps
+    .sort((a, b) => a.path.length > b.path.length)
+    .map(x => {
+      return {key: x.path.join(' > '), value: x.count}
+    })
 
   return h('div.chart', {
     hook: hook((node) => {
-      new Chartist.Bar(node, {labels: labels, series: [data]}, {
-        fullWidth: true,
-        axisX: {showGrid: false},
-        axisY: {onlyInteger: true}
-      })
+      setTimeout(() => {
+        node.innerHTML = ''
+        return bar(node, data)
+      }, 0)
     })
   })
 }

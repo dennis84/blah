@@ -1,13 +1,13 @@
 import {h} from 'virtual-dom'
 import moment from 'moment'
 import {hook, mount} from '../../hook'
-import {timeframeD3} from '../../timeframe'
+import timeframe from '../../timeframe'
 import {filterBy, groupBy, form} from '../builder/all'
 import {grouped} from './ctrl'
 import bar from '../chart/bar'
 
 function chart(model) {
-  var data = timeframeD3(
+  var data = timeframe(
     model.groups,
     moment().subtract(1, 'day'),
     moment().add(1, 'hour')

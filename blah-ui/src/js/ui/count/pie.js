@@ -1,34 +1,30 @@
 import {h} from 'virtual-dom'
 import clone from 'clone'
-import Chartist from 'chartist'
 import {grouped} from './ctrl'
 import {hook, mount} from '../../hook'
+import donut from '../chart/donut'
 
 function chart(model) {
   if(!model.groups || 0 === model.groups.length) return
-  var data = model.groups.map((x) => x.count)
-  var labels = model.groups.map((x) => {
+  var data = model.groups.map((x) => {
     var y = clone(x)
     delete y['count']
     delete y['date']
-    return Object.values(y).join(', ')
+    return {key: Object.values(y).join(', '), value: x.count}
   })
 
   return [
-    h('div.labels', labels.map((label, i) => {
+    h('div.labels', data.map((d,i) => {
       return h('span.label', {
         className: 'label-series-' + String.fromCharCode(i + 97)
-      }, label)
+      }, d.key)
     })),
     h('div.chart', {
       hook: hook((node) => {
-        new Chartist.Pie(node, {series: data}, {
-          donut: true,
-          donutWidth: 40,
-          labelInterpolationFnc: (value) => {
-            return Math.round(value / data.reduce((a,b) => a + b) * 100) + '%'
-          }
-        })
+        setTimeout(() => {
+          node.innerHTML = ''
+          return donut(node, data)
+        }, 0)
       })
     })
   ]

@@ -9,11 +9,11 @@ function findCount(date, data) {
 }
 
 /**
- * Generates Chartist labels and series by timeframe.
+ * Generates D3 data.
  *
  * ```
- * timeframe(data, fromDate, toDate, {step: 'hour', max: 2, format: 'h:mm a'})
- * ==> {labels: ['9:00 am', '10:00'], series: [[1, 2, 3]]}
+ * timeframe(data, fromDate, toDate, {step: 'hour', max: 2, format: 'ddd h:mm a'})
+ * ==> [{key: '9:00 am', value: 1}, {key: '10:00', value: 2}]
  * ```
  *
  * @param {Array}  Grouped data from API layer e.g. [{date: 'ISO8601', count: Number}]
@@ -21,28 +21,9 @@ function findCount(date, data) {
  * @param {Moment} To date
  * @param {Object} Options
  *
- * @return {Object} An object with: {labels: [], series: []}
+ * @return {Array}
  */
 function timeframe(data, from, to, options = {}) {
-  options = xtend({step: 'hour', max: 24, format: 'h:mm a'}, options)
-  from = from.startOf(options.step)
-  to = to.startOf(options.step)
-
-  var labels = []
-  var series = []
-
-  for(var d = moment(from); d.diff(to) < 0; d.add(1, options.step)) {
-    labels.push(d.format(options.format))
-    series.push(findCount(d, data) || 0)
-  }
-
-  return {labels: labels, series: [series]}
-}
-
-/**
- * Generates D3 data
- */
-function timeframeD3(data, from, to, options = {}) {
   options = xtend({step: 'hour', max: 24, format: 'ddd h:mm a'}, options)
   from = from.startOf(options.step)
   to = to.startOf(options.step)
@@ -58,7 +39,4 @@ function timeframeD3(data, from, to, options = {}) {
   return out
 }
 
-export {
-  timeframe,
-  timeframeD3
-}
+export default timeframe

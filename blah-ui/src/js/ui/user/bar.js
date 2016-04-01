@@ -1,7 +1,6 @@
 import {h} from 'virtual-dom'
 import {grouped} from './ctrl'
 import {hook, mount} from '../../hook'
-import Chartist from 'chartist'
 import bar from '../chart/bar'
 
 function chart(model, limit = 8) {

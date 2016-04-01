@@ -1,6 +1,6 @@
 import {h} from 'virtual-dom'
 import {hook} from '../../hook'
-import Chartist from 'chartist'
+import donut from '../chart/donut'
 
 /**
  * Returns a div with a pie chart.
@@ -15,11 +15,17 @@ import Chartist from 'chartist'
  */
 function progressBar(value) {
   value = value > 100 ? 100 : value
+  var data = [
+    {key: 'a', value: value},
+    {key: 'b', value: 100 - value}
+  ]
+
   return h('div.circle-progress-bar', {
     hook: hook(node => {
-      new Chartist.Pie(node, {
-        series: [value, 100 - value]
-      }, {donut: true, donutWidth: 10, showLabel: false})
+      setTimeout(() => {
+        node.innerHTML = ''
+        donut(node, data, {donutWidth: 10})
+      }, 0)
     })
   })
 }

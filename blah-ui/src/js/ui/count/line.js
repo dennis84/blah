@@ -1,14 +1,13 @@
 import {h} from 'virtual-dom'
-import Chartist from 'chartist'
 import moment from 'moment'
 import {hook, mount} from '../../hook'
-import {timeframeD3} from '../../timeframe'
+import timeframe from '../../timeframe'
 import {filterBy, groupBy, form} from '../builder/all'
 import {grouped} from './ctrl'
 import line from '../chart/line'
 
 function chart(model) {
-  var data = timeframeD3(
+  var data = timeframe(
     model.groups,
     moment().subtract(1, 'day'),
     moment().add(1, 'hour')
