@@ -6,11 +6,11 @@ function render(node, data) {
   var height = node.offsetHeight - margin[0] - margin[2]
 
   var x = d3.scale.ordinal()
-    .domain(data.map((d) => d.key))
+    .domain(data.map(d => d.key))
     .rangeRoundBands([0, width], 0.1)
 
   var y = d3.scale.linear()
-    .domain([0, d3.max(data, (d) => d.value)])
+    .domain([0, d3.max(data, d => d.value)])
     .range([height, 0])
 
   var xAxis = d3.svg.axis()
@@ -32,9 +32,9 @@ function render(node, data) {
       .attr('transform', `translate(${margin[3]},${margin[0]})`)
 
   svg.append('g')
-		.attr('class', 'x axis')
-	  .attr('transform', `translate(0, ${height})`)
-	  .call(xAxis)
+    .attr('class', 'x axis')
+    .attr('transform', `translate(0, ${height})`)
+    .call(xAxis)
     .selectAll('.tick text')
       .style('text-anchor', 'end')
       .attr('dx', '-10px')
@@ -48,10 +48,10 @@ function render(node, data) {
   svg.selectAll('.bar').data(data)
     .enter().append('rect')
       .attr('class', 'bar')
-      .attr('x', (d) => x(d.key))
+      .attr('x', d => x(d.key))
       .attr('width', x.rangeBand())
-      .attr('y', (d) => y(d.value))
-      .attr('height', (d) => height - y(d.value))
+      .attr('y', d => y(d.value))
+      .attr('height', d => height - y(d.value))
 }
 
 export default render

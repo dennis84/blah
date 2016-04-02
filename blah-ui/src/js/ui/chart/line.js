@@ -6,11 +6,11 @@ function render(node, data) {
   var height = node.offsetHeight - margin[0] - margin[2]
 
   var x = d3.scale.ordinal()
-    .domain(data.map((d) => d.key))
+    .domain(data.map(d => d.key))
     .rangePoints([0, width])
 
   var y = d3.scale.linear()
-    .domain(d3.extent(data, (d) => d.value))
+    .domain(d3.extent(data, d => d.value))
     .range([height, 0])
 
   var xAxis = d3.svg.axis()
@@ -25,8 +25,8 @@ function render(node, data) {
     .innerTickSize(-width)
 
   var line = d3.svg.line()
-    .x((d) => x(d.key))
-    .y((d) => y(d.value))
+    .x(d => x(d.key))
+    .y(d => y(d.value))
 
   var graph = d3.select(node)
     .append('svg')

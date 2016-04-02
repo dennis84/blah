@@ -6,7 +6,7 @@ function render(node, data, options = {}) {
   var width = node.offsetWidth
   var height = node.offsetHeight
   var radius = Math.min(width, height) / 2
-  var total = data.map((x) => x.value).reduce((a,b) => a + b) 
+  var total = data.map(x => x.value).reduce((a,b) => a + b) 
 
   var color = d3.scale.ordinal()
     .range(Array.apply(null, {length: 26})
@@ -33,11 +33,11 @@ function render(node, data, options = {}) {
 
   g.append('path')
     .attr('d', arc)
-    .attr('class', (d) => color(d.data.key))
+    .attr('class', d => color(d.data.key))
 
   g.append('text')
-    .attr('transform', (d) => `translate(${arc.centroid(d)})`)
-    .text((d) => Math.round(d.data.value / total * 100) + '%')
+    .attr('transform', d => `translate(${arc.centroid(d)})`)
+    .text(d => Math.round(d.data.value / total * 100) + '%')
 }
 
 export default render
