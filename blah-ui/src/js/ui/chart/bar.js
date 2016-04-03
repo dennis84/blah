@@ -7,7 +7,7 @@ function render(node, data) {
 
   var x = d3.scale.ordinal()
     .domain(data.map(d => d.key))
-    .rangeRoundBands([0, width], 0.1)
+    .rangeRoundBands([0, width], 0.2)
 
   var y = d3.scale.linear()
     .domain([0, d3.max(data, d => d.value)])
@@ -32,7 +32,7 @@ function render(node, data) {
       .attr('transform', `translate(${margin[3]},${margin[0]})`)
 
   svg.append('g')
-    .attr('class', 'x axis')
+    .attr('class', 'x-axis')
     .attr('transform', `translate(0, ${height})`)
     .call(xAxis)
     .selectAll('.tick text')
@@ -42,7 +42,7 @@ function render(node, data) {
       .attr('transform', 'rotate(-90)')
 
   svg.append('g')
-    .attr('class', 'y axis')
+    .attr('class', 'y-axis')
     .call(yAxis)
 
   svg.selectAll('.bar').data(data)

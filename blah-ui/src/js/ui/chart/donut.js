@@ -29,11 +29,10 @@ function render(node, data, options = {}) {
 
   var g = svg.selectAll('.arc').data(pie(data))
     .enter().append('g')
-      .attr('class', 'arc')
+      .attr('class', d => `arc arc-${color(d.data.key)}`)
 
   g.append('path')
     .attr('d', arc)
-    .attr('class', d => color(d.data.key))
 
   g.append('text')
     .attr('transform', d => `translate(${arc.centroid(d)})`)

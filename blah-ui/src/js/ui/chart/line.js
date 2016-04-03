@@ -36,7 +36,7 @@ function render(node, data) {
       .attr('transform', `translate(${margin[3]},${margin[0]})`)
 
   graph.append('g')
-		.attr('class', 'x axis')
+		.attr('class', 'x-axis')
 	  .attr('transform', `translate(0, ${height})`)
 	  .call(xAxis)
     .selectAll('.tick text')
@@ -46,7 +46,7 @@ function render(node, data) {
       .attr('transform', 'rotate(-90)')
 
   graph.append('g')
-    .attr('class', 'y axis')
+    .attr('class', 'y-axis')
     .attr('transform', 'translate(0,0)')
     .call(yAxis)
 

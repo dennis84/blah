@@ -1,45 +1,42 @@
-path
-  stroke: red
-  stroke-width: 3
-  fill: none
-
-.axis
-  shape-rendering: crispEdges
-
-.y.axis line,
-.x.axis path
+.x-axis .tick line,
+.y-axis .tick line
   fill: none
   stroke: base0
   stroke-width: 1
 
-.y.axis path
-  stroke-width: 0
+.y-axis .tick line
+  opacity 0.2
 
-.chart .tick line
-  stroke: base1
-
-.x.axis .tick line,
-.chart .tick:first-child line
+.x-axis .domain,
+.y-axis .domain
+  fill: none
   stroke: base0
+  stroke-width: 1
 
-.chart .tick text
+.x-axis .tick text,
+.y-axis .tick text
   font-size: 10px
   fill: base0
+
+.line
+  stroke: red
+  stroke-width: 3
+  fill: none
 
 .bar
   fill: red
 
 .arc text
-  font: 10px sans-serif
+  font-size: 10px
   text-anchor: middle
   fill base3
 
-.arc path
-  stroke-width: 0
-
 colorize(letter, color)
-  .arc .{letter}
-    fill: color
+  .arc-{letter}
+    fill color
+
+  .label-{letter}
+    background color
 
 colorize('a', red)
 colorize('b', red2)

@@ -16,7 +16,7 @@ function chart(model) {
   return [
     h('div.labels', data.map((d,i) => {
       return h('span.label', {
-        className: 'label-series-' + String.fromCharCode(i + 97)
+        className: 'label-' + String.fromCharCode(i + 97)
       }, d.key)
     })),
     h('div.chart', {
