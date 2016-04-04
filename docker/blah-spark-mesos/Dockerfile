@@ -10,7 +10,7 @@ RUN apt-get -y update
 RUN apt-get -y install mesos
 
 RUN mkdir /opt/spark
-RUN wget -qO- http://www.eu.apache.org/dist/spark/spark-1.6.0/spark-1.6.0.tgz \
+RUN wget -qO- http://www.eu.apache.org/dist/spark/spark-1.6.1/spark-1.6.1.tgz \
   | tar zxvf - -C /opt/spark --strip 1
 
 ENV SPARK_HOME /opt/spark
@@ -21,7 +21,5 @@ RUN cd $SPARK_HOME && $SPARK_HOME/build/mvn \
   -Pyarn -Phadoop-2.4 -Dscala-2.11 -DskipTests clean package
 
 ENV MESOS_NATIVE_JAVA_LIBRARY /usr/local/lib/libmesos.so
-ENV SPARK_HOME /opt/spark
 
-CMD ["--registry=in_memory"]
-ENTRYPOINT ["mesos-master"]
+ENV SPARK_HOME /opt/spark
