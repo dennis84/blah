@@ -7,14 +7,14 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.hadoop.io.{LongWritable, BytesWritable}
 import org.elasticsearch.spark._
 import org.elasticsearch.spark.rdd.Metadata._
+import kafka.producer.KafkaProducer
 import com.typesafe.config.Config
-import blah.core.KafkaProducer
 import blah.core.FindOpt._
 
 class BatchJob(
   name: String,
   algo: Algo,
-  producer: KafkaProducer[Array[Byte], String]
+  producer: KafkaProducer[String]
 ) extends Job {
 
   def run(

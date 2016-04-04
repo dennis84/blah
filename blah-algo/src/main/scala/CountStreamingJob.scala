@@ -3,12 +3,12 @@ package blah.algo
 import scala.concurrent.ExecutionContext
 import org.apache.spark.SparkConf
 import com.typesafe.config.Config
-import blah.core.KafkaProducer
+import kafka.producer.KafkaProducer
 
 class CountStreamingJob(
   name: String,
   algo: Algo,
-  producer: KafkaProducer[Array[Byte], String]
+  producer: KafkaProducer[String]
 ) extends StreamingJob(name, algo, producer) {
   override def run(
     config: Config,

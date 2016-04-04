@@ -1,7 +1,7 @@
 {
   "id": "count-streaming",
-  "cpus": 0.1,
-  "mem": 128.0,
+  "cpus": 0.5,
+  "mem": 512.0,
   "instances": 1,
   "container": {
     "type": "DOCKER",

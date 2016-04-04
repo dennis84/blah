@@ -8,12 +8,13 @@ import org.apache.spark.streaming.kafka.KafkaUtils
 import org.elasticsearch.spark._
 import org.elasticsearch.spark.rdd.Metadata._
 import com.typesafe.config.Config
-import blah.core.KafkaProducer
+import kafka.producer.KafkaProducer
+import kafka.serializer.StringDecoder
 
 class StreamingJob(
   name: String,
   algo: Algo,
-  producer: KafkaProducer[Array[Byte], String]
+  producer: KafkaProducer[String]
 ) extends Job {
 
   def run(
@@ -24,11 +25,10 @@ class StreamingJob(
     sparkConf.set("es.write.operation", "upsert")
 
     val ssc = new StreamingContext(sparkConf, Seconds(10))
-    val stream = KafkaUtils.createStream(ssc,
-      config.getString("consumer.zookeeper.connect"),
-      config.getString("consumer.group.id"),
-      Map("events" -> 1)
-    ).map(_._2)
+    val stream = KafkaUtils
+      .createDirectStream[String, String, StringDecoder, StringDecoder](ssc,
+        Map("metadata.broker.list" -> config.getString("consumer.broker.list")),
+        Set("events"))
 
     stream.foreachRDD { rdd =>
       algo.train(rdd, args).map { doc =>
