@@ -28,7 +28,7 @@ class StreamingJob(
     val stream = KafkaUtils
       .createDirectStream[String, String, StringDecoder, StringDecoder](ssc,
         Map("metadata.broker.list" -> config.getString("consumer.broker.list")),
-        Set("events"))
+        Set("events")).map(_._2)
 
     stream.foreachRDD { rdd =>
       algo.train(rdd, args).map { doc =>
