@@ -161,6 +161,9 @@ main() {
     create-apps)
       create_apps
       ;;
+    create-app)
+      create_app "$@"
+      ;;
     create-jobs)
       create_jobs
       ;;
@@ -194,6 +197,7 @@ main() {
       echo "  build-all                   Build all"
       echo "  pull-images                 Pre-pull docker-compose images"
       echo "  create-apps                 Create apps in marathon"
+      echo "  create-app                  Create a single app"
       echo "  create-streaming-apps       Create streaming apps in marathon"
       echo "  create-jobs                 Create all chronos jobs"
       echo "  create-job NAME             Create a single chronos job"
