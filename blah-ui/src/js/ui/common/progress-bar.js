@@ -21,12 +21,7 @@ function progressBar(value) {
   ]
 
   return h('div.circle-progress-bar', {
-    hook: hook(node => {
-      setTimeout(() => {
-        node.innerHTML = ''
-        donut(node, data, {donutWidth: 10})
-      }, 0)
-    })
+    hook: hook(node => donut(node, data, {donutWidth: 10}))
   })
 }
 

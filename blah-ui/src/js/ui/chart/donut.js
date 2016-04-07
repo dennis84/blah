@@ -1,5 +1,6 @@
 import d3 from 'd3'
 import xtend from 'xtend'
+import init from './init'
 
 function render(node, data, options = {}) {
   options = xtend({donutWidth: 40}, options)
@@ -39,4 +40,4 @@ function render(node, data, options = {}) {
     .text(d => Math.round(d.data.value / total * 100) + '%')
 }
 
-export default render
+export default init(render)

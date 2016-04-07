@@ -10,12 +10,7 @@ function chart(model, limit = 8) {
   })
 
   return h('div.chart', {
-    hook: hook((node) => {
-      setTimeout(() => {
-        node.innerHTML = ''
-        return bar(node, data)
-      }, 0)
-    })
+    hook: hook(node => bar(node, data))
   })
 }
 

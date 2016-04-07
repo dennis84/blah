@@ -14,12 +14,7 @@ function chart(model) {
   )
 
   return h('div.chart', {
-    hook: hook((node) => {
-      setTimeout(() => {
-        node.innerHTML = ''
-        return line(node, data)
-      }, 0)
-    })
+    hook: hook(node => line(node, data))
   })
 }
 

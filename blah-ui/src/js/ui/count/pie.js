@@ -20,12 +20,7 @@ function chart(model) {
       }, d.key)
     })),
     h('div.chart', {
-      hook: hook((node) => {
-        setTimeout(() => {
-          node.innerHTML = ''
-          return donut(node, data)
-        }, 0)
-      })
+      hook: hook(node => donut(node, data))
     })
   ]
 }

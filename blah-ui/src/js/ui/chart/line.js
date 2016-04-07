@@ -1,4 +1,5 @@
 import d3 from 'd3'
+import init from './init'
 
 function render(node, data) {
   var margin = [20, 20, 80, 40]
@@ -56,4 +57,4 @@ function render(node, data) {
     .attr('d', line)
 }
 
-export default render
+export default init(render)
