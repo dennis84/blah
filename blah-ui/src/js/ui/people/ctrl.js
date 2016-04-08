@@ -10,8 +10,15 @@ import {post} from '../../http'
  * @return {Promise} The model wrapped in a promise
  */
 function search(model, options = {}) {
-  return post('/users', options).then((data) => {
+  return post('/users', options).then(data => {
     var m = clone(model)
+    data.map(user => {
+      user.events = user.events.map(event => {
+        event.date = new Date(event.date)
+        return event
+      }).sort((a,b) => b.date - a.date)
+    })
+
     m.users = data
     return m
   })

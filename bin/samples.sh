@@ -55,13 +55,26 @@ rand_ip() {
   echo "$(($RANDOM % 256)).$(($RANDOM % 256)).$(($RANDOM % 256)).$(($RANDOM % 256))"
 }
 
+rand_title() {
+  declare rand="$(($RANDOM % 3))"
+  case $rand in
+    0) echo "Started a new game"
+       ;;
+    1) echo "Created a new character »Drargwulf«"
+       ;;
+    2) echo "Joined the guild »Warriors of the Concealed«"
+       ;;
+  esac
+}
+
 make_pageview() {
   printf '{
     "item":"%s",
+    "title": "%s",
     "user":"%s",
     "ip": "%s",
     "userAgent":"%s"
-  }' "$(rand_item)" "$(rand_user)" "$(rand_ip)" "$(rand_ua)"
+  }' "$(rand_item)" "$(rand_title)" "$(rand_user)" "$(rand_ip)" "$(rand_ua)"
 }
 
 make_purchase() {
