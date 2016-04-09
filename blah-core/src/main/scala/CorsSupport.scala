@@ -1,4 +1,4 @@
-package blah.serving
+package blah.core
 
 import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model.HttpResponse

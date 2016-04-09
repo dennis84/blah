@@ -7,6 +7,7 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
+import blah.core.CorsSupport
 import blah.elastic.IndexUpdater
 
 object Boot extends App
