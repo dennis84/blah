@@ -8,7 +8,7 @@ import error from './common/error'
 function render(update, conn, model) {
   return h('div.container', [
     nav(model, update, conn),
-    h('h1.center-hv', 'User Stats'),
+    h('h1.is-text-centered', 'User Stats'),
     error(model) || masonry({className: 'widgets', itemSelector: '.widget'}, [
       widgets.visitorsToday(model, update, conn),
       widgets.visitorsByCountry(model, update, conn),

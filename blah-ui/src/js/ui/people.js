@@ -7,7 +7,7 @@ import error from './common/error'
 function render(update, conn, model) {
   return h('div.container', [
     nav(model, update, conn),
-    h('h1.center-hv', 'People'),
+    h('h1.is-text-centered', 'People'),
     error(model) || widget(explore, model, update)
   ])
 }

@@ -1,13 +1,13 @@
 import {h} from 'virtual-dom' 
 
 function unknown() {
-  return h('div.center-hv', h('span', [
+  return h('div.is-text-centered', [
     h('i.material-icons.is-large', 'cloud_off'),
     h('p', 'No connection'),
-    h('a.button.is-red', {
+    h('a.button.is-danger.is-outlined', {
       onclick: () => window.location.reload()
-    }, 'Retry'),
-  ]))
+    }, 'Retry')
+  ])
 }
 
 function error(model) {

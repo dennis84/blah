@@ -7,7 +7,7 @@ import error from './common/error'
 function render(update, conn, model) {
   return h('div.container', [
     nav(model, update, conn),
-    h('h1.center-hv', 'Misc'),
+    h('h1.is-text-centered', 'Misc'),
     error(model) || masonry({className: 'widgets', itemSelector: '.widget'}, [
       widgets.itemsFunnel(model, update, conn),
       widgets.totalRevenue(model, update, conn),

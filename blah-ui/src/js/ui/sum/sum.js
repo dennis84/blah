@@ -9,16 +9,16 @@ function content(model, options) {
     String(model.sum.toFixed(2))
 
   return h('div', [
-    h('div.value', value),
-    h('div.title', options.title)
+    h('div.widget-value', value),
+    h('div.widget-title', options.title)
   ])
 }
 
 function render(model, update, conn, options) {
-  return h('div.widget.widget-sum.center-hv', {
+  return h('div.widget.widget-sum.is-centered-hv', {
     className: options.className,
-    mount: mount((node) => {
-      conn.on('count', (data) => update(sum, options))
+    mount: mount(node => {
+      conn.on('count', data => update(sum, options))
       update(sum, options)
     })
   }, content(model, options))

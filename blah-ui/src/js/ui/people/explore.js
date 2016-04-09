@@ -7,16 +7,8 @@ import debounce from 'debounce'
 function views(xs) {
   if(undefined === xs || 0 == xs.length) return
   return h('div.list', xs.map((user) => {
-    return h('div.list-item.clearfix', [
-      h('div', user.user),
-      h('h3', 'Activity'),
-      h('div', user.events.map((event) => {
-        return h('div', [
-          h('b', moment(event.date).format('MMMM Do YYYY, hh:mm:ss a')),
-          h('span', event.item),
-          h('span', event.title)
-        ])
-      }))
+    return h('div.list-item', [
+      h('div', user.user)
     ])
   }))
 }
@@ -27,6 +19,7 @@ function render(model, update, options = {}) {
   }, [
     h('div.control', [
       h('input.input.is-large', {
+        placeholder: 'Search users ...',
         oninput: debounce((e) => {
           if(!e.target.value) {
             e.target.classList.remove('dirty')
@@ -38,8 +31,7 @@ function render(model, update, options = {}) {
             {prop: 'user', operator: 'contains', value: e.target.value}
           ]})
         }, 500)
-      }),
-      h('label', 'Search for users')
+      })
     ]),
     views(model.users)
   ])

@@ -6,7 +6,7 @@ import donut from '../chart/donut'
 
 function chart(model) {
   if(!model.groups || 0 === model.groups.length) return
-  var data = model.groups.map((x) => {
+  var data = model.groups.map(x => {
     var y = clone(x)
     delete y['count']
     delete y['date']
@@ -14,9 +14,9 @@ function chart(model) {
   })
 
   return [
-    h('div.labels', data.map((d,i) => {
-      return h('span.label', {
-        className: 'label-' + String.fromCharCode(i + 97)
+    h('div.is-text-centered', data.map((d,i) => {
+      return h('span.tag', {
+        className: 'is-colored-' + String.fromCharCode(i + 97)
       }, d.key)
     })),
     h('div.chart', {
@@ -28,7 +28,7 @@ function chart(model) {
 function render(model, update, conn, options) {
   return h('div.widget.widget-pie', {
     className: options.className,
-    mount: mount((node) => {
+    mount: mount(node => {
       conn.on('count', (data) => update(grouped, options))
       update(grouped, options)
     })

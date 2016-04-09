@@ -24,7 +24,7 @@ function diff(value, percentage = false) {
     value = plusMinus + Math.abs(value)
   }
 
-  return h('div.value', value)
+  return h('div.widget-value', value)
 }
 
 export default diff

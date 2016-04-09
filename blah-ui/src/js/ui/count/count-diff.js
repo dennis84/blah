@@ -9,7 +9,7 @@ function content(model, options) {
 
   var elems = [
     diff(model.diff, options.percentage),
-    h('div.title', options.title)
+    h('div.widget-title', options.title)
   ]
 
   if(true === options.percentage && true === options.progressBar) {
@@ -22,7 +22,7 @@ function content(model, options) {
 }
 
 function render(model, update, conn, options) {
-  return h('div.widget.widget-diff.center-hv', {
+  return h('div.widget.widget-diff.is-centered-hv', {
     className: options.className,
     mount: mount((node) => {
       conn.on('count', (data) => update(countDiff, options))

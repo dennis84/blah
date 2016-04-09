@@ -7,7 +7,7 @@ import error from './common/error'
 function render(update, conn, model) {
   return h('div.container', [
     nav(model, update, conn),
-    h('h1.center-hv', 'Segmentation'),
+    h('h1.is-text-centered', 'Segmentation'),
     error(model) || widget(line, model, update, {
       builder: {
         groups: [

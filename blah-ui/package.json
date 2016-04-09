@@ -2,6 +2,7 @@
   "name": "blah-ui",
   "description": "...",
   "dependencies": {
+    "bulma": "0.0.17",
     "clone": "^1.0.2",
     "d3": "^3.5.16",
     "debounce": "^1.0.0",

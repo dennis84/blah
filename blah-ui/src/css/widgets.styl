@@ -1,0 +1,104 @@
+@import 'nib'
+
+.widget
+  width 320px
+  height 320px
+  margin-right 10px
+  margin-bottom 10px
+  padding 10px
+  float left
+  background base3
+  box-shadow 0 1px 1px rgba(0,0,0,0.1)
+
+  h3
+    padding 0
+    margin 10px
+    margin-bottom 20px
+    font-weight 200
+    font-size 32px
+    text-align center
+
+@media (min-width: 650px)
+  .widget.size-2of3
+    width 650px
+  .widget.size-3of3
+    width 650px
+
+@media (min-width: 990px)
+  .widget.size-3of3
+    width 990px
+
+.widget-count
+  .widget-value
+    font-weight 200
+    font-size 64px
+    text-align center
+  .widget-title
+    text-align center
+
+.widget-diff
+  position relative
+  .widget-value
+    font-weight 200
+    font-size 64px
+    text-align center
+  .widget-title
+    text-align center
+  .has-progress-bar
+    .widget-title
+      padding 0 50px
+  .circle-progress-bar
+    position absolute
+    top 10px
+    left 10px
+    width 300px
+    height 300px
+    colorize('b', base2)
+
+.widget-sum
+  .widget-value
+    font-weight 800
+    font-size 48px
+    text-align center
+  .widget-title
+    text-align center
+
+.widget-users
+  .widget-value
+    font-weight 200
+    font-size 64px
+    text-align center
+  .widget-title
+    text-align center
+
+.widget-line
+  height auto
+  .chart
+    height 300px
+
+.widget-bar
+  height auto
+  .chart
+    height 300px
+
+.widget-pie
+  height auto
+  .tag
+    margin 2px
+  .chart
+    margin-top: 20px
+    width 300px
+    height 300px
+
+.widget-recommendations
+  height auto
+  .recommendations
+    margin-top 20px
+    .recommendation
+      margin 2px 0
+
+.widget-funnel
+  height auto
+  .chart
+    width 300px
+    height 300px
