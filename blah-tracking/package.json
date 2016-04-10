@@ -1,0 +1,9 @@
+{
+  "main": "index",
+  "dependencies": {
+    "xhr": "^2.2.0"
+  },
+  "scripts": {
+    "build": "browserify --standalone tracking index.js | uglifyjs > tracking.js"
+  }
+}
