@@ -28,7 +28,7 @@ object Submit {
     lazy val userBatch = new BatchJob("user", userAlgo, producer)
     lazy val funnelBatch = new BatchJob("funnel", funnelAlgo, producer)
     lazy val countStreaming = new CountStreamingJob("count", countAlgo, producer)
-    lazy val userStreaming = new StreamingJob("user", userAlgo, producer)
+    lazy val userStreaming = new UserStreamingJob("user", userAlgo, producer)
 
     lazy val jobs = Map(
       "count" -> countBatch,

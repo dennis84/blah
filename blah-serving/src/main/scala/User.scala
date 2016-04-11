@@ -10,4 +10,11 @@ case class UserEvent(
 
 case class User(
   user: String,
+  date: ZonedDateTime,
+  lng: Double,
+  lat: Double,
+  country: String,
+  countryCode: String,
+  city: String,
+  zipCode: String,
   events: List[UserEvent] = Nil)
