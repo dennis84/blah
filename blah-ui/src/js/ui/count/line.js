@@ -21,11 +21,9 @@ function chart(model) {
 function render(model, update, conn, options) {
   return h('div.widget.widget-line', {
     className: options.className,
-    mount: mount((node) => {
-      conn.on('count', (data) => update(grouped, options))
-      update(grouped, options)
-    }),
-    hook: hook((node) => {
+    mount: mount(node => update(grouped, options)),
+    hook: hook(node => {
+      conn.off('count').on('count', data => update(grouped, options))
       if(model.builder && model.builder.shouldUpdate) {
         update(grouped, options)
         model.builder.shouldUpdate = false
