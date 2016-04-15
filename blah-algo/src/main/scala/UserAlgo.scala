@@ -1,40 +1,76 @@
 package blah.algo
 
-import scala.util.Try
 import org.apache.spark.rdd.RDD
-import spray.json._
-import blah.core._
-import JsonProtocol._
+import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.{SQLContext, Row}
+import org.apache.spark.sql.types.{StructType,StructField,StringType}
 
-class UserAlgo extends Algo {
-  def train(rdd: RDD[String], args: Array[String]) = rdd
-    .map(x => Try(x.parseJson.convertTo[UserEvent]))
-    .filter(_.isSuccess)
-    .map(_.get)
-    .map(x => (x.props.user, (x.props.ip, x.date, x.props.item, x.props.title)))
-    .groupByKey
-    .map { case(u, values) =>
-      val (maybeIp, date, item, title) = values.last
-      val geo = maybeIp.map(GeoIp.find _).flatten
-      val userEvents = (values takeRight 20).toList.reverse map {
-        case (maybeIp, date, maybeItem, maybeTitle) => Map(
-          "ip" -> maybeIp,
-          "date" -> date.toString,
-          "item" -> maybeItem,
-          "title" -> maybeTitle
-        )
+case class UserEvent(
+  date: String,
+  user: Option[String] = None,
+  item: Option[String] = None,
+  title: Option[String] = None,
+  ip: Option[String] = None)
+
+case class User(
+  id: String,
+  user: String,
+  date: String,
+  lng: Double,
+  lat: Double,
+  country: String,
+  countryCode: String,
+  city: String,
+  zipCode: String,
+  events: List[UserEvent])
+
+object UserEvent {
+  def apply(r: Row): UserEvent = UserEvent(
+    r.getString(0),
+    Option(r.getString(1)),
+    Option(r.getString(2)),
+    Option(r.getString(3)),
+    Option(r.getString(4)))
+}
+
+object UserSchema {
+  def apply() = StructType(Array(
+    StructField("date", StringType, true),
+    StructField("props", StructType(Array(
+      StructField("user", StringType, true),
+      StructField("item", StringType, true),
+      StructField("title", StringType, true),
+      StructField("ip", StringType, true))), true)))
+}
+
+class UserAlgo {
+  def train(rdd: RDD[String], ctx: SQLContext, args: Array[String]) = {
+    val reader = ctx.read.schema(UserSchema())
+    reader.json(rdd).registerTempTable("event")
+    ctx.sql("""|SELECT
+               |  date,
+               |  props.user,
+               |  props.item,
+               |  props.title,
+               |  props.ip
+               |FROM event""".stripMargin)
+      .map(UserEvent(_))
+      .filter(_.user.isDefined)
+      .groupBy(_.user)
+      .collect { case(Some(u), events) =>
+        val geo = events.last.ip.map(GeoIp.find _).flatten
+        val userEvents = (events takeRight 20).toList.reverse
+        User(
+          id = u,
+          user = u,
+          date = events.last.date,
+          lng = geo.map(_.lng).getOrElse(0),
+          lat = geo.map(_.lat).getOrElse(0),
+          country = geo.map(_.country).flatten.getOrElse("N/A"),
+          countryCode = geo.map(_.countryCode).flatten.getOrElse("N/A"),
+          city = geo.map(_.city).flatten.getOrElse("N/A"),
+          zipCode = geo.map(_.zipCode).flatten.getOrElse("N/A"),
+          events = userEvents)
       }
-
-      Doc(u, Map(
-        "user" -> u,
-        "date" -> date.toString,
-        "lng" -> geo.map(_.lng).getOrElse(0),
-        "lat" -> geo.map(_.lat).getOrElse(0),
-        "country" -> geo.map(_.country).flatten.getOrElse("N/A"),
-        "countryCode" -> geo.map(_.countryCode).flatten.getOrElse("N/A"),
-        "city" -> geo.map(_.city).flatten.getOrElse("N/A"),
-        "zipCode" -> geo.map(_.zipCode).flatten.getOrElse("N/A"),
-        "events" -> userEvents
-      ))
-    }
+  }
 }

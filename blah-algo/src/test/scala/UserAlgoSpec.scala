@@ -4,10 +4,11 @@ import org.scalatest._
 import spray.json._
 import blah.core._
 import JsonProtocol._
+import org.apache.spark.sql.types.{StructType,StructField,StringType}
 
 class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
 
-  "The UserAlgo" should "train" in withSparkContext { sc =>
+  "The UserAlgo" should "train" in withSparkSqlContext { (sc, sqlContext) =>
     val algo = new UserAlgo
     val input = sc.parallelize(List(
       Event("1", "view", props = Map(
@@ -22,11 +23,11 @@ class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input, Array.empty[String])
+    val output = algo.train(input, sqlContext, Array.empty[String])
     val users = output.collect.toList
     users.length should be (1)
-    val events = users(0).data("events").asInstanceOf[List[Map[String, Any]]]
-    events(0)("title").asInstanceOf[Option[String]].get should be ("title2")
-    events(0)("title").asInstanceOf[Option[String]].get should be ("title2")
+    val events = users(0).events
+    events(0).title should be (Some("title2"))
+    events(1).title should be (Some("title1"))
   }
 }

@@ -28,5 +28,5 @@ case class UserProps(
   ip: Option[String] = None)
 case class UserEvent(
   id: String,
-  date: ZonedDateTime,
+  date: String,
   props: UserProps)
