@@ -23,19 +23,19 @@ object Submit {
     lazy val userAlgo = new UserAlgo
     lazy val funnelAlgo = new FunnelAlgo
 
-    lazy val countBatch = new BatchJob("count", countAlgo, producer)
-    lazy val similarityBatch = new BatchJob("similarity", similarityAlgo, producer)
+    // lazy val countBatch = new BatchJob("count", countAlgo, producer)
+    // lazy val similarityBatch = new BatchJob("similarity", similarityAlgo, producer)
     // lazy val userBatch = new BatchJob("user", userAlgo, producer)
-    lazy val funnelBatch = new BatchJob("funnel", funnelAlgo, producer)
-    lazy val countStreaming = new CountStreamingJob("count", countAlgo, producer)
+    // lazy val funnelBatch = new BatchJob("funnel", funnelAlgo, producer)
+    // lazy val countStreaming = new CountStreamingJob("count", countAlgo, producer)
     // lazy val userStreaming = new UserStreamingJob("user", userAlgo, producer)
 
-    lazy val jobs = Map(
-      "count" -> countBatch,
-      "similarity" -> similarityBatch,
-      // "user" -> userBatch,
-      "funnel" -> funnelBatch,
-      "count-streaming" -> countStreaming)
+    lazy val jobs = Map.empty[String, Job]
+      // "count" -> countBatch,
+      // "similarity" -> similarityBatch,
+      // // "user" -> userBatch,
+      // "funnel" -> funnelBatch,
+      // "count-streaming" -> countStreaming)
       // "user-streaming" -> userStreaming)
 
     (for {

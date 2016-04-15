@@ -1,19 +1,10 @@
 package blah.algo
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.{SQLContext, Row}
 import org.apache.spark.sql.types.{StructType,StructField,StringType}
 
-case class UserEvent(
-  date: String,
-  user: Option[String] = None,
-  item: Option[String] = None,
-  title: Option[String] = None,
-  ip: Option[String] = None)
-
 case class User(
-  id: String,
   user: String,
   date: String,
   lng: Double,
@@ -23,6 +14,13 @@ case class User(
   city: String,
   zipCode: String,
   events: List[UserEvent])
+
+case class UserEvent(
+  date: String,
+  user: Option[String] = None,
+  item: Option[String] = None,
+  title: Option[String] = None,
+  ip: Option[String] = None)
 
 object UserEvent {
   def apply(r: Row): UserEvent = UserEvent(
@@ -60,8 +58,7 @@ class UserAlgo {
       .collect { case(Some(u), events) =>
         val geo = events.last.ip.map(GeoIp.find _).flatten
         val userEvents = (events takeRight 20).toList.reverse
-        User(
-          id = u,
+        val doc = User(
           user = u,
           date = events.last.date,
           lng = geo.map(_.lng).getOrElse(0),
@@ -71,6 +68,7 @@ class UserAlgo {
           city = geo.map(_.city).flatten.getOrElse("N/A"),
           zipCode = geo.map(_.zipCode).flatten.getOrElse("N/A"),
           events = userEvents)
+        (u, doc)
       }
   }
 }
