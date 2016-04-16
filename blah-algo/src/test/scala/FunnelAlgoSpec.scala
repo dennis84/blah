@@ -56,7 +56,7 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
     val output = algo.train(input, sqlContext, Array(
       "--name", "signup",
       "--steps", "landingpage,signup,dashboard"))
-    val docs = output.collect.toList
+    val docs = output.collect.toList.asInstanceOf[List[(String, Funnel)]]
 
     docs(0)._2.name should be ("signup")
     docs(0)._2.path should be (List("landingpage", "signup", "dashboard"))
@@ -83,7 +83,7 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
     val output = algo.train(input, sqlContext, Array(
       "--name", "signup",
       "--steps", "landingpage,signup,dashboard"))
-    val docs = output.collect.toList
+    val docs = output.collect.toList.asInstanceOf[List[(String, Funnel)]]
 
     docs(0)._2.name should be ("signup")
     docs(0)._2.path should be (List("landingpage", "signup"))
@@ -138,7 +138,7 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
     val output = algo.train(input, sqlContext, Array(
       "--name", "signup",
       "--steps", "landingpage,signup,dashboard"))
-    val docs = output.collect.toList
+    val docs = output.collect.toList.asInstanceOf[List[(String, Funnel)]]
 
     docs(0)._2.name should be ("signup")
     docs(0)._2.path should be (List("landingpage", "signup", "dashboard"))
@@ -165,7 +165,7 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
     val output = algo.train(input, sqlContext, Array(
       "--name", "foobar",
       "--steps", "foo,bar,baz"))
-    val docs = output.collect.toList
+    val docs = output.collect.toList.asInstanceOf[List[(String, Funnel)]]
 
     docs(0)._2.name should be ("foobar")
     docs(0)._2.path should be (List("foo", "bar", "baz"))

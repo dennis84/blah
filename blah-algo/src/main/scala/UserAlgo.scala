@@ -1,59 +1,21 @@
 package blah.algo
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{SQLContext, Row}
-import org.apache.spark.sql.types.{StructType,StructField,StringType}
+import org.apache.spark.sql.SQLContext
 
-case class User(
-  user: String,
-  date: String,
-  lng: Double,
-  lat: Double,
-  country: String,
-  countryCode: String,
-  city: String,
-  zipCode: String,
-  events: List[UserEvent])
-
-case class UserEvent(
-  date: String,
-  user: Option[String] = None,
-  item: Option[String] = None,
-  title: Option[String] = None,
-  ip: Option[String] = None)
-
-object UserEvent {
-  def apply(r: Row): UserEvent = UserEvent(
-    r.getString(0),
-    Option(r.getString(1)),
-    Option(r.getString(2)),
-    Option(r.getString(3)),
-    Option(r.getString(4)))
-}
-
-object UserSchema {
-  def apply() = StructType(Array(
-    StructField("date", StringType, true),
-    StructField("props", StructType(Array(
-      StructField("user", StringType, true),
-      StructField("item", StringType, true),
-      StructField("title", StringType, true),
-      StructField("ip", StringType, true))), true)))
-}
-
-class UserAlgo {
+class UserAlgo extends Algo {
   def train(rdd: RDD[String], ctx: SQLContext, args: Array[String]) = {
     val reader = ctx.read.schema(UserSchema())
     reader.json(rdd).registerTempTable("event")
     ctx.sql("""|SELECT
                |  date,
-               |  props.user,
+               |  props.user AS user,
                |  props.item,
                |  props.title,
                |  props.ip
                |FROM event""".stripMargin)
+      .filter("user is not null")
       .map(UserEvent(_))
-      .filter(_.user.isDefined)
       .groupBy(_.user)
       .collect { case(Some(u), events) =>
         val geo = events.last.ip.map(GeoIp.find _).flatten

@@ -2,46 +2,20 @@ package blah.algo
 
 import java.security.MessageDigest
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{SQLContext, Row}
-import org.apache.spark.sql.types.{StructType,StructField,StringType}
+import org.apache.spark.sql.SQLContext
 import org.apache.spark.mllib.linalg.{Vectors, SparseVector}
 import org.apache.spark.mllib.linalg.distributed._
 
-case class Similarity(
-  user: String,
-  views: List[SimilarityItem] = Nil)
-
-case class SimilarityItem(
-  item: String,
-  score: Double)
-
-case class SimilarityEvent(
-  user: Option[String] = None,
-  item: Option[String] = None)
-
-object SimilarityEvent {
-  def apply(r: Row): SimilarityEvent = SimilarityEvent(
-    Option(r.getString(0)),
-    Option(r.getString(1)))
-}
-
-object SimilaritySchema {
-  def apply() = StructType(Array(
-    StructField("props", StructType(Array(
-      StructField("user", StringType, true),
-      StructField("item", StringType, true))), true)))
-}
-
-class SimilarityAlgo {
+class SimilarityAlgo extends Algo {
   def train(rdd: RDD[String], ctx: SQLContext, args: Array[String]) = {
     val reader = ctx.read.schema(SimilaritySchema())
     reader.json(rdd).registerTempTable("similarity")
     val events = ctx.sql("""|SELECT
-                            |  props.user,
-                            |  props.item
+                            |  props.user AS user,
+                            |  props.item AS item
                             |FROM similarity""".stripMargin)
+      .filter("user is not null and item is not null")
       .map(SimilarityEvent(_))
-      .filter(x => x.user.isDefined && x.item.isDefined)
     require(!events.isEmpty, "view events cannot be empty")
 
     val usersRDD = events.groupBy(_.user)
@@ -50,7 +24,7 @@ class SimilarityAlgo {
     val itemsRDD = events.groupBy(_.item)
     val items = itemsRDD.keys.collect.toList.flatten
 
-    val views: RDD[(Int, Int)] = events
+    val views = events
       .collect { case SimilarityEvent(Some(user), Some(item)) =>
         (users.indexOf(user), items.indexOf(item))
       }

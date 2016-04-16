@@ -24,7 +24,7 @@ class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
     ))
 
     val output = algo.train(input, sqlContext, Array.empty[String])
-    val users = output.collect.toList
+    val users = output.collect.toList.asInstanceOf[List[(String, User)]]
     users.length should be (1)
     val events = users(0)._2.events
     events(0).title should be (Some("title2"))

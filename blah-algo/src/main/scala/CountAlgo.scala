@@ -1,52 +1,11 @@
 package blah.algo
 
 import java.security.MessageDigest
-import java.time.temporal.ChronoUnit
-import java.time.ZonedDateTime
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{SQLContext, Row}
-import org.apache.spark.sql.types.{StructType,StructField,StringType}
+import org.apache.spark.sql.SQLContext
 import blah.core.{UserAgent, UserAgentClassifier}
 
-case class Count(
-  collection: String,
-  date: String,
-  browserFamily: String,
-  browserMajor: String,
-  osFamily: String,
-  osMajor: String,
-  deviceFamily: String,
-  isMobile: Boolean,
-  isTablet: Boolean,
-  isMobileDevice: Boolean,
-  isComputer: Boolean,
-  platform: String,
-  count: Long = 0)
-
-case class CountEvent(
-  date: String,
-  collection: String,
-  item: Option[String] = None,
-  userAgent: Option[String] = None)
-
-object CountEvent {
-  def apply(r: Row): CountEvent = CountEvent(
-    date = ZonedDateTime.parse(r.getString(0)).truncatedTo(ChronoUnit.HOURS).toString,
-    collection = r.getString(1),
-    item = Option(r.getString(2)),
-    userAgent = Option(r.getString(3)))
-}
-
-object CountSchema {
-  def apply() = StructType(Array(
-    StructField("date", StringType, true),
-    StructField("collection", StringType, true),
-    StructField("props", StructType(Array(
-      StructField("item", StringType, true),
-      StructField("userAgent", StringType, true))), true)))
-}
-
-class CountAlgo {
+class CountAlgo extends Algo {
   def train(rdd: RDD[String], ctx: SQLContext, args: Array[String]) = {
     val reader = ctx.read.schema(CountSchema())
     reader.json(rdd).registerTempTable("count")
@@ -57,13 +16,10 @@ class CountAlgo {
                |  props.userAgent
                |FROM count""".stripMargin)
       .map(CountEvent(_))
-      .map(x => (x, 1))
-      .reduceByKey(_ + _)
-      .collect { case(event, count) =>
+      .map { event =>
         val ua = event.userAgent.map(UserAgent(_))
         val uac = ua.map(UserAgentClassifier.classify)
         val doc = Count(
-          count = count,
           collection = event.collection,
           date = event.date,
           browserFamily = ua.map(_.browser.family).getOrElse("N/A"),
@@ -84,7 +40,9 @@ class CountAlgo {
           .digest(doc.hashCode.toString.getBytes("UTF-8"))
           .map("%02x".format(_))
           .mkString
-        (id, doc)
+        ((id, doc), 1)
       }
+      .reduceByKey(_ + _)
+      .map { case((id, count), nb) => (id, count.copy(count = nb)) }
   }
 }

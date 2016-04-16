@@ -1,45 +1,12 @@
 package blah.algo
 
 import java.security.MessageDigest
-import java.time.{ZonedDateTime, ZoneOffset}
+import java.time.ZonedDateTime
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{SQLContext, Row}
-import org.apache.spark.sql.types.{StructType,StructField,StringType}
+import org.apache.spark.sql.SQLContext
 import blah.core.FindOpt._
 
-case class Funnel(
-  name: String,
-  path: List[String] = Nil,
-  count: Long = 0)
-
-case class FunnelEvent(
-  date: ZonedDateTime,
-  user: Option[String] = None,
-  item: Option[String] = None,
-  referrer: Option[String] = None)
-
-object FunnelEvent {
-  def apply(r: Row): FunnelEvent = FunnelEvent(
-    ZonedDateTime.parse(r.getString(0)),
-    Option(r.getString(1)),
-    Option(r.getString(2)),
-    Option(r.getString(3)))
-}
-
-object FunnelSchema {
-  def apply() = StructType(Array(
-    StructField("date", StringType, true),
-    StructField("props", StructType(Array(
-      StructField("user", StringType, true),
-      StructField("item", StringType, true),
-      StructField("referrer", StringType, true))), true)))
-}
-
-case class FunnelConfig(
-  name: String,
-  steps: List[String] = Nil)
-
-class FunnelAlgo {
+class FunnelAlgo extends Algo {
   def train(rdd: RDD[String], ctx: SQLContext, args: Array[String]) = {
     val config = (for {
       name <- args opt "name"
@@ -54,12 +21,12 @@ class FunnelAlgo {
     reader.json(rdd).registerTempTable("funnel")
     val events = ctx.sql("""|SELECT
                             |  date,
-                            |  props.user,
-                            |  props.item,
+                            |  props.user AS user,
+                            |  props.item AS item,
                             |  props.referrer
                             |FROM funnel""".stripMargin)
+      .filter("user is not null and item is not null")
       .map(FunnelEvent(_))
-      .filter(x => x.user.isDefined && x.item.isDefined)
 
     val ord = Ordering[Long]
       .on[ZonedDateTime](_.toInstant.toEpochMilli)

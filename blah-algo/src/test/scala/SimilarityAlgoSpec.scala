@@ -33,7 +33,7 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
     ))
 
     val output = algo.train(input, sqlContext, Array.empty[String])
-    val docs = output.collect()
+    val docs = output.collect.toList.asInstanceOf[List[(String, Similarity)]]
     docs foreach {
       case ("user1", data) =>
         val views = data.views

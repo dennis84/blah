@@ -18,11 +18,6 @@ trait JsonProtocol extends DefaultJsonProtocol {
   implicit val userAgentFmt = jsonFormat3(UserAgent.apply)
 
   implicit val eventFmt = jsonFormat4(Event)
-  implicit val viewPropsFmt = jsonFormat5(ViewProps)
-  implicit val viewEventFmt = jsonFormat4(ViewEvent)
-  implicit val userPropsFmt = jsonFormat4(UserProps)
-  implicit val userEventFmt = jsonFormat3(UserEvent)
-
   implicit val messageFmt = jsonFormat1(Message)
 }
 
