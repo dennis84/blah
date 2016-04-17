@@ -36,6 +36,13 @@ function render(node, data) {
     .append('g')
       .attr('transform', `translate(${margin[3]},${margin[0]})`)
 
+  graph.selectAll('dot').data(data)
+    .enter().append('circle')
+		  .attr('class', 'circle')
+      .attr('r', 3.5)
+      .attr('cx', (d) => x(d.key))
+      .attr('cy', (d) => y(d.value))
+
   graph.append('g')
 		.attr('class', 'x-axis')
 	  .attr('transform', `translate(0, ${height})`)
