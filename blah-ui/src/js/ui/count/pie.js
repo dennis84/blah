@@ -3,6 +3,7 @@ import clone from 'clone'
 import {grouped} from './ctrl'
 import {hook, mount} from '../../hook'
 import donut from '../chart/donut'
+import * as error from '../common/error'
 
 function chart(model) {
   if(!model.groups || 0 === model.groups.length) return

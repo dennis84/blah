@@ -10,9 +10,14 @@ function unknown() {
   ])
 }
 
-function error(model) {
-  if(!model.error) return
-  return unknown();
+function noData() {
+  return h('div.is-text-centered', [
+    h('i.material-icons.is-large', 'error_outline'),
+    h('p', 'No data')
+  ])
 }
 
-export default error
+export {
+  unknown,
+  noData
+}

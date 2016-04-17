@@ -3,22 +3,16 @@ import {countDiff} from './ctrl'
 import {mount} from '../../hook'
 import progressBar from '../common/progress-bar'
 import diff from '../common/diff'
+import * as error from '../common/error'
 
 function content(model, options) {
-  if(undefined === model.diff) return
-
-  var elems = [
-    diff(model.diff, options.percentage),
-    h('div.widget-title', options.title)
-  ]
-
-  if(true === options.percentage && true === options.progressBar) {
-    elems.push(progressBar(model.diff))
-  }
-
   return h('div', {
     className: options.progressBar ? 'has-progress-bar' : ''
-  }, elems)
+  }, (!model.diff || !Number.isFinite(model.diff)) ? error.noData() : [
+    diff(model.diff, options.percentage),
+    h('div.widget-title', options.title),
+    (options.percentage && options.progressBar) ? progressBar(model.diff) : null
+  ])
 }
 
 function render(model, update, conn, options) {

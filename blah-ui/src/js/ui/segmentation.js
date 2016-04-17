@@ -2,13 +2,13 @@ import {h} from 'virtual-dom'
 import nav from './nav'
 import widget from '../widget'
 import line from './count/line'
-import error from './common/error'
+import * as error from './common/error'
 
 function render(update, conn, model) {
   return h('div.container', [
     nav(model, update, conn),
     h('h1.is-text-centered', 'Segmentation'),
-    error(model) || widget(line, model, update, {
+    (model.error) ? error.unknown() : widget(line, model, update, {
       builder: {
         groups: [
           {value: 'date.year', selected: false},
