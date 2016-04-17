@@ -29,6 +29,11 @@ function render(node, data) {
     .x(d => x(d.key))
     .y(d => y(d.value))
 
+  var area = d3.svg.area()
+    .x(d => x(d.key))
+    .y0(height)
+    .y1(d => y(d.value))
+
   var graph = d3.select(node)
     .append('svg')
       .attr('width', width + margin[1] + margin[3])
@@ -57,6 +62,11 @@ function render(node, data) {
     .attr('class', 'y-axis')
     .attr('transform', 'translate(0,0)')
     .call(yAxis)
+
+  graph.append('path')
+    .datum(data)
+    .attr('class', 'area')
+    .attr('d', area)
 
   graph.append('path')
     .datum(data)

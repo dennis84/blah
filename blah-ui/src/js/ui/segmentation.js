@@ -20,7 +20,7 @@ function render(update, conn, model) {
     }, conn, {
       collection: 'pageviews',
       groupBy: ['date.hour'],
-      className: 'size-3of3'
+      className: 'size-3of3 segmentation'
     })
   ])
 }
