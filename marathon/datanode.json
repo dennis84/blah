@@ -11,6 +11,11 @@
       "portMappings": [
         {"containerPort": 50075, "hostPort": 0, "servicePort": 50075, "protocol": "tcp"}
       ]
-    }
+    },
+    "volumes": [{
+      "containerPath": "/data",
+      "hostPath": "/data",
+      "mode": "RW"
+    }]
   }
 }
