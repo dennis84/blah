@@ -13,8 +13,8 @@
       ]
     },
     "volumes": [{
-      "containerPath": "/data",
-      "hostPath": "/data",
+      "containerPath": "/data/dfs/data",
+      "hostPath": "/data/dfs/data",
       "mode": "RW"
     }]
   }

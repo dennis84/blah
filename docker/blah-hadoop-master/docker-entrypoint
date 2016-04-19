@@ -2,7 +2,10 @@
 
 sed -i s/0.0.0.0/$HOSTNAME/ $HADOOP_CONF_DIR/core-site.xml
 
-hdfs namenode -format -nonInteractive
+if [[ ! -f /data/hdfs/name/current/VERSION ]]; then
+  hdfs namenode -format -nonInteractive
+fi
+
 hdfs namenode
 
 while true; do sleep 1000; done
