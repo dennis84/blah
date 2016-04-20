@@ -23,7 +23,7 @@ class UserRepo(client: ElasticClient)(
   def search(q: UserQuery): Future[List[User]] =
     client request HttpRequest(
       method = HttpMethods.GET,
-      uri = "/blah/user/_search?size=100",
+      uri = "/blah/user/_search?size=50&sort=date:desc",
       entity = HttpEntity(
         ContentTypes.`application/json`,
         UserElasticQuery(q).compactPrint)
