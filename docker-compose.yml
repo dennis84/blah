@@ -1,71 +1,82 @@
-zookeeper:
-  image: blah/zookeeper
-  net: host
+version: '2'
 
-mesos:
-  image: mesosphere/mesos-master:0.28.1-2.0.20.ubuntu1404
-  net: host
-  environment:
-    MESOS_ZK: "zk://192.168.99.100:2181/mesos"
-    MESOS_HOSTNAME: 192.168.99.100
-    MESOS_IP: 192.168.99.100
-    MESOS_QUORUM: 1
-    MESOS_WORK_DIR: /var/lib/mesos
-    MESOS_LOG_DIR: /var/log/mesos
+volumes:
+  hadoop_name:
+    driver: local
+  hadoop_data:
+    driver: local
 
-slave1:
-  image: mesosphere/mesos-slave:0.28.1-2.0.20.ubuntu1404
-  net: host
-  pid: host
-  privileged: true
-  environment:
-    MESOS_MASTER: "zk://192.168.99.100:2181/mesos"
-    MESOS_HOSTNAME: 192.168.99.100
-    MESOS_IP: 192.168.99.100
-    MESOS_PORT: 5051
-    MESOS_EXECUTOR_REGISTRATION_TIMEOUT: "5mins"
-    MESOS_CONTAINERIZERS: "docker,mesos"
-    MESOS_ISOLATION: "cgroups/cpu,cgroups/mem"
-    MESOS_RESOURCES: "cpus:2;mem:3062;disk:10000;ports(*):[31000-31100]"
-    MESOS_LOG_DIR: /var/log/mesos
-  volumes:
-    - /proc:/host/proc:ro
-    - /sys/fs/cgroup:/sys/fs/cgroup
-    - /var/run/docker.sock:/var/run/docker.sock
-    - /usr/local/bin/docker:/usr/bin/docker:ro
+services:
+  zookeeper:
+    image: blah/zookeeper
+    network_mode: host
 
-slave2:
-  image: mesosphere/mesos-slave:0.28.1-2.0.20.ubuntu1404
-  net: host
-  pid: host
-  privileged: true
-  environment:
-    MESOS_MASTER: "zk://192.168.99.100:2181/mesos"
-    MESOS_HOSTNAME: 192.168.99.100
-    MESOS_IP: 192.168.99.100
-    MESOS_PORT: 5052
-    MESOS_EXECUTOR_REGISTRATION_TIMEOUT: "5mins"
-    MESOS_CONTAINERIZERS: "docker,mesos"
-    MESOS_ISOLATION: "cgroups/cpu,cgroups/mem"
-    MESOS_RESOURCES: "cpus:2;mem:3062;disk:10000;ports(*):[31000-31100]"
-    MESOS_LOG_DIR: /var/log/mesos
-  volumes_from:
-    - slave1
+  mesos:
+    image: mesosphere/mesos-master:0.28.1-2.0.20.ubuntu1404
+    network_mode: host
+    environment:
+      MESOS_ZK: "zk://192.168.99.100:2181/mesos"
+      MESOS_HOSTNAME: 192.168.99.100
+      MESOS_IP: 192.168.99.100
+      MESOS_QUORUM: 1
+      MESOS_WORK_DIR: /var/lib/mesos
+      MESOS_LOG_DIR: /var/log/mesos
 
-marathon:
-  image: mesosphere/marathon:latest-dev
-  net: host
-  environment: 
-    MARATHON_MASTER: "zk://192.168.99.100:2181/mesos"
-    MARATHON_ZK: "zk://192.168.99.100:2181/marathon"
+  slave1:
+    image: mesosphere/mesos-slave:0.28.1-2.0.20.ubuntu1404
+    network_mode: host
+    pid: host
+    privileged: true
+    environment:
+      MESOS_MASTER: "zk://192.168.99.100:2181/mesos"
+      MESOS_HOSTNAME: 192.168.99.100
+      MESOS_IP: 192.168.99.100
+      MESOS_PORT: 5051
+      MESOS_EXECUTOR_REGISTRATION_TIMEOUT: "5mins"
+      MESOS_CONTAINERIZERS: "docker,mesos"
+      MESOS_ISOLATION: "cgroups/cpu,cgroups/mem"
+      MESOS_RESOURCES: "cpus:2;mem:3062;disk:10000;ports(*):[31000-31100]"
+      MESOS_LOG_DIR: /var/log/mesos
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/local/bin/docker:/usr/bin/docker:ro
 
-kafka:
-  net: host
-  image: blah/kafka-mesos
-  command: scheduler --master=zk://192.168.99.100:2181/mesos --zk=192.168.99.100:2181 --api=http://192.168.99.100:7000
+  slave2:
+    image: mesosphere/mesos-slave:0.28.1-2.0.20.ubuntu1404
+    network_mode: host
+    pid: host
+    privileged: true
+    environment:
+      MESOS_MASTER: "zk://192.168.99.100:2181/mesos"
+      MESOS_HOSTNAME: 192.168.99.100
+      MESOS_IP: 192.168.99.100
+      MESOS_PORT: 5052
+      MESOS_EXECUTOR_REGISTRATION_TIMEOUT: "5mins"
+      MESOS_CONTAINERIZERS: "docker,mesos"
+      MESOS_ISOLATION: "cgroups/cpu,cgroups/mem"
+      MESOS_RESOURCES: "cpus:2;mem:3062;disk:10000;ports(*):[31000-31100]"
+      MESOS_LOG_DIR: /var/log/mesos
+    volumes_from:
+      - slave1
 
-chronos:
-  image: mesosphere/chronos
-  net: host
-  entrypoint: /usr/bin/chronos
-  command: "--master zk://192.168.99.100:2181/mesos --http_port 8081"
+  marathon:
+    image: mesosphere/marathon:latest-dev
+    network_mode: host
+    environment: 
+      MARATHON_MASTER: "zk://192.168.99.100:2181/mesos"
+      MARATHON_ZK: "zk://192.168.99.100:2181/marathon"
+    volumes:
+      - "./data:/data"
+
+  kafka:
+    network_mode: host
+    image: blah/kafka-mesos
+    command: scheduler --master=zk://192.168.99.100:2181/mesos --zk=192.168.99.100:2181 --api=http://192.168.99.100:7000
+
+  chronos:
+    image: mesosphere/chronos
+    network_mode: host
+    entrypoint: /usr/bin/chronos
+    command: "--master zk://192.168.99.100:2181/mesos --http_port 8081"

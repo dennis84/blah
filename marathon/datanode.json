@@ -10,12 +10,11 @@
       "network": "BRIDGE",
       "portMappings": [
         {"containerPort": 50075, "hostPort": 0, "servicePort": 50075, "protocol": "tcp"}
-      ]
-    },
-    "volumes": [{
-      "containerPath": "/data/dfs/data",
-      "hostPath": "/data/dfs/data",
-      "mode": "RW"
-    }]
+      ],
+      "parameters": [{
+        "key": "volume",
+        "value": "hadoop_data:/data/dfs/data"
+      }]
+    }
   }
 }

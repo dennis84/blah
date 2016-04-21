@@ -11,12 +11,11 @@
       "portMappings": [
         {"containerPort": 8020, "hostPort": 0, "servicePort": 8020, "protocol": "tcp"},
         {"containerPort": 50070, "hostPort": 0, "servicePort": 50070, "protocol": "tcp"}
-      ]
-    },
-    "volumes": [{
-      "containerPath": "/data/dfs/name",
-      "hostPath": "/data/dfs/name",
-      "mode": "RW"
-    }]
+      ],
+      "parameters": [{
+        "key": "volume",
+        "value": "hadoop_name:/data/dfs/name"
+      }]
+    }
   }
 }
