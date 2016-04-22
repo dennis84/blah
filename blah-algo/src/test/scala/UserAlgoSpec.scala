@@ -8,7 +8,7 @@ import org.apache.spark.sql.types.{StructType,StructField,StringType}
 
 class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
 
-  "The UserAlgo" should "train" in withSparkSqlContext { (sc, sqlContext) =>
+  "The UserAlgo" should "train" in withSparkContext { (sc, sqlContext) =>
     val algo = new UserAlgo
     val input = sc.parallelize(List(
       Event("1", "view", props = Map(

@@ -7,7 +7,7 @@ import JsonProtocol._
 
 class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
 
-  "The SimilarityAlgo" should "train" in withSparkSqlContext { (sc, sqlContext) =>
+  "The SimilarityAlgo" should "train" in withSparkContext { (sc, sqlContext) =>
     val algo = new SimilarityAlgo
     val input = sc.parallelize(List(
       Event("1", "view", props = Map(
@@ -47,7 +47,7 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
     }
   }
 
-  it should "not fail with wrong data" in withSparkSqlContext { (sc, sqlContext) =>
+  it should "not fail with wrong data" in withSparkContext { (sc, sqlContext) =>
     val algo = new SimilarityAlgo
     val input = sc.parallelize(List(
       Event("1", "foo", props = Map(

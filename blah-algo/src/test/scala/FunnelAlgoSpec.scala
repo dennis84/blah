@@ -14,7 +14,7 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
   val date4 = ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(3)
   val date5 = ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(4)
 
-  "The FunnelAlgo" should "match all steps" in withSparkSqlContext { (sc, sqlContext) =>
+  "The FunnelAlgo" should "match all steps" in withSparkContext { (sc, sqlContext) =>
     val algo = new FunnelAlgo
 
     val input = sc.parallelize(List(
@@ -63,7 +63,7 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
     docs(0)._2.count should be (2)
   }
 
-  it should "match two steps" in withSparkSqlContext { (sc, sqlContext) =>
+  it should "match two steps" in withSparkContext { (sc, sqlContext) =>
     val algo = new FunnelAlgo
     val input = sc.parallelize(List(
       Event("1", "view", date2, props = Map(
@@ -90,7 +90,7 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
     docs(0)._2.count should be (1)
   }
 
-  it should "match no steps" in withSparkSqlContext { (sc, sqlContext) =>
+  it should "match no steps" in withSparkContext { (sc, sqlContext) =>
     val algo = new FunnelAlgo
     val input = sc.parallelize(List(
       Event("1", "view", date1, props = Map(
@@ -110,7 +110,7 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
     docs.length should be (0)
   }
 
-  it should "remove contiguous duplicates" in withSparkSqlContext { (sc, sqlContext) =>
+  it should "remove contiguous duplicates" in withSparkContext { (sc, sqlContext) =>
     val algo = new FunnelAlgo
     val input = sc.parallelize(List(
       Event("1", "view", date1, props = Map(
@@ -145,7 +145,7 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
     docs(0)._2.count should be (1)
   }
 
-  it should "parse args" in withSparkSqlContext { (sc, sqlContext) =>
+  it should "parse args" in withSparkContext { (sc, sqlContext) =>
     val algo = new FunnelAlgo
     val input = sc.parallelize(List(
       Event("1", "view", date1, props = Map(
@@ -172,7 +172,7 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
     docs(0)._2.count should be (1)
   }
 
-  it should "fail with illegal args" in withSparkSqlContext { (sc, sqlContext) =>
+  it should "fail with illegal args" in withSparkContext { (sc, sqlContext) =>
     val algo = new FunnelAlgo
     the [java.lang.IllegalArgumentException] thrownBy {
       algo.train(sc.parallelize(Nil), sqlContext, Array(

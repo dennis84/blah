@@ -8,7 +8,7 @@ import JsonProtocol._
 
 class CountAlgoSpec extends FlatSpec with Matchers with SparkFun {
 
-  "The CountAlgo" should "train" in withSparkSqlContext { (sc, sqlContext) =>
+  "The CountAlgo" should "train" in withSparkContext { (sc, sqlContext) =>
     val algo = new CountAlgo
     val input = sc.parallelize(List(
       Event("1", "pageviews", props = Map(
