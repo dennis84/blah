@@ -2,9 +2,7 @@ package blah.algo
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.apache.spark.SparkConf
-import com.softwaremill.react.kafka.ProducerProperties
 import com.typesafe.config.ConfigFactory
-import kafka.producer.KafkaProducer
 import kafka.serializer.StringEncoder
 
 object Submit {
@@ -12,23 +10,17 @@ object Submit {
     val arguments = args.map(_ split " ").flatten
     val config = ConfigFactory.load()
 
-    val producer = KafkaProducer[String](ProducerProperties(
-      brokerList = config.getString("producer.broker.list"),
-      topic = "trainings",
-      clientId = "websocket",
-      encoder = new StringEncoder))
-
     lazy val countAlgo = new CountAlgo
     lazy val similarityAlgo = new SimilarityAlgo
     lazy val userAlgo = new UserAlgo
     lazy val funnelAlgo = new FunnelAlgo
 
-    lazy val countBatch = new BatchJob("count", countAlgo, producer)
-    lazy val similarityBatch = new BatchJob("similarity", similarityAlgo, producer)
-    lazy val userBatch = new BatchJob("user", userAlgo, producer)
-    lazy val funnelBatch = new BatchJob("funnel", funnelAlgo, producer)
-    lazy val countStreaming = new CountStreamingJob("count", countAlgo, producer)
-    lazy val userStreaming = new UserStreamingJob("user", userAlgo, producer)
+    lazy val countBatch = new BatchJob("count", countAlgo)
+    lazy val similarityBatch = new BatchJob("similarity", similarityAlgo)
+    lazy val userBatch = new BatchJob("user", userAlgo)
+    lazy val funnelBatch = new BatchJob("funnel", funnelAlgo)
+    lazy val countStreaming = new CountStreamingJob("count", countAlgo)
+    lazy val userStreaming = new UserStreamingJob("user", userAlgo)
 
     lazy val jobs = Map(
       "count" -> countBatch,

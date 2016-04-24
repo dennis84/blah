@@ -1,5 +1,6 @@
 package blah.algo
 
+import java.util.Properties
 import scala.concurrent.ExecutionContext
 import scala.util.{Success, Failure}
 import org.apache.spark.{SparkConf, SparkContext}
@@ -9,15 +10,11 @@ import org.apache.spark.streaming.kafka.KafkaUtils
 import org.elasticsearch.spark._
 import org.elasticsearch.spark.rdd.Metadata._
 import com.typesafe.config.Config
-import kafka.producer.KafkaProducer
+import kafka.producer.KeyedMessage
 import kafka.serializer.StringDecoder
+import RddKafkaWriter._
 
-class StreamingJob(
-  name: String,
-  algo: Algo,
-  producer: KafkaProducer[String]
-) extends Job {
-
+class StreamingJob(name: String, algo: Algo) extends Job {
   def run(
     config: Config,
     sparkConf: SparkConf,
@@ -34,10 +31,19 @@ class StreamingJob(
     stream.foreachRDD { rdd =>
       val sqlContext = SQLContextSingleton.getInstance(rdd.sparkContext)
       import sqlContext.implicits._
-      algo.train(rdd, sqlContext, args).map { case (id, doc) =>
+      val output = algo.train(rdd, sqlContext, args)
+        
+      output map { case (id, doc) =>
         (Map(ID -> id), doc)
-      }.saveToEsWithMeta(s"blah/$name")
-      producer send name
+      } saveToEsWithMeta s"blah/$name"
+
+      val props = new Properties
+      props.put("metadata.broker.list", config.getString("producer.broker.list"))
+      props.put("serializer.class", "kafka.serializer.DefaultEncoder")
+      props.put("key.serializer.class", "kafka.serializer.StringEncoder")
+
+      output.writeToKafka(props, x =>
+        new KeyedMessage[String, Array[Byte]]("trainings", null, name.getBytes))
     }
 
     stream.print()

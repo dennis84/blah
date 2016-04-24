@@ -3,13 +3,11 @@ package blah.algo
 import scala.concurrent.ExecutionContext
 import org.apache.spark.SparkConf
 import com.typesafe.config.Config
-import kafka.producer.KafkaProducer
 
 class UserStreamingJob(
   name: String,
-  algo: Algo,
-  producer: KafkaProducer[String]
-) extends StreamingJob(name, algo, producer) {
+  algo: Algo
+) extends StreamingJob(name, algo) {
   override def run(
     config: Config,
     sparkConf: SparkConf,
