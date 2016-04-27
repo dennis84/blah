@@ -14,7 +14,7 @@ import kafka.producer.KeyedMessage
 import kafka.serializer.StringDecoder
 import RddKafkaWriter._
 
-class StreamingJob(name: String, algo: Algo) extends Job {
+class StreamingJob[T](name: String, algo: Algo[T]) extends Job {
   def run(
     config: Config,
     sparkConf: SparkConf,
@@ -30,11 +30,11 @@ class StreamingJob(name: String, algo: Algo) extends Job {
 
     stream.foreachRDD { rdd =>
       val sqlContext = SQLContextSingleton.getInstance(rdd.sparkContext)
-      import sqlContext.implicits._
       val output = algo.train(rdd, sqlContext, args)
-        
-      output map { case (id, doc) =>
-        (Map(ID -> id), doc)
+      import sqlContext.implicits._
+
+      output.rdd map { case (id, doc: Any) =>
+        Map(ID -> id) -> doc
       } saveToEsWithMeta s"blah/$name"
 
       val props = new Properties
@@ -42,8 +42,8 @@ class StreamingJob(name: String, algo: Algo) extends Job {
       props.put("serializer.class", "kafka.serializer.DefaultEncoder")
       props.put("key.serializer.class", "kafka.serializer.StringEncoder")
 
-      output.writeToKafka(props, x =>
-        new KeyedMessage[String, Array[Byte]]("trainings", null, name.getBytes))
+      output.df.toJSON.writeToKafka(props, x =>
+        new KeyedMessage[String, Array[Byte]]("trainings", null, x.getBytes))
     }
 
     stream.print()

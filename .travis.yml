@@ -4,7 +4,7 @@ scala:
 jdk:
   - oraclejdk8
 script:
-  - sbt 'test-only -- -l blah.elastic.ElasticTest -l blah.elastic.KafkaTest'
+  - sbt 'test-only -- -l blah.elastic.ElasticTest
   - "cd blah-ui && npm run travis-test && cd .."
 before_script:
   - "cd blah-ui && npm install && cd .."

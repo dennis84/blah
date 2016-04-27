@@ -6,7 +6,7 @@ import com.typesafe.config.Config
 
 class UserStreamingJob(
   name: String,
-  algo: Algo
+  algo: UserAlgo
 ) extends StreamingJob(name, algo) {
   override def run(
     config: Config,

@@ -14,7 +14,7 @@ import kafka.producer.KeyedMessage
 import blah.core.FindOpt._
 import RddKafkaWriter._
 
-class BatchJob(name: String, algo: Algo) extends Job {
+class BatchJob[T](name: String, algo: Algo[T]) extends Job {
   def run(
     config: Config,
     sparkConf: SparkConf,
@@ -27,9 +27,9 @@ class BatchJob(name: String, algo: Algo) extends Job {
     val rdd = sc.sequenceFile[LongWritable, BytesWritable](hadoopUrl)
       .map(x => ByteString(x._2.copyBytes).utf8String)
     val output = algo.train(rdd, sqlContext, args shift "path")
-      
-    output map { case (id, doc) =>
-      (Map(ID -> id), doc)
+
+    output.rdd map { case (id, doc: Any) =>
+      Map(ID -> id) -> doc
     } saveToEsWithMeta s"blah/$name"
 
     val props = new Properties
@@ -37,8 +37,8 @@ class BatchJob(name: String, algo: Algo) extends Job {
     props.put("serializer.class", "kafka.serializer.DefaultEncoder")
     props.put("key.serializer.class", "kafka.serializer.StringEncoder")
 
-    output.writeToKafka(props, x =>
-      new KeyedMessage[String, Array[Byte]]("trainings", null, name.getBytes))
+    output.df.toJSON.writeToKafka(props, x =>
+      new KeyedMessage[String, Array[Byte]]("trainings", null, x.getBytes))
 
     sc.stop
   }

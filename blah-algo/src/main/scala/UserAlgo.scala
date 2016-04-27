@@ -3,17 +3,18 @@ package blah.algo
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 
-class UserAlgo extends Algo {
+class UserAlgo extends Algo[User] {
   def train(rdd: RDD[String], ctx: SQLContext, args: Array[String]) = {
+    import ctx.implicits._
     val reader = ctx.read.schema(UserSchema())
     reader.json(rdd).registerTempTable("event")
-    ctx.sql("""|SELECT
-               |  date,
-               |  props.user AS user,
-               |  props.item,
-               |  props.title,
-               |  props.ip
-               |FROM event""".stripMargin)
+    val output = ctx.sql("""|SELECT
+                            |  date,
+                            |  props.user AS user,
+                            |  props.item,
+                            |  props.title,
+                            |  props.ip
+                            |FROM event""".stripMargin)
       .filter("user is not null")
       .map(UserEvent(_))
       .groupBy(_.user)
@@ -32,5 +33,6 @@ class UserAlgo extends Algo {
           events = userEvents)
         (u, doc)
       }
+    Result(output, output.toDF)
   }
 }

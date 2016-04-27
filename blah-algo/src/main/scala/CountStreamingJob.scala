@@ -6,7 +6,7 @@ import com.typesafe.config.Config
 
 class CountStreamingJob(
   name: String,
-  algo: Algo
+  algo: CountAlgo
 ) extends StreamingJob(name, algo) {
   override def run(
     config: Config,

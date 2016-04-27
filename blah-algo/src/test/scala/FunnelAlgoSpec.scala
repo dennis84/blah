@@ -14,10 +14,10 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
   val date4 = ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(3)
   val date5 = ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(4)
 
-  "The FunnelAlgo" should "match all steps" in withSparkContext { (sc, sqlContext) =>
+  "The FunnelAlgo" should "match all steps" in withSparkContext { ctx =>
     val algo = new FunnelAlgo
 
-    val input = sc.parallelize(List(
+    val input = ctx.sparkContext.parallelize(List(
       Event("1", "view", date1, props = Map(
         "item" -> JsString("home"),
         "user" -> JsString("user1")
@@ -53,19 +53,19 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input, sqlContext, Array(
+    val result = algo.train(input, ctx, Array(
       "--name", "signup",
       "--steps", "landingpage,signup,dashboard"))
-    val docs = output.collect.toList.asInstanceOf[List[(String, Funnel)]]
+    val docs = result.rdd.collect.toList
 
     docs(0)._2.name should be ("signup")
     docs(0)._2.path should be (List("landingpage", "signup", "dashboard"))
     docs(0)._2.count should be (2)
   }
 
-  it should "match two steps" in withSparkContext { (sc, sqlContext) =>
+  it should "match two steps" in withSparkContext { ctx =>
     val algo = new FunnelAlgo
-    val input = sc.parallelize(List(
+    val input = ctx.sparkContext.parallelize(List(
       Event("1", "view", date2, props = Map(
         "item" -> JsString("landingpage"),
         "user" -> JsString("user1")
@@ -80,19 +80,19 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input, sqlContext, Array(
+    val result = algo.train(input, ctx, Array(
       "--name", "signup",
       "--steps", "landingpage,signup,dashboard"))
-    val docs = output.collect.toList.asInstanceOf[List[(String, Funnel)]]
+    val docs = result.rdd.collect.toList
 
     docs(0)._2.name should be ("signup")
     docs(0)._2.path should be (List("landingpage", "signup"))
     docs(0)._2.count should be (1)
   }
 
-  it should "match no steps" in withSparkContext { (sc, sqlContext) =>
+  it should "match no steps" in withSparkContext { ctx =>
     val algo = new FunnelAlgo
-    val input = sc.parallelize(List(
+    val input = ctx.sparkContext.parallelize(List(
       Event("1", "view", date1, props = Map(
         "item" -> JsString("foo"),
         "user" -> JsString("user1")
@@ -103,16 +103,16 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input, sqlContext, Array(
+    val result = algo.train(input, ctx, Array(
       "--name", "signup",
       "--steps", "landingpage,signup,dashboard"))
-    val docs = output.collect.toList
+    val docs = result.rdd.collect.toList
     docs.length should be (0)
   }
 
-  it should "remove contiguous duplicates" in withSparkContext { (sc, sqlContext) =>
+  it should "remove contiguous duplicates" in withSparkContext { ctx =>
     val algo = new FunnelAlgo
-    val input = sc.parallelize(List(
+    val input = ctx.sparkContext.parallelize(List(
       Event("1", "view", date1, props = Map(
         "item" -> JsString("landingpage"),
         "user" -> JsString("user1")
@@ -135,19 +135,19 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input, sqlContext, Array(
+    val result = algo.train(input, ctx, Array(
       "--name", "signup",
       "--steps", "landingpage,signup,dashboard"))
-    val docs = output.collect.toList.asInstanceOf[List[(String, Funnel)]]
+    val docs = result.rdd.collect.toList
 
     docs(0)._2.name should be ("signup")
     docs(0)._2.path should be (List("landingpage", "signup", "dashboard"))
     docs(0)._2.count should be (1)
   }
 
-  it should "parse args" in withSparkContext { (sc, sqlContext) =>
+  it should "parse args" in withSparkContext { ctx =>
     val algo = new FunnelAlgo
-    val input = sc.parallelize(List(
+    val input = ctx.sparkContext.parallelize(List(
       Event("1", "view", date1, props = Map(
         "item" -> JsString("foo"),
         "user" -> JsString("user1")
@@ -162,20 +162,20 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input, sqlContext, Array(
+    val result = algo.train(input, ctx, Array(
       "--name", "foobar",
       "--steps", "foo,bar,baz"))
-    val docs = output.collect.toList.asInstanceOf[List[(String, Funnel)]]
+    val docs = result.rdd.collect.toList
 
     docs(0)._2.name should be ("foobar")
     docs(0)._2.path should be (List("foo", "bar", "baz"))
     docs(0)._2.count should be (1)
   }
 
-  it should "fail with illegal args" in withSparkContext { (sc, sqlContext) =>
+  it should "fail with illegal args" in withSparkContext { ctx =>
     val algo = new FunnelAlgo
     the [java.lang.IllegalArgumentException] thrownBy {
-      algo.train(sc.parallelize(Nil), sqlContext, Array(
+      algo.train(ctx.sparkContext.parallelize(Nil), ctx, Array(
         "--hello", "foobar",
         "--world", "foo,bar,baz"))
     } should have message "Invalid arguments"

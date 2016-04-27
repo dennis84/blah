@@ -6,8 +6,9 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 import blah.core.FindOpt._
 
-class FunnelAlgo extends Algo {
+class FunnelAlgo extends Algo[Funnel] {
   def train(rdd: RDD[String], ctx: SQLContext, args: Array[String]) = {
+    import ctx.implicits._
     val config = (for {
       name <- args opt "name"
       steps <- args opt "steps" map (_ split ",")
@@ -55,7 +56,7 @@ class FunnelAlgo extends Algo {
         } getOrElse (Nil, 0)
       }
 
-    paths
+    val output = paths
       .filter(_._1.length > 0)
       .reduceByKey(_ + _)
       .map { case(path, count) =>
@@ -65,5 +66,7 @@ class FunnelAlgo extends Algo {
           .mkString
         (id, Funnel(config.name, path, count))
       }
+
+    Result(output, output.toDF)
   }
 }

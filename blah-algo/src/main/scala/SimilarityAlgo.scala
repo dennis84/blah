@@ -6,8 +6,9 @@ import org.apache.spark.sql.SQLContext
 import org.apache.spark.mllib.linalg.{Vectors, SparseVector}
 import org.apache.spark.mllib.linalg.distributed._
 
-class SimilarityAlgo extends Algo {
+class SimilarityAlgo extends Algo[Similarity] {
   def train(rdd: RDD[String], ctx: SQLContext, args: Array[String]) = {
+    import ctx.implicits._
     val reader = ctx.read.schema(SimilaritySchema())
     reader.json(rdd).registerTempTable("similarity")
     val events = ctx.sql("""|SELECT
@@ -51,7 +52,7 @@ class SimilarityAlgo extends Algo {
 
     val ord = Ordering[Double].reverse
 
-    usersRDD
+    val output = usersRDD
       .collect { case(Some(u), elems) =>
         val doc = Similarity(u, elems.flatMap {
           case SimilarityEvent(Some(user), Some(item)) => {
@@ -74,5 +75,7 @@ class SimilarityAlgo extends Algo {
 
         (u, doc)
       }
+
+    Result(output, output.toDF)
   }
 }

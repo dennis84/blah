@@ -7,9 +7,9 @@ import JsonProtocol._
 
 class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
 
-  "The SimilarityAlgo" should "train" in withSparkContext { (sc, sqlContext) =>
+  "The SimilarityAlgo" should "train" in withSparkContext { ctx =>
     val algo = new SimilarityAlgo
-    val input = sc.parallelize(List(
+    val input = ctx.sparkContext.parallelize(List(
       Event("1", "view", props = Map(
         "item" -> JsString("page1"),
         "user" -> JsString("user1")
@@ -32,8 +32,8 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input, sqlContext, Array.empty[String])
-    val docs = output.collect.toList.asInstanceOf[List[(String, Similarity)]]
+    val result = algo.train(input, ctx, Array.empty[String])
+    val docs = result.rdd.collect.toList
     docs foreach {
       case ("user1", data) =>
         val views = data.views
@@ -47,9 +47,9 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
     }
   }
 
-  it should "not fail with wrong data" in withSparkContext { (sc, sqlContext) =>
+  it should "not fail with wrong data" in withSparkContext { ctx =>
     val algo = new SimilarityAlgo
-    val input = sc.parallelize(List(
+    val input = ctx.sparkContext.parallelize(List(
       Event("1", "foo", props = Map(
         "x" -> JsString("bar")
       )).toJson.compactPrint,
@@ -59,7 +59,7 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
     ))
 
     val thrown = intercept[IllegalArgumentException] {
-      algo.train(input, sqlContext, Array.empty[String])
+      algo.train(input, ctx, Array.empty[String])
     }
 
     thrown.getMessage should be

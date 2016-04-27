@@ -5,16 +5,17 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 import blah.core.{UserAgent, UserAgentClassifier}
 
-class CountAlgo extends Algo {
+class CountAlgo extends Algo[Count] {
   def train(rdd: RDD[String], ctx: SQLContext, args: Array[String]) = {
+    import ctx.implicits._
     val reader = ctx.read.schema(CountSchema())
     reader.json(rdd).registerTempTable("count")
-    ctx.sql("""|SELECT
-               |  date,
-               |  collection,
-               |  props.item,
-               |  props.userAgent
-               |FROM count""".stripMargin)
+    val output = ctx.sql("""|SELECT
+                            |  date,
+                            |  collection,
+                            |  props.item,
+                            |  props.userAgent
+                            |FROM count""".stripMargin)
       .map(CountEvent(_))
       .map { event =>
         val ua = event.userAgent.map(UserAgent(_))
@@ -44,5 +45,6 @@ class CountAlgo extends Algo {
       }
       .reduceByKey(_ + _)
       .map { case((id, count), nb) => (id, count.copy(count = nb)) }
+    Result(output, output.toDF)
   }
 }

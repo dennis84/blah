@@ -8,8 +8,6 @@ import blah.core._
 import JsonProtocol._
 import RddKafkaWriter._
 
-object KafkaTest extends Tag("blah.algo.KafkaTest")
-
 /**
  * Start kafka:
  *
@@ -20,6 +18,7 @@ object KafkaTest extends Tag("blah.algo.KafkaTest")
  * bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic test
  * ```
  */
+@Ignore
 class RddKafkaWriterSpec extends FlatSpec with Matchers with SparkFun {
 
   val props = new Properties
@@ -27,14 +26,14 @@ class RddKafkaWriterSpec extends FlatSpec with Matchers with SparkFun {
   props.put("serializer.class", "kafka.serializer.DefaultEncoder")
   props.put("key.serializer.class", "kafka.serializer.StringEncoder")
 
-  "The RddKafkaWriter" should "write to kafka" taggedAs(KafkaTest) in withSparkContext { (sc, _) =>
-    val input = sc.parallelize(List("foo", "bar", "baz"))
+  "The RddKafkaWriter" should "write to kafka" in withSparkContext { ctx =>
+    val input = ctx.sparkContext.parallelize(List("foo", "bar", "baz"))
     input.writeToKafka(props, x =>
       new KeyedMessage[String, Array[Byte]]("test", null, x.getBytes))
   }
 
-  it should "write json" taggedAs(KafkaTest) in withSparkContext { (sc, sqlContext) =>
-    val input = sc.parallelize(List(
+  it should "write json" in withSparkContext { ctx =>
+    val input = ctx.sparkContext.parallelize(List(
       Event("1", "pageviews", props = Map(
         "item" -> JsString("page1")
       )).toJson.compactPrint,
@@ -42,7 +41,7 @@ class RddKafkaWriterSpec extends FlatSpec with Matchers with SparkFun {
         "item" -> JsString("page2")
       )).toJson.compactPrint))
 
-    val df = sqlContext.read.json(input)
+    val df = ctx.read.json(input)
     df.toJSON.writeToKafka(props, x =>
       new KeyedMessage[String, Array[Byte]]("test", null, x.getBytes))
   }
