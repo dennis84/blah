@@ -4,13 +4,13 @@ import akka.actor._
 
 class WebsocketHub(room: WebsocketRoom) extends Actor {
   def receive = {
-    case "count" =>
-      room.send("count", "[]")
-    case "similarity" =>
-      room.send("similarity", "[]")
-    case "user" =>
-      room.send("user", "[]")
-    case "funnel" =>
-      room.send("funnel", "[]")
+    case ("count", message) =>
+      room.send("count", message)
+    case ("similarity", message) =>
+      room.send("similarity", message)
+    case ("user", message) =>
+      room.send("user", message)
+    case ("funnel", message) =>
+      room.send("funnel", message)
   }
 }

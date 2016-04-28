@@ -14,7 +14,10 @@ import kafka.producer.KeyedMessage
 import blah.core.FindOpt._
 import RddKafkaWriter._
 
-class BatchJob[T](name: String, algo: Algo[T]) extends Job {
+class BatchJob[T](
+  name: String,
+  algo: Algo[T]
+) extends Job with java.io.Serializable {
   def run(
     config: Config,
     sparkConf: SparkConf,
@@ -34,11 +37,11 @@ class BatchJob[T](name: String, algo: Algo[T]) extends Job {
 
     val props = new Properties
     props.put("metadata.broker.list", config.getString("producer.broker.list"))
-    props.put("serializer.class", "kafka.serializer.DefaultEncoder")
+    props.put("serializer.class", "kafka.serializer.StringEncoder")
     props.put("key.serializer.class", "kafka.serializer.StringEncoder")
 
     output.df.toJSON.writeToKafka(props, x =>
-      new KeyedMessage[String, Array[Byte]]("trainings", null, x.getBytes))
+      new KeyedMessage[String, String]("trainings", s"$name@$x"))
 
     sc.stop
   }

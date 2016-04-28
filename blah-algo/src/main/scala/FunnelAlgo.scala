@@ -67,6 +67,6 @@ class FunnelAlgo extends Algo[Funnel] {
         (id, Funnel(config.name, path, count))
       }
 
-    Result(output, output.toDF)
+    Result(output, output.map(_._2).toDF)
   }
 }

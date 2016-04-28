@@ -45,6 +45,6 @@ class CountAlgo extends Algo[Count] {
       }
       .reduceByKey(_ + _)
       .map { case((id, count), nb) => (id, count.copy(count = nb)) }
-    Result(output, output.toDF)
+    Result(output, output.map(_._2).toDF)
   }
 }

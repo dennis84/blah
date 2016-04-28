@@ -76,6 +76,6 @@ class SimilarityAlgo extends Algo[Similarity] {
         (u, doc)
       }
 
-    Result(output, output.toDF)
+    Result(output, output.map(_._2).toDF)
   }
 }

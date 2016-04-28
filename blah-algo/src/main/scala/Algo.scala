@@ -4,7 +4,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.DataFrame
 
-trait Algo[T] {
+trait Algo[T] extends java.io.Serializable {
   def train(
     rdd: RDD[String],
     sqlContext: SQLContext,

@@ -33,6 +33,6 @@ class UserAlgo extends Algo[User] {
           events = userEvents)
         (u, doc)
       }
-    Result(output, output.toDF)
+    Result(output, output.map(_._2).toDF)
   }
 }
