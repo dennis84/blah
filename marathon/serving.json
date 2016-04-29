@@ -1,7 +1,7 @@
 {
   "id": "serving",
-  "cpus": 0.5,
-  "mem": 512.0,
+  "cpus": 1,
+  "mem": 1024.0,
   "instances": 1,
   "container": {
     "type": "DOCKER",
