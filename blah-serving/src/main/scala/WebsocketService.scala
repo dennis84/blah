@@ -11,7 +11,7 @@ class WebsocketService(
   import system.dispatcher
 
   def route = (get & path("ws")) {
-    handleWebsocketMessages(flow)
+    handleWebSocketMessages(flow)
   }
 
   def flow = Flow[Message]
