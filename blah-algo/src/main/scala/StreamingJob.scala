@@ -14,7 +14,10 @@ import kafka.producer.KeyedMessage
 import kafka.serializer.StringDecoder
 import RddKafkaWriter._
 
-class StreamingJob[T](name: String, algo: Algo[T]) extends Job {
+class StreamingJob[T](
+  name: String,
+  algo: Algo[T]
+) extends Job with java.io.Serializable {
   def run(
     config: Config,
     sparkConf: SparkConf,
