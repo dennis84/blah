@@ -24,7 +24,7 @@ class WebsocketRoom(system: ActorSystem) {
   def flow: Flow[String, String, Any] = {
     val sink = Sink.actorRef(actor, WebsocketRoom.Leave)
     val in = Flow[String].map(x => WebsocketRoom.Noop).to(sink)
-    val out = Source.actorRef(1, OverflowStrategy.fail)
+    val out = Source.actorRef(100, OverflowStrategy.fail)
       .mapMaterializedValue(actor ! WebsocketRoom.Join(_))
     Flow.fromSinkAndSource(in, out)
   }
