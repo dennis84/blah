@@ -39,8 +39,14 @@ function path(model, path) {
   return model
 }
 
+function theme(model) {
+  model.theme = 'dark' === model.theme ? 'light' : 'dark'
+  return model
+}
+
 export {
   widget,
   error,
-  path
+  path,
+  theme
 }
