@@ -8,7 +8,8 @@ function render(model, update, conn) {
       h('p.navbar-item', h('a.button.is-link', {href: '#/user'}, 'User Stats')),
       h('p.navbar-item', h('a.button.is-link', {href: '#/misc'}, 'Misc')),
       h('p.navbar-item', h('a.button.is-link', {href: '#/people'}, 'People')),
-      h('p.navbar-item', h('a.button.is-danger.is-outlined', {href: '#/segmentation'}, 'Segmentation'))
+      h('p.navbar-item', h('a.button.is-link', {href: '#/segmentation'}, 'Segmentation')),
+      h('p.navbar-item', h('a.button.is-danger.is-outlined', {href: '#/world-map'}, 'Map'))
     ]),
     h('div.navbar-right', [
       h('p.navbar-item', h('a.button.is-link', {

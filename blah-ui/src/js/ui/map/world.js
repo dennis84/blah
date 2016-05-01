@@ -6,10 +6,15 @@ import {mount} from '../../hook'
 function render(model, update, conn, options = {}) {
   return h('div.world-map', {
     mount: mount(node => {
-      var pins = []
-
       setTimeout(() => {
-        var map = new Datamap({element: node})
+        var map = new Datamap({
+          element: node,
+          geographyConfig: {
+            highlightOnHover: false,
+            popupOnHover: false
+          }
+        })
+
         map.addPlugin('pins', function(layer, data, options) {
           var self = this
           var svg = this.svg
@@ -39,7 +44,6 @@ function render(model, update, conn, options = {}) {
         })
 
         conn.on('user', d => {
-          //pins.push({user: d.user, lat: d.lat, lng: d.lng})
           map.pins([{user: d.user, lat: d.lat, lng: d.lng}])
         })
       }, 0)
