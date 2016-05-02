@@ -38,7 +38,8 @@ function render(model, update, conn, options = {}) {
               .attr('fill-opacity', 1)
               .ease('in')
               .transition()
-              .delay(12000)
+              .duration(20000)
+              .attr('fill-opacity', 0)
               .each('end', () => circle.remove())
           }
         })

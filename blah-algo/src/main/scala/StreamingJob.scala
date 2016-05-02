@@ -25,7 +25,8 @@ class StreamingJob[T](
   )(implicit ec: ExecutionContext) {
     sparkConf.set("es.write.operation", "upsert")
 
-    val ssc = new StreamingContext(sparkConf, Seconds(10))
+    val ssc = new StreamingContext(sparkConf,
+      Seconds(config.getInt("streaming.batch.interval")))
     val stream = KafkaUtils
       .createDirectStream[String, String, StringDecoder, StringDecoder](ssc,
         Map("metadata.broker.list" -> config.getString("consumer.broker.list")),
