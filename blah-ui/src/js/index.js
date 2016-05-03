@@ -12,7 +12,10 @@ import segmentation from './ui/segmentation'
 import worldMap from './ui/world-map'
 
 var conn = connect(SERVING_WS_URL)
-var model = {path: location.hash}
+var model = {
+  path: location.hash,
+  theme: 'light'
+}
 var renderFn = render.bind(null, update, conn)
 var loop = main(model, renderFn, document.body)
 

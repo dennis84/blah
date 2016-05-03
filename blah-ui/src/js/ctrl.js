@@ -39,6 +39,13 @@ function path(model, path) {
   return model
 }
 
+/**
+ * Toggle between light and dark theme.
+ *
+ * @param {Object} The global state
+ *
+ * @return {Object} The updated state
+ */
 function theme(model) {
   model.theme = 'dark' === model.theme ? 'light' : 'dark'
   return model

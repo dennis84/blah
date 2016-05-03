@@ -6,7 +6,8 @@ import {mount} from '../../hook'
 function render(model, update, conn, options = {}) {
   return h('div.world-map', {
     mount: mount(node => {
-      setTimeout(() => {
+      setTimeout(function draw() {
+        node.innerHTML = ''
         var map = new Datamap({
           element: node,
           geographyConfig: {
@@ -47,6 +48,8 @@ function render(model, update, conn, options = {}) {
         conn.on('user', d => {
           map.pins([{user: d.user, lat: d.lat, lng: d.lng}])
         })
+
+        window.addEventListener('resize', draw)
       }, 0)
     })
   })
