@@ -53,10 +53,10 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val result = algo.train(input, ctx, Array(
+    val output = algo.train(input, ctx, Array(
       "--name", "signup",
       "--steps", "landingpage,signup,dashboard"))
-    val docs = result.rdd.collect.toList
+    val docs = output.collect.toList
 
     docs(0)._2.name should be ("signup")
     docs(0)._2.path should be (List("landingpage", "signup", "dashboard"))
@@ -80,10 +80,10 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val result = algo.train(input, ctx, Array(
+    val output = algo.train(input, ctx, Array(
       "--name", "signup",
       "--steps", "landingpage,signup,dashboard"))
-    val docs = result.rdd.collect.toList
+    val docs = output.collect.toList
 
     docs(0)._2.name should be ("signup")
     docs(0)._2.path should be (List("landingpage", "signup"))
@@ -103,10 +103,10 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val result = algo.train(input, ctx, Array(
+    val output = algo.train(input, ctx, Array(
       "--name", "signup",
       "--steps", "landingpage,signup,dashboard"))
-    val docs = result.rdd.collect.toList
+    val docs = output.collect.toList
     docs.length should be (0)
   }
 
@@ -135,10 +135,10 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val result = algo.train(input, ctx, Array(
+    val output = algo.train(input, ctx, Array(
       "--name", "signup",
       "--steps", "landingpage,signup,dashboard"))
-    val docs = result.rdd.collect.toList
+    val docs = output.collect.toList
 
     docs(0)._2.name should be ("signup")
     docs(0)._2.path should be (List("landingpage", "signup", "dashboard"))
@@ -162,10 +162,10 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val result = algo.train(input, ctx, Array(
+    val output = algo.train(input, ctx, Array(
       "--name", "foobar",
       "--steps", "foo,bar,baz"))
-    val docs = result.rdd.collect.toList
+    val docs = output.collect.toList
 
     docs(0)._2.name should be ("foobar")
     docs(0)._2.path should be (List("foo", "bar", "baz"))

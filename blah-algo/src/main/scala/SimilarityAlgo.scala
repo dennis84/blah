@@ -52,7 +52,7 @@ class SimilarityAlgo extends Algo[Similarity] {
 
     val ord = Ordering[Double].reverse
 
-    val output = usersRDD
+    usersRDD
       .collect { case(Some(u), elems) =>
         val doc = Similarity(u, elems.flatMap {
           case SimilarityEvent(Some(user), Some(item)) => {
@@ -75,7 +75,5 @@ class SimilarityAlgo extends Algo[Similarity] {
 
         (u, doc)
       }
-
-    Result(output, output.map(_._2).toDF)
   }
 }

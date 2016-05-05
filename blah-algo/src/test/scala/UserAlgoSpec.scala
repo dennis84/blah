@@ -22,8 +22,8 @@ class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val result = algo.train(input, ctx, Array.empty[String])
-    val users = result.rdd.collect.toList
+    val output = algo.train(input, ctx, Array.empty[String])
+    val users = output.collect.toList
     users.length should be (1)
     val events = users(0)._2.events
     events(0).title should be (Some("title2"))

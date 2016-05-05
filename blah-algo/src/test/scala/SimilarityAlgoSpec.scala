@@ -32,8 +32,8 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val result = algo.train(input, ctx, Array.empty[String])
-    val docs = result.rdd.collect.toList
+    val output = algo.train(input, ctx, Array.empty[String])
+    val docs = output.collect.toList
     docs foreach {
       case ("user1", data) =>
         val views = data.views

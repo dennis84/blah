@@ -10,12 +10,12 @@ class CountAlgo extends Algo[Count] {
     import ctx.implicits._
     val reader = ctx.read.schema(CountSchema())
     reader.json(rdd).registerTempTable("count")
-    val output = ctx.sql("""|SELECT
-                            |  date,
-                            |  collection,
-                            |  props.item,
-                            |  props.userAgent
-                            |FROM count""".stripMargin)
+    ctx.sql("""|SELECT
+               |  date,
+               |  collection,
+               |  props.item,
+               |  props.userAgent
+               |FROM count""".stripMargin)
       .map(CountEvent(_))
       .map { event =>
         val ua = event.userAgent.map(UserAgent(_))
@@ -45,6 +45,5 @@ class CountAlgo extends Algo[Count] {
       }
       .reduceByKey(_ + _)
       .map { case((id, count), nb) => (id, count.copy(count = nb)) }
-    Result(output, output.map(_._2).toDF)
   }
 }

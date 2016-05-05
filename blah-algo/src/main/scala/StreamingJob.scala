@@ -2,6 +2,8 @@ package blah.algo
 
 import java.util.Properties
 import scala.concurrent.ExecutionContext
+import scala.reflect.ClassTag
+import scala.reflect.runtime.universe.TypeTag
 import scala.util.{Success, Failure}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext
@@ -14,10 +16,10 @@ import kafka.producer.KeyedMessage
 import kafka.serializer.StringDecoder
 import RddKafkaWriter._
 
-class StreamingJob[T](
+class StreamingJob[T <: Product : TypeTag](
   name: String,
   algo: Algo[T]
-) extends Job with java.io.Serializable {
+)(implicit ct: ClassTag[T]) extends Job with java.io.Serializable {
   def run(
     config: Config,
     sparkConf: SparkConf,
@@ -37,7 +39,7 @@ class StreamingJob[T](
       val output = algo.train(rdd, sqlContext, args)
       import sqlContext.implicits._
 
-      output.rdd map { case (id, doc: Any) =>
+      output map { case (id, doc: Any) =>
         Map(ID -> id) -> doc
       } saveToEsWithMeta s"blah/$name"
 
@@ -46,7 +48,7 @@ class StreamingJob[T](
       props.put("serializer.class", "kafka.serializer.StringEncoder")
       props.put("key.serializer.class", "kafka.serializer.StringEncoder")
 
-      output.df.toJSON.writeToKafka(props, x =>
+      output.map(_._2).toDF.toJSON.writeToKafka(props, x =>
         new KeyedMessage[String, String]("trainings", s"$name@$x"))
     }
 

@@ -8,13 +8,13 @@ class UserAlgo extends Algo[User] {
     import ctx.implicits._
     val reader = ctx.read.schema(UserSchema())
     reader.json(rdd).registerTempTable("event")
-    val output = ctx.sql("""|SELECT
-                            |  date,
-                            |  props.user AS user,
-                            |  props.item,
-                            |  props.title,
-                            |  props.ip
-                            |FROM event""".stripMargin)
+    ctx.sql("""|SELECT
+               |  date,
+               |  props.user AS user,
+               |  props.item,
+               |  props.title,
+               |  props.ip
+               |FROM event""".stripMargin)
       .filter("user is not null")
       .map(UserEvent(_))
       .groupBy(_.user)
@@ -33,6 +33,5 @@ class UserAlgo extends Algo[User] {
           events = userEvents)
         (u, doc)
       }
-    Result(output, output.map(_._2).toDF)
   }
 }

@@ -56,7 +56,7 @@ class FunnelAlgo extends Algo[Funnel] {
         } getOrElse (Nil, 0)
       }
 
-    val output = paths
+    paths
       .filter(_._1.length > 0)
       .reduceByKey(_ + _)
       .map { case(path, count) =>
@@ -66,7 +66,5 @@ class FunnelAlgo extends Algo[Funnel] {
           .mkString
         (id, Funnel(config.name, path, count))
       }
-
-    Result(output, output.map(_._2).toDF)
   }
 }
