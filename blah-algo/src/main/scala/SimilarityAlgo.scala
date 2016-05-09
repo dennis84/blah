@@ -25,44 +25,41 @@ class SimilarityAlgo extends Algo[Similarity] {
     val itemsRDD = events.groupBy(_.item)
     val items = itemsRDD.keys.collect.toList.flatten
 
-    val views = events
-      .collect { case SimilarityEvent(Some(user), Some(item)) =>
-        (users.indexOf(user), items.indexOf(item))
-      }
+    val itemsByUser = usersRDD collect { case(Some(user), events) =>
+      (users.indexOf(user), events collect {
+        case SimilarityEvent(_, Some(item)) => items.indexOf(item)
+      })
+    }
 
-    val rows = views.map { case (user, item) =>
-      (user, (item, 5.0))
-    }.groupByKey().map { case (user, itemsByUser) =>
-      val xs = itemsByUser.groupBy(_._1).map { case(i, group) =>
-        val r = group.reduce((a, b) => a)
-        (i, r._2)
-      }.toArray
-      Vectors.sparse(items.length, xs.map(_._1), xs.map(_._2))
+    val rows = itemsByUser map { case(_, indices) =>
+      Vectors.sparse(
+        items.length,
+        indices.toArray,
+        indices.map(_ => 5.0).toArray)
     }
 
     val mat = new RowMatrix(rows)
     val sim = mat.columnSimilarities(0.1)
 
-    val all = sim.toIndexedRowMatrix.rows.flatMap { case IndexedRow(i,v) =>
-      val vector = v.asInstanceOf[SparseVector]
-      vector.indices.zip(vector.values).flatMap { case (j,s) =>
-        Seq((i.toInt,(j,s)), (j,(i.toInt,s)))
-      }
+    val data = sim.toIndexedRowMatrix.rows.flatMap {
+      case IndexedRow(i, SparseVector(length, indices, values)) =>
+        indices.zip(values).flatMap { case (j,s) =>
+          Seq((i.toInt,(j,s)), (j,(i.toInt,s)))
+        }
     }.groupByKey.collectAsMap
 
     val ord = Ordering[Double].reverse
 
     usersRDD
-      .collect { case(Some(u), elems) =>
-        val doc = Similarity(u, elems.flatMap {
-          case SimilarityEvent(Some(user), Some(item)) => {
-            all.get(items.indexOf(item)) getOrElse Nil
-          }
+      .collect { case(Some(u), itemsByUser) =>
+        val elems = itemsByUser flatMap {
+          case SimilarityEvent(_, Some(item)) =>
+            data get (items indexOf item) getOrElse Nil
         }
+
+        val filtered = elems
           .map(x => (items(x._1), x._2))
-          .filterNot(x => {
-            elems.find(y => y.item.get == x._1).isDefined
-          })
+          .filterNot(x => itemsByUser.find(y => y.item.get == x._1).isDefined)
           .groupBy(_._1)
           .mapValues(x => x.max)
           .values
@@ -71,9 +68,8 @@ class SimilarityAlgo extends Algo[Similarity] {
           .take(10)
           .collect {
             case(item, score) => SimilarityItem(item, score)
-          })
-
-        (u, doc)
+          }
+        (u, Similarity(u, filtered))
       }
   }
 }
