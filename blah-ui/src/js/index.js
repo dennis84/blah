@@ -3,6 +3,7 @@ import virtualDom from 'virtual-dom'
 import main from './main'
 import {SERVING_WS_URL} from './config'
 import connect from './connection'
+import Storage from './storage'
 import * as ctrl from './ctrl'
 import pageviews from './ui/pageviews'
 import user from './ui/user'
@@ -12,11 +13,12 @@ import segmentation from './ui/segmentation'
 import worldMap from './ui/world-map'
 
 var conn = connect(SERVING_WS_URL)
+var storage = new Storage(window.localStorage)
 var model = {
   path: location.hash,
-  theme: 'light'
+  theme: storage.get('settings', {}).theme || 'light'
 }
-var renderFn = render.bind(null, update, conn)
+var renderFn = render.bind(null, update, conn, storage)
 var loop = main(model, renderFn, document.body)
 
 function update(action, ...args) {

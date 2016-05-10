@@ -1,7 +1,7 @@
 import {h} from 'virtual-dom'
 import {theme} from '../ctrl'
 
-function render(model, update, conn) {
+function render(model, update, conn, storage) {
   return h('nav.navbar', [
     h('div.navbar-left', [
       h('p.navbar-item', h('a.button.is-link', {href: '#/pageviews'}, 'Pageviews')),
@@ -13,7 +13,7 @@ function render(model, update, conn) {
     ]),
     h('div.navbar-right', [
       h('p.navbar-item', h('a.button.is-link', {
-        onclick: node => update('theme')
+        onclick: node => update('theme', storage)
       }, h('i.material-icons', 'color_lens')))
     ])
   ])

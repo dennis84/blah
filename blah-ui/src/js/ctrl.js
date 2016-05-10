@@ -46,8 +46,9 @@ function path(model, path) {
  *
  * @return {Object} The updated state
  */
-function theme(model) {
+function theme(model, storage) {
   model.theme = 'dark' === model.theme ? 'light' : 'dark'
+  storage.set('settings', {theme: model.theme})
   return model
 }
 
