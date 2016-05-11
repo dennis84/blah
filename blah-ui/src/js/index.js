@@ -1,8 +1,10 @@
 import 'babel-polyfill'
 import virtualDom from 'virtual-dom'
+import xtend from 'xtend'
 import main from './main'
 import {SERVING_WS_URL} from './config'
 import connect from './connection'
+import bindAppend from './bind-append'
 import Storage from './storage'
 import * as ctrl from './ctrl'
 import pageviews from './ui/pageviews'
@@ -14,11 +16,13 @@ import worldMap from './ui/world-map'
 
 var conn = connect(SERVING_WS_URL)
 var storage = new Storage(window.localStorage)
-var model = {
+
+var model = xtend({
   path: location.hash,
-  theme: storage.get('settings', {}).theme || 'light'
-}
-var renderFn = render.bind(null, update, conn, storage)
+  theme: 'light'
+}, storage.get('settings'))
+
+var renderFn = bindAppend(render, null, update, conn, storage)
 var loop = main(model, renderFn, document.body)
 
 function update(action, ...args) {

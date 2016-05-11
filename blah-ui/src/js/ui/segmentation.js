@@ -5,7 +5,7 @@ import line from './count/line'
 import * as error from './common/error'
 import theme from './theme'
 
-function render(update, conn, storage, model) {
+function render(model, update, conn, storage) {
   return h('div.container', {
     theme: theme(model)
   }, [
