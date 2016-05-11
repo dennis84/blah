@@ -6,8 +6,8 @@ val res = Seq(
 
 val deps = Seq(
   "org.scalatest"                   % "scalatest_2.11"                         % "2.2.6" % "test",
-  "com.typesafe.akka"              %% "akka-actor"                             % "2.4.1",
-  "com.typesafe.akka"              %% "akka-testkit"                           % "2.4.1",
+  "com.typesafe.akka"              %% "akka-actor"                             % "2.4.4",
+  "com.typesafe.akka"              %% "akka-testkit"                           % "2.4.4",
   "com.typesafe.akka"              %% "akka-stream"                            % "2.4.4",
   "com.typesafe.akka"              %% "akka-stream-testkit"                    % "2.4.4",
   "com.typesafe.akka"              %% "akka-http-core"                         % "2.4.4",
@@ -18,8 +18,8 @@ val deps = Seq(
   "org.apache.spark"               %% "spark-streaming"                        % "1.6.1" % "provided",
   "org.apache.spark"               %% "spark-streaming-kafka"                  % "1.6.1",
   "org.apache.spark"               %% "spark-mllib"                            % "1.6.1",
-  "org.elasticsearch"              %% "elasticsearch-spark"                    % "2.2.0",
-  "com.softwaremill.reactivekafka" %% "reactive-kafka-core"                    % "0.8.5",
+  "org.elasticsearch"              %% "elasticsearch-spark"                    % "2.3.1",
+  "com.softwaremill.reactivekafka" %% "reactive-kafka-core"                    % "0.8.7",
   "org.clojars.timewarrior"         % "ua-parser"                              % "1.3.0",
   "net.virtual-void"               %% "json-lenses"                            % "0.6.1",
   "com.maxmind.geoip2"              % "geoip2"                                 % "2.5.0"

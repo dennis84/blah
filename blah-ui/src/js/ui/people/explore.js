@@ -1,14 +1,27 @@
 import {h} from 'virtual-dom'
 import moment from 'moment'
 import {mount} from '../../hook'
-import {search} from './ctrl'
+import {search, open} from './ctrl'
 import debounce from 'debounce'
 
-function views(xs) {
+function views(xs, update) {
   if(undefined === xs || 0 == xs.length) return
-  return h('div.list', xs.map((user) => {
-    return h('div.list-item', [
-      h('div', user.user)
+  return h('div.people-list', xs.map(user => {
+    return h('div.card.is-fullwidth', [
+      h('header.card-header', [
+        h('p.card-header-title', user.user),
+        h('a.card-header-icon', {
+          onclick: node => update(open, user)
+        }, h('i.material-icons', 'expand_more'))
+      ]),
+      user.opened ? h('div', user.events.map(evt => [
+        h('div.level.event', [
+          h('div.level-left', [
+            h('div.level-item', h('span.tag.is-primary', moment(evt.date).calendar())),
+            h('div.level-item', evt.title)
+          ])
+        ])
+      ])) : null
     ])
   }))
 }
@@ -33,7 +46,7 @@ function render(model, update, options = {}) {
         }, 500)
       })
     ]),
-    views(model.users)
+    views(model.users, update)
   ])
 }
 

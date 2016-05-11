@@ -10,7 +10,7 @@ function render(model, update, conn, storage) {
     theme: theme(model)
   }, [
     nav(model, update, conn, storage),
-    h('h1.is-text-centered', 'World Map'),
+    h('h1.has-text-centered', 'World Map'),
     (model.error) ? error.unknown() : widget(world, model, update, {}, conn)
   ])
 }

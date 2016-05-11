@@ -24,6 +24,28 @@ function search(model, options = {}) {
   })
 }
 
+/**
+ * Sets the `opened` flag in the model.
+ *
+ * @param {Object} The widget state
+ * @param {Object} The user
+ *
+ * @return {Object} The updated model
+ */
+function open(model, user) {
+  var m = clone(model)
+  for(var i in model.users) {
+    if(model.users[i] == user) {
+      m.users[i].opened = !user.opened
+    } else {
+      m.users[i].opened = false
+    }
+  }
+
+  return m
+}
+
 export {
-  search
+  search,
+  open
 }

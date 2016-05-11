@@ -15,7 +15,7 @@ function chart(model) {
   })
 
   return [
-    h('div.is-text-centered', data.map((d,i) => {
+    h('div.has-text-centered', data.map((d,i) => {
       return h('span.tag', {
         className: 'is-colored-' + String.fromCharCode(i + 97)
       }, d.key)

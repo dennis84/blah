@@ -10,7 +10,7 @@ function render(model, update, conn, storage) {
     theme: theme(model)
   }, [
     nav(model, update, conn, storage),
-    h('h1.is-text-centered', 'Pageviews'),
+    h('h1.has-text-centered', 'Pageviews'),
     (model.error) ? error.unknown() : masonry({
       className: 'widgets',
       itemSelector: '.widget'

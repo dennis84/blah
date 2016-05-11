@@ -10,7 +10,7 @@ function render(model, update, conn, storage) {
     theme: theme(model)
   }, [
     nav(model, update, conn, storage),
-    h('h1.is-text-centered', 'Segmentation'),
+    h('h1.has-text-centered', 'Segmentation'),
     (model.error) ? error.unknown() : widget(line, model, update, {
       builder: {
         groups: [
