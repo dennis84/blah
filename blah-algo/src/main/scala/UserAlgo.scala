@@ -30,7 +30,8 @@ class UserAlgo extends Algo[User] {
           countryCode = geo.map(_.countryCode).flatten.getOrElse("N/A"),
           city = geo.map(_.city).flatten.getOrElse("N/A"),
           zipCode = geo.map(_.zipCode).flatten.getOrElse("N/A"),
-          events = userEvents)
+          events = userEvents,
+          nbEvents = events.size)
         (u, doc)
       }
   }

@@ -9,4 +9,5 @@ case class User(
   countryCode: String,
   city: String,
   zipCode: String,
-  events: List[UserEvent])
+  events: List[UserEvent],
+  nbEvents: Int)

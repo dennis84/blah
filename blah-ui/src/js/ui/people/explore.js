@@ -14,14 +14,23 @@ function views(xs, update) {
           onclick: node => update(open, user)
         }, h('i.material-icons', 'expand_more'))
       ]),
-      user.opened ? h('div', user.events.map(evt => [
-        h('div.level.event', [
+      user.opened ? h('div.card-content', [
+        h('div.media', [
+          h('div.media-left', h('i.material-icons', 'face')),
+          h('div.media-content', [
+            h('p.title.is-5', user.user),
+            h('p.subtitle.is-6', `Country: ${user.country}`),
+            h('p.subtitle.is-6', `City: ${user.city}`),
+            h('p.subtitle.is-6', `Number of events: ${user.nbEvents}`)
+          ])
+        ]),
+        user.events.map(evt => h('div.level.event', [
           h('div.level-left', [
             h('div.level-item', h('span.tag.is-primary', moment(evt.date).calendar())),
             h('div.level-item', evt.title)
           ])
-        ])
-      ])) : null
+        ]))
+      ]) : null
     ])
   }))
 }

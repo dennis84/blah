@@ -17,4 +17,5 @@ case class User(
   countryCode: String,
   city: String,
   zipCode: String,
-  events: List[UserEvent] = Nil)
+  events: List[UserEvent] = Nil,
+  nbEvents: Int = 0)

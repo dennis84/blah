@@ -78,7 +78,8 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
               ("title" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
               ("date" -> ("type" -> "date") ~ ("format" -> "dateOptionalTime")) ~
               ("ip" -> ("type" -> "string") ~ ("index" -> "not_analyzed"))
-            )))) ~
+            )) ~
+          ("nbEvents" -> ("type" -> "integer")))) ~
       ("funnel" ->
         ("properties" ->
           ("name" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
