@@ -7,9 +7,16 @@ function render(model, update, conn, options = {}) {
   return h('div.world-map', {
     mount: mount(node => {
       setTimeout(function draw() {
+        var ratio = 750 / 500
+        var width = node.offsetWidth
+        var height = width / ratio
         node.innerHTML = ''
+
         var map = new Datamap({
           element: node,
+          projection: 'mercator',
+          width: width,
+          height: height,
           geographyConfig: {
             highlightOnHover: false,
             popupOnHover: false
