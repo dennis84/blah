@@ -32,10 +32,11 @@ class SimilarityAlgo extends Algo[Similarity] {
     }
 
     val rows = itemsByUser map { case(_, indices) =>
+      val distinctIndices = indices.toArray.distinct
       Vectors.sparse(
         items.length,
-        indices.toArray,
-        indices.map(_ => 5.0).toArray)
+        distinctIndices,
+        distinctIndices.map(_ => 5.0))
     }
 
     val mat = new RowMatrix(rows)

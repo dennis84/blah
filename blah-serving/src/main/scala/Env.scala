@@ -63,6 +63,7 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
       ("user" ->
         ("properties" ->
           ("user" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("email" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("ip" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("lng" -> ("type" -> "double")) ~
           ("lat" -> ("type" -> "double")) ~

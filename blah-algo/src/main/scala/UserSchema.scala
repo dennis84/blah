@@ -7,6 +7,7 @@ object UserSchema {
     StructField("date", StringType, true),
     StructField("props", StructType(Array(
       StructField("user", StringType, true),
+      StructField("email", StringType, true),
       StructField("item", StringType, true),
       StructField("title", StringType, true),
       StructField("ip", StringType, true))), true)))

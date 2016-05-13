@@ -71,10 +71,11 @@ make_pageview() {
   printf '{
     "item":"%s",
     "title": "%s",
-    "user":"%s",
+    "user": "%s",
+    "email": "d.dietrich84+blah-%s@gmail.com",
     "ip": "%s",
-    "userAgent":"%s"
-  }' "$(rand_item)" "$(rand_title)" "$(rand_user)" "$(rand_ip)" "$(rand_ua)"
+    "userAgent": "%s"
+  }' "$(rand_item)" "$(rand_title)" "$(rand_user)" "$(rand_user)" "$(rand_ip)" "$(rand_ua)"
 }
 
 make_purchase() {

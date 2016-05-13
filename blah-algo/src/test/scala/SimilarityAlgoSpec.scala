@@ -14,19 +14,27 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
         "item" -> JsString("page1"),
         "user" -> JsString("user1")
       )).toJson.compactPrint,
-      Event("1", "view", props = Map(
-        "item" -> JsString("page2"),
+      Event("2", "view", props = Map(
+        "item" -> JsString("page1"),
         "user" -> JsString("user1")
       )).toJson.compactPrint,
-      Event("2", "view", props = Map(
-        "item" -> JsString("page3"),
+      Event("3", "view", props = Map(
+        "item" -> JsString("page1"),
         "user" -> JsString("user1")
       )).toJson.compactPrint,
       Event("4", "view", props = Map(
+        "item" -> JsString("page2"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("5", "view", props = Map(
+        "item" -> JsString("page3"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("6", "view", props = Map(
         "item" -> JsString("page1"),
         "user" -> JsString("user2")
       )).toJson.compactPrint,
-      Event("5", "view", props = Map(
+      Event("7", "view", props = Map(
         "item" -> JsString("page4"),
         "user" -> JsString("user2")
       )).toJson.compactPrint

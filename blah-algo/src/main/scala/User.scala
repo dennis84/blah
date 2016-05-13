@@ -2,6 +2,7 @@ package blah.algo
 
 case class User(
   user: String,
+  email: String,
   date: String,
   lng: Double,
   lat: Double,

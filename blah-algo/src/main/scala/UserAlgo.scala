@@ -10,7 +10,8 @@ class UserAlgo extends Algo[User] {
     reader.json(rdd).registerTempTable("event")
     ctx.sql("""|SELECT
                |  date,
-               |  props.user AS user,
+               |  props.user,
+               |  props.email,
                |  props.item,
                |  props.title,
                |  props.ip
@@ -23,6 +24,7 @@ class UserAlgo extends Algo[User] {
         val userEvents = (events takeRight 20).toList.reverse
         val doc = User(
           user = u,
+          email = events.last.email.getOrElse("N/A"),
           date = events.last.date,
           lng = geo.map(_.lng).getOrElse(0),
           lat = geo.map(_.lat).getOrElse(0),

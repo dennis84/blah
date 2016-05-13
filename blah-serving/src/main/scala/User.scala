@@ -10,6 +10,7 @@ case class UserEvent(
 
 case class User(
   user: String,
+  email: String,
   date: ZonedDateTime,
   lng: Double,
   lat: Double,
