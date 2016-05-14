@@ -11,10 +11,10 @@
   "shell": false,
   "command": "similarity",
   "environmentVariables": [
-    {"name": "KAFKA_URL", "value": "192.168.99.100:31000"},
-    {"name": "ZOOKEEPER_URL", "value": "192.168.99.100:2181"},
+    {"name": "KAFKA_URL", "value": "$BLAH_HOST:31000"},
+    {"name": "ZOOKEEPER_URL", "value": "$BLAH_HOST:2181"},
     {"name": "HADOOP_URL", "value": "hdfs://namenode.marathon.mesos:8020"},
     {"name": "ELASTICSEARCH_URL", "value": "elasticsearch.marathon.mesos:9200"},
-    {"name": "SPARK_MASTER", "value": "mesos://zk://192.168.99.100:2181/mesos"}
+    {"name": "SPARK_MASTER", "value": "mesos://zk://$BLAH_HOST:2181/mesos"}
   ]
 }

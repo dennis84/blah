@@ -1,8 +1,9 @@
 create_job() {
   declare name="$1"
   echo "Create $name job"
-  curl -s -o /dev/null -H "Content-Type: application/json" \
-    -d "@chronos/${name}.json" http://$BLAH_HOST:8081/scheduler/iso8601
+  cat "chronos/${name}.json" | sed "s/\$BLAH_HOST/$BLAH_HOST/" | \
+    curl -s -o /dev/null -H "Content-Type: application/json" \
+    -d @- http://$BLAH_HOST:8081/scheduler/iso8601
 }
 
 destroy_job() {

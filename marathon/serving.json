@@ -14,8 +14,8 @@
     }
   },
   "env": {
-    "ZOOKEEPER_URL": "192.168.99.100:2181",
-    "KAFKA_URL": "192.168.99.100:31000",
+    "ZOOKEEPER_URL": "$BLAH_HOST:2181",
+    "KAFKA_URL": "$BLAH_HOST:31000",
     "ELASTICSEARCH_URL": "elasticsearch.marathon.mesos:9200"
   }
 }

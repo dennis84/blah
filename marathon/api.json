@@ -1,7 +1,7 @@
 {
   "id": "api",
   "cpus": 0.1,
-  "mem": 128.0,
+  "mem": 512.0,
   "instances": 1,
   "container": {
     "type": "DOCKER",
@@ -14,7 +14,7 @@
     }
   },
   "env": {
-    "KAFKA_URL": "192.168.99.100:31000",
+    "KAFKA_URL": "$BLAH_HOST:31000",
     "HADOOP_URL": "hdfs://namenode.marathon.mesos:8020"
   }
 }

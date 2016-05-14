@@ -45,6 +45,8 @@ build_images() {
   docker build -t blah/spark-mesos docker/blah-spark-mesos/
   docker build -t blah/zookeeper docker/blah-zookeeper/
   docker build -t blah/java docker/blah-java/
+  docker build -t blah/mesos-master docker/blah-mesos-master
+  docker build -t blah/mesos-slave docker/blah-mesos-slave
 }
 
 build_ui() {
@@ -120,6 +122,16 @@ create_sample_data() {
   echo -ne '\n'
 }
 
+run_env() {
+  if [[ ! -z "$DOCKER_MACHINE_NAME" ]]; then
+    print_setenv BLAH_HOST "$(docker-machine ip $DOCKER_MACHINE_NAME)"
+  else
+    print_setenv BLAH_HOST 172.17.42.1
+  fi
+
+  print_setenv BLAH_DOCKER_BIN "$(which docker)"
+}
+
 main() {
   set -eo pipefail
 
@@ -128,17 +140,20 @@ main() {
   source "$(dirname "$0")/kafka.sh"
   source "$(dirname "$0")/marathon.sh"
   source "$(dirname "$0")/samples.sh"
+  
+  local cmd="$1"; shift || true
 
-  if [[ ! -z "$DOCKER_MACHINE_NAME" ]]; then
-    export BLAH_HOST="$(docker-machine ip $DOCKER_MACHINE_NAME)"
-  fi
+  [[ "env" == "$cmd" ]] && run_env && exit
 
   if [[ -z "$BLAH_HOST" ]]; then
     echo "Error: \$BLAH_HOST is not set."
+    echo "Run this command to configure your shell."
+    case $SHELL in
+      */fish) echo 'eval (bin/console env)'; ;;
+      *)      echo 'eval $(bin/console env)'; ;;
+    esac
     exit 1
   fi
-
-  local cmd="$1"; shift || true
 
   case "$cmd" in
     build-apps)
@@ -206,6 +221,7 @@ main() {
       echo "  run-job NAME                Run a chronos job"
       echo "  restart NAME                Compile and recreate an application"
       echo "  samples [nb] [collection]   Create some sample data"
+      echo "  env                         Set env vars"
       exit 1
   esac
 }

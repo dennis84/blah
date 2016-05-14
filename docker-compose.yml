@@ -12,51 +12,50 @@ services:
     network_mode: host
 
   mesos:
-    image: mesosphere/mesos-master:0.28.1-2.0.20.ubuntu1404
+    image: blah/mesos-master
     network_mode: host
     environment:
-      MESOS_ZK: "zk://192.168.99.100:2181/mesos"
-      MESOS_HOSTNAME: 192.168.99.100
-      MESOS_IP: 192.168.99.100
+      MESOS_ZK: "zk://$BLAH_HOST:2181/mesos"
+      MESOS_HOSTNAME: $BLAH_HOST
+      MESOS_IP: $BLAH_HOST
       MESOS_QUORUM: 1
       MESOS_WORK_DIR: /var/lib/mesos
       MESOS_LOG_DIR: /var/log/mesos
 
   slave1:
-    image: mesosphere/mesos-slave:0.28.1-2.0.20.ubuntu1404
+    image: blah/mesos-slave
     network_mode: host
     pid: host
     privileged: true
     environment:
-      MESOS_MASTER: "zk://192.168.99.100:2181/mesos"
-      MESOS_HOSTNAME: 192.168.99.100
-      MESOS_IP: 192.168.99.100
+      MESOS_MASTER: "zk://$BLAH_HOST:2181/mesos"
+      MESOS_HOSTNAME: $BLAH_HOST
+      MESOS_IP: $BLAH_HOST
       MESOS_PORT: 5051
       MESOS_EXECUTOR_REGISTRATION_TIMEOUT: "5mins"
       MESOS_CONTAINERIZERS: "docker,mesos"
       MESOS_ISOLATION: "cgroups/cpu,cgroups/mem"
-      MESOS_RESOURCES: "cpus:2;mem:3062;disk:10000;ports(*):[31000-31100]"
+      MESOS_RESOURCES: "cpus:2;mem:4096;disk:10000;ports(*):[31000-31100]"
       MESOS_LOG_DIR: /var/log/mesos
     volumes:
       - /proc:/host/proc:ro
       - /sys/fs/cgroup:/sys/fs/cgroup
       - /var/run/docker.sock:/var/run/docker.sock
-      - /usr/local/bin/docker:/usr/bin/docker:ro
 
   slave2:
-    image: mesosphere/mesos-slave:0.28.1-2.0.20.ubuntu1404
+    image: blah/mesos-slave
     network_mode: host
     pid: host
     privileged: true
     environment:
-      MESOS_MASTER: "zk://192.168.99.100:2181/mesos"
-      MESOS_HOSTNAME: 192.168.99.100
-      MESOS_IP: 192.168.99.100
+      MESOS_MASTER: "zk://$BLAH_HOST:2181/mesos"
+      MESOS_HOSTNAME: $BLAH_HOST
+      MESOS_IP: $BLAH_HOST
       MESOS_PORT: 5052
       MESOS_EXECUTOR_REGISTRATION_TIMEOUT: "5mins"
       MESOS_CONTAINERIZERS: "docker,mesos"
       MESOS_ISOLATION: "cgroups/cpu,cgroups/mem"
-      MESOS_RESOURCES: "cpus:2;mem:3062;disk:10000;ports(*):[31000-31100]"
+      MESOS_RESOURCES: "cpus:2;mem:4096;disk:10000;ports(*):[31000-31100]"
       MESOS_LOG_DIR: /var/log/mesos
     volumes_from:
       - slave1
@@ -65,16 +64,16 @@ services:
     image: mesosphere/marathon:latest-dev
     network_mode: host
     environment: 
-      MARATHON_MASTER: "zk://192.168.99.100:2181/mesos"
-      MARATHON_ZK: "zk://192.168.99.100:2181/marathon"
+      MARATHON_MASTER: "zk://$BLAH_HOST:2181/mesos"
+      MARATHON_ZK: "zk://$BLAH_HOST:2181/marathon"
 
   kafka:
     network_mode: host
     image: blah/kafka-mesos
-    command: scheduler --master=zk://192.168.99.100:2181/mesos --zk=192.168.99.100:2181 --api=http://192.168.99.100:7000
+    command: scheduler --master=zk://$BLAH_HOST:2181/mesos --zk=$BLAH_HOST:2181 --api=http://$BLAH_HOST:7000
 
   chronos:
     image: mesosphere/chronos
     network_mode: host
     entrypoint: /usr/bin/chronos
-    command: "--master zk://192.168.99.100:2181/mesos --http_port 8081"
+    command: "--master zk://$BLAH_HOST:2181/mesos --http_port 8081"

@@ -15,3 +15,10 @@ ping_wait() {
   done
   echo ""
 }
+
+print_setenv() {
+  case $SHELL in
+    */fish) echo "set -x $1 $2;"; ;;
+    *)      echo "export $1=$2;"; ;;
+  esac
+}
