@@ -1,5 +1,8 @@
 FROM mesosphere/mesos-slave:0.28.1-2.0.20.ubuntu1404
 
+ARG DOCKER_VERSION
+ENV DOCKER_VERSION ${DOCKER_VERSION}-0~trusty
+
 RUN apt-get update
 RUN apt-get install -y apt-transport-https
 
@@ -10,4 +13,4 @@ RUN echo "deb https://apt.dockerproject.org/repo ubuntu-trusty main" > \
   /etc/apt/sources.list.d/docker.list
 
 RUN apt-get update
-RUN apt-get install -y docker-engine
+RUN apt-get install -y docker-engine=${DOCKER_VERSION}

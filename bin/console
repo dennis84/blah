@@ -46,7 +46,9 @@ build_images() {
   docker build -t blah/zookeeper docker/blah-zookeeper/
   docker build -t blah/java docker/blah-java/
   docker build -t blah/mesos-master docker/blah-mesos-master
-  docker build -t blah/mesos-slave docker/blah-mesos-slave
+  docker build \
+    --build-arg DOCKER_VERSION=$(docker version --format '{{.Client.Version}}') \
+    -t blah/mesos-slave docker/blah-mesos-slave
 }
 
 build_ui() {
