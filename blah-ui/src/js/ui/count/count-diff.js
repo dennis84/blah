@@ -16,7 +16,7 @@ function content(model, options) {
 }
 
 function render(model, update, conn, options) {
-  return h('div.widget.widget-diff.has-centered-hv', {
+  return h('div.widget.widget-diff.is-centered-hv', {
     className: options.className,
     mount: mount((node) => {
       conn.on('count', (data) => update(countDiff, options))

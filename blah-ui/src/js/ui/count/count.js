@@ -11,7 +11,7 @@ function content(model, options) {
 }
 
 function render(model, update, conn, options) {
-  return h('div.widget.widget-count.has-centered-hv', {
+  return h('div.widget.widget-count.is-centered-hv', {
     className: options.className,
     mount: mount(node => {
       conn.on('count', data => update(count, options))
