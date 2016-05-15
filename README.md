@@ -4,6 +4,14 @@
 
 ## Setting up a Docker environment
 
+### Linux
+
+- Get the IP address of the `docker0` bridge (172.17.42.1)
+- Edit `/lib/systemd/system/docker.service` and change the `ExecStart` command to `/usr/bin/docker daemon --bip=172.17.42.1/24 --dns=172.17.42.1 --dns=8.8.8.8 -H fd://`
+- Add `nameserver 172.17.42.1` to your `/etc/resolv.conf`
+
+### OS X
+
 ```bash
 brew install docker docker-machine docker-compose
 
@@ -21,6 +29,7 @@ sudo route -n add 172.17.0.0/16 $(docker-machine ip mesos)
 ## Running
 
 ```bash
+eval $(bin/console env)
 bin/console build-all
 docker-compose up
 bin/console create-all
