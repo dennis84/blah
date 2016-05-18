@@ -8,7 +8,7 @@ trait AggregationMerge {
     def mergeAggregation(b: JsObject): JsObject = {
       val (k1, v1: JsObject) = a.fields.head
       val (k2, v2: JsObject) = v1.fields.head
-      (k1 -> (k2 -> (v2 merge b)))
+      (k1 -> (k2 -> (v2 ~ b)))
     }
   }
 }
