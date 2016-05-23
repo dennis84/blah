@@ -37,16 +37,16 @@ impl Channel {
     /// |  Serialized delimited IpcConnectionContextProto                     |
     /// +---------------------------------------------------------------------+
     pub fn open(&mut self) {
-        self.stream.write(b"hrpc");
+        self.stream.write(b"hrpc").unwrap();
         let mut version = vec![];
         version.write_u8(9).unwrap();
-        self.stream.write(&version[..]);
+        self.stream.write(&version[..]).unwrap();
         let mut service_class = vec![];
         service_class.write_u8(0).unwrap();
-        self.stream.write(&service_class[..]);
+        self.stream.write(&service_class[..]).unwrap();
         let mut auth = vec![];
         auth.write_u8(0).unwrap();
-        self.stream.write(&auth[..]);
+        self.stream.write(&auth[..]).unwrap();
     }
 
 
@@ -62,5 +62,6 @@ impl Channel {
     /// |  Delimited serialized Request (varint len + request)                |
     /// +---------------------------------------------------------------------+
     pub fn send(&self) {
+        println!("send");
     }
 }
