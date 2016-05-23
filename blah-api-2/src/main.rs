@@ -2,6 +2,7 @@ extern crate hyper;
 extern crate rustc_serialize;
 extern crate uuid;
 extern crate kafka;
+extern crate byteorder;
 
 use hyper::{Get, Post};
 use hyper::server::{Server, Request, Response};
@@ -11,6 +12,7 @@ use rustc_serialize::json::{self, Json};
 use uuid::Uuid;
 use std::io::Read;
 use kafka::producer::{Producer, Record};
+mod hdfs;
 
 #[derive(RustcEncodable)]
 struct Event {
