@@ -4,6 +4,7 @@ extern crate uuid;
 extern crate kafka;
 extern crate byteorder;
 extern crate protobuf;
+extern crate varint;
 
 use hyper::{Get, Post};
 use hyper::server::{Server, Request, Response};

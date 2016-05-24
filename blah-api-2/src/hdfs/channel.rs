@@ -1,14 +1,18 @@
 use std::io::prelude::*;
-use std::net::TcpStream;
+use std::net::{TcpStream, Shutdown};
 use byteorder::{BigEndian, LittleEndian, WriteBytesExt};
 use protobuf::Message;
 use protobuf::rt::compute_raw_varint32_size;
+use varint::{VarintWrite};
 
 use super::super::proto::RpcHeader::RpcRequestHeaderProto;
 use super::super::proto::RpcHeader::RpcKindProto;
 use super::super::proto::RpcHeader::RpcRequestHeaderProto_OperationProto;
 use super::super::proto::IpcConnectionContext::IpcConnectionContextProto;
 use super::super::proto::IpcConnectionContext::UserInformationProto;
+use super::super::proto::ProtobufRpcEngine::RequestHeaderProto;
+use super::super::proto::hdfs::FsPermissionProto;
+use super::super::proto::ClientNamenodeProtocol::MkdirsRequestProto;
 
 pub struct ChannelFactory;
 
@@ -52,7 +56,6 @@ impl Channel {
         self.stream.write_u8(9).unwrap();
         self.stream.write_u8(0).unwrap();
         self.stream.write_u8(0).unwrap();
-        self.stream.flush();
 
         let rpc_header = self.create_rpc_request_header();
         let context = self.create_connection_context();
@@ -70,6 +73,11 @@ impl Channel {
                    context_len + context_varint;
         self.stream.write_u32::<BigEndian>(size);
 
+        self.stream.write_unsigned_varint_32(rpc_header_len);
+        self.stream.write(&rpc_header_bytes[..]).unwrap();
+
+        self.stream.write_unsigned_varint_32(context_len);
+        self.stream.write(&context_bytes[..]).unwrap();
     }
 
     /// Sends a Hadoop RPC request to the NameNode.
@@ -83,8 +91,57 @@ impl Channel {
     /// +---------------------------------------------------------------------+
     /// |  Delimited serialized Request (varint len + request)                |
     /// +---------------------------------------------------------------------+
-    pub fn send(&self) {
-        println!("send");
+    pub fn send(&mut self) {
+        let rpc_header = self.create_rpc_request_header();
+        let req_header = self.create_request_header();
+        let req = self.mkdir();
+
+        let rpc_header_bytes = rpc_header.write_to_bytes().unwrap();
+        let rpc_header_len = rpc_header_bytes.len() as u32;
+        let rpc_header_varint = compute_raw_varint32_size(rpc_header_len);
+
+        let req_header_bytes = req_header.write_to_bytes().unwrap();
+        let req_header_len = req_header_bytes.len() as u32;
+        let req_header_varint = compute_raw_varint32_size(req_header_len);
+
+        let req_bytes = req.write_to_bytes().unwrap();
+        let req_len = req_bytes.len() as u32;
+        let req_varint = compute_raw_varint32_size(req_len);
+
+        let size = rpc_header_len + rpc_header_varint +
+                   req_header_len + req_header_varint +
+                   req_len + req_varint;
+        self.stream.write_u32::<BigEndian>(size);
+
+        self.stream.write_unsigned_varint_32(rpc_header_len);
+        self.stream.write(&rpc_header_bytes[..]).unwrap();
+
+        self.stream.write_unsigned_varint_32(req_header_len);
+        self.stream.write(&req_header_bytes[..]).unwrap();
+
+        self.stream.write_unsigned_varint_32(req_len);
+        self.stream.write(&req_bytes[..]).unwrap();
+
+        self.stream.flush();
+    }
+
+    pub fn mkdir(&self) -> MkdirsRequestProto {
+        let mut perm = FsPermissionProto::new();
+        perm.set_perm(777);
+        let mut mkdir = MkdirsRequestProto::new();
+        mkdir.set_src("/hello".to_string());
+        mkdir.set_masked(perm);
+        mkdir.set_createParent(false);
+        mkdir
+    }
+
+    fn create_request_header(&self) -> RequestHeaderProto {
+        let mut header = RequestHeaderProto::new();
+        header.set_methodName("mkdirs".to_string());
+        header.set_declaringClassProtocolName(
+            "org.apache.hadoop.hdfs.protocol.ClientProtocol".to_string());
+        header.set_clientProtocolVersion(1);
+        header
     }
 
     fn create_rpc_request_header(&mut self) -> RpcRequestHeaderProto {
