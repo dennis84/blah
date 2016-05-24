@@ -1,9 +1,9 @@
 use std::io::prelude::*;
-use std::net::{TcpStream, Shutdown};
-use byteorder::{BigEndian, LittleEndian, WriteBytesExt};
-use protobuf::Message;
-use protobuf::rt::compute_raw_varint32_size;
-use varint::{VarintWrite};
+use std::net::{TcpStream};
+use byteorder::{BigEndian, WriteBytesExt};
+use protobuf::{Message};
+use protobuf::error::{ProtobufResult};
+use protobuf::stream::{WithCodedOutputStream};
 
 use super::super::proto::RpcHeader::RpcRequestHeaderProto;
 use super::super::proto::RpcHeader::RpcKindProto;
@@ -51,7 +51,6 @@ impl Channel {
     /// |  Serialized delimited IpcConnectionContextProto                     |
     /// +---------------------------------------------------------------------+
     pub fn open(&mut self) {
-        // 68 72 70 63 09 00 0
         self.stream.write_all(b"hrpc").unwrap();
         self.stream.write_u8(9).unwrap();
         self.stream.write_u8(0).unwrap();
@@ -60,24 +59,11 @@ impl Channel {
         let rpc_header = self.create_rpc_request_header();
         let context = self.create_connection_context();
 
-        let rpc_header_bytes = rpc_header.write_to_bytes().unwrap();
-        let rpc_header_len = rpc_header_bytes.len() as u32;
-        let rpc_header_varint = compute_raw_varint32_size(rpc_header_len);
-
-        let context_bytes = context.write_to_bytes().unwrap();
-        let context_len = context_bytes.len() as u32;
-        let context_varint = compute_raw_varint32_size(context_len);
-
-        // 00 00 00 56
-        let size = rpc_header_len + rpc_header_varint +
-                   context_len + context_varint;
-        self.stream.write_u32::<BigEndian>(size);
-
-        self.stream.write_unsigned_varint_32(rpc_header_len);
-        self.stream.write(&rpc_header_bytes[..]).unwrap();
-
-        self.stream.write_unsigned_varint_32(context_len);
-        self.stream.write(&context_bytes[..]).unwrap();
+        let mut buf = Vec::new();
+        self.write_delimited_to_writer(&rpc_header, &mut buf).unwrap();
+        self.write_delimited_to_writer(&context, &mut buf).unwrap();
+        self.stream.write_u32::<BigEndian>(buf.len() as u32).unwrap();
+        self.stream.write(&buf.as_slice()).unwrap();
     }
 
     /// Sends a Hadoop RPC request to the NameNode.
@@ -96,33 +82,13 @@ impl Channel {
         let req_header = self.create_request_header();
         let req = self.mkdir();
 
-        let rpc_header_bytes = rpc_header.write_to_bytes().unwrap();
-        let rpc_header_len = rpc_header_bytes.len() as u32;
-        let rpc_header_varint = compute_raw_varint32_size(rpc_header_len);
-
-        let req_header_bytes = req_header.write_to_bytes().unwrap();
-        let req_header_len = req_header_bytes.len() as u32;
-        let req_header_varint = compute_raw_varint32_size(req_header_len);
-
-        let req_bytes = req.write_to_bytes().unwrap();
-        let req_len = req_bytes.len() as u32;
-        let req_varint = compute_raw_varint32_size(req_len);
-
-        let size = rpc_header_len + rpc_header_varint +
-                   req_header_len + req_header_varint +
-                   req_len + req_varint;
-        self.stream.write_u32::<BigEndian>(size);
-
-        self.stream.write_unsigned_varint_32(rpc_header_len);
-        self.stream.write(&rpc_header_bytes[..]).unwrap();
-
-        self.stream.write_unsigned_varint_32(req_header_len);
-        self.stream.write(&req_header_bytes[..]).unwrap();
-
-        self.stream.write_unsigned_varint_32(req_len);
-        self.stream.write(&req_bytes[..]).unwrap();
-
-        self.stream.flush();
+        let mut buf = Vec::new();
+        self.write_delimited_to_writer(&rpc_header, &mut buf).unwrap();
+        self.write_delimited_to_writer(&req_header, &mut buf).unwrap();
+        self.write_delimited_to_writer(&req, &mut buf).unwrap();
+        self.stream.write_u32::<BigEndian>(buf.len() as u32).unwrap();
+        self.stream.write(&buf.as_slice()).unwrap();
+        self.stream.flush().unwrap();
     }
 
     pub fn mkdir(&self) -> MkdirsRequestProto {
@@ -149,9 +115,9 @@ impl Channel {
         header.set_rpcKind(RpcKindProto::RPC_PROTOCOL_BUFFER);
         header.set_rpcOp(
             RpcRequestHeaderProto_OperationProto::RPC_FINAL_PACKET);
-        header.set_callId(-3);
-        let clientId = String::from("9f9120b1-baed-49");
-        let bytes = clientId.into_bytes();
+        header.set_callId(self.call_id);
+        let client_id = String::from("c683f954-789f-4d");
+        let bytes = client_id.into_bytes();
         header.set_clientId(bytes);
         header.set_retryCount(-1);
 
@@ -172,5 +138,14 @@ impl Channel {
         context.set_protocol(
             "org.apache.hadoop.hdfs.protocol.ClientProtocol".to_string());
         context
+    }
+
+    fn write_delimited_to_writer(&self, m: &Message, w: &mut Write)
+            -> ProtobufResult<()> {
+        w.with_coded_output_stream(|os| {
+            let size = m.write_to_bytes().unwrap().len();
+            try!(os.write_raw_varint32(size as u32));
+            m.write_to(os)
+        })
     }
 }
