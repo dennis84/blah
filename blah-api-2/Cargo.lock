@@ -5,6 +5,7 @@ dependencies = [
  "byteorder 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper 0.9.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "kafka 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "protobuf 1.0.20 (git+http://github.com/stepancheg/rust-protobuf)",
  "rustc-serialize 0.3.19 (registry+https://github.com/rust-lang/crates.io-index)",
  "uuid 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -257,6 +258,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "tempdir 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
+
+[[package]]
+name = "protobuf"
+version = "1.0.20"
+source = "git+http://github.com/stepancheg/rust-protobuf#668cbcd4a4eaf8c3c2d3c1c5c43879aacbc815a6"
 
 [[package]]
 name = "rand"

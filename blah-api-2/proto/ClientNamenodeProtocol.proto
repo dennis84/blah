@@ -1,0 +1,14 @@
+option java_package = "org.apache.hadoop.hdfs.protocol.proto";
+option java_outer_classname = "ClientNamenodeProtocolProtos";
+option java_generic_services = true;
+option java_generate_equals_and_hash = true;
+option py_generic_services = true;
+package hadoop.hdfs;
+
+import "hdfs.proto";
+
+message MkdirsRequestProto {
+  required string src = 1;
+  required FsPermissionProto masked = 2;
+  required bool createParent = 3;
+}

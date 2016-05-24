@@ -1,0 +1,24 @@
+option java_package = "org.apache.hadoop.ipc.protobuf";
+option java_outer_classname = "RpcHeaderProtos";
+option java_generate_equals_and_hash = true;
+package hadoop.common;
+
+enum RpcKindProto {
+  RPC_BUILTIN          = 0;
+  RPC_WRITABLE         = 1;
+  RPC_PROTOCOL_BUFFER  = 2;
+}
+
+message RpcRequestHeaderProto {
+  enum OperationProto {
+    RPC_FINAL_PACKET        = 0;
+    RPC_CONTINUATION_PACKET = 1;
+    RPC_CLOSE_CONNECTION     = 2;
+  }
+
+  optional RpcKindProto rpcKind = 1;
+  optional OperationProto rpcOp = 2;
+  required sint32 callId = 3;
+  required bytes clientId = 4;
+  optional sint32 retryCount = 5 [default = -1];
+}

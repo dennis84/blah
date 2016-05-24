@@ -4,3 +4,6 @@ project/target/
 node_modules
 blah-ui/assets/css/index.css
 blah-ui/assets/js/index.js
+blah-api-2/src/proto/*
+!blah-api-2/src/proto/mod.rs
+!.gitkeep
