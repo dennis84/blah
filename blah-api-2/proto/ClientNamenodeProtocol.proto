@@ -12,3 +12,8 @@ message MkdirsRequestProto {
   required FsPermissionProto masked = 2;
   required bool createParent = 3;
 }
+
+message DeleteRequestProto {
+  required string src = 1;
+  required bool recursive = 2;
+}

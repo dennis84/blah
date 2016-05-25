@@ -4,6 +4,7 @@ use byteorder::{BigEndian, WriteBytesExt};
 use protobuf::{Message};
 use protobuf::error::{ProtobufResult};
 use protobuf::stream::{WithCodedOutputStream};
+use protobuf::reflect::{MessageDescriptor};
 
 use super::super::proto::RpcHeader::RpcRequestHeaderProto;
 use super::super::proto::RpcHeader::RpcKindProto;
@@ -11,10 +12,13 @@ use super::super::proto::RpcHeader::RpcRequestHeaderProto_OperationProto;
 use super::super::proto::IpcConnectionContext::IpcConnectionContextProto;
 use super::super::proto::IpcConnectionContext::UserInformationProto;
 use super::super::proto::ProtobufRpcEngine::RequestHeaderProto;
-use super::super::proto::hdfs::FsPermissionProto;
-use super::super::proto::ClientNamenodeProtocol::MkdirsRequestProto;
 
 pub struct ChannelFactory;
+
+pub struct Request<'a> {
+    pub method: &'a str,
+    pub message: &'a Message,
+}
 
 impl ChannelFactory {
     pub fn new(addr: &str) -> Result<Channel, String> {
@@ -22,6 +26,7 @@ impl ChannelFactory {
         Ok(Channel {
             stream: stream,
             call_id: -3,
+            handshake_sent: false,
         })
     }
 }
@@ -29,9 +34,37 @@ impl ChannelFactory {
 pub struct Channel {
     stream: TcpStream,
     call_id: i32,
+    handshake_sent: bool,
 }
 
 impl Channel {
+    /// Sends a Hadoop RPC request to the NameNode.
+    ///
+    /// +---------------------------------------------------------------------+
+    /// |  Length of the next three parts (4 bytes/32 bit int)                |
+    /// +---------------------------------------------------------------------+
+    /// |  Delimited serialized RpcRequestHeaderProto (varint len + header)   |
+    /// +---------------------------------------------------------------------+
+    /// |  Delimited serialized RequestHeaderProto (varint len + header)      |
+    /// +---------------------------------------------------------------------+
+    /// |  Delimited serialized Request (varint len + request)                |
+    /// +---------------------------------------------------------------------+
+    pub fn send(&mut self, req: &Request) {
+        if false == self.handshake_sent {
+            self.send_handshake();
+        }
+
+        let rpc_header = self.create_rpc_request_header();
+        let req_header = self.create_request_header(req.method);
+
+        let mut buf = Vec::new();
+        self.write_delimited_to_writer(&rpc_header, &mut buf).unwrap();
+        self.write_delimited_to_writer(&req_header, &mut buf).unwrap();
+        self.write_delimited_to_writer(req.message, &mut buf).unwrap();
+        self.stream.write_u32::<BigEndian>(buf.len() as u32).unwrap();
+        self.stream.write(&buf.as_slice()).unwrap();
+    }
+
     /// Writes the Hadoop headers.
     ///
     /// +---------------------------------------------------------------------+
@@ -50,7 +83,7 @@ impl Channel {
     /// +---------------------------------------------------------------------+
     /// |  Serialized delimited IpcConnectionContextProto                     |
     /// +---------------------------------------------------------------------+
-    pub fn open(&mut self) {
+    fn send_handshake(&mut self) {
         self.stream.write_all(b"hrpc").unwrap();
         self.stream.write_u8(9).unwrap();
         self.stream.write_u8(0).unwrap();
@@ -66,44 +99,9 @@ impl Channel {
         self.stream.write(&buf.as_slice()).unwrap();
     }
 
-    /// Sends a Hadoop RPC request to the NameNode.
-    ///
-    /// +---------------------------------------------------------------------+
-    /// |  Length of the next three parts (4 bytes/32 bit int)                |
-    /// +---------------------------------------------------------------------+
-    /// |  Delimited serialized RpcRequestHeaderProto (varint len + header)   |
-    /// +---------------------------------------------------------------------+
-    /// |  Delimited serialized RequestHeaderProto (varint len + header)      |
-    /// +---------------------------------------------------------------------+
-    /// |  Delimited serialized Request (varint len + request)                |
-    /// +---------------------------------------------------------------------+
-    pub fn send(&mut self) {
-        let rpc_header = self.create_rpc_request_header();
-        let req_header = self.create_request_header();
-        let req = self.mkdir();
-
-        let mut buf = Vec::new();
-        self.write_delimited_to_writer(&rpc_header, &mut buf).unwrap();
-        self.write_delimited_to_writer(&req_header, &mut buf).unwrap();
-        self.write_delimited_to_writer(&req, &mut buf).unwrap();
-        self.stream.write_u32::<BigEndian>(buf.len() as u32).unwrap();
-        self.stream.write(&buf.as_slice()).unwrap();
-        self.stream.flush().unwrap();
-    }
-
-    pub fn mkdir(&self) -> MkdirsRequestProto {
-        let mut perm = FsPermissionProto::new();
-        perm.set_perm(777);
-        let mut mkdir = MkdirsRequestProto::new();
-        mkdir.set_src("/hello".to_string());
-        mkdir.set_masked(perm);
-        mkdir.set_createParent(false);
-        mkdir
-    }
-
-    fn create_request_header(&self) -> RequestHeaderProto {
+    fn create_request_header(&self, method: &str) -> RequestHeaderProto {
         let mut header = RequestHeaderProto::new();
-        header.set_methodName("mkdirs".to_string());
+        header.set_methodName(method.to_string());
         header.set_declaringClassProtocolName(
             "org.apache.hadoop.hdfs.protocol.ClientProtocol".to_string());
         header.set_clientProtocolVersion(1);
