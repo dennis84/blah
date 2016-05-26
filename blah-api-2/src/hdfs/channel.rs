@@ -5,6 +5,7 @@ use protobuf::{Message};
 use protobuf::error::{ProtobufResult};
 use protobuf::stream::{WithCodedOutputStream};
 use protobuf::reflect::{MessageDescriptor};
+use uuid::Uuid;
 
 use super::super::proto::RpcHeader::RpcRequestHeaderProto;
 use super::super::proto::RpcHeader::RpcKindProto;
@@ -24,6 +25,7 @@ impl ChannelFactory {
     pub fn new(addr: &str) -> Result<Channel, String> {
         let stream = TcpStream::connect(addr).unwrap();
         Ok(Channel {
+            addr: addr.to_string(),
             stream: stream,
             call_id: -3,
             handshake_sent: false,
@@ -32,6 +34,7 @@ impl ChannelFactory {
 }
 
 pub struct Channel {
+    addr: String,
     stream: TcpStream,
     call_id: i32,
     handshake_sent: bool,
@@ -114,9 +117,8 @@ impl Channel {
         header.set_rpcOp(
             RpcRequestHeaderProto_OperationProto::RPC_FINAL_PACKET);
         header.set_callId(self.call_id);
-        let client_id = String::from("c683f954-789f-4d");
-        let bytes = client_id.into_bytes();
-        header.set_clientId(bytes);
+        let client_id = Uuid::new_v4().simple().to_string();
+        header.set_clientId(client_id[0..16].to_string().into_bytes());
         header.set_retryCount(-1);
 
         if self.call_id == -3 {
