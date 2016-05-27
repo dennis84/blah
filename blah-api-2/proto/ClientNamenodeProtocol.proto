@@ -13,9 +13,17 @@ message MkdirsRequestProto {
   required bool createParent = 3;
 }
 
+message MkdirsResponseProto {
+    required bool result = 1;
+}
+
 message DeleteRequestProto {
   required string src = 1;
   required bool recursive = 2;
+}
+
+message DeleteResponseProto {
+    required bool result = 1;
 }
 
 message CreateRequestProto {
@@ -28,9 +36,25 @@ message CreateRequestProto {
   required uint64 blockSize = 7;
 }
 
+message CreateResponseProto {
+  optional HdfsFileStatusProto fs = 1;
+}
+
 message CompleteRequestProto {
   required string src = 1;
   required string clientName = 2;
   optional ExtendedBlockProto last = 3;
   optional uint64 fileId = 4 [default = 0];
+}
+
+message CompleteResponseProto {
+  required bool result = 1;
+}
+
+message GetFileInfoRequestProto {
+  required string src = 1;
+}
+
+message GetFileInfoResponseProto {
+  optional HdfsFileStatusProto fs = 1;
 }

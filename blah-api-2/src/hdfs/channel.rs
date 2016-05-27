@@ -1,15 +1,16 @@
 use std::io::prelude::*;
+use std::io::{self, BufReader, BufWriter};
 use std::net::{TcpStream};
-use byteorder::{BigEndian, WriteBytesExt};
-use protobuf::{Message};
-use protobuf::error::{ProtobufResult};
-use protobuf::stream::{WithCodedOutputStream};
-use protobuf::reflect::{MessageDescriptor};
+use byteorder::{BigEndian, WriteBytesExt, ReadBytesExt};
+use protobuf::{Message, MessageStatic};
+use protobuf::error::{ProtobufResult, ProtobufError};
+use protobuf::stream::{WithCodedOutputStream, CodedInputStream};
 use uuid::Uuid;
 
 use super::super::proto::RpcHeader::RpcRequestHeaderProto;
 use super::super::proto::RpcHeader::RpcKindProto;
 use super::super::proto::RpcHeader::RpcRequestHeaderProto_OperationProto;
+use super::super::proto::RpcHeader::RpcResponseHeaderProto;
 use super::super::proto::IpcConnectionContext::IpcConnectionContextProto;
 use super::super::proto::IpcConnectionContext::UserInformationProto;
 use super::super::proto::ProtobufRpcEngine::RequestHeaderProto;
@@ -22,11 +23,12 @@ pub struct Request<'a> {
 }
 
 impl ChannelFactory {
-    pub fn new(addr: &str) -> Result<Channel, String> {
+    pub fn new(addr: &str) -> io::Result<Channel> {
         let stream = TcpStream::connect(addr).unwrap();
+        let writer = try!(stream.try_clone());
         Ok(Channel {
-            addr: addr.to_string(),
-            stream: stream,
+            reader: BufReader::new(stream),
+            writer: BufWriter::new(writer),
             call_id: -3,
             handshake_sent: false,
         })
@@ -34,29 +36,56 @@ impl ChannelFactory {
 }
 
 pub struct Channel {
-    addr: String,
-    stream: TcpStream,
+    reader: BufReader<TcpStream>,
+    writer: BufWriter<TcpStream>,
     call_id: i32,
     handshake_sent: bool,
 }
 
 impl Channel {
-    /// Sends a Hadoop RPC request to the NameNode.
-    ///
-    /// +---------------------------------------------------------------------+
-    /// |  Length of the next three parts (4 bytes/32 bit int)                |
-    /// +---------------------------------------------------------------------+
-    /// |  Delimited serialized RpcRequestHeaderProto (varint len + header)   |
-    /// +---------------------------------------------------------------------+
-    /// |  Delimited serialized RequestHeaderProto (varint len + header)      |
-    /// +---------------------------------------------------------------------+
-    /// |  Delimited serialized Request (varint len + request)                |
-    /// +---------------------------------------------------------------------+
-    pub fn send(&mut self, req: &Request) {
+    pub fn send(&mut self, req: &Request) -> ProtobufResult<()> {
         if false == self.handshake_sent {
             self.send_handshake();
         }
 
+        self.send_message(req);
+        try!(self.writer.flush().or_else(|e| Err(ProtobufError::IoError(e))));
+        Ok(())
+    }
+
+    /// +-----------------------------------------------------------+
+    /// |  Length of the RPC resonse (4 bytes/32 bit int)           |
+    /// +-----------------------------------------------------------+
+    /// |  Delimited serialized RpcResponseHeaderProto              |
+    /// +-----------------------------------------------------------+
+    /// |  Serialized delimited RPC response                        |
+    /// +-----------------------------------------------------------+
+    pub fn recv<M : Message + MessageStatic>(&mut self) -> ProtobufResult<M> {
+        let mut input = CodedInputStream::new(&mut self.reader);
+        let len_bytes = input.read_raw_bytes(4).unwrap();
+
+        let mut reader = ::std::io::Cursor::new(len_bytes);
+        let total_length = reader.read_u32::<BigEndian>().unwrap();
+
+        let packet = input.read_raw_bytes(total_length).unwrap();
+        let mut packet = CodedInputStream::from_bytes(packet.as_slice());
+
+        try!(packet.read_message::<RpcResponseHeaderProto>());
+        packet.read_message::<M>()
+    }
+
+    /// Sends a Hadoop RPC request to the NameNode.
+    ///
+    /// +-------------------------------------------------------------------+
+    /// |  Length of the next three parts (4 bytes/32 bit int)              |
+    /// +-------------------------------------------------------------------+
+    /// |  Delimited serialized RpcRequestHeaderProto (varint len + header) |
+    /// +-------------------------------------------------------------------+
+    /// |  Delimited serialized RequestHeaderProto (varint len + header)    |
+    /// +-------------------------------------------------------------------+
+    /// |  Delimited serialized Request (varint len + request)              |
+    /// +-------------------------------------------------------------------+
+    fn send_message(&mut self, req: &Request) {
         let rpc_header = self.create_rpc_request_header();
         let req_header = self.create_request_header(req.method);
 
@@ -64,33 +93,33 @@ impl Channel {
         self.write_delimited_to_writer(&rpc_header, &mut buf).unwrap();
         self.write_delimited_to_writer(&req_header, &mut buf).unwrap();
         self.write_delimited_to_writer(req.message, &mut buf).unwrap();
-        self.stream.write_u32::<BigEndian>(buf.len() as u32).unwrap();
-        self.stream.write(&buf.as_slice()).unwrap();
+        self.writer.write_u32::<BigEndian>(buf.len() as u32).unwrap();
+        self.writer.write(&buf.as_slice()).unwrap();
     }
 
     /// Writes the Hadoop headers.
     ///
-    /// +---------------------------------------------------------------------+
-    /// |  Header, 4 bytes ("hrpc")                                           |
-    /// +---------------------------------------------------------------------+
-    /// |  Version, 1 byte (default verion 9)                                 |
-    /// +---------------------------------------------------------------------+
-    /// |  RPC service class, 1 byte (0x00)                                   |
-    /// +---------------------------------------------------------------------+
-    /// |  Auth protocol, 1 byte (Auth method None = 0)                       |
-    /// +---------------------------------------------------------------------+
-    /// |  Length of the RpcRequestHeaderProto  + length of the               |
-    /// |  of the IpcConnectionContextProto (4 bytes/32 bit int)              |
-    /// +---------------------------------------------------------------------+
-    /// |  Serialized delimited RpcRequestHeaderProto                         |
-    /// +---------------------------------------------------------------------+
-    /// |  Serialized delimited IpcConnectionContextProto                     |
-    /// +---------------------------------------------------------------------+
+    /// +--------------------------------------------------------+
+    /// |  Header, 4 bytes ("hrpc")                              |
+    /// +--------------------------------------------------------+
+    /// |  Version, 1 byte (default verion 9)                    |
+    /// +--------------------------------------------------------+
+    /// |  RPC service class, 1 byte (0x00)                      |
+    /// +--------------------------------------------------------+
+    /// |  Auth protocol, 1 byte (Auth method None = 0)          |
+    /// +--------------------------------------------------------+
+    /// |  Length of the RpcRequestHeaderProto  + length of the  |
+    /// |  of the IpcConnectionContextProto (4 bytes/32 bit int) |
+    /// +--------------------------------------------------------+
+    /// |  Serialized delimited RpcRequestHeaderProto            |
+    /// +--------------------------------------------------------+
+    /// |  Serialized delimited IpcConnectionContextProto        |
+    /// +--------------------------------------------------------+
     fn send_handshake(&mut self) {
-        self.stream.write_all(b"hrpc").unwrap();
-        self.stream.write_u8(9).unwrap();
-        self.stream.write_u8(0).unwrap();
-        self.stream.write_u8(0).unwrap();
+        self.writer.write_all(b"hrpc").unwrap();
+        self.writer.write_u8(9).unwrap();
+        self.writer.write_u8(0).unwrap();
+        self.writer.write_u8(0).unwrap();
 
         let rpc_header = self.create_rpc_request_header();
         let context = self.create_connection_context();
@@ -98,8 +127,8 @@ impl Channel {
         let mut buf = Vec::new();
         self.write_delimited_to_writer(&rpc_header, &mut buf).unwrap();
         self.write_delimited_to_writer(&context, &mut buf).unwrap();
-        self.stream.write_u32::<BigEndian>(buf.len() as u32).unwrap();
-        self.stream.write(&buf.as_slice()).unwrap();
+        self.writer.write_u32::<BigEndian>(buf.len() as u32).unwrap();
+        self.writer.write(&buf.as_slice()).unwrap();
     }
 
     fn create_request_header(&self, method: &str) -> RequestHeaderProto {

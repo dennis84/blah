@@ -1,0 +1,12 @@
+option java_package = "org.apache.hadoop.security.proto";
+option java_outer_classname = "SecurityProtos";
+option java_generic_services = true;
+option java_generate_equals_and_hash = true;
+
+package hadoop.common;
+message TokenProto {
+  required bytes identifier = 1;
+  required bytes password = 2;
+  required string kind = 3;
+  required string service = 4;
+}
