@@ -7,13 +7,17 @@ use protobuf::error::{ProtobufResult, ProtobufError};
 use protobuf::stream::{WithCodedOutputStream, CodedInputStream};
 use uuid::Uuid;
 
-use super::super::proto::RpcHeader::RpcRequestHeaderProto;
-use super::super::proto::RpcHeader::RpcKindProto;
-use super::super::proto::RpcHeader::RpcRequestHeaderProto_OperationProto;
-use super::super::proto::RpcHeader::RpcResponseHeaderProto;
-use super::super::proto::IpcConnectionContext::IpcConnectionContextProto;
-use super::super::proto::IpcConnectionContext::UserInformationProto;
 use super::super::proto::ProtobufRpcEngine::RequestHeaderProto;
+use super::super::proto::RpcHeader::{
+    RpcRequestHeaderProto,
+    RpcKindProto,
+    RpcRequestHeaderProto_OperationProto,
+    RpcResponseHeaderProto,
+};
+use super::super::proto::IpcConnectionContext::{
+    IpcConnectionContextProto,
+    UserInformationProto,
+};
 
 pub struct ChannelFactory;
 
@@ -45,10 +49,10 @@ pub struct Channel {
 impl Channel {
     pub fn send(&mut self, req: &Request) -> ProtobufResult<()> {
         if false == self.handshake_sent {
-            self.send_handshake();
+            try!(self.send_handshake());
         }
 
-        self.send_message(req);
+        try!(self.send_message(req));
         try!(self.writer.flush().or_else(|e| Err(ProtobufError::IoError(e))));
         Ok(())
     }
@@ -62,12 +66,14 @@ impl Channel {
     /// +-----------------------------------------------------------+
     pub fn recv<M : Message + MessageStatic>(&mut self) -> ProtobufResult<M> {
         let mut input = CodedInputStream::new(&mut self.reader);
-        let len_bytes = input.read_raw_bytes(4).unwrap();
 
-        let mut reader = ::std::io::Cursor::new(len_bytes);
-        let total_length = reader.read_u32::<BigEndian>().unwrap();
+        let mut size: u32 = 0;
+        size += (try!(input.read_raw_byte()) as u32) << 24;
+        size += (try!(input.read_raw_byte()) as u32) << 16;
+        size += (try!(input.read_raw_byte()) as u32) <<  8;
+        size += (try!(input.read_raw_byte()) as u32) <<  0;
 
-        let packet = input.read_raw_bytes(total_length).unwrap();
+        let packet = try!(input.read_raw_bytes(size));
         let mut packet = CodedInputStream::from_bytes(packet.as_slice());
 
         try!(packet.read_message::<RpcResponseHeaderProto>());
@@ -85,16 +91,28 @@ impl Channel {
     /// +-------------------------------------------------------------------+
     /// |  Delimited serialized Request (varint len + request)              |
     /// +-------------------------------------------------------------------+
-    fn send_message(&mut self, req: &Request) {
+    fn send_message(&mut self, req: &Request) -> ProtobufResult<()> {
         let rpc_header = self.create_rpc_request_header();
         let req_header = self.create_request_header(req.method);
 
         let mut buf = Vec::new();
-        self.write_delimited_to_writer(&rpc_header, &mut buf).unwrap();
-        self.write_delimited_to_writer(&req_header, &mut buf).unwrap();
-        self.write_delimited_to_writer(req.message, &mut buf).unwrap();
-        self.writer.write_u32::<BigEndian>(buf.len() as u32).unwrap();
-        self.writer.write(&buf.as_slice()).unwrap();
+        try!(self.write_delimited_to_writer(&rpc_header, &mut buf));
+        try!(self.write_delimited_to_writer(&req_header, &mut buf));
+        try!(self.write_delimited_to_writer(req.message, &mut buf));
+
+        let size = buf.len();
+        try!(self.writer.write_all(&[((size >> 24) & 0xFF) as u8])
+                .or_else(|e| Err(ProtobufError::IoError(e))));
+        try!(self.writer.write_all(&[((size >> 16) & 0xFF) as u8])
+                .or_else(|e| Err(ProtobufError::IoError(e))));
+        try!(self.writer.write_all(&[((size >>  8) & 0xFF) as u8])
+                .or_else(|e| Err(ProtobufError::IoError(e))));
+        try!(self.writer.write_all(&[((size >>  0) & 0xFF) as u8])
+                .or_else(|e| Err(ProtobufError::IoError(e))));
+
+        try!(self.writer.write(&buf.as_slice())
+                .or_else(|e| Err(ProtobufError::IoError(e))));
+        Ok(())
     }
 
     /// Writes the Hadoop headers.
@@ -115,11 +133,15 @@ impl Channel {
     /// +--------------------------------------------------------+
     /// |  Serialized delimited IpcConnectionContextProto        |
     /// +--------------------------------------------------------+
-    fn send_handshake(&mut self) {
-        self.writer.write_all(b"hrpc").unwrap();
-        self.writer.write_u8(9).unwrap();
-        self.writer.write_u8(0).unwrap();
-        self.writer.write_u8(0).unwrap();
+    fn send_handshake(&mut self) -> ProtobufResult<()> {
+        try!(self.writer.write_all(b"hrpc")
+                .or_else(|e| Err(ProtobufError::IoError(e))));
+        try!(self.writer.write_u8(9)
+                .or_else(|e| Err(ProtobufError::IoError(e))));
+        try!(self.writer.write_u8(0)
+                .or_else(|e| Err(ProtobufError::IoError(e))));
+        try!(self.writer.write_u8(0)
+                .or_else(|e| Err(ProtobufError::IoError(e))));
 
         let rpc_header = self.create_rpc_request_header();
         let context = self.create_connection_context();
@@ -127,8 +149,11 @@ impl Channel {
         let mut buf = Vec::new();
         self.write_delimited_to_writer(&rpc_header, &mut buf).unwrap();
         self.write_delimited_to_writer(&context, &mut buf).unwrap();
-        self.writer.write_u32::<BigEndian>(buf.len() as u32).unwrap();
-        self.writer.write(&buf.as_slice()).unwrap();
+        try!(self.writer.write_u32::<BigEndian>(buf.len() as u32)
+                .or_else(|e| Err(ProtobufError::IoError(e))));
+        try!(self.writer.write(&buf.as_slice())
+                .or_else(|e| Err(ProtobufError::IoError(e))));
+        Ok(())
     }
 
     fn create_request_header(&self, method: &str) -> RequestHeaderProto {
