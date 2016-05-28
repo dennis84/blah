@@ -2,7 +2,7 @@ use std::io::prelude::*;
 use std::io::{self, BufReader, BufWriter};
 use std::net::{TcpStream};
 use byteorder::{BigEndian, WriteBytesExt, ReadBytesExt};
-use protobuf::{Message, MessageStatic};
+use protobuf::{Message, MessageStatic, parse_from_bytes};
 use protobuf::error::{ProtobufResult, ProtobufError};
 use protobuf::stream::{WithCodedOutputStream, CodedInputStream};
 use uuid::Uuid;
@@ -13,6 +13,7 @@ use super::super::proto::RpcHeader::{
     RpcKindProto,
     RpcRequestHeaderProto_OperationProto,
     RpcResponseHeaderProto,
+    RpcResponseHeaderProto_RpcStatusProto,
 };
 use super::super::proto::IpcConnectionContext::{
     IpcConnectionContextProto,
@@ -47,37 +48,42 @@ pub struct Channel {
 }
 
 impl Channel {
-    pub fn send(&mut self, req: &Request) -> ProtobufResult<()> {
+    pub fn send<M : Message + MessageStatic>(&mut self, req: &Request)
+            -> ProtobufResult<M> {
         if false == self.handshake_sent {
             try!(self.send_handshake());
+            self.handshake_sent = true;
         }
 
         try!(self.send_message(req));
-        try!(self.writer.flush().or_else(|e| Err(ProtobufError::IoError(e))));
-        Ok(())
+        self.read_response()
     }
 
     /// +-----------------------------------------------------------+
-    /// |  Length of the RPC resonse (4 bytes/32 bit int)           |
+    /// |  Length of the RPC response (4 bytes/32 bit int)           |
     /// +-----------------------------------------------------------+
     /// |  Delimited serialized RpcResponseHeaderProto              |
     /// +-----------------------------------------------------------+
     /// |  Serialized delimited RPC response                        |
     /// +-----------------------------------------------------------+
-    pub fn recv<M : Message + MessageStatic>(&mut self) -> ProtobufResult<M> {
-        let mut input = CodedInputStream::new(&mut self.reader);
+    fn read_response<M : Message + MessageStatic>(&mut self)
+            -> ProtobufResult<M> {
+        let mut i = CodedInputStream::from_buffered_reader(&mut self.reader);
 
         let mut size: u32 = 0;
-        size += (try!(input.read_raw_byte()) as u32) << 24;
-        size += (try!(input.read_raw_byte()) as u32) << 16;
-        size += (try!(input.read_raw_byte()) as u32) <<  8;
-        size += (try!(input.read_raw_byte()) as u32) <<  0;
+        size += (try!(i.read_raw_byte()) as u32) << 24;
+        size += (try!(i.read_raw_byte()) as u32) << 16;
+        size += (try!(i.read_raw_byte()) as u32) <<  8;
+        size += (try!(i.read_raw_byte()) as u32) <<  0;
 
-        let packet = try!(input.read_raw_bytes(size));
-        let mut packet = CodedInputStream::from_bytes(packet.as_slice());
+        let h = try!(i.read_message::<RpcResponseHeaderProto>());
 
-        try!(packet.read_message::<RpcResponseHeaderProto>());
-        packet.read_message::<M>()
+        if h.get_status() != RpcResponseHeaderProto_RpcStatusProto::SUCCESS {
+            return Err(ProtobufError::IoError(io::Error::new(
+                io::ErrorKind::Other, "Namenode error")));
+        }
+
+        i.read_message()
     }
 
     /// Sends a Hadoop RPC request to the NameNode.
@@ -100,17 +106,11 @@ impl Channel {
         try!(self.write_delimited_to_writer(&req_header, &mut buf));
         try!(self.write_delimited_to_writer(req.message, &mut buf));
 
-        let size = buf.len();
-        try!(self.writer.write_all(&[((size >> 24) & 0xFF) as u8])
+        try!(self.writer.write_u32::<BigEndian>(buf.len() as u32)
                 .or_else(|e| Err(ProtobufError::IoError(e))));
-        try!(self.writer.write_all(&[((size >> 16) & 0xFF) as u8])
+        try!(self.writer.write_all(&buf.as_slice())
                 .or_else(|e| Err(ProtobufError::IoError(e))));
-        try!(self.writer.write_all(&[((size >>  8) & 0xFF) as u8])
-                .or_else(|e| Err(ProtobufError::IoError(e))));
-        try!(self.writer.write_all(&[((size >>  0) & 0xFF) as u8])
-                .or_else(|e| Err(ProtobufError::IoError(e))));
-
-        try!(self.writer.write(&buf.as_slice())
+        try!(self.writer.flush()
                 .or_else(|e| Err(ProtobufError::IoError(e))));
         Ok(())
     }

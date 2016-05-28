@@ -4,15 +4,15 @@ use super::client::{Client};
 #[test]
 fn test() {
     let mut chan = ChannelFactory::new("127.0.0.1:8020").unwrap();
-    match chan.exists("/test") {
+    match chan.mkdir("/test") {
         Ok(resp) => { println!("{:?}", resp) }
         Err(e) => { println!("{:?}", e) }
     }
 
-    // match chan.mkdir("/test") {
-    //     Ok(resp) => { println!("{:?}", resp) }
-    //     Err(e) => { println!("{:?}", e) }
-    // }
+    match chan.mkdir("/test2") {
+        Ok(resp) => { println!("{:?}", resp) }
+        Err(e) => { println!("{:?}", e) }
+    }
 
     // chan.rmdir("/test");
     // chan.touch("/foo.txt");
