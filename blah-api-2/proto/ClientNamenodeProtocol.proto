@@ -58,3 +58,10 @@ message GetFileInfoRequestProto {
 message GetFileInfoResponseProto {
   optional HdfsFileStatusProto fs = 1;
 }
+
+message GetServerDefaultsRequestProto {
+}
+
+message GetServerDefaultsResponseProto {
+  required FsServerDefaultsProto serverDefaults = 1;
+}
