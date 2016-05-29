@@ -22,11 +22,6 @@ use super::super::proto::IpcConnectionContext::{
 
 pub struct ChannelFactory;
 
-pub struct Request<'a> {
-    pub method: &'a str,
-    pub message: &'a Message,
-}
-
 impl ChannelFactory {
     pub fn new(addr: &str) -> io::Result<Channel> {
         let stream = TcpStream::connect(addr).unwrap();
@@ -38,6 +33,11 @@ impl ChannelFactory {
             handshake_sent: false,
         })
     }
+}
+
+pub struct Request<'a> {
+    pub method: &'a str,
+    pub message: &'a Message,
 }
 
 pub struct Channel {
@@ -99,7 +99,12 @@ impl Channel {
     /// +-------------------------------------------------------------------+
     fn send_message(&mut self, req: &Request) -> ProtobufResult<()> {
         let rpc_header = self.create_rpc_request_header();
-        let req_header = self.create_request_header(req.method);
+
+        let mut req_header = RequestHeaderProto::new();
+        req_header.set_methodName(req.method.to_string());
+        req_header.set_declaringClassProtocolName(
+            "org.apache.hadoop.hdfs.protocol.ClientProtocol".to_string());
+        req_header.set_clientProtocolVersion(1);
 
         let mut buf = Vec::new();
         try!(self.write_delimited_to_writer(&rpc_header, &mut buf));
@@ -144,7 +149,12 @@ impl Channel {
                 .or_else(|e| Err(ProtobufError::IoError(e))));
 
         let rpc_header = self.create_rpc_request_header();
-        let context = self.create_connection_context();
+        let mut user = UserInformationProto::new();
+        user.set_effectiveUser("dennis".to_string());
+        let mut context = IpcConnectionContextProto::new();
+        context.set_userInfo(user);
+        context.set_protocol(
+            "org.apache.hadoop.hdfs.protocol.ClientProtocol".to_string());
 
         let mut buf = Vec::new();
         self.write_delimited_to_writer(&rpc_header, &mut buf).unwrap();
@@ -154,15 +164,6 @@ impl Channel {
         try!(self.writer.write(&buf.as_slice())
                 .or_else(|e| Err(ProtobufError::IoError(e))));
         Ok(())
-    }
-
-    fn create_request_header(&self, method: &str) -> RequestHeaderProto {
-        let mut header = RequestHeaderProto::new();
-        header.set_methodName(method.to_string());
-        header.set_declaringClassProtocolName(
-            "org.apache.hadoop.hdfs.protocol.ClientProtocol".to_string());
-        header.set_clientProtocolVersion(1);
-        header
     }
 
     fn create_rpc_request_header(&mut self) -> RpcRequestHeaderProto {
@@ -182,16 +183,6 @@ impl Channel {
         }
 
         header
-    }
-
-    fn create_connection_context(&mut self) -> IpcConnectionContextProto {
-        let mut user = UserInformationProto::new();
-        user.set_effectiveUser("dennis".to_string());
-        let mut context = IpcConnectionContextProto::new();
-        context.set_userInfo(user);
-        context.set_protocol(
-            "org.apache.hadoop.hdfs.protocol.ClientProtocol".to_string());
-        context
     }
 
     fn write_delimited_to_writer(&self, m: &Message, w: &mut Write)
