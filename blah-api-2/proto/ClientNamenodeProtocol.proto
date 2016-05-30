@@ -65,3 +65,26 @@ message GetServerDefaultsRequestProto {
 message GetServerDefaultsResponseProto {
   required FsServerDefaultsProto serverDefaults = 1;
 }
+
+message GetBlockLocationsRequestProto {
+  required string src = 1;
+  required uint64 offset = 2;
+  required uint64 length = 3;
+}
+
+message GetBlockLocationsResponseProto {
+  optional LocatedBlocksProto locations = 1;
+}
+
+message AddBlockRequestProto {
+  required string src = 1;
+  required string clientName = 2;
+  optional ExtendedBlockProto previous = 3;
+  repeated DatanodeInfoProto excludeNodes = 4;
+  optional uint64 fileId = 5 [default = 0];
+  repeated string favoredNodes = 6;
+}
+
+message AddBlockResponseProto {
+  required LocatedBlockProto block = 1;
+}

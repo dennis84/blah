@@ -8,10 +8,10 @@ fn test() {
     chan.rm("/test").unwrap();
     chan.touch("/foo.txt").unwrap();
     chan.rm("/foo.txt").unwrap();
-    // let mut writer = chan.create("/test.txt");
-    // writer.write(b"hello");
-    // writer.write(b"world");
-    // writer.close();
-
-    println!("test");
+    let file = chan.create("/test.txt").unwrap();
+    chan.write(&file, b"hello").unwrap();
+    chan.write(&file, b"world").unwrap();
+    chan.close(&file).unwrap();
+    chan.cat("/test.txt").unwrap();
+    chan.rm("/test.txt").unwrap();
 }

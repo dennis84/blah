@@ -42,7 +42,7 @@ pub struct Request<'a> {
 
 pub struct Channel {
     reader: BufReader<TcpStream>,
-    writer: BufWriter<TcpStream>,
+    pub writer: BufWriter<TcpStream>,
     call_id: i32,
     handshake_sent: bool,
 }

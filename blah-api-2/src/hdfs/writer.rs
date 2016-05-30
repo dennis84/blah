@@ -1,9 +1,6 @@
-pub struct Writer {}
+use super::super::proto::hdfs::HdfsFileStatusProto;
 
-impl Writer {
-    pub fn write(&self, b: &[u8]) {
-    }
-
-    pub fn close(&self) {
-    }
+pub struct File {
+    pub src: String,
+    pub fs: HdfsFileStatusProto,
 }
