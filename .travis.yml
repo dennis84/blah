@@ -7,6 +7,7 @@ script:
   - sbt 'test-only -- -l blah.elastic.ElasticTest'
   - "cd blah-ui && npm run travis-test && cd .."
 before_script:
+  - "npm install -g npm@next"
   - "cd blah-ui && npm install && cd .."
 env:
   global:
