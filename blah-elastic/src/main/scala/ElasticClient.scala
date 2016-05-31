@@ -1,8 +1,9 @@
 package blah.elastic
 
-import scala.concurrent.Future
+import scala.concurrent._
+import scala.util.{Success, Failure}
 import akka.actor.ActorSystem
-import akka.stream.Materializer
+import akka.stream.{Materializer, OverflowStrategy, QueueOfferResult}
 import akka.stream.scaladsl._
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
@@ -13,13 +14,27 @@ class ElasticClient(uri: ElasticUri)(
   import system.dispatcher
 
   private val flow =
-    Http().newHostConnectionPool[Any](
+    Http().cachedHostConnectionPool[Promise[HttpResponse]](
       uri.hosts.head._1,
       uri.hosts.head._2)
 
-  def request(req: HttpRequest): Future[HttpResponse] =
-    Source.single(req -> null)
-      .via(flow)
-      .runWith(Sink.head)
-      .map(_._1.get)
+  private val queue =
+    Source.queue[(HttpRequest, Promise[HttpResponse])](
+      1000, OverflowStrategy.backpressure)
+        .via(flow)
+        .toMat(Sink foreach {
+          case (Success(r), p) => p success r
+          case (Failure(e), p) => p failure e
+        })(Keep.left)
+        .run
+
+  def request(req: HttpRequest): Future[HttpResponse] = {
+    val promise = Promise[HttpResponse]
+    val request = req -> promise
+    (queue offer request) flatMap {
+      case QueueOfferResult.Enqueued => promise.future
+      case _ => Future.failed(new RuntimeException(
+        "Failed to queue request."))
+    }
+  }
 }
