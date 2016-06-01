@@ -1,6 +1,5 @@
 package blah.algo
 
-import java.security.MessageDigest
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.mllib.linalg.{Vectors, SparseVector}

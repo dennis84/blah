@@ -1,6 +1,7 @@
 package blah.algo
 
-import java.security.MessageDigest
+import java.util.UUID
+import java.nio.ByteBuffer
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 import blah.core.{UserAgent, UserAgentClassifier}
@@ -32,16 +33,16 @@ class CountAlgo extends Algo[Count] {
           isTablet = uac.map(_.tablet).getOrElse(false),
           isMobileDevice = uac.map(_.mobileDevice).getOrElse(false),
           isComputer = uac.map(_.computer).getOrElse(true),
-          platform = uac.map {
-            case c if c.mobile => "Mobile"
-            case c if c.spider => "Spider"
-            case _             => "Computer"
-          }.getOrElse("Computer"))
-        val id = MessageDigest.getInstance("SHA-1")
-          .digest(doc.hashCode.toString.getBytes("UTF-8"))
-          .map("%02x".format(_))
-          .mkString
-        ((id, doc), 1)
+          platform = uac match {
+            case Some(c) if c.mobile => "Mobile"
+            case Some(c) if c.spider => "Spider"
+            case _                   => "Computer"
+          })
+        val uuid = UUID.nameUUIDFromBytes(ByteBuffer
+          .allocate(Integer.SIZE / 8)
+          .putInt(doc.hashCode)
+          .array)
+        ((uuid.toString, doc), 1)
       }
       .reduceByKey(_ + _)
       .map { case((id, count), nb) => (id, count.copy(count = nb)) }

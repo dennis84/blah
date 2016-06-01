@@ -1,6 +1,7 @@
 package blah.algo
 
-import java.security.MessageDigest
+import java.util.UUID
+import java.nio.ByteBuffer
 import java.time.ZonedDateTime
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
@@ -60,11 +61,11 @@ class FunnelAlgo extends Algo[Funnel] {
       .filter(_._1.length > 0)
       .reduceByKey(_ + _)
       .map { case(path, count) =>
-        val id = MessageDigest.getInstance("SHA-1")
-          .digest((config.name + path.mkString).getBytes("UTF-8"))
-          .map("%02x".format(_))
-          .mkString
-        (id, Funnel(config.name, path, count))
+        val uuid = UUID.nameUUIDFromBytes(ByteBuffer
+          .allocate(Integer.SIZE / 8)
+          .putInt((config.name +: path).hashCode)
+          .array)
+        (uuid.toString, Funnel(config.name, path, count))
       }
   }
 }
