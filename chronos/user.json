@@ -2,7 +2,7 @@
   "schedule": "R/2015-11-26T00:00:00Z/PT10M",
   "name": "user",
   "cpus": "0.5",
-  "mem": "512",
+  "mem": "1024",
   "container": {
     "type": "DOCKER",
     "image": "blah/algo:0.1.0",
