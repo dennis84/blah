@@ -25,8 +25,8 @@ class Service(env: Env)(
     path("events" / Segment) { collection =>
       (post & entity(as[Map[String, JsValue]])) { props =>
         val evt = Event(UUID.randomUUID.toString, collection, props = props)
-        // env.hdfs ! HdfsWriter.Write(evt)
-        // env.producer send evt.toJson.compactPrint
+        env.hdfs ! HdfsWriter.Write(evt)
+        env.producer ! evt
         complete(OK -> Message("Event successfully created."))
       }
     }
