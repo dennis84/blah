@@ -4,7 +4,7 @@ import scala.concurrent.duration._
 
 class ApiEventSimulation extends Simulation {
   val httpConf = http
-    .baseURL("http://api.marathon.mesos:8000")
+    .baseURL("http://api.blah.local")
     .header("Content-Type", "application/json")
 
   val insert = http("all")

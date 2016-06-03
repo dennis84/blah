@@ -17,5 +17,8 @@
         "value": "hadoop_name:/data/dfs/name"
       }]
     }
+  },
+  "labels":{
+    "HAPROXY_GROUP": "external"
   }
 }

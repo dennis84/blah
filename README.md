@@ -7,8 +7,8 @@
 ### Linux
 
 - Get the IP address of the `docker0` bridge (172.17.42.1)
-- Edit `/lib/systemd/system/docker.service` and change the `ExecStart` command to `/usr/bin/docker daemon --bip=172.17.42.1/24 --dns=172.17.42.1 --dns=8.8.8.8 -H fd://`
-- Add `nameserver 172.17.42.1` to your `/etc/resolv.conf`
+- Edit `/lib/systemd/system/docker.service` and change the `ExecStart` command to `/usr/bin/docker daemon --bip=172.17.42.1/24 -H fd://`
+- Add `172.17.42.1 api.blah.local serving.blah.local` to your `/etc/hosts`
 
 ### OS X
 

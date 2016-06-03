@@ -21,7 +21,7 @@ class Env(system: ActorSystem) {
       encoder = new StringEncoder
     )))))
 
-  private val dfs = FileSystem.get(
+  private lazy val dfs = FileSystem.get(
     URI.create(config.getString("hadoop.url")),
     new Configuration)
 

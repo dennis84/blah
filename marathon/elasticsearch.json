@@ -13,5 +13,8 @@
         {"containerPort": 9300, "hostPort": 0, "servicePort": 9300, "protocol": "tcp"}
       ]
     }
+  },
+  "labels":{
+    "HAPROXY_GROUP": "external"
   }
 }

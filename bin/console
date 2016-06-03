@@ -3,13 +3,11 @@
 create_apps() {
   ! is_open "$BLAH_HOST" 7000 8080 && exit 1
   create_brokers 1
-  create_app dns
+  create_app marathon-lb
   create_app namenode
-  ping_wait "namenode.marathon.mesos"
   create_app datanode
   create_app api
   create_app elasticsearch
-  ping_wait "elasticsearch.marathon.mesos"
   create_app serving
 }
 
@@ -39,7 +37,7 @@ build_images() {
   docker build -t blah/elasticsearch docker/blah-elasticsearch/
   docker build -t blah/hadoop-base docker/blah-hadoop-base/
   docker build -t blah/hadoop-master docker/blah-hadoop-master/
-  docker build -t blah/hadoop-slave docker/blah-hadoop-slave/
+  docker build --build-arg NAMENODE="$BLAH_HOST" -t blah/hadoop-slave docker/blah-hadoop-slave/
   docker build -t blah/kafka-mesos docker/blah-kafka-mesos/
   docker build -t blah/mesos-dns docker/blah-mesos-dns/
   docker build -t blah/spark-mesos docker/blah-spark-mesos/
@@ -47,7 +45,7 @@ build_images() {
   docker build -t blah/java docker/blah-java/
   docker build -t blah/mesos-master docker/blah-mesos-master
   docker build \
-    --build-arg DOCKER_VERSION=$(docker version --format '{{.Client.Version}}') \
+    --build-arg DOCKER_VERSION="$(docker version --format '{{.Client.Version}}')" \
     -t blah/mesos-slave docker/blah-mesos-slave
 }
 
@@ -63,6 +61,7 @@ pull_images() {
   docker pull mesosphere/mesos-slave:0.28.1-2.0.20.ubuntu1404
   docker pull mesosphere/marathon:latest-dev
   docker pull mesosphere/chronos
+  docker pull mesosphere/marathon-lb
 }
 
 restart_app() {
@@ -101,7 +100,7 @@ restart_app() {
 }
 
 create_sample_data() {
-  ! is_open "api.marathon.mesos" 8000 && exit 1
+  ! is_open "api.blah.local" 80 && exit 1
   declare nb=${1:-1} coll=${2:-"pageviews"}
   for i in $(eval echo "{1..$nb}"); do
     echo -ne "Processing $i/$nb\r"

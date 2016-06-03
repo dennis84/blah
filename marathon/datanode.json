@@ -9,12 +9,18 @@
       "image": "blah/hadoop-slave",
       "network": "BRIDGE",
       "portMappings": [
-        {"containerPort": 50075, "hostPort": 0, "servicePort": 50075, "protocol": "tcp"}
+        {"containerPort": 50010, "hostPort": 0, "servicePort": 50010, "protocol": "tcp"},
+        {"containerPort": 50020, "hostPort": 0, "servicePort": 50020, "protocol": "tcp"},
+        {"containerPort": 50075, "hostPort": 0, "servicePort": 50075, "protocol": "tcp"},
+        {"containerPort": 50475, "hostPort": 0, "servicePort": 50475, "protocol": "tcp"}
       ],
       "parameters": [{
         "key": "volume",
         "value": "hadoop_data:/data/dfs/data"
       }]
     }
+  },
+  "labels":{
+    "HAPROXY_GROUP": "external"
   }
 }

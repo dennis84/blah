@@ -4,7 +4,7 @@ import scala.concurrent.duration._
 
 class ServingCountSimulation extends Simulation {
   val httpConf = http
-    .baseURL("http://serving.marathon.mesos:8001")
+    .baseURL("http://serving.blah.local")
     .header("Content-Type", "application/json")
 
   val all = http("all")

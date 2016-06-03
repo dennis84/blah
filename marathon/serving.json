@@ -16,6 +16,10 @@
   "env": {
     "ZOOKEEPER_URL": "$BLAH_HOST:2181",
     "KAFKA_URL": "$BLAH_HOST:31000",
-    "ELASTICSEARCH_URL": "elasticsearch.marathon.mesos:9200"
+    "ELASTICSEARCH_URL": "$BLAH_HOST:9200"
+  },
+  "labels":{
+    "HAPROXY_GROUP": "external",
+    "HAPROXY_0_VHOST": "serving.blah.local"
   }
 }

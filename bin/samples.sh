@@ -90,5 +90,5 @@ make_purchase() {
 
 create_event() {
   curl -s -o /dev/null -H 'Content-Type: application/json' \
-    -X POST "http://api.marathon.mesos:8000/events/$1" -d "$2"
+    -X POST "http://api.blah.local/events/$1" -d "$2"
 }

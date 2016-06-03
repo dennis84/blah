@@ -1,5 +1,5 @@
 var xhr = require('xhr')
-var API_URL = 'http://api.marathon.mesos:8000'
+var API_URL = 'http://api.blah.local'
 
 /**
  * Tracking API.
