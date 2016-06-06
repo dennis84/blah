@@ -1,10 +1,13 @@
+extern crate getopts;
 extern crate hyper;
 extern crate rustc_serialize;
 
+use std::env;
 use std::thread;
 use std::time::Duration;
 use std::io::prelude::*;
 use std::collections::HashMap;
+use getopts::Options;
 use hyper::client::Client;
 use rustc_serialize::json::{self, Json};
 
@@ -13,15 +16,58 @@ mod error;
 use error::{AutoscaleResult};
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
+
+    let mut opts = Options::new();
+    opts.reqopt("", "host", "Set marathon/mesos hostname", "172.17.42.1");
+    opts.reqopt("", "app", "Set marathon app name", "api");
+    opts.optopt("", "cpu-percent", "Set maximum CPU usage", "80");
+    opts.optopt("", "mem-percent", "Set maximum memory usage", "80");
+    opts.optopt("", "max", "Set maximum instances", "20");
+
+    let matches = opts.parse(&args[1..]).unwrap_or_else(|_| {
+        let brief = format!("Usage: autoscale [options]");
+        print!("{}", opts.usage(&brief));
+        ::std::process::exit(1);
+    });
+
+    let host = matches.opt_str("host").unwrap();
+    let app = matches.opt_str("app").unwrap();
+
+    let max_mem_usage = matches
+        .opt_str("mem-percent")
+        .unwrap_or("80".to_string())
+        .parse::<f64>()
+        .unwrap();
+
+    let max_cpu_usage = matches
+        .opt_str("cpu-percent")
+        .unwrap_or("80".to_string())
+        .parse::<f64>()
+        .unwrap();
+
+    let max_instances = matches
+        .opt_str("max")
+        .unwrap_or("10".to_string())
+        .parse::<i32>()
+        .unwrap();
+
     let service = Service {
-        host: "172.17.42.1".to_string(),
-        app: "api".to_string(),
-        max_mem_usage: 80.0,
-        max_cpu_usage: 80.0,
+        host: host,
+        app: app,
+        max_mem_usage: max_mem_usage,
+        max_cpu_usage: max_cpu_usage,
         multiplier: 1.5,
-        max_instances: 10,
+        max_instances: max_instances,
         client: Client::new(),
     };
+
+    println!("Marathon/Mesos host: {}", service.host);
+    println!("Marathon app: {}", service.app);
+    println!("Max memory usage: {}", service.max_mem_usage);
+    println!("Max CPU usage: {}", service.max_cpu_usage);
+    println!("Max instances: {}", service.max_instances);
+    println!("Multiplier: {}", service.multiplier);
 
     let apps = service.get_apps().unwrap();
 
@@ -35,6 +81,7 @@ fn main() {
 
     loop {
         let app = service.get_app().unwrap();
+        println!("-------------------------------------");
         println!("Running instances: {}", &app.instances);
 
         let stat = service.get_statistic(&app, &slaves, prev).unwrap();

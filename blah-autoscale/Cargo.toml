@@ -4,5 +4,6 @@ version = "0.1.0"
 authors = ["Dennis Dietrich <d.dietrich84@gmail.com>"]
 
 [dependencies]
+getopts = "0.2"
 hyper = "0.9"
 rustc-serialize = "0.3"
