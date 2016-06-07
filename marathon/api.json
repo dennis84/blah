@@ -19,6 +19,12 @@
   },
   "labels":{
     "HAPROXY_GROUP": "external",
-    "HAPROXY_0_VHOST": "api.blah.local"
-  }
+    "HAPROXY_0_VHOST": "api.blah.local",
+    "HAPROXY_0_BACKEND_HTTP_HEALTHCHECK_OPTIONS": "  option  httpchk GET {healthCheckPath} HTTP/1.1\\r\\nHost:\\ api.blah.local\n  timeout check {healthCheckTimeoutSeconds}s\n"
+  },
+  "healthChecks": [{
+    "protocol": "HTTP",
+    "path": "/",
+    "intervalSeconds": 10
+  }]
 }

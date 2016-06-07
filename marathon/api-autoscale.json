@@ -1,0 +1,17 @@
+{
+  "id": "api-autoscale",
+  "cpus": 0.1,
+  "mem": 64.0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "blah/autoscale",
+      "network": "BRIDGE"
+    }
+  },
+  "args": [
+    "--host", "$BLAH_HOST",
+    "--app", "api"
+  ]
+}

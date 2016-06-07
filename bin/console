@@ -7,6 +7,7 @@ create_apps() {
   create_app namenode
   create_app datanode
   create_app api
+  create_app api-autoscale
   create_app elasticsearch
   create_app serving
 }
@@ -47,6 +48,8 @@ build_images() {
   docker build \
     --build-arg DOCKER_VERSION="$(docker version --format '{{.Client.Version}}')" \
     -t blah/mesos-slave docker/blah-mesos-slave
+  docker build -t blah/rust docker/blah-rust/
+  docker build -t blah/autoscale blah-autoscale/
 }
 
 build_ui() {
