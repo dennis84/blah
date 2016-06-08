@@ -7,7 +7,7 @@ create_apps() {
   create_app namenode
   create_app datanode
   create_app api
-  create_app api-autoscale
+  #create_app api-autoscale
   create_app elasticsearch
   create_app serving
 }
