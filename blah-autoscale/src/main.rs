@@ -77,9 +77,9 @@ fn main() {
     let mut prev: Option<Statistic> = None;
 
     loop {
-        let app = service.get_app().unwrap();
+        let app = service.get_app(&service.app).unwrap();
         println!("-------------------------------------");
-        println!("Running instances: {}", &app.instances);
+        println!("Running instances: {}", app.instances);
 
         let stat = service.get_statistic(&app, &slaves, prev).unwrap();
 

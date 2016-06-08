@@ -16,6 +16,7 @@ pub struct Service {
 
 #[derive(Debug)]
 pub struct App {
+    pub name: String,
     pub instances: i64,
     pub tasks: HashMap<String, String>,
 }
@@ -57,8 +58,8 @@ impl Service {
         }).collect())
     }
 
-    pub fn get_app(&self) -> AutoscaleResult<App> {
-        let url = format!("http://{}:8080/v2/apps/{}", &self.host, &self.app);
+    pub fn get_app(&self, app: &String) -> AutoscaleResult<App> {
+        let url = format!("http://{}:8080/v2/apps/{}", &self.host, &app);
         let mut res = try!(self.client.get(&url).send());
         let mut buf = String::new();
         try!(res.read_to_string(&mut buf));
@@ -80,6 +81,7 @@ impl Service {
         }
 
         Ok(App {
+            name: app.to_owned(),
             instances: instances,
             tasks: tasks,
         })
