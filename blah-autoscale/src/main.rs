@@ -1,5 +1,6 @@
 extern crate getopts;
 extern crate hyper;
+extern crate mio;
 extern crate rustc_serialize;
 
 use std::env;
