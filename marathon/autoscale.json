@@ -1,5 +1,5 @@
 {
-  "id": "api-autoscale",
+  "id": "autoscale",
   "cpus": 0.1,
   "mem": 64.0,
   "instances": 1,
@@ -11,7 +11,6 @@
     }
   },
   "args": [
-    "--host", "$BLAH_HOST",
-    "--app", "api"
+    "--host", "$BLAH_HOST"
   ]
 }

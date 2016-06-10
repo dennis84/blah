@@ -18,6 +18,9 @@
     "HADOOP_URL": "hdfs://$BLAH_HOST:8020"
   },
   "labels":{
+    "AUTOSCALE_MAX_INSTANCES": "10",
+    "AUTOSCALE_MEM_PERCENT": "80",
+    "AUTOSCALE_CPU_PERCENT": "80",
     "HAPROXY_GROUP": "external",
     "HAPROXY_0_VHOST": "api.blah.local",
     "HAPROXY_0_BACKEND_HTTP_HEALTHCHECK_OPTIONS": "  option  httpchk GET {healthCheckPath} HTTP/1.1\\r\\nHost:\\ api.blah.local\n  timeout check {healthCheckTimeoutSeconds}s\n"

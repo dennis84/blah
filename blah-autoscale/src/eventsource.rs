@@ -26,14 +26,14 @@ pub struct Event {
 }
 
 struct EventSourceHandler<F>
-    where F: Fn(Event) -> () {
+    where F: FnMut(Event) -> () {
     reader: BufReader<TcpStream>,
     initialized: bool,
     callback: F,
 }
 
 impl<F> Handler for EventSourceHandler<F>
-    where F: Fn(Event) -> () {
+    where F: FnMut(Event) -> () {
     type Timeout = ();
     type Message = ();
 
@@ -59,7 +59,7 @@ impl<F> Handler for EventSourceHandler<F>
         }
 
         if ! event.data.is_empty() {
-            let fun = &self.callback;
+            let fun = &mut self.callback;
             fun(event);
         }
     }
@@ -101,7 +101,7 @@ fn parse_line(line: &str, event: &mut Event) {
 }
 
 pub fn connect<F>(addr: &str, fun: F) -> io::Result<()> 
-    where F: Fn(Event) -> () {
+    where F: FnMut(Event) -> () {
     let stream = try!(TcpStream::connect(&addr.parse().unwrap()));
     let writer = try!(stream.try_clone());
     let mut writer = BufWriter::new(writer);

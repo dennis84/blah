@@ -6,19 +6,24 @@ extern crate rustc_serialize;
 use std::env;
 use std::thread;
 use std::time::Duration;
+use std::collections::HashMap;
+use std::sync::mpsc::channel;
 use getopts::Options;
 use hyper::client::Client;
+use rustc_serialize::json::{self, Json};
 
 mod error;
 mod service;
-use service::{Service, Statistic};
+mod eventsource;
+use service::{Service, Statistic, App};
+use error::{AutoscaleResult, Error};
+use eventsource::{connect, Event};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
 
     let mut opts = Options::new();
     opts.reqopt("", "host", "Set marathon/mesos hostname", "172.17.42.1");
-    opts.reqopt("", "app", "Set marathon app name", "api");
     opts.optopt("", "cpu-percent", "Set maximum CPU usage", "80");
     opts.optopt("", "mem-percent", "Set maximum memory usage", "80");
     opts.optopt("", "max", "Set maximum instances", "20");
@@ -30,7 +35,6 @@ fn main() {
     });
 
     let host = matches.opt_str("host").unwrap();
-    let app = matches.opt_str("app").unwrap();
 
     let max_mem_usage = matches
         .opt_str("mem-percent")
@@ -52,7 +56,6 @@ fn main() {
 
     let service = Service {
         host: host,
-        app: app,
         max_mem_usage: max_mem_usage,
         max_cpu_usage: max_cpu_usage,
         multiplier: 1.5,
@@ -61,47 +64,139 @@ fn main() {
     };
 
     println!("Marathon/Mesos host: {}", service.host);
-    println!("Marathon app: {}", service.app);
     println!("Max memory usage: {}", service.max_mem_usage);
     println!("Max CPU usage: {}", service.max_cpu_usage);
     println!("Max instances: {}", service.max_instances);
     println!("Multiplier: {}", service.multiplier);
 
-    let apps = service.get_apps().unwrap();
+    let (tx, rx) = channel();
+    let tx2 = tx.clone();
 
-    if ! &apps.contains(&service.app) {
-        println!("Could not find app: {}", &service.app);
-        ::std::process::exit(1);
-    }
+    tx.send(Action::StartApplication(service.get_apps().unwrap())).unwrap();
 
+    thread::spawn(move || {
+        let client = connect("172.17.42.1:8080", move |event| {
+            match filtered(&event) {
+                Ok(action) => { tx.send(action).unwrap() }
+                _ => ()
+            }
+        }).unwrap();
+    });
+
+    thread::spawn(move || {
+        loop {
+            thread::sleep(Duration::new(10, 0));
+            tx2.send(Action::Tick).unwrap();
+        }
+    });
+
+    let mut apps: HashMap<String, App> = HashMap::new();
+    let mut stats: HashMap<String, Statistic> = HashMap::new();
     let slaves = service.get_slaves().unwrap();
-    let mut prev: Option<Statistic> = None;
 
     loop {
-        let app = service.get_app(&service.app).unwrap();
-        println!("-------------------------------------");
-        println!("Running instances: {}", app.instances);
-
-        let stat = service.get_statistic(&app, &slaves, prev).unwrap();
-
-        if stat.cpu_usage > service.max_cpu_usage ||
-           stat.mem_usage > service.max_mem_usage {
-            match service.scale(&app) {
-                Ok(_) => {
-                    println!("Successfully scaled app: {}", service.app);
-                    println!("CPU: {} MEM: {}", stat.cpu_usage, stat.mem_usage);
-                }
-                Err(err) => {
-                    println!("Autoscaling failed!: {}", err);
-                    ::std::process::exit(1);
+        match rx.recv() {
+            Ok(Action::Tick) => {}
+            Ok(Action::StartApplication(xs)) => {
+                for x in xs {
+                    let app = service.get_app(x.as_ref()).unwrap().unwrap();
+                    let _ = apps.insert(x, app);
                 }
             }
-        } else {
-            println!("No need to scale: {}", service.app);
-            println!("CPU: {} MEM: {}", stat.cpu_usage, stat.mem_usage);
+            Ok(Action::StopApplication(xs)) => {
+                for x in xs {
+                    let _ = apps.remove(&x[..]);
+                }
+            }
+            _ => {
+                continue;
+            }
         }
 
-        prev = Some(stat);
-        thread::sleep(Duration::new(10, 0))
+        for (id, app) in &apps {
+            println!("------------------------------------");
+            println!("App: {}", app.name);
+            println!("Running instances: {}", app.instances);
+
+            let stat = {
+                let prev = stats.get(id);
+                service.get_statistic(&app, &slaves, prev).unwrap()
+            };
+
+            if stat.cpu_usage > app.max_cpu_usage ||
+               stat.mem_usage > app.max_mem_usage {
+                match service.scale(&app) {
+                    Ok(_) => {
+                        println!("Successfully scaled app: {}", app.name);
+                        println!("CPU: {} MEM: {}", stat.cpu_usage, stat.mem_usage);
+                    }
+                    Err(err) => {
+                        println!("Autoscaling failed!: {}", err);
+                        ::std::process::exit(1);
+                    }
+                }
+            } else {
+                println!("No need to scale: {}", app.name);
+                println!("CPU: {} MEM: {}", stat.cpu_usage, stat.mem_usage);
+            }
+
+            stats.insert(id.to_owned(), stat);
+        }
     }
+}
+
+enum Action {
+    StartApplication(Vec<String>),
+    StopApplication(Vec<String>),
+    Tick,
+    Noop,
+}
+
+fn parse_apps(data: &Json) -> AutoscaleResult<Vec<String>> {
+    let mut apps = Vec::new();
+    let xs = try!(data.as_array().ok_or(Error::Parse));
+    for x in xs.iter() {
+        let labels = try!(x.find("labels").ok_or(Error::Parse));
+        let labels = try!(labels.as_object().ok_or(Error::Parse));
+        if labels.iter().find(|&(x,y)| x.starts_with("AUTOSCALE_")).is_none() {
+            continue;
+        }
+
+        let name = try!(x.find("id").ok_or(Error::Parse));
+        let name = try!(name.as_string().ok_or(Error::Parse));
+        apps.push(name[1..].to_string());
+    }
+
+    Ok(apps)
+}
+
+fn filtered(event: &Event) -> AutoscaleResult<Action> {
+    if event.event != Some("deployment_success".to_string()) {
+        return Ok(Action::Noop);
+    }
+
+    let data = try!(Json::from_str(&event.data));
+    let steps = try!(data.find_path(&["plan", "steps"]).ok_or(Error::Parse));
+    let steps = try!(steps.as_array().ok_or(Error::Parse));
+    for step in steps.iter() {
+        let actions = try!(step.find("actions").ok_or(Error::Parse));
+        let actions = try!(actions.as_array().ok_or(Error::Parse));
+        for action in actions.iter() {
+            match action.find("action") {
+                Some(&Json::String(ref n)) if n == "StartApplication" => {
+                    let xs = try!(data.find_path(
+                        &["plan", "target", "apps"]).ok_or(Error::Parse));
+                    return Ok(Action::StartApplication(try!(parse_apps(xs))))
+                }
+                Some(&Json::String(ref n)) if n == "StopApplication" => {
+                    let xs = try!(data.find_path(
+                        &["plan", "original", "apps"]).ok_or(Error::Parse));
+                    return Ok(Action::StopApplication(try!(parse_apps(xs))))
+                }
+                _ => ()
+            }
+        }
+    }
+
+    Ok(Action::Noop)
 }

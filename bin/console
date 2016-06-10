@@ -3,11 +3,11 @@
 create_apps() {
   ! is_open "$BLAH_HOST" 7000 8080 && exit 1
   create_brokers 1
+  create_app autoscale
   create_app marathon-lb
   create_app namenode
   create_app datanode
   create_app api
-  #create_app api-autoscale
   create_app elasticsearch
   create_app serving
 }

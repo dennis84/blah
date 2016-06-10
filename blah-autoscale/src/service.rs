@@ -6,7 +6,6 @@ use error::AutoscaleResult;
 
 pub struct Service {
     pub host: String,
-    pub app: String,
     pub max_mem_usage: f64,
     pub max_cpu_usage: f64,
     pub multiplier: f64,
@@ -17,6 +16,9 @@ pub struct Service {
 #[derive(Debug)]
 pub struct App {
     pub name: String,
+    pub max_mem_usage: f64,
+    pub max_cpu_usage: f64,
+    pub max_instances: i32,
     pub instances: i64,
     pub tasks: HashMap<String, String>,
 }
@@ -50,15 +52,27 @@ impl Service {
         let data = data.as_object().unwrap();
         let data = data.get("apps").unwrap();
         let data = data.as_array().unwrap();
+        let mut apps = Vec::new();
 
-        Ok(data.iter().map(|x| {
+        for x in data.iter() {
+            let labels = x.find("labels").unwrap();
+            let labels = labels.as_object().unwrap();
+            let label = labels.iter()
+                .find(|&(x,_)| x.starts_with("AUTOSCALE_"));
+
+            if label.is_none() {
+                continue;
+            }
+
             let id = x.find("id").unwrap();
             let id = id.as_string().unwrap();
-            id[1..].to_string()
-        }).collect())
+            apps.push(id[1..].to_string());
+        }
+
+        Ok(apps)
     }
 
-    pub fn get_app(&self, app: &String) -> AutoscaleResult<App> {
+    pub fn get_app(&self, app: &str) -> AutoscaleResult<Option<App>> {
         let url = format!("http://{}:8080/v2/apps/{}", &self.host, &app);
         let mut res = try!(self.client.get(&url).send());
         let mut buf = String::new();
@@ -67,6 +81,36 @@ impl Service {
 
         let instances = data.find_path(&["app", "instances"]).unwrap();
         let instances = instances.as_i64().unwrap();
+
+        let mut max_instances = self.max_instances.clone();
+        let mut max_mem_usage = self.max_mem_usage.clone();
+        let mut max_cpu_usage = self.max_cpu_usage.clone();
+
+        let labels = data.find_path(&["app", "labels"]).unwrap();
+        let labels = labels.as_object().unwrap();
+        let mut has_labels = false;
+
+        for (label, value) in labels {
+            match (label.as_ref(), value) {
+                ("AUTOSCALE_MAX_INSTANCES", &Json::String(ref v)) => {
+                    max_instances = v.parse::<i32>().unwrap();
+                    has_labels = true;
+                }
+                ("AUTOSCALE_MEM_PERCENT", &Json::String(ref v)) => {
+                    max_mem_usage = v.parse::<f64>().unwrap();
+                    has_labels = true;
+                }
+                ("AUTOSCALE_CPU_PERCENT", &Json::String(ref v)) => {
+                    max_cpu_usage = v.parse::<f64>().unwrap();
+                    has_labels = true;
+                }
+                _ => {}
+            }
+        }
+
+        if ! has_labels {
+            return Ok(None);
+        }
 
         let xs = data.find_path(&["app", "tasks"]).unwrap();
         let xs = xs.as_array().unwrap();
@@ -80,11 +124,14 @@ impl Service {
             tasks.insert(id.to_string(), slave_id.to_string());
         }
 
-        Ok(App {
-            name: app.to_owned(),
+        Ok(Some(App {
+            name: app.to_string(),
+            max_instances: max_instances,
+            max_mem_usage: max_mem_usage,
+            max_cpu_usage: max_cpu_usage,
             instances: instances,
             tasks: tasks,
-        })
+        }))
     }
 
     pub fn get_slaves(&self) -> AutoscaleResult<HashMap<String, String>> {
@@ -112,7 +159,7 @@ impl Service {
 
     pub fn get_statistic(&self, app: &App,
                          slaves: &HashMap<String, String>,
-                         prev: Option<Statistic>)
+                         prev: Option<&Statistic>)
                          -> AutoscaleResult<Statistic> {
         let mut mems: Vec<f64> = Vec::new();
         let mut cpus: Vec<f64> = Vec::new();
@@ -156,7 +203,7 @@ impl Service {
         }
 
         let body = format!(r#"{{"instances": {}}}"#, instances);
-        let url = format!("http://{}:8080/v2/apps/{}", &self.host, &self.app);
+        let url = format!("http://{}:8080/v2/apps/{}", &self.host, &app.name);
         try!(self.client.put(&url).body(&body).send());
         Ok(())
     }

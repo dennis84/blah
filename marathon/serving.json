@@ -19,7 +19,11 @@
     "ELASTICSEARCH_URL": "$BLAH_HOST:9200"
   },
   "labels":{
+    "AUTOSCALE_MAX_INSTANCES": "10",
+    "AUTOSCALE_MEM_PERCENT": "80",
+    "AUTOSCALE_CPU_PERCENT": "80",
     "HAPROXY_GROUP": "external",
-    "HAPROXY_0_VHOST": "serving.blah.local"
+    "HAPROXY_0_VHOST": "serving.blah.local",
+    "HAPROXY_0_BACKEND_HTTP_HEALTHCHECK_OPTIONS": "  option  httpchk GET {healthCheckPath} HTTP/1.1\\r\\nHost:\\ serving.blah.local\n  timeout check {healthCheckTimeoutSeconds}s\n"
   }
 }
