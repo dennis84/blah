@@ -37,11 +37,10 @@ impl<F> Handler for EventSourceHandler<F>
     type Timeout = ();
     type Message = ();
 
-    fn ready(&mut self, event_loop: &mut EventLoop<Self>,
-             token: Token, _: EventSet) {
+    fn ready(&mut self, _: &mut EventLoop<Self>, token: Token, _: EventSet) {
         assert_eq!(token, Token(1));
         if false == self.initialized {
-            let response = parse_response(&mut self.reader).unwrap();
+            parse_response(&mut self.reader).unwrap();
             self.initialized = true;
         }
 

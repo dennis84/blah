@@ -2,7 +2,7 @@ use std::io::prelude::*;
 use std::collections::HashMap;
 use hyper::client::Client;
 use rustc_serialize::json::{self, Json};
-use error::AutoscaleResult;
+use error::{AutoscaleResult, Error};
 
 pub struct Service {
     pub host: String,
@@ -168,7 +168,8 @@ impl Service {
 
         for (id, slave_id) in &app.tasks {
             let url = slaves.get::<String>(&slave_id).unwrap().to_string();
-            let task = self.get_task_statistic(url, id).unwrap().unwrap();
+            let task = try!(self.get_task_statistic(url, id));
+            let task = try!(task.ok_or(Error::Parse));
             timestamp = task.timestamp;
             cpus.push(task.cpus_user_time_secs + task.cpus_system_time_secs);
             mems.push(100.0 * task.mem_rss_bytes as f64 /
