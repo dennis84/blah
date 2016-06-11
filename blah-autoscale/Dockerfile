@@ -7,6 +7,4 @@ WORKDIR /app
 
 RUN cargo build --release
 
-ENV RUST_LOG info
-
 ENTRYPOINT ["target/release/blah-autoscale"]

@@ -10,6 +10,9 @@
       "network": "BRIDGE"
     }
   },
+  "env": {
+    "RUST_LOG": "info"
+  },
   "args": [
     "--host", "$BLAH_HOST"
   ]
