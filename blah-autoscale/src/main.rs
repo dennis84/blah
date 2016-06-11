@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate log;
+extern crate env_logger;
 extern crate getopts;
 extern crate hyper;
 extern crate mio;
@@ -16,6 +19,7 @@ use hyper::client::Client;
 use mio::*;
 use service::{Service, Statistic, App};
 use eventsource::{connect};
+use error::{AutoscaleResult};
 
 #[derive(Debug)]
 enum Message {
@@ -29,64 +33,69 @@ struct Autoscale {
     stats: HashMap<String, Statistic>,
 }
 
+impl Autoscale {
+    fn update(&mut self) -> AutoscaleResult<()> {
+        self.apps.clear();
+        self.stats.clear();
+
+        let apps = try!(self.service.get_apps());
+
+        for id in apps {
+            let app = try!(self.service.get_app(id.as_ref()));
+            if app.is_some() {
+                self.apps.insert(id, app.unwrap());
+            }
+        }
+
+        Ok(())
+    }
+
+    fn scale(&mut self) -> AutoscaleResult<()> {
+        let slaves = try!(self.service.get_slaves());
+
+        for (id, app) in &self.apps {
+            let stat = {
+                let prev = self.stats.get(id);
+                self.service.get_statistic(&app, &slaves, prev)
+            };
+
+            if stat.is_err() {
+                continue;
+            }
+
+            let stat = stat.unwrap();
+            if stat.cpu_usage > app.max_cpu_usage ||
+               stat.mem_usage > app.max_mem_usage {
+                try!(self.service.scale(&app));
+            }
+
+            info!("----------------------------------------");
+            info!("App: {}", app.name);
+            info!("Instances: {}", app.instances);
+            info!("CPU: {}", stat.cpu_usage);
+            info!("MEM: {}", stat.mem_usage);
+
+            self.stats.insert(id.to_owned(), stat);
+        }
+
+        Ok(())
+    }
+}
+
 impl Handler for Autoscale {
     type Timeout = ();
     type Message = Message;
 
-    fn notify(&mut self, _: &mut EventLoop<Autoscale>, msg: Message) {
+    fn notify(&mut self, _: &mut EventLoop<Self>, msg: Message) {
         match msg {
-            Message::Update => {
-                self.apps.clear();
-                let apps = self.service.get_apps().unwrap();
-
-                for id in apps {
-                    let app = self.service.get_app(id.as_ref()).unwrap();
-                    if app.is_some() {
-                        self.apps.insert(id, app.unwrap());
-                    }
-                }
-            }
-            Message::Tick => {
-                let slaves = self.service.get_slaves().unwrap();
-
-                for (id, app) in &self.apps {
-                    println!("----------------------------------------");
-                    println!("App: {}", app.name);
-                    println!("Running instances: {}", app.instances);
-
-                    let stat = {
-                        let prev = self.stats.get(id);
-                        self.service.get_statistic(&app, &slaves, prev)
-                    }.unwrap();
-
-                    if stat.cpu_usage < app.max_cpu_usage &&
-                       stat.mem_usage < app.max_mem_usage {
-                        println!("No need to scale: {}", app.name);
-                        println!("CPU: {} MEM: {}",
-                                 stat.cpu_usage, stat.mem_usage);
-                        continue;
-                    }
-
-                    match self.service.scale(&app) {
-                        Ok(_) => {
-                            println!("Successfully scaled app: {}", app.name);
-                            println!("CPU: {} MEM: {}",
-                                     stat.cpu_usage, stat.mem_usage);
-                        }
-                        Err(err) => {
-                            println!("Autoscaling failed!: {}", err);
-                            ::std::process::exit(1);
-                        }
-                    }
-
-                    self.stats.insert(id.to_owned(), stat);
-                }
-            }
+            Message::Update => self.update().unwrap(),
+            Message::Tick => self.scale().unwrap(),
         }
     }
 }
 
 fn main() {
+    env_logger::init().unwrap();
     let args: Vec<String> = env::args().collect();
 
     let mut opts = Options::new();
@@ -97,7 +106,7 @@ fn main() {
 
     let matches = opts.parse(&args[1..]).unwrap_or_else(|_| {
         let brief = format!("Usage: autoscale [options]");
-        print!("{}", opts.usage(&brief));
+        error!("{}", opts.usage(&brief));
         ::std::process::exit(1);
     });
 
@@ -139,23 +148,22 @@ fn main() {
 
     let sse = event_loop.channel();
     thread::spawn(move || {
-        connect("172.17.42.1:8080", move |event| {
+        connect("172.17.42.1:8080", |event| {
             if event.event == Some("status_update_event".to_string()) {
                 sse.send(Message::Update).unwrap();
             }
-        }).unwrap();
+        })
     });
 
     let timer = event_loop.channel();
     thread::spawn(move || {
         loop {
             thread::sleep(Duration::new(10, 0));
-            timer.send(Message::Tick).unwrap();
+            timer.send(Message::Tick).unwrap()
         }
     });
 
     let init = event_loop.channel();
     init.send(Message::Update).unwrap();
-
     event_loop.run(&mut handler).unwrap();
 }

@@ -4,6 +4,8 @@ version = "0.1.0"
 authors = ["Dennis Dietrich <d.dietrich84@gmail.com>"]
 
 [dependencies]
+log = "0.3"
+env_logger = "0.3"
 getopts = "0.2"
 mio = "0.5"
 hyper = "0.9"

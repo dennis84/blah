@@ -1,7 +1,7 @@
 use std::io;
 use std::fmt;
-use hyper;
 use rustc_serialize::json;
+use hyper;
 
 pub type AutoscaleResult<T> = Result<T, Error>;
 
