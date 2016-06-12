@@ -66,12 +66,15 @@ impl Autoscale {
             let stat = stat.unwrap();
             if stat.cpu_usage > app.max_cpu_usage ||
                stat.mem_usage > app.max_mem_usage {
-                try!(self.service.scale(&app));
+                match self.service.scale(&app) {
+                    Ok(_) => {},
+                    Err(_) => continue,
+                }
             }
 
             info!("----------------------------------------");
             info!("App: {}", app.name);
-            info!("Instances: {}", app.instances);
+            info!("Instances: {}/{}", app.instances, app.max_instances);
             info!("CPU: {}", stat.cpu_usage);
             info!("MEM: {}", stat.mem_usage);
 

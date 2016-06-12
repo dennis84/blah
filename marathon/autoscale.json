@@ -1,7 +1,7 @@
 {
   "id": "autoscale",
   "cpus": 0.1,
-  "mem": 64.0,
+  "mem": 128.0,
   "instances": 1,
   "container": {
     "type": "DOCKER",
@@ -11,7 +11,8 @@
     }
   },
   "env": {
-    "RUST_LOG": "info"
+    "RUST_LOG": "info",
+    "RUST_BACKTRACE": "1"
   },
   "args": [
     "--host", "$BLAH_HOST"
