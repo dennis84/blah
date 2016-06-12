@@ -4,6 +4,7 @@ extern crate env_logger;
 extern crate getopts;
 extern crate hyper;
 extern crate mio;
+extern crate mioco;
 extern crate rustc_serialize;
 
 mod error;
@@ -11,12 +12,10 @@ mod service;
 mod eventsource;
 
 use std::env;
-use std::thread;
-use std::time::Duration;
 use std::collections::HashMap;
 use getopts::Options;
 use hyper::client::Client;
-use mio::*;
+use mioco::sync::mpsc;
 use service::{Service, Statistic, App};
 use eventsource::{connect};
 use error::{AutoscaleResult};
@@ -82,18 +81,6 @@ impl Autoscale {
     }
 }
 
-impl Handler for Autoscale {
-    type Timeout = ();
-    type Message = Message;
-
-    fn notify(&mut self, _: &mut EventLoop<Self>, msg: Message) {
-        match msg {
-            Message::Update => self.update().unwrap(),
-            Message::Tick => self.scale().unwrap(),
-        }
-    }
-}
-
 fn main() {
     env_logger::init().unwrap();
     let args: Vec<String> = env::args().collect();
@@ -139,31 +126,36 @@ fn main() {
         client: Client::new(),
     };
 
-    let mut event_loop = EventLoop::new().unwrap();
     let mut handler = Autoscale {
         service: service,
         apps: HashMap::new(),
         stats: HashMap::new(),
     };
 
-    let sse = event_loop.channel();
-    thread::spawn(move || {
-        connect("172.17.42.1:8080", |event| {
-            if event.event == Some("status_update_event".to_string()) {
-                sse.send(Message::Update).unwrap();
+    mioco::start(move || {
+        let (sender, receiver) = mpsc::channel::<Message>();
+        mioco::spawn(move || loop {
+            match receiver.recv() {
+                Ok(Message::Tick) => handler.scale().unwrap(),
+                Ok(Message::Update) => handler.update().unwrap(),
+                Err(_) => {},
             }
-        })
-    });
+        });
 
-    let timer = event_loop.channel();
-    thread::spawn(move || {
+        mioco::spawn({
+            let sender = sender.clone();
+            move || connect("172.17.42.1:8080", |event| {
+                if event.event == Some("status_update_event".to_string()) {
+                    sender.send(Message::Update).unwrap();
+                }
+            })
+        });
+
+        sender.send(Message::Update).unwrap();
+
         loop {
-            thread::sleep(Duration::new(10, 0));
-            timer.send(Message::Tick).unwrap()
+            sender.send(Message::Tick).unwrap();
+            mioco::sleep_ms(10000);
         }
-    });
-
-    let init = event_loop.channel();
-    init.send(Message::Update).unwrap();
-    event_loop.run(&mut handler).unwrap();
+    }).unwrap();
 }
