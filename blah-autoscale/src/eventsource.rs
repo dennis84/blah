@@ -12,10 +12,12 @@
 
 use std::io::prelude::*;
 use std::io::{self, BufWriter};
+use std::borrow::Borrow;
 use mio::tcp::{TcpStream};
 use hyper::http::h1::parse_response;
 use hyper::buffer::BufReader;
 use mio::*;
+use url::Url;
 
 #[derive(Debug)]
 pub struct Event {
@@ -103,13 +105,22 @@ impl<F> Handler for EventSourceHandler<F>
     }
 }
 
-pub fn connect<F>(addr: &str, fun: F) -> io::Result<()> 
-    where F: FnMut(Event) -> () {
+pub fn connect<F,U>(url: U, fun: F) -> io::Result<()> 
+    where F: FnMut(Event) -> (),
+          U: Borrow<str> {
+    let url = Url::parse(url.borrow()).unwrap();
+    let addr = match (url.host(), url.port()) {
+        (Some(host), Some(port)) => format!("{}:{}", host, port),
+        _ => panic!("Invalid URL"),
+    };
+
     let stream = try!(TcpStream::connect(&addr.parse().unwrap()));
     let writer = try!(stream.try_clone());
     let mut writer = BufWriter::new(writer);
-    try!(writer.write(b"GET /v2/events HTTP/1.1\r\n"));
-    try!(writer.write(b"HOST: 172.17.42.1:8080\r\n"));
+    try!(writer.write(&format!(
+        "GET {} HTTP/1.1\r\n", url.path()).into_bytes()[..]));
+    try!(writer.write(&format!(
+        "HOST: {}\r\n", addr).into_bytes()[..]));
     try!(writer.write(b"accept: text/event-stream\r\n\r\n"));
     try!(writer.flush());
 

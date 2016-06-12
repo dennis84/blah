@@ -3,6 +3,7 @@ extern crate log;
 extern crate env_logger;
 extern crate getopts;
 extern crate hyper;
+extern crate url;
 extern crate mio;
 extern crate mioco;
 extern crate rustc_serialize;
@@ -118,7 +119,7 @@ fn main() {
         .unwrap();
 
     let service = Service {
-        host: host,
+        host: host.clone(),
         max_mem_usage: max_mem_usage,
         max_cpu_usage: max_cpu_usage,
         multiplier: 1.5,
@@ -144,8 +145,8 @@ fn main() {
 
         mioco::spawn({
             let sender = sender.clone();
-            move || connect("172.17.42.1:8080", |event| {
-                if event.event == Some("status_update_event".to_string()) {
+            move || connect(format!("http://{}:8080/v2/events", host), |e| {
+                if e.event == Some("status_update_event".to_string()) {
                     sender.send(Message::Update).unwrap();
                 }
             })
