@@ -5,7 +5,7 @@
 //! mod eventsource;
 //! use eventsource::{connect};
 //!
-//! let client = connect("172.17.42.1:8080", |event| {
+//! let client = connect("http://172.17.42.1:8080/v2/events", |event| {
 //!     println!("{:?}", event);
 //! }).unwrap();
 //! ```
@@ -36,6 +36,31 @@ struct EventSourceHandler<F>
 
 impl<F> EventSourceHandler<F>
     where F: FnMut(Event) -> () {
+
+    fn read(&mut self) {
+        if false == self.initialized {
+            parse_response(&mut self.reader).unwrap();
+            self.initialized = true;
+        }
+
+        let mut event = Event {
+            id: None,
+            event: None,
+            data: "".to_string(),
+            retry: None,
+        };
+
+        let mut line = String::new();
+        while self.reader.read_line(&mut line).unwrap_or(0) > 0 {
+            self.parse_line(&line, &mut event);
+            line.clear();
+        }
+
+        if ! event.data.is_empty() {
+            let fun = &mut self.callback;
+            fun(event);
+        }
+    }
 
     fn parse_line(&self, line: &str, event: &mut Event) {
         let line = if line.ends_with("\r\n") {
@@ -78,30 +103,10 @@ impl<F> Handler for EventSourceHandler<F>
     type Timeout = ();
     type Message = ();
 
-    fn ready(&mut self, _: &mut EventLoop<Self>, token: Token, _: EventSet) {
+    fn ready(&mut self, _: &mut EventLoop<Self>,
+             token: Token, _: EventSet) {
         assert_eq!(token, Token(1));
-        if false == self.initialized {
-            parse_response(&mut self.reader).unwrap();
-            self.initialized = true;
-        }
-
-        let mut event = Event {
-            id: None,
-            event: None,
-            data: "".to_string(),
-            retry: None,
-        };
-
-        let mut line = String::new();
-        while self.reader.read_line(&mut line).unwrap_or(0) > 0 {
-            self.parse_line(&line, &mut event);
-            line.clear();
-        }
-
-        if ! event.data.is_empty() {
-            let fun = &mut self.callback;
-            fun(event);
-        }
+        self.read();
     }
 }
 
