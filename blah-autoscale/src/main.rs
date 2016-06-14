@@ -31,27 +31,31 @@ struct Autoscale {
     service: Service,
     apps: HashMap<String, App>,
     stats: HashMap<String, Statistic>,
+    need_update: bool,
 }
 
 impl Autoscale {
     fn update(&mut self) -> AutoscaleResult<()> {
-        self.apps.clear();
-        self.stats.clear();
-
-        let apps = try!(self.service.get_apps());
-
-        for id in apps {
-            let app = try!(self.service.get_app(id.as_ref()));
-            if app.is_some() {
-                self.apps.insert(id, app.unwrap());
-            }
-        }
-
+        self.need_update = true;
         Ok(())
     }
 
-    fn scale(&mut self) -> AutoscaleResult<()> {
+    fn tick(&mut self) -> AutoscaleResult<()> {
         let slaves = try!(self.service.get_slaves());
+
+        if self.need_update {
+            self.apps.clear();
+            self.stats.clear();
+            let apps = try!(self.service.get_apps());
+            for id in apps {
+                let app = try!(self.service.get_app(id.as_ref()));
+                if app.is_some() {
+                    self.apps.insert(id, app.unwrap());
+                }
+            }
+
+            self.need_update = false;
+        }
 
         for (id, app) in &self.apps {
             let stat = {
@@ -68,7 +72,7 @@ impl Autoscale {
                stat.mem_usage > app.max_mem_usage {
                 match self.service.scale(&app) {
                     Ok(_) => {},
-                    Err(_) => continue,
+                    Err(_) => {},
                 }
             }
 
@@ -134,14 +138,19 @@ fn main() {
         service: service,
         apps: HashMap::new(),
         stats: HashMap::new(),
+        need_update: true,
     };
 
     mioco::start(move || {
         let (sender, receiver) = mpsc::channel::<Message>();
         mioco::spawn(move || loop {
             match receiver.recv() {
-                Ok(Message::Tick) => handler.scale().unwrap(),
-                Ok(Message::Update) => handler.update().unwrap(),
+                Ok(Message::Tick) => handler.tick().unwrap_or_else(|e| {
+                    debug!("Update failed {:?}. Continue ...", e);
+                }),
+                Ok(Message::Update) => handler.update().unwrap_or_else(|e| {
+                    debug!("Tick failed {:?}. Continue ...", e);
+                }),
                 Err(_) => {},
             }
         });
@@ -154,8 +163,6 @@ fn main() {
                 }
             })
         });
-
-        sender.send(Message::Update).unwrap();
 
         loop {
             sender.send(Message::Tick).unwrap();

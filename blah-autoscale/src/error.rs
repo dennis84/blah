@@ -7,8 +7,9 @@ pub type AutoscaleResult<T> = Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
-    IoError(io::Error),
+    Io(io::Error),
     Parse,
+    Unspecified(String),
 }
 
 impl fmt::Display for Error {
@@ -19,13 +20,13 @@ impl fmt::Display for Error {
 
 impl From<io::Error> for Error {
     fn from(err: io::Error) -> Error {
-        Error::IoError(err)
+        Error::Io(err)
     }
 }
 
 impl From<hyper::Error> for Error {
     fn from(err: hyper::Error) -> Error {
-        Error::IoError(io::Error::new(
+        Error::Io(io::Error::new(
             io::ErrorKind::Other,
             err.to_string()
         ))
@@ -34,7 +35,7 @@ impl From<hyper::Error> for Error {
 
 impl From<json::ParserError> for Error {
     fn from(err: json::ParserError) -> Error {
-        Error::IoError(io::Error::new(
+        Error::Io(io::Error::new(
             io::ErrorKind::Other,
             err.to_string()
         ))

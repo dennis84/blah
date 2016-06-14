@@ -199,8 +199,11 @@ impl Service {
 
     pub fn scale(&self, app: &App) -> AutoscaleResult<()> {
         let instances = (app.instances as f64 * self.multiplier).ceil() as i32;
-        if instances > self.max_instances {
-            panic!("Reached maximum instances of: {}", self.max_instances);
+        if instances > app.max_instances {
+            return Err(Error::Unspecified(format!(
+                "Reached maximum instances of: {}",
+                self.max_instances
+            )));
         }
 
         let body = format!(r#"{{"instances": {}}}"#, instances);
