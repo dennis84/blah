@@ -14,9 +14,8 @@ class UserStreamingJob(
     args: Array[String]
   )(implicit ec: ExecutionContext) {
     sparkConf.set("es.update.script",
-      """|ctx._source.events = ((ctx._source.events) ?
-         |  ctx._source.events += events :
-         |  events).takeRight(20);
+      """|ctx._source.events = (ctx._source.events += events).takeRight(20);
+         |ctx._source.nbEvents += nbEvents;
          |ctx._source.date = date;
          |ctx._source.lng = lng;
          |ctx._source.lat = lat;
@@ -27,6 +26,7 @@ class UserStreamingJob(
          |""".stripMargin.replaceAll("\n", ""))
     sparkConf.set("es.update.script.params",
       """|events:events,
+         |nbEvents:nbEvents,
          |date:date,
          |lng:lng,
          |lat:lat,

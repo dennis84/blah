@@ -2,6 +2,7 @@ package blah.algo
 
 import java.util.Properties
 import scala.reflect.ClassTag
+import scala.language.implicitConversions
 import org.apache.spark.rdd.RDD
 import kafka.producer.{ProducerConfig, Producer, KeyedMessage}
 
