@@ -12,6 +12,7 @@
 
 use std::io::prelude::*;
 use std::io::{self, BufWriter};
+use std::net::{SocketAddr, ToSocketAddrs};
 use std::borrow::Borrow;
 use mio::tcp::{TcpStream};
 use hyper::http::h1::parse_response;
@@ -113,13 +114,11 @@ impl<F> Handler for EventSourceHandler<F>
 pub fn connect<F,U>(url: U, fun: F) -> io::Result<()> 
     where F: FnMut(Event) -> (),
           U: Borrow<str> {
-    let url = Url::parse(url.borrow()).unwrap();
-    let addr = match (url.host(), url.port()) {
-        (Some(host), Some(port)) => format!("{}:{}", host, port),
-        _ => panic!("Invalid URL"),
-    };
-
-    let stream = try!(TcpStream::connect(&addr.parse().unwrap()));
+    let url = try!(Url::parse(url.borrow()).or_else(|e| {
+        Err(io::Error::new(io::ErrorKind::Other, e))
+    }));
+    let addr = try!(parse_url(&url));
+    let stream = try!(TcpStream::connect(&addr));
     let writer = try!(stream.try_clone());
     let mut writer = BufWriter::new(writer);
     try!(writer.write(&format!(
@@ -140,4 +139,33 @@ pub fn connect<F,U>(url: U, fun: F) -> io::Result<()>
     }));
 
     Ok(())
+}
+
+fn parse_url(url: &Url) -> io::Result<SocketAddr> {
+    let host = url.host_str();
+
+    if host.is_none() {
+        return Err(io::Error::new(io::ErrorKind::Other, "Invalid URL"))
+    }
+
+    let port = url.port_or_known_default().unwrap_or(80);
+    let addrs = try!((&host.unwrap()[..], port).to_socket_addrs());
+    let addrs = addrs.collect::<Vec<SocketAddr>>();
+
+    match addrs.first() {
+        Some(_) => Ok(addrs[0]),
+        None => Err(io::Error::new(io::ErrorKind::Other, "Parse error")),
+    }
+}
+
+#[test]
+fn test_parse_url() {
+    let url = Url::parse("http://google.com").unwrap();
+    let url = parse_url(&url);
+    assert!(url.is_ok());
+    assert!(80 == url.unwrap().port());
+    let url = Url::parse("http://8.8.8.8:8000").unwrap();
+    let url = parse_url(&url);
+    assert!(url.is_ok());
+    assert!(8000 == url.unwrap().port());
 }
