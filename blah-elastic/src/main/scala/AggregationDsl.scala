@@ -5,7 +5,7 @@ import blah.core.JsonDsl._
 
 trait AggregationDsl {
   def terms(k: String): JsObject =
-    ("aggs" -> (k -> ("terms" -> 
+    ("aggs" -> (k -> ("terms" ->
       ("field" -> k) ~
       ("size" -> 0)
     )))

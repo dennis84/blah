@@ -7,7 +7,7 @@ trait FilterDsl {
   def filter(json: JsObject): JsObject =
     ("query" -> ("filtered" -> ("filter" -> json)))
 
-  def gte(k: String, v: JsValue): JsObject = 
+  def gte(k: String, v: JsValue): JsObject =
     filter("range" -> (k -> ("gte" -> v)))
 
   def lte(k: String, v: JsValue): JsObject =

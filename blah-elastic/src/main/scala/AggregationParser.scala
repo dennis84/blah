@@ -2,24 +2,33 @@ package blah.elastic
 
 import spray.json._
 import spray.json.lenses.JsonLenses._
+import blah.core.JsonDsl._
 import DefaultJsonProtocol._
 
 object AggregationParser {
 
-  private def extractKey(json: JsValue): JsValue =
-    json.extract[JsValue]('key_as_string.?) getOrElse json.extract[JsValue]('key)
+  private def extractKey(json: JsValue) =
+    json.extract[JsValue]('key_as_string.?) getOrElse {
+      json.extract[JsValue]('key)
+    }
 
-  private def extractCount(json: JsValue): JsValue =
-    json.extract[JsValue]('count.? / 'value) getOrElse json.extract[JsValue]('doc_count)
+  private def extractCount(json: JsValue) =
+    json.extract[JsValue]('count.? / 'value) getOrElse {
+      json.extract[JsValue]('doc_count)
+    }
 
-  private def parseBucket(key: String, data: JsObject): List[JsObject] = {
+  private def parseBucket(key: String, data: JsObject) = {
     val value = extractKey(data)
     val count = extractCount(data)
-    data.fields.toList collectFirst {
-      case (k, v: JsObject) if v.fields.contains("buckets") => parse(JsObject(k -> v))
-    } map (_ map {
-      obj => JsObject(Map(key -> value) ++ obj.fields)
-    }) getOrElse List(JsObject(key -> value, "count" -> count))
+    val maybeBuckets = data.fields.toList collectFirst {
+      case (k, v: JsObject) if v.fields.contains("buckets") => parse(k -> v)
+    }
+
+    maybeBuckets map { xs =>
+      xs map (_ merge (key -> value))
+    } getOrElse {
+      List(JsObject(key -> value, "count" -> count))
+    }
   }
 
   def parse(data: JsValue): List[JsObject] = data match {
