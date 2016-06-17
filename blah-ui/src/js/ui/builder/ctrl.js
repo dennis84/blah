@@ -1,21 +1,6 @@
 import clone from 'clone'
 import xtend from 'xtend'
 
-function addFilter(model) {
-  var m = clone(model)
-  if(undefined === m.filterBy) {
-    m.filterBy = []
-  }
-
-  m.filterBy.push({
-    prop: 'date.from',
-    operator: 'eq',
-    value: ''
-  })
-
-  return m
-}
-
 function updateFilter(model, index, prop) {
   var m = clone(model)
   m.filterBy[index] = xtend(m.filterBy[index], prop)
@@ -31,7 +16,6 @@ function updateGroups(model, selected) {
 }
 
 export {
-  addFilter,
   updateFilter,
   updateGroups
 }

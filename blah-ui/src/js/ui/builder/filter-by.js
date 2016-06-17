@@ -2,9 +2,8 @@ import {h} from 'virtual-dom'
 import debounce from 'debounce'
 import {addFilter, updateFilter} from './ctrl'
 
-function mkFilterRows(model, update) {
-  if(undefined === model.filterBy) return
-  return model.filterBy.map((filter, index) => h('div.control.is-grouped', [
+function mkFilterRow(filter, index, update) {
+  return h('div.filter-row', h('div.control.is-grouped', [
     h('select.select', {
       onchange: (e) => update(updateFilter, index, {prop: e.target.value})
     }, [
@@ -43,14 +42,10 @@ function mkFilterRows(model, update) {
 }
 
 function render(model, update) {
+  var filters = model.filterBy || []
   return h('div', [
-    mkFilterRows(model, update),
-    h('div.control', h('a.button.is-danger.is-outlined', {
-      onclick: (e) => {
-        e.preventDefault()
-        update(addFilter)
-      }
-    }, '+ Add Filter')),
+    filters.map((filter, index) => mkFilterRow(filter, index, update)),
+    mkFilterRow({}, filters.length, update)
   ])
 }
 

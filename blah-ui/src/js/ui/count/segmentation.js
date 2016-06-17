@@ -28,23 +28,25 @@ function chart(model) {
 }
 
 function render(model, update, conn, options) {
-  return h('div.widget.widget-line', {
-    className: options.className,
-    mount: mount(node => update(grouped, xtend(options, model))),
-    hook: hook(node => {
-      conn.off('count').on('count', data => {
-        update(grouped, xtend(options, model))
-      })
-
-      if(model.shouldUpdate) {
-        update(grouped, xtend(options, model))
-        model.shouldUpdate = false
-      }
-    })
-  }, [
-    h('h3', options.title),
+  return h('div', [
     form(model, update, filterBy, groupBy(options)),
-    chart(model)
+    h('div.widget.widget-line', {
+      className: options.className,
+      mount: mount(node => update(grouped, xtend(options, model))),
+      hook: hook(node => {
+        conn.off('count').on('count', data => {
+          update(grouped, xtend(options, model))
+        })
+
+        if(model.shouldUpdate) {
+          update(grouped, xtend(options, model))
+          model.shouldUpdate = false
+        }
+      })
+    }, [
+      h('h3', options.title),
+      chart(model)
+    ])
   ])
 }
 

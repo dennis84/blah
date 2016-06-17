@@ -2,7 +2,7 @@ import {h} from 'virtual-dom'
 import {updateGroups} from './ctrl'
 
 function render(options) {
-  return (model, update) => h('div.control', [
+  return (model, update) => h('div.group-row', h('div.control', [
     h('label', 'Group by'),
     h('select', {
       multiple: true,
@@ -19,7 +19,7 @@ function render(options) {
       value: x,
       selected: -1 !== model.groupBy.indexOf(x)
     }, x)))
-  ])
+  ]))
 }
 
 export default render
