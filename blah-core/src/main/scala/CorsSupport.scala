@@ -9,7 +9,13 @@ import akka.http.scaladsl.server.{Directive0, Route}
 trait CorsSupport {
   lazy val allowedOriginHeader = `Access-Control-Allow-Origin`.*
 
-  private def addAccessControlHeaders: Directive0 =
+  private def preflightRequestHandler: Route = options {
+    complete(HttpResponse(200).withHeaders(
+      `Access-Control-Allow-Methods`(OPTIONS, POST, PUT, GET, DELETE)
+    ))
+  }
+
+  def withAccessControlHeaders: Directive0 =
     mapResponseHeaders { headers =>
       allowedOriginHeader +:
         `Access-Control-Allow-Credentials`(true) +:
@@ -20,12 +26,6 @@ trait CorsSupport {
         ) +: headers
     }
 
-  private def preflightRequestHandler: Route = options {
-    complete(HttpResponse(200).withHeaders(
-      `Access-Control-Allow-Methods`(OPTIONS, POST, PUT, GET, DELETE)
-    ))
-  }
-
   def corsHandler(r: Route) =
-    addAccessControlHeaders(preflightRequestHandler ~ r)
+    withAccessControlHeaders(preflightRequestHandler ~ r)
 }
