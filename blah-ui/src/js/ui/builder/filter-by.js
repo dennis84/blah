@@ -8,17 +8,33 @@ function mkFilterRows(model, update) {
     h('select.select', {
       onchange: (e) => update(updateFilter, index, {prop: e.target.value})
     }, [
-      h('option', {value: 'date.from'}, 'From'),
-      h('option', {value: 'date.to'}, 'To'),
+      h('option', {
+        value: 'date.from',
+        selected: 'date.from' === filter.prop
+      }, 'From'),
+      h('option', {
+        value: 'date.to',
+        selected: 'date.to' === filter.prop
+      }, 'To'),
     ]),
     h('select.select', {
       onchange: (e) => update(updateFilter, index, {operator: e.target.value})
     }, [
-      h('option', {value: 'eq'}, 'eq'),
-      h('option', {value: 'lte'}, 'lte'),
-      h('option', {value: 'gte'}, 'gte')
+      h('option', {
+        value: 'eq',
+        selected: 'eq' === filter.operator
+      }, 'eq'),
+      h('option', {
+        value: 'lte',
+        selected: 'lte' === filter.operator
+      }, 'lte'),
+      h('option', {
+        value: 'gte',
+        selected: 'gte' === filter.operator
+      }, 'gte')
     ]),
     h('input.input', {
+      value: filter.value,
       oninput: debounce((e) => {
         update(updateFilter, index, {value: e.target.value})
       }, 500)

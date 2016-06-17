@@ -1,9 +1,8 @@
 import {h} from 'virtual-dom'
 import {updateGroups} from './ctrl'
 
-function render(model, update) {
-  if(undefined === model.groups) return
-  return h('div.control', [
+function render(options) {
+  return (model, update) => h('div.control', [
     h('label', 'Group by'),
     h('select', {
       multiple: true,
@@ -16,10 +15,10 @@ function render(model, update) {
         }
         update(updateGroups, selected)
       }
-    }, model.groups.map((group) => h('option', {
-      value: group.value,
-      selected: group.selected
-    }, group.value)))
+    }, options.groups.map(x => h('option', {
+      value: x,
+      selected: -1 !== model.groupBy.indexOf(x)
+    }, x)))
   ])
 }
 

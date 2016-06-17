@@ -1,7 +1,8 @@
 import {h} from 'virtual-dom'
+import moment from 'moment'
 import nav from './nav'
 import widget from '../widget'
-import line from './count/line'
+import seg from './count/segmentation'
 import * as error from './common/error'
 import theme from './theme'
 
@@ -11,19 +12,17 @@ function render(model, update, conn, storage) {
   }, [
     nav(model, update, conn, storage),
     h('h1.has-text-centered', 'Segmentation'),
-    (model.error) ? error.unknown() : widget(line, model, update, {
-      builder: {
-        groups: [
-          {value: 'date.year', selected: false},
-          {value: 'date.month', selected: false},
-          {value: 'date.day', selected: false},
-          {value: 'date.hour', selected: false}
-        ]
-      }
+    (model.error) ? error.unknown() : widget(seg, model, update, {
+      groupBy: ['date.hour'],
+      filterBy: [{
+        prop: 'date.from',
+        operator: 'gte',
+        value: moment().subtract(1, 'day').format()
+      }]
     }, conn, {
       collection: 'pageviews',
-      groupBy: ['date.hour'],
-      className: 'size-3of3 segmentation'
+      className: 'size-3of3 segmentation',
+      groups: ['date.year', 'date.month', 'date.day', 'date.hour']
     })
   ])
 }

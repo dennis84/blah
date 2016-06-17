@@ -67,14 +67,14 @@ function countDiff(model, options) {
  * @return {Promise} The model wrapped in a promise
  */
 function grouped(model, options) {
-  return post('/count', mkQuery(options, model.builder)).then((data) => {
+  return post('/count', mkQuery(options)).then((data) => {
     var m = clone(model)
     m.groups = data
     return m
   })
 }
 
-function mkQuery(options, other) {
+function mkQuery(options) {
   var query = {}
   if(options.filterBy) {
     query.filterBy = options.filterBy
@@ -86,10 +86,6 @@ function mkQuery(options, other) {
 
   if(options.collection) {
     query.collection = options.collection
-  }
-
-  if(undefined !== other) {
-    query = xtend(query, mkQuery(other))
   }
 
   return query
