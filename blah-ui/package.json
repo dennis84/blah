@@ -11,6 +11,7 @@
     "emitter-component": "^1.1.1",
     "masonry-layout": "^4.1.0",
     "moment": "^2.13.0",
+    "pikaday": "^1.4.0",
     "raf": "^3.2.0",
     "uuid": "^2.0.2",
     "vdom-thunk": "^3.0.0",

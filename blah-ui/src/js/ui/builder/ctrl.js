@@ -3,7 +3,11 @@ import xtend from 'xtend'
 
 function updateFilter(model, index, prop) {
   var m = clone(model)
-  m.filterBy[index] = xtend(m.filterBy[index], prop)
+  m.filterBy[index] = xtend({
+    prop: '',
+    operator: '',
+    value: ''
+  }, m.filterBy[index], prop)
   m.shouldUpdate = true
   return m
 }

@@ -18,6 +18,10 @@ function render(model, update, conn, storage) {
         prop: 'date.from',
         operator: 'gte',
         value: moment().subtract(1, 'day').format()
+      }, {
+        prop: 'date.to',
+        operator: 'lte',
+        value: moment().add(1, 'hour').format()
       }]
     }, conn, {
       collection: 'pageviews',

@@ -3,7 +3,7 @@ import moment from 'moment'
 import xtend from 'xtend'
 import {hook, mount} from '../../hook'
 import timeframe from '../../timeframe'
-import {filterBy, groupBy, form} from '../builder/all'
+import {dateRange, filterBy, groupBy, form} from '../builder/all'
 import {grouped} from './ctrl'
 import line from '../chart/line'
 
@@ -13,7 +13,7 @@ function chart(model) {
   var to = model.filterBy
     .find(x => 'date.to' === x.prop)
   from = from ? moment(from.value) : moment().subtract(1, 'day'),
-  to = to ? moment(to.value) : moment().add(1, 'hour')
+  to = to ? moment(to.value).endOf('day') : moment().add(1, 'hour')
   var diff = to.diff(from, 'days');
   var format = 'ddd h:mm a'
   if(diff > 2) format = 'ddd M'
@@ -29,7 +29,7 @@ function chart(model) {
 
 function render(model, update, conn, options) {
   return h('div', [
-    form(model, update, filterBy, groupBy(options)),
+    form(model, update, dateRange, filterBy, groupBy(options)),
     h('div.widget.widget-line', {
       className: options.className,
       mount: mount(node => update(grouped, xtend(options, model))),
