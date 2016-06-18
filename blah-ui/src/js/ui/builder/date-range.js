@@ -28,8 +28,11 @@ function render(model, update) {
   var toIndex = filters.indexOf(to)
 
   return h('div.filter-row', h('div.control.is-grouped.is-horizontal', [
-    mkInput(from, fromIndex, update),
-    mkInput(to, fromIndex, update)
+    h('div.control-label', h('label.label', 'From - To')),
+    h('div.control', [
+      mkInput(from, fromIndex, update),
+      mkInput(to, fromIndex, update)
+    ])
   ]))
 }
 

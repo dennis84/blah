@@ -2,11 +2,10 @@ import {h} from 'virtual-dom'
 import {updateGroups} from './ctrl'
 
 function render(options) {
-  return (model, update) => h('div.group-row', h('div.control', [
-    h('label', 'Group by'),
-    h('select', {
-      multiple: true,
-      onchange: (e) => {
+  return (model, update) => h('div.group-row', h('div.control.is-horizontal', [
+    h('div.control-label', h('label.label', 'Group by')),
+    h('div.control', h('select.select', {
+      onchange: e => {
         var selected = []
         for(var i in e.target.options) {
           if(e.target.options[i].selected) {
@@ -18,7 +17,7 @@ function render(options) {
     }, options.groups.map(x => h('option', {
       value: x,
       selected: -1 !== model.groupBy.indexOf(x)
-    }, x)))
+    }, x))))
   ]))
 }
 

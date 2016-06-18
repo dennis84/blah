@@ -12,6 +12,13 @@ function updateFilter(model, index, prop) {
   return m
 }
 
+function removeFilter(model, index) {
+  var m = clone(model)
+  m.filterBy.splice(index, 1)
+  m.shouldUpdate = true
+  return m
+}
+
 function updateGroups(model, selected) {
   var m = clone(model)
   m.groupBy = selected
@@ -21,5 +28,6 @@ function updateGroups(model, selected) {
 
 export {
   updateFilter,
+  removeFilter,
   updateGroups
 }
