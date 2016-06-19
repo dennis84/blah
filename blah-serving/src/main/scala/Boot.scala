@@ -31,7 +31,8 @@ object Boot extends App
     new SumService(env),
     new FunnelService(env),
     new SimilarityService(env),
-    new UserService(env))
+    new UserService(env),
+    new MostViewedService(env))
   val routes = services.map(_.route)
 
   Try(env.consumer) match {

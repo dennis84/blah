@@ -9,6 +9,7 @@ import userCount from './user/count'
 import userBar from './user/bar'
 import sum from './sum/sum'
 import funnel from './funnel/funnel'
+import mostViewedList from './most-viewed/list'
 
 /**
  * Pie Chart: Browser Statistics Over a Year
@@ -183,6 +184,17 @@ function itemsFunnel(model, update, conn) {
   })
 }
 
+/**
+ * Most viewed items
+ */
+function mostViewed(model, update, conn) {
+  return widget(mostViewedList, model, update, {}, conn, {
+    title: 'Most Viewed Items',
+    collection: 'pageviews',
+    limit: 10
+  })
+}
+
 export {
   browserStats,
   pageviews,
@@ -195,5 +207,6 @@ export {
   mobileOsStats,
   totalRevenue,
   recommendationsWidget,
-  itemsFunnel
+  itemsFunnel,
+  mostViewed
 }

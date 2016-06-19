@@ -17,6 +17,9 @@ trait ServingJsonProtocol extends JsonProtocol {
   implicit val sumFmt = jsonFormat1(Sum)
   implicit val funnelQueryFmt = jsonFormat1(FunnelQuery)
   implicit val funnelFmt = jsonFormat3(Funnel)
+  implicit val mostViewedQueryFmt = jsonFormat1(MostViewedQuery)
+  implicit val mostViewedItemFmt = jsonFormat3(MostViewedItem)
+  implicit val mostViewedResultFmt = jsonFormat2(MostViewedResult)
 }
 
 object ServingJsonProtocol extends ServingJsonProtocol

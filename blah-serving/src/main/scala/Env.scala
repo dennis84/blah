@@ -85,5 +85,14 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
         ("properties" ->
           ("name" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("path" -> ("type" -> "string")) ~
-          ("count" -> ("type" -> "integer")))))
+          ("count" -> ("type" -> "integer")))) ~
+      ("most_viewed" ->
+        ("properties" ->
+          ("collection" -> ("type" -> "string")) ~
+          ("items" ->
+            ("type" -> "nested") ~
+            ("properties" ->
+              ("item" -> ("type" -> "string")) ~
+              ("pos" -> ("type" -> "integer")) ~
+              ("count" -> ("type" -> "integer")))))))
 }
