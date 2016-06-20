@@ -20,7 +20,10 @@ function render(model, update, conn, options = {}) {
   var items = model.items ? model.items.slice(0, options.limit) : []
   return h('div.widget.is-borderless.widget-most-viewed', {
     className: options.className,
-    mount: mount(node => update(find, options))
+    mount: mount(node => {
+      conn.on('most-viewed', data => update(find, options))
+      update(find, options)
+    })
   }, [
     h('div.is-bordered', h('h3', options.title)),
     mkItems(items, update)

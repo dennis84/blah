@@ -12,5 +12,7 @@ class WebsocketHub(room: WebsocketRoom) extends Actor {
       room.send("user", message)
     case ("funnel", message: String) =>
       room.send("funnel", message)
+    case ("most_viewed", message: String) =>
+      room.send("most-viewed", message)
   }
 }
