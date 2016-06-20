@@ -17,7 +17,6 @@ function mkItems(xs, update) {
 }
 
 function render(model, update, conn, options = {}) {
-  var items = model.items ? model.items.slice(0, options.limit) : []
   return h('div.widget.is-borderless.widget-most-viewed', {
     className: options.className,
     mount: mount(node => {
@@ -26,7 +25,7 @@ function render(model, update, conn, options = {}) {
     })
   }, [
     h('div.is-bordered', h('h3', options.title)),
-    mkItems(items, update)
+    mkItems(model.items, update)
   ])
 }
 

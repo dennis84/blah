@@ -14,8 +14,8 @@ import {post} from '../../http'
 function find(model, options) {
   return post('/most-viewed', mkQuery(options)).then((data) => {
     var m = clone(model)
-    m.collection = data.collection
-    m.items = data.items
+    m.collection = options.collection
+    m.items = data
     return m
   })
 }
@@ -26,6 +26,8 @@ function mkQuery(options) {
   if(options.collection) {
     query.collection = options.collection
   }
+
+  query.limit = options.limit || 100
 
   return query
 }
