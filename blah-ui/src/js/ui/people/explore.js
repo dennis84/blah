@@ -27,13 +27,13 @@ function views(xs, update) {
             h('p.subtitle.is-6', `Number of events: ${user.nbEvents}`)
           ])
         ]),
-        user.events.map(evt => h('div.level.event', [
+        h('div.list', user.events.map(evt => h('div.level.list-item', [
           h('div.level-left', [
             h('div.level-item', h('span.tag.is-primary', moment(evt.date).calendar())),
             h('div.level-item', h('span.tag', evt.item)),
             h('div.level-item', evt.title)
           ])
-        ]))
+        ])))
       ]) : null
     ])
   }))

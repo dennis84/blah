@@ -12,8 +12,8 @@
 
   h3
     padding 0
-    margin 10px
-    margin-bottom 20px
+    padding 10px
+    padding-bottom 20px
     font-weight 200
     font-size 32px
     text-align center
@@ -27,6 +27,11 @@
 @media (min-width: 990px)
   .widget.size-3of3
     width 990px
+
+.widget.is-borderless
+  padding 0
+  background none
+  box-shadow none
 
 .widget-count
   .widget-value
@@ -90,26 +95,16 @@
     width 300px
     height 300px
 
-.widget-recommendations
-  height auto
-  .recommendations
-    margin-top 20px
-    .recommendation
-      margin 2px 0
-
 .widget-funnel
   height auto
   .chart
     width 300px
     height 300px
 
-.widget-most-viewed
-  padding 0
-  background none
-  box-shadow none
-  h3
-    margin 0
+.widget-recommendations
+  height auto
+  .control
     padding 10px
-    padding-bottom 20px
-    background base3
-    box-shadow 0 2px 3px rgba(base03, 0.1), 0 0 0 1px rgba(base03, 0.1)
+
+.widget-most-viewed
+  height auto
