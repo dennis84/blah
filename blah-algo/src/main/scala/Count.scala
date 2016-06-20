@@ -3,6 +3,7 @@ package blah.algo
 case class Count(
   collection: String,
   date: String,
+  item: String,
   browserFamily: String,
   browserMajor: String,
   osFamily: String,

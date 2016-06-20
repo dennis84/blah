@@ -18,6 +18,7 @@ function render(model, update, conn, storage) {
       widgets.browserStats(model, update, conn),
       widgets.pageviews(model, update, conn),
       widgets.countAll(model, update, conn),
+      widgets.countOne(model, update, conn, 'item-1'),
       widgets.platformStats(model, update, conn),
       widgets.pageviewDiff(model, update, conn),
       widgets.mobileOsStats(model, update, conn)

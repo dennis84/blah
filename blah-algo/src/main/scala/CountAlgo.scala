@@ -24,6 +24,7 @@ class CountAlgo extends Algo[Count] {
         val doc = Count(
           collection = event.collection,
           date = event.date,
+          item = event.item.getOrElse("undefined"),
           browserFamily = ua.map(_.browser.family).getOrElse("N/A"),
           browserMajor = ua.map(_.browser.major).flatten.getOrElse("N/A"),
           osFamily = ua.map(_.os.family).getOrElse("N/A"),

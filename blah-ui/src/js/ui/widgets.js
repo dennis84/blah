@@ -76,6 +76,21 @@ function uniqueVisitors(model, update, conn) {
 }
 
 /**
+ * Count one
+ */
+function countOne(model, update, conn, item) {
+  return widget(count, model, update, {}, conn, {
+    collection: 'pageviews',
+    filterBy: [{
+      prop: 'item',
+      operator: 'eq',
+      value: 'item-4'
+    }],
+    title: 'Count: ' + item
+  })
+}
+
+/**
  * Count: All Page Views
  */
 function countAll(model, update, conn) {
@@ -202,6 +217,7 @@ export {
   visitorsByCountry,
   uniqueVisitors,
   countAll,
+  countOne,
   platformStats,
   pageviewDiff,
   mobileOsStats,
