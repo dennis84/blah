@@ -6,5 +6,4 @@ case class MostViewed(
 
 case class MostViewedItem(
   item: String,
-  pos: Int,
   count: Int)

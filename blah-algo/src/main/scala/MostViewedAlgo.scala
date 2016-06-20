@@ -31,9 +31,8 @@ class MostViewedAlgo extends Algo[MostViewed] {
         val items = xs.toList
           .sortBy(_._2)(Ordering[Int].reverse)
           .take(config.max)
-          .zipWithIndex
-          .map { case(((item, collection), count), pos) =>
-            MostViewedItem(item, pos.toInt, count)
+          .map { case((item, collection), count) =>
+            MostViewedItem(item, count)
           }
         (collection, MostViewed(collection, items))
       }

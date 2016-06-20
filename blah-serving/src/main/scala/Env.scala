@@ -93,6 +93,5 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
             ("type" -> "nested") ~
             ("properties" ->
               ("item" -> ("type" -> "string")) ~
-              ("pos" -> ("type" -> "integer")) ~
               ("count" -> ("type" -> "integer")))))))
 }
