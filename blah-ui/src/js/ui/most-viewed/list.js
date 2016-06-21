@@ -20,7 +20,7 @@ function render(model, update, conn, options = {}) {
   return h('div.widget.is-borderless.widget-most-viewed', {
     className: options.className,
     mount: mount(node => {
-      conn.on('most-viewed', data => update(find, options))
+      conn.on('count', data => update(find, options))
       update(find, options)
     })
   }, [
