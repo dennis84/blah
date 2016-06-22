@@ -40,7 +40,6 @@ build_images() {
   docker build -t blah/hadoop-master docker/blah-hadoop-master/
   docker build --build-arg NAMENODE="$BLAH_HOST" -t blah/hadoop-slave docker/blah-hadoop-slave/
   docker build -t blah/kafka-mesos docker/blah-kafka-mesos/
-  docker build -t blah/mesos-dns docker/blah-mesos-dns/
   docker build -t blah/spark-mesos docker/blah-spark-mesos/
   docker build -t blah/zookeeper docker/blah-zookeeper/
   docker build -t blah/java docker/blah-java/
