@@ -2,6 +2,7 @@ package blah.algo
 
 import java.util.UUID
 import java.nio.ByteBuffer
+import java.time.temporal.ChronoUnit
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 import blah.core.{UserAgent, UserAgentClassifier}
@@ -23,7 +24,7 @@ class CountAlgo extends Algo[Count] {
         val uac = ua.map(UserAgentClassifier.classify)
         val doc = Count(
           collection = event.collection,
-          date = event.date,
+          date = event.date.truncatedTo(ChronoUnit.HOURS).toString,
           item = event.item.getOrElse("undefined"),
           browserFamily = ua.map(_.browser.family).getOrElse("N/A"),
           browserMajor = ua.map(_.browser.major).flatten.getOrElse("N/A"),
