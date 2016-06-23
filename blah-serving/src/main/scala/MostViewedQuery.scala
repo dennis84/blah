@@ -2,4 +2,4 @@ package blah.serving
 
 case class MostViewedQuery(
   collection: String,
-  limit: Int = 100)
+  limit: Option[Int] = None)

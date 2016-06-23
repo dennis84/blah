@@ -27,9 +27,7 @@ class MostViewedRepo(client: ElasticClient)(
         MostViewedElasticQuery(q).compactPrint)
     ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
       Try(json.extract[JsValue]('aggregations)) match {
-        case Success(aggs) =>
-          val items = AggregationParser.parseTo[MostViewed](aggs)
-          items.take(q.limit)
+        case Success(aggs) => AggregationParser.parseTo[MostViewed](aggs)
         case Failure(_) => Nil
       }
     }
