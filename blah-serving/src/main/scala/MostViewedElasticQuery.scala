@@ -10,7 +10,7 @@ object MostViewedElasticQuery {
     ("aggs" -> ("item" ->
       ("terms" ->
         ("field" -> "item") ~
-        ("size" -> query.limit.getOrElse(100)) ~
+        ("size" -> query.limit.getOrElse(0)) ~
         ("order" -> ("count" -> "desc"))) ~
       ("aggs" -> ("count" -> ("sum" -> ("field" -> "count"))))
     ))
