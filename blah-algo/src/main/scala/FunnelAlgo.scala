@@ -33,7 +33,7 @@ class FunnelAlgo extends Algo[Funnel] {
     val ord = Ordering[Long]
       .on[ZonedDateTime](_.toInstant.toEpochMilli)
 
-    val users = events
+    val eventsByUser = events
       .groupBy(_.user)
       .collect { case(Some(user), xs) =>
         (user, xs.toList.sortBy(_.date)(ord))
@@ -43,18 +43,19 @@ class FunnelAlgo extends Algo[Funnel] {
       (a,x) => a ::: List(a.last dropRight 1)
     }
 
-    val paths = users
-      .map { case(user, xs) =>
-        val ys = (xs.map(_.item.get) :\ List.empty[String])((x, a) => a match {
+    val paths = eventsByUser
+      .flatMap { case(user, events) =>
+        val items = events map (_.item.get)
+        val ys = (items :\ List.empty[String])((x, a) => a match {
           case h :: xs if(h == x) => a
           case _ => x :: a
         })
 
-        allSteps collectFirst {
+        allSteps.collect {
           case x if(x.length > 0 && ys.containsSlice(x)) =>
             val index = ys.indexOfSlice(x)
             (ys.slice(index, index + x.length), 1)
-        } getOrElse (Nil, 0)
+        }
       }
 
     paths

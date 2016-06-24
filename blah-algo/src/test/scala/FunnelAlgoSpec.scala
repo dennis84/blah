@@ -14,7 +14,55 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
   val date4 = ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(3)
   val date5 = ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(4)
 
-  "The FunnelAlgo" should "match all steps" in withSparkContext { ctx =>
+  "The FunnelAlgo" should "count all step" in withSparkContext { ctx =>
+    val algo = new FunnelAlgo
+
+    val input = ctx.sparkContext.parallelize(List(
+      Event("2", "view", date2, props = Map(
+        "item" -> JsString("landingpage"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("3", "view", date3, props = Map(
+        "item" -> JsString("signup"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("4", "view", date4, props = Map(
+        "item" -> JsString("dashboard"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("6", "view", date1, props = Map(
+        "item" -> JsString("landingpage"),
+        "user" -> JsString("user2")
+      )).toJson.compactPrint,
+      Event("7", "view", date2, props = Map(
+        "item" -> JsString("signup"),
+        "user" -> JsString("user2")
+      )).toJson.compactPrint,
+      Event("6", "view", date1, props = Map(
+        "item" -> JsString("landingpage"),
+        "user" -> JsString("user3")
+      )).toJson.compactPrint,
+      Event("8", "view", date1, props = Map(
+        "item" -> JsString("signup"),
+        "user" -> JsString("user4")
+      )).toJson.compactPrint
+    ))
+
+    val output = algo.train(input, ctx, Array(
+      "--name", "signup",
+      "--steps", "landingpage,signup,dashboard"))
+    val docs = output.collect.toList
+    docs.length should be (3)
+
+    val funnel3 = docs.find(_._2.path.length == 3).get._2
+    funnel3.count should be (1)
+    val funnel2 = docs.find(_._2.path.length == 2).get._2
+    funnel2.count should be (2)
+    val funnel1 = docs.find(_._2.path.length == 1).get._2
+    funnel1.count should be (3)
+  }
+
+  it should "match all steps" in withSparkContext { ctx =>
     val algo = new FunnelAlgo
 
     val input = ctx.sparkContext.parallelize(List(
@@ -57,10 +105,10 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       "--name", "signup",
       "--steps", "landingpage,signup,dashboard"))
     val docs = output.collect.toList
+    docs.length should be (3)
 
-    docs(0)._2.name should be ("signup")
-    docs(0)._2.path should be (List("landingpage", "signup", "dashboard"))
-    docs(0)._2.count should be (2)
+    val funnel3 = docs.find(_._2.path.length == 3).get._2
+    funnel3.count should be (2)
   }
 
   it should "match two steps" in withSparkContext { ctx =>
@@ -84,10 +132,12 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       "--name", "signup",
       "--steps", "landingpage,signup,dashboard"))
     val docs = output.collect.toList
+    docs.length should be (2)
 
-    docs(0)._2.name should be ("signup")
-    docs(0)._2.path should be (List("landingpage", "signup"))
-    docs(0)._2.count should be (1)
+    val funnel2 = docs.find(_._2.path.length == 2).get._2
+    funnel2.count should be (1)
+    val funnel1 = docs.find(_._2.path.length == 1).get._2
+    funnel1.count should be (1)
   }
 
   it should "match no steps" in withSparkContext { ctx =>
@@ -139,10 +189,10 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       "--name", "signup",
       "--steps", "landingpage,signup,dashboard"))
     val docs = output.collect.toList
+    docs.length should be (3)
 
-    docs(0)._2.name should be ("signup")
-    docs(0)._2.path should be (List("landingpage", "signup", "dashboard"))
-    docs(0)._2.count should be (1)
+    val funnel3 = docs.find(_._2.path.length == 3).get._2
+    funnel3.count should be (1)
   }
 
   it should "parse args" in withSparkContext { ctx =>
@@ -166,10 +216,14 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with Inside with SparkFun {
       "--name", "foobar",
       "--steps", "foo,bar,baz"))
     val docs = output.collect.toList
+    docs.length should be (3)
 
-    docs(0)._2.name should be ("foobar")
-    docs(0)._2.path should be (List("foo", "bar", "baz"))
-    docs(0)._2.count should be (1)
+    val funnel3 = docs.find(_._2.path.length == 3).get._2
+    funnel3.count should be (1)
+    val funnel2 = docs.find(_._2.path.length == 2).get._2
+    funnel2.count should be (1)
+    val funnel1 = docs.find(_._2.path.length == 1).get._2
+    funnel1.count should be (1)
   }
 
   it should "fail with illegal args" in withSparkContext { ctx =>
