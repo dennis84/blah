@@ -27,3 +27,44 @@
   .list-item
     padding 10px
     margin 0
+
+.multiselect
+  position relative
+  width 400px
+  .multiselect-menu
+    position absolute
+    background #fff
+    width 100%
+  .multiselect-option
+    box-shadow 0 2px 3px rgba(base03, 0.1), 0 0 0 1px rgba(base03, 0.1)
+    background #fff
+    padding 6px
+    cursor pointer
+  .multiselect-option:hover
+    background lighten(yellow, 80%)
+  .multiselect-option.is-highlighted
+    background lighten(yellow, 80%)
+  .multiselect-control
+    width 100%
+    display inline-block
+    box-shadow 0 2px 3px rgba(base03, 0.1), 0 0 0 1px rgba(base03, 0.1)
+    background #fff
+    cursor text
+    padding 1px
+  .multiselect-values
+    display inline
+  .multiselect-value
+    display inline-block
+    border-radius 3px
+    background cyan
+    padding 6px
+    margin 1px
+    color #fff
+  .multiselect-input
+    padding 0 2px
+    display inline
+    height 32px
+    width auto
+    border none
+    outline none
+    background none
