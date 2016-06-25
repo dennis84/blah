@@ -11,6 +11,8 @@ class Multiselect {
   init() {
     var options = []
     var values = this.options.values || []
+    var onchange = this.options.onchange
+
     if(undefined !== this.options.options) {
       options = this.options.options.map(x => {
         var selected = -1 !== values.indexOf(x)
@@ -33,8 +35,12 @@ class Multiselect {
     var loop = main(model, renderFn, elem)
 
     function update(fn, ...args) {
+      var length = model.values.length
       loop.update(fn(model, ...args))
       model = loop.state
+      if(onchange && length !== model.values.length) {
+        onchange(model.values)
+      }
     }
 
     return elem
