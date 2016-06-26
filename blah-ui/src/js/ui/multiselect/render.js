@@ -31,7 +31,7 @@ function input(model, update) {
     onfocus: (e) => update(open),
     onblur: (e) => {
       e.preventDefault()
-      if(e.target.blurDisabled) {
+      if(model.multiple && e.target.blurDisabled) {
         e.target.blurDisabled = false
         e.target.focus()
         return
@@ -51,9 +51,15 @@ function input(model, update) {
         update(add, value)
         update(filter, '')
         e.target.value = ''
+        if(!model.multiple) {
+          update(open, false)
+          e.target.blur()
+        }
       } else if(KEY_UP === e.keyCode) {
+        if(!model.open) update(open)
         update(move, 'up')
       } else if(KEY_DOWN === e.keyCode) {
+        if(!model.open) update(open)
         update(move, 'down')
       } else if(KEY_ESC === e.keyCode) {
         update(open, false)
@@ -70,7 +76,9 @@ function value(model, update, x) {
 }
 
 function render(model, update) {
-  return h('div.multiselect', [
+  return h('div.multiselect', {
+    className: model.multiple ? 'is-multiple' : ''
+  }, [
     h('div.multiselect-control', {
       tabIndex: 0,
       onfocus: (e) => e.target.querySelector('.multiselect-input').focus(),

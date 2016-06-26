@@ -9,6 +9,7 @@ function add(model, value) {
     m.options[index].highlighted = false
     m.options[index].selected = true
     m.options[index].hidden = true
+    if(!m.multiple) m = pop(m)
     m.values.push(highlighted.value)
     return m
   }
@@ -23,6 +24,7 @@ function add(model, value) {
     m.options[index].hidden = true
   }
 
+  if(!m.multiple) m = pop(m)
   m.values.push(value)
   return m
 }

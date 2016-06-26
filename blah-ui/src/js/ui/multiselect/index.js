@@ -26,6 +26,7 @@ class Multiselect {
     }
 
     var model = {
+      multiple: !!this.options.multiple,
       options: options,
       values: values
     }
@@ -35,11 +36,18 @@ class Multiselect {
     var loop = main(model, renderFn, elem)
 
     function update(fn, ...args) {
-      var length = model.values.length
+      var valuesBefore = model.values
       loop.update(fn(model, ...args))
       model = loop.state
-      if(onchange && length !== model.values.length) {
+
+      if(!model.multiple && onchange && valuesBefore[0] !== model.values[0]) {
+        onchange(model.values[0])
+        return
+      }
+
+      if(onchange && valuesBefore.length !== model.values.length) {
         onchange(model.values)
+        return
       }
     }
 
