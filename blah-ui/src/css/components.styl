@@ -40,10 +40,15 @@
     background #fff
     padding 6px
     cursor pointer
-  .multiselect-option:hover
-    background lighten(yellow, 80%)
   .multiselect-option.is-highlighted
     background lighten(yellow, 80%)
+    font-weight bold
+  .multiselect-option.is-selected
+    background base2
+  .multiselect-option.is-selected.is-highlighted
+    background deepOrange
+    color #fff
+    font-weight bold
   .multiselect-control
     width 100%
     display inline-block

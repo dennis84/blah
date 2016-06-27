@@ -1,7 +1,7 @@
 import {h} from 'virtual-dom'
 import debounce from 'debounce'
 import {hook, mount} from '../../hook'
-import {open, add, pop, move, filter} from './ctrl'
+import {open, toggle, pop, next, prev, highlight, filter} from './ctrl'
 
 const KEY_UP = 38
 const KEY_DOWN = 40
@@ -14,13 +14,16 @@ function menu(model, update) {
     className: model.open ? '' : 'is-hidden'
   }, model.options.map(x => {
     if(x.hidden) return
+    var highlighted = x.highlighted ? 'is-highlighted' : ''
+    var selected = x.selected ? 'is-selected' : ''
     return h('div.multiselect-option', {
-      className: x.highlighted ? 'is-highlighted' : '',
+      className: `${highlighted} ${selected}`,
+      onmouseover: (e) => update(highlight, x),
       onmousedown: (e) => {
         e.target.parentNode.parentNode.parentNode
           .querySelector('.multiselect-input')
           .blurDisabled = true
-        update(add, x.value)
+        update(toggle, x.value)
       }
     }, x.value)
   }))
@@ -48,7 +51,7 @@ function input(model, update) {
     onkeyup: e => {
       var value = e.target.value.trim()
       if(KEY_ENTER === e.keyCode) {
-        update(add, value)
+        update(toggle, value)
         update(filter, '')
         e.target.value = ''
         if(!model.multiple) {
@@ -57,10 +60,10 @@ function input(model, update) {
         }
       } else if(KEY_UP === e.keyCode) {
         if(!model.open) update(open)
-        update(move, 'up')
+        update(prev)
       } else if(KEY_DOWN === e.keyCode) {
         if(!model.open) update(open)
-        update(move, 'down')
+        update(next)
       } else if(KEY_ESC === e.keyCode) {
         update(open, false)
         e.target.blur()

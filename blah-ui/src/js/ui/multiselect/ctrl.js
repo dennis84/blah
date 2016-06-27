@@ -1,31 +1,47 @@
 import clone from 'clone'
 
-function add(model, value) {
+function toggle(model, value) {
   var m = clone(model)
-  var highlighted = model.options.find(x => x.highlighted)
-
-  if(highlighted) {
-    var index = model.options.indexOf(highlighted)
-    m.options[index].highlighted = false
-    m.options[index].selected = true
-    m.options[index].hidden = true
-    if(!m.multiple) m = pop(m)
-    m.values.push(highlighted.value)
-    return m
-  }
-
-  if('' === value) return m
-
-  var option = model.options.find(x => x.value === value)
+  var option = m.options.find(x => x.highlighted)
+  if(!option && '' === value) return model
 
   if(option) {
-    var index = model.options.indexOf(option)
-    m.options[index].selected = true
-    m.options[index].hidden = true
+    value = option.value
+  } else {
+    option = m.options.find(x => x.value === value)
   }
 
-  if(!m.multiple) m = pop(m)
-  m.values.push(value)
+  if(!option) {
+    option = {
+      value: value,
+      selected: false,
+      highlighted: false,
+      hidden: false
+    }
+
+    m.options.push(option)
+  }
+
+  var index = m.options.indexOf(option)
+
+  if(option.selected) {
+    m.options[index].highlighted = false
+    m.options[index].selected = false
+    var i = model.values.indexOf(option.value)
+    m.values.splice(i, 1)
+  } else {
+    m.options[index].highlighted = false
+    m.options[index].selected = true
+    if(model.multiple) {
+      m.values.push(value)
+    } else {
+      m = pop(m)
+      m.values = [value]
+    }
+  }
+
+  if(m.options[0]) m.options[0].highlighted = true
+
   return m
 }
 
@@ -36,41 +52,56 @@ function pop(model) {
 
   if(option) {
     var index = model.options.indexOf(option)
+    m.options[index].highlighted = false
     m.options[index].selected = false
-    m.options[index].hidden = false
   }
 
   return m
 }
 
-function move(model, direction) {
+function highlight(model, option) {
   var m = clone(model)
-  var next = null
-  var highlightNext = false
-
-  function fn(i) {
+  for(var i in model.options) {
     var opt = model.options[i]
-    if(!next && !opt.selected && !opt.hidden && !opt.highlighted) next = opt
-    if(highlightNext && !opt.selected && !opt.hidden) {
-      highlightNext = false
-      next = opt 
+    if(opt === option) {
+      m.options[i].highlighted = true
+    } else {
+      m.options[i].highlighted = false
     }
-
-    if(opt.highlighted) highlightNext = true
-    m.options[i].highlighted = false
   }
 
-  if('up' === direction) {
-    for(var i = model.options.length - 1; i >= 0; i--) fn(i)
-  } else {
-    for(var i = 0; i < model.options.length; i++) fn(i)
-  }
+  return m
+}
 
-  if(next) {
-    var index = model.options.indexOf(next)
-    m.options[index].highlighted = true
-  }
+function next(model) {
+  var m = clone(model)
+  var highlighted = m.options.find(x => x.highlighted)
+  var index = m.options.indexOf(highlighted)
+  var nextIndex = function findNext(i) {
+    if(i >= m.options.length) i = 0
+    var opt = m.options[i]
+    if(!opt.hidden) return i
+    findNext(i + 1)
+  }(index + 1)
 
+  m.options[index].highlighted = false
+  m.options[nextIndex].highlighted = true
+  return m
+}
+
+function prev(model) {
+  var m = clone(model)
+  var highlighted = m.options.find(x => x.highlighted)
+  var index = m.options.indexOf(highlighted)
+  var nextIndex = function findPrev(i) {
+    if(i < 0) i = m.options.length - 1
+    var opt = m.options[i]
+    if(!opt.hidden) return i
+    findPrev(i - 1)
+  }(index - 1)
+
+  m.options[index].highlighted = false
+  m.options[nextIndex].highlighted = true
   return m
 }
 
@@ -79,9 +110,9 @@ function filter(model, value) {
   for(var i in model.options) {
     var opt = model.options[i]
 
-    if(!opt.selected && '' === value) {
+    if('' === value) {
       m.options[i].hidden = false
-    } else if(!opt.selected && 0 === opt.value.indexOf(value)) {
+    } else if(0 === opt.value.indexOf(value)) {
       m.options[i].hidden = false
     } else {
       m.options[i].hidden = true
@@ -93,6 +124,7 @@ function filter(model, value) {
 
 function open(model, value = true) {
   var m = clone(model)
+  if(m.options[0]) m.options[0].highlighted = true
   m.open = value
   return m
 }
@@ -100,7 +132,9 @@ function open(model, value = true) {
 export {
   open,
   filter,
-  move,
+  next,
+  prev,
+  highlight,
   pop,
-  add
+  toggle
 }
