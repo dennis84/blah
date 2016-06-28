@@ -1,7 +1,0 @@
-#!/bin/bash
-
-readonly dir=$(dirname "$0")
-
-for file in $(find "$dir/proto/" -type f); do
-  protoc --proto_path="$dir/proto" --rust_out "$dir/src/proto" "$file"
-done
