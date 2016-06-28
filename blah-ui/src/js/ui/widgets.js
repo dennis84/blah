@@ -10,6 +10,7 @@ import userBar from './user/bar'
 import sum from './sum/sum'
 import funnel from './funnel/funnel'
 import mostViewedList from './most-viewed/list'
+import referrers from './referrer/list'
 
 /**
  * Pie Chart: Browser Statistics Over a Year
@@ -210,6 +211,16 @@ function mostViewed(model, update, conn) {
   })
 }
 
+/**
+ * Referring Sites
+ */
+function referringSites(model, update, conn) {
+  return widget(referrers, model, update, {}, conn, {
+    title: 'Referring Sites',
+    limit: 10
+  })
+}
+
 export {
   browserStats,
   pageviews,
@@ -224,5 +235,6 @@ export {
   totalRevenue,
   recommendationsWidget,
   itemsFunnel,
-  mostViewed
+  mostViewed,
+  referringSites
 }

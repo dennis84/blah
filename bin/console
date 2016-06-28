@@ -25,6 +25,7 @@ create_jobs() {
   create_job similarity
   create_job funnel-items
   create_job funnel-signup
+  create_job referrer
 }
 
 build_apps() {
@@ -84,12 +85,14 @@ restart_app() {
       destroy_job similarity
       destroy_job funnel-items
       destroy_job funnel-signup
+      destroy_job referrer
       sleep 1
       create_job count
       create_job user
       create_job similarity
       create_job funnel-items
       create_job funnel-signup
+      create_job referrer
       ;;
     *)
       echo "Error: App does not exist: $app"

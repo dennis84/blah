@@ -24,8 +24,7 @@ class FunnelAlgo extends Algo[Funnel] {
     val events = ctx.sql("""|SELECT
                             |  date,
                             |  props.user AS user,
-                            |  props.item AS item,
-                            |  props.referrer
+                            |  props.item AS item
                             |FROM funnel""".stripMargin)
       .filter("user is not null and item is not null")
       .map(FunnelEvent(_))

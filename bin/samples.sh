@@ -67,6 +67,18 @@ rand_title() {
   esac
 }
 
+rand_referrer() {
+  declare rand="$(($RANDOM % 3))"
+  case $rand in
+    0) echo "https://google.com"
+       ;;
+    1) echo "https://bing.com"
+       ;;
+    2) echo "https://duckduckgo.com"
+       ;;
+  esac
+}
+
 make_pageview() {
   printf '{
     "item":"%s",
@@ -74,8 +86,9 @@ make_pageview() {
     "user": "%s",
     "email": "d.dietrich84+blah-%s@gmail.com",
     "ip": "%s",
-    "userAgent": "%s"
-  }' "$(rand_item)" "$(rand_title)" "$(rand_user)" "$(rand_user)" "$(rand_ip)" "$(rand_ua)"
+    "userAgent": "%s",
+    "referrer": "%s"
+  }' "$(rand_item)" "$(rand_title)" "$(rand_user)" "$(rand_user)" "$(rand_ip)" "$(rand_ua)" "$(rand_referrer)"
 }
 
 make_purchase() {

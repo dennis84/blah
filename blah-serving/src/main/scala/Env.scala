@@ -85,5 +85,9 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
         ("properties" ->
           ("name" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("path" -> ("type" -> "string")) ~
+          ("count" -> ("type" -> "integer")))) ~
+      ("referrer" ->
+        ("properties" ->
+          ("referrer" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("count" -> ("type" -> "integer")))))
 }
