@@ -4,6 +4,7 @@ import java.time.ZonedDateTime
 
 case class UserEvent(
   date: ZonedDateTime,
+  collection: String,
   item: Option[String] = None,
   title: Option[String] = None,
   ip: Option[String] = None)
@@ -11,6 +12,8 @@ case class UserEvent(
 case class User(
   user: String,
   email: String,
+  firstname: String,
+  lastname: String,
   date: ZonedDateTime,
   lng: Double,
   lat: Double,

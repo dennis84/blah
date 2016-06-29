@@ -29,8 +29,10 @@ function views(xs, update) {
         ]),
         h('div.list', user.events.map(evt => h('div.level.list-item', [
           h('div.level-left', [
-            h('div.level-item', h('span.tag.is-primary', moment(evt.date).calendar())),
-            h('div.level-item', h('span.tag', evt.item)),
+            h('div.level-item', h('span.tag', {
+              className: `is-collection-${evt.collection}`
+            }, moment(evt.date).calendar())),
+            evt.item ? h('div.level-item', h('span.tag', evt.item)) : null,
             h('div.level-item', evt.title)
           ])
         ])))

@@ -64,6 +64,8 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
         ("properties" ->
           ("user" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("email" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("firstname" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("lastname" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("ip" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("lng" -> ("type" -> "double")) ~
           ("lat" -> ("type" -> "double")) ~
@@ -75,6 +77,7 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
           ("events" ->
             ("type" -> "nested") ~
             ("properties" ->
+              ("collection" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
               ("item" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
               ("title" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
               ("date" -> ("type" -> "date") ~ ("format" -> "dateOptionalTime")) ~
