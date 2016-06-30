@@ -12,7 +12,7 @@ RUN apt-get -y install mesos
 RUN mkdir /opt/kafka-mesos
 WORKDIR /opt/kafka-mesos
 
-RUN wget -o /dev/null https://github.com/mesos/kafka/releases/download/0.9.4.0/kafka-mesos-0.9.4.0.jar
+RUN wget -o /dev/null https://github.com/mesos/kafka/releases/download/v0.9.5.1/kafka-mesos-0.9.5.1.jar
 
 RUN wget https://archive.apache.org/dist/kafka/0.8.2.2/kafka_2.11-0.8.2.2.tgz
 

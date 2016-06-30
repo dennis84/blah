@@ -10,7 +10,7 @@ RUN apt-get -y update
 RUN apt-get -y install mesos
 
 RUN mkdir /opt/spark
-RUN wget -qO- http://www.eu.apache.org/dist/spark/spark-1.6.1/spark-1.6.1.tgz \
+RUN wget -qO- http://www.eu.apache.org/dist/spark/spark-1.6.2/spark-1.6.2.tgz \
   | tar zxvf - -C /opt/spark --strip 1
 
 ENV SPARK_HOME /opt/spark
