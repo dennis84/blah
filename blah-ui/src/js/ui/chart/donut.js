@@ -1,4 +1,4 @@
-import d3 from 'd3'
+import * as d3 from 'd3'
 import xtend from 'xtend'
 import init from './init'
 
@@ -9,15 +9,15 @@ function render(node, data, options = {}) {
   var radius = Math.min(width, height) / 2
   var total = data.map(x => x.value).reduce((a,b) => a + b) 
 
-  var color = d3.scale.ordinal()
+  var color = d3.scaleOrdinal()
     .range(Array.apply(null, {length: 26})
       .map((x,i) => String.fromCharCode(97 + i)))
 
-  var arc = d3.svg.arc()
+  var arc = d3.arc()
     .outerRadius(radius)
     .innerRadius(radius - options.donutWidth)
 
-  var pie = d3.layout.pie()
+  var pie = d3.pie()
     .sort(null)
     .value(d => d.value)
 

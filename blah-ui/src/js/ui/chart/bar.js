@@ -1,4 +1,4 @@
-import d3 from 'd3'
+import * as d3 from 'd3'
 import init from './init'
 
 function render(node, data) {
@@ -6,24 +6,21 @@ function render(node, data) {
   var width = node.offsetWidth - margin[1] - margin[3]
   var height = node.offsetHeight - margin[0] - margin[2]
 
-  var x = d3.scale.ordinal()
+  var x = d3.scaleBand()
     .domain(data.map(d => d.key))
-    .rangeRoundBands([0, width], 0.2)
+    .rangeRound([0, width])
+    .paddingInner([0.2])
 
-  var y = d3.scale.linear()
+  var y = d3.scaleLinear()
     .domain([0, d3.max(data, d => d.value)])
     .range([height, 0])
 
-  var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient('bottom')
+  var xAxis = d3.axisBottom(x)
     .ticks(24)
 
-  var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient('left')
+  var yAxis = d3.axisLeft(y)
     .ticks(5)
-    .innerTickSize(-width)
+    .tickSizeInner(-width)
 
   var svg = d3.select(node)
     .append('svg')
@@ -50,7 +47,7 @@ function render(node, data) {
     .enter().append('rect')
       .attr('class', 'bar')
       .attr('x', d => x(d.key))
-      .attr('width', x.rangeBand())
+      .attr('width', x.bandwidth())
       .attr('y', d => y(d.value))
       .attr('height', d => height - y(d.value))
 }

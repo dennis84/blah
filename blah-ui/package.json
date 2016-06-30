@@ -4,7 +4,7 @@
   "dependencies": {
     "bulma": "0.1.0",
     "clone": "^1.0.2",
-    "d3": "^3.5.17",
+    "d3": "^4.0.0",
     "datamaps": "^0.5.5",
     "debounce": "^1.0.0",
     "deep-equal": "^1.0.1",

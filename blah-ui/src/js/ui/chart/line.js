@@ -1,4 +1,4 @@
-import d3 from 'd3'
+import * as d3 from 'd3'
 import init from './init'
 
 function render(node, data) {
@@ -6,30 +6,26 @@ function render(node, data) {
   var width = node.offsetWidth - margin[1] - margin[3]
   var height = node.offsetHeight - margin[0] - margin[2]
 
-  var x = d3.scale.ordinal()
+  var x = d3.scalePoint()
     .domain(data.map(d => d.key))
-    .rangePoints([0, width])
+    .range([0, width])
 
-  var y = d3.scale.linear()
+  var y = d3.scaleLinear()
     .domain(d3.extent(data, d => d.value))
     .range([height, 0])
 
-  var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient('bottom')
+  var xAxis = d3.axisBottom(x)
     .ticks(24)
 
-  var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient('left')
+  var yAxis = d3.axisLeft(y)
     .ticks(5)
-    .innerTickSize(-width)
+    .tickSizeInner(-width)
 
-  var line = d3.svg.line()
+  var line = d3.line()
     .x(d => x(d.key))
     .y(d => y(d.value))
 
-  var area = d3.svg.area()
+  var area = d3.area()
     .x(d => x(d.key))
     .y0(height)
     .y1(d => y(d.value))
