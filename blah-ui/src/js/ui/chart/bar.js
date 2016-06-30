@@ -9,7 +9,7 @@ function render(node, data) {
   var x = d3.scaleBand()
     .domain(data.map(d => d.key))
     .rangeRound([0, width])
-    .paddingInner([0.2])
+    .paddingInner(0.2)
 
   var y = d3.scaleLinear()
     .domain([0, d3.max(data, d => d.value)])
