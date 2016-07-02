@@ -4,7 +4,8 @@ import count from './count/count'
 import countDiff from './count/count-diff'
 import bar from './count/bar'
 import pie from './count/pie'
-import recommendations from './recommendations/widget'
+import recommendations from './recommendation/widget'
+import similarities from './similarity/widget'
 import userCount from './user/count'
 import userBar from './user/bar'
 import sum from './sum/sum'
@@ -186,8 +187,15 @@ function totalRevenue(model, update, conn) {
 /**
  * Recommendations
  */
-function recommendationsWidget(model, update, conn) {
+function recommendationWidget(model, update, conn) {
   return widget(recommendations, model, update, {})
+}
+
+/**
+ * Simiarities
+ */
+function similarityWidget(model, update, conn) {
+  return widget(similarities, model, update, {})
 }
 
 /**
@@ -233,7 +241,8 @@ export {
   pageviewDiff,
   mobileOsStats,
   totalRevenue,
-  recommendationsWidget,
+  recommendationWidget,
+  similarityWidget,
   itemsFunnel,
   mostViewed,
   referringSites

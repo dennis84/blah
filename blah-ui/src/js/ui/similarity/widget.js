@@ -1,9 +1,9 @@
 import {h} from 'virtual-dom'
 import {mount} from '../../hook'
-import {recommendations} from './ctrl'
+import {find} from './ctrl'
 import debounce from 'debounce'
 
-function views(xs) {
+function mkSimilarities(xs) {
   if(undefined === xs || 0 == xs.length) return
   return h('div.list', xs.map(item => {
     return h('div.list-item.level.is-bordered', [
@@ -15,25 +15,26 @@ function views(xs) {
 }
 
 function render(model, update, options = {}) {
-  return h('div.widget.is-borderless.widget-recommendations', {
+  return h('div.widget.is-borderless.widget-similarity', {
     mount: mount(node => {
-      if(options.user) update(recommendations, options)
+      if(options.item) update(find, options)
     })
   }, [
     h('div.is-bordered', [
-      h('h3', 'Recommendations'),
+      h('h3', 'Similarity'),
       h('div.control', [
         h('input.input', {
-          placeholder: 'Enter username',
-          value: options.user,
+          placeholder: 'Enter item',
+          value: options.item,
           oninput: debounce(e => {
             if(!e.target.value) return
-            update(recommendations, {user: e.target.value})
+            var items = e.target.value.split(",")
+            update(find, {items: items})
           }, 500)
         })
       ])
     ]),
-    views(model.views)
+    mkSimilarities(model.similarities)
   ])
 }
 

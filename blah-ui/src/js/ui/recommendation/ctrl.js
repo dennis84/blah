@@ -11,7 +11,7 @@ import {post} from '../../http'
  *
  * @return {Promise} The model wrapped in a promise
  */
-function recommendations(model, options) {
+function find(model, options) {
   return post('/recommendation', options).then((data) => {
     var m = clone(model)
     m.user = data.user
@@ -21,5 +21,5 @@ function recommendations(model, options) {
 }
 
 export {
-  recommendations
+  find
 }

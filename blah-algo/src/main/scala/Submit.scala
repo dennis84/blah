@@ -11,25 +11,28 @@ object Submit {
     val config = ConfigFactory.load()
 
     lazy val countAlgo = new CountAlgo
-    lazy val recommendationAlgo = new RecommendationAlgo
     lazy val userAlgo = new UserAlgo
     lazy val funnelAlgo = new FunnelAlgo
     lazy val referrerAlgo = new ReferrerAlgo
+    lazy val recommendationAlgo = new RecommendationAlgo
+    lazy val similarityAlgo = new SimilarityAlgo
 
     lazy val countBatch = new BatchJob("count", countAlgo)
-    lazy val recommendationBatch = new BatchJob("recommendation", recommendationAlgo)
     lazy val userBatch = new BatchJob("user", userAlgo)
     lazy val funnelBatch = new BatchJob("funnel", funnelAlgo)
     lazy val referrerBatch = new BatchJob("referrer", referrerAlgo)
+    lazy val recommendationBatch = new BatchJob("recommendation", recommendationAlgo)
+    lazy val similarityBatch = new BatchJob("similarity", similarityAlgo)
     lazy val countStreaming = new CountStreamingJob("count", countAlgo)
     lazy val userStreaming = new UserStreamingJob("user", userAlgo)
 
     lazy val jobs = Map(
       "count" -> countBatch,
-      "recommendation" -> recommendationBatch,
       "user" -> userBatch,
       "funnel" -> funnelBatch,
       "referrer" -> referrerBatch,
+      "recommendation" -> recommendationBatch,
+      "similarity" -> similarityBatch,
       "count-streaming" -> countStreaming,
       "user-streaming" -> userStreaming)
 
@@ -55,10 +58,11 @@ object Submit {
                   |Usage: java -jar algo.jar submit COMMAND [OPTION]
                   |Commands:
                   |  count
-                  |  recommendation
                   |  user
                   |  funnel
                   |  referrer
+                  |  recommendation
+                  |  similarity
                   |  count-streaming
                   |  user-streaming
                   |""".stripMargin)

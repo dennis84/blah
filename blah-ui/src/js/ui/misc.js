@@ -17,7 +17,8 @@ function render(model, update, conn, storage) {
     }, [
       widgets.itemsFunnel(model, update, conn),
       widgets.totalRevenue(model, update, conn),
-      widgets.recommendationsWidget(model, update, conn),
+      widgets.recommendationWidget(model, update, conn),
+      widgets.similarityWidget(model, update, conn),
       widgets.mostViewed(model, update, conn),
       widgets.referringSites(model, update, conn)
     ])

@@ -60,6 +60,14 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
             ("properties" ->
               ("item" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
               ("score" -> ("type" -> "double")))))) ~
+      ("similarity" ->
+        ("properties" ->
+          ("item" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("similarities" ->
+            ("type" -> "nested") ~
+            ("properties" ->
+              ("item" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+              ("score" -> ("type" -> "double")))))) ~
       ("user" ->
         ("properties" ->
           ("user" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~

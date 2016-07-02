@@ -8,6 +8,10 @@ trait QueryDsl {
     ("query" -> ("filtered" -> ("query" ->
       ("bool" -> ("must" -> List("term" -> (k -> v)))))))
 
+  def terms(k: String, v: JsArray): JsObject =
+    ("query" -> ("filtered" -> ("query" ->
+      ("bool" -> ("must" -> List("terms" -> (k -> v)))))))
+
   def notTerm(k: String, v: JsValue): JsObject =
     ("query" -> ("filtered" -> ("query" ->
       ("bool" -> ("must_not" -> List("term" -> (k -> v)))))))

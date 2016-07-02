@@ -10,6 +10,8 @@ trait ServingJsonProtocol extends JsonProtocol {
   implicit val recommendationQueryFmt = jsonFormat2(RecommendationQuery)
   implicit val recommendationItemFmt = jsonFormat2(RecommendationItem)
   implicit val recommendationResultFmt = jsonFormat2(RecommendationResult)
+  implicit val similarityQueryFmt = jsonFormat2(SimilarityQuery)
+  implicit val similarityItemFmt = jsonFormat2(SimilarityItem)
   implicit val userEventFmt = jsonFormat5(UserEvent)
   implicit val userFmt = jsonFormat13(User)
   implicit val userCountFmt = jsonFormat2(UserCount)
