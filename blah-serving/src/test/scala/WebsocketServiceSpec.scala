@@ -32,7 +32,7 @@ class WebsocketServiceSpec
       """count@{"foo": "bar"}""",
       """user@{"foo": "bar"}""",
       """funnel@{"foo": "bar"}""",
-      """similarity@{"foo": "bar"}"""
+      """recommendation@{"foo": "bar"}"""
     ) foreach { x =>
       val parts = x.split("@", 2)
       hub ! (parts(0), parts(1))

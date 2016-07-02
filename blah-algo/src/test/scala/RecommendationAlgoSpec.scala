@@ -5,10 +5,10 @@ import spray.json._
 import blah.core._
 import JsonProtocol._
 
-class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
+class RecommendationAlgoSpec extends FlatSpec with Matchers with SparkFun {
 
-  "The SimilarityAlgo" should "train" in withSparkContext { ctx =>
-    val algo = new SimilarityAlgo
+  "The RecommendationAlgo" should "train" in withSparkContext { ctx =>
+    val algo = new RecommendationAlgo
     val input = ctx.sparkContext.parallelize(List(
       Event("1", "view", props = Map(
         "item" -> JsString("page1"),
@@ -56,7 +56,7 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
   }
 
   it should "not fail with wrong data" in withSparkContext { ctx =>
-    val algo = new SimilarityAlgo
+    val algo = new RecommendationAlgo
     val input = ctx.sparkContext.parallelize(List(
       Event("1", "foo", props = Map(
         "x" -> JsString("bar")

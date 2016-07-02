@@ -1,6 +1,6 @@
 {
   "schedule": "R/2015-11-26T00:00:00Z/PT30M",
-  "name": "similarity",
+  "name": "recommendation",
   "cpus": "0.5",
   "mem": "1024",
   "container": {
@@ -9,7 +9,7 @@
     "network": "BRIDGE"
   },
   "shell": false,
-  "command": "similarity",
+  "command": "recommendation",
   "environmentVariables": [
     {"name": "KAFKA_URL", "value": "$BLAH_HOST:31000"},
     {"name": "ZOOKEEPER_URL", "value": "$BLAH_HOST:2181"},

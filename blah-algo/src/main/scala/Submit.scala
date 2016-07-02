@@ -11,13 +11,13 @@ object Submit {
     val config = ConfigFactory.load()
 
     lazy val countAlgo = new CountAlgo
-    lazy val similarityAlgo = new SimilarityAlgo
+    lazy val recommendationAlgo = new RecommendationAlgo
     lazy val userAlgo = new UserAlgo
     lazy val funnelAlgo = new FunnelAlgo
     lazy val referrerAlgo = new ReferrerAlgo
 
     lazy val countBatch = new BatchJob("count", countAlgo)
-    lazy val similarityBatch = new BatchJob("similarity", similarityAlgo)
+    lazy val recommendationBatch = new BatchJob("recommendation", recommendationAlgo)
     lazy val userBatch = new BatchJob("user", userAlgo)
     lazy val funnelBatch = new BatchJob("funnel", funnelAlgo)
     lazy val referrerBatch = new BatchJob("referrer", referrerAlgo)
@@ -26,7 +26,7 @@ object Submit {
 
     lazy val jobs = Map(
       "count" -> countBatch,
-      "similarity" -> similarityBatch,
+      "recommendation" -> recommendationBatch,
       "user" -> userBatch,
       "funnel" -> funnelBatch,
       "referrer" -> referrerBatch,
@@ -55,7 +55,7 @@ object Submit {
                   |Usage: java -jar algo.jar submit COMMAND [OPTION]
                   |Commands:
                   |  count
-                  |  similarity
+                  |  recommendation
                   |  user
                   |  funnel
                   |  referrer

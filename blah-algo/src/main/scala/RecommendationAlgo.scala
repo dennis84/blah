@@ -5,17 +5,17 @@ import org.apache.spark.sql.SQLContext
 import org.apache.spark.mllib.linalg.{Vectors, SparseVector}
 import org.apache.spark.mllib.linalg.distributed._
 
-class SimilarityAlgo extends Algo[Similarity] {
+class RecommendationAlgo extends Algo[Recommendation] {
   def train(rdd: RDD[String], ctx: SQLContext, args: Array[String]) = {
     import ctx.implicits._
-    val reader = ctx.read.schema(SimilaritySchema())
-    reader.json(rdd).registerTempTable("similarity")
+    val reader = ctx.read.schema(RecommendationSchema())
+    reader.json(rdd).registerTempTable("recommendation")
     val events = ctx.sql("""|SELECT
                             |  props.user AS user,
                             |  props.item AS item
-                            |FROM similarity""".stripMargin)
+                            |FROM recommendation""".stripMargin)
       .filter("user is not null and item is not null")
-      .map(SimilarityEvent(_))
+      .map(RecommendationEvent(_))
     require(!events.isEmpty, "view events cannot be empty")
 
     val usersRDD = events.groupBy(_.user)
@@ -26,7 +26,7 @@ class SimilarityAlgo extends Algo[Similarity] {
 
     val itemsByUser = usersRDD collect { case(Some(user), events) =>
       (users.indexOf(user), events collect {
-        case SimilarityEvent(_, Some(item)) => items.indexOf(item)
+        case RecommendationEvent(_, Some(item)) => items.indexOf(item)
       })
     }
 
@@ -53,7 +53,7 @@ class SimilarityAlgo extends Algo[Similarity] {
     usersRDD
       .collect { case(Some(u), itemsByUser) =>
         val elems = itemsByUser flatMap {
-          case SimilarityEvent(_, Some(item)) =>
+          case RecommendationEvent(_, Some(item)) =>
             data get (items indexOf item) getOrElse Nil
         }
 
@@ -67,9 +67,9 @@ class SimilarityAlgo extends Algo[Similarity] {
           .sortBy(_._2)(ord)
           .take(10)
           .collect {
-            case(item, score) => SimilarityItem(item, score)
+            case(item, score) => RecommendationItem(item, score)
           }
-        (u, Similarity(u, filtered))
+        (u, Recommendation(u, filtered))
       }
   }
 }

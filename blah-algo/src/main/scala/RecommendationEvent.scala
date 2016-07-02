@@ -2,12 +2,12 @@ package blah.algo
 
 import org.apache.spark.sql.Row
 
-case class SimilarityEvent(
+case class RecommendationEvent(
   user: Option[String] = None,
   item: Option[String] = None)
 
-object SimilarityEvent {
-  def apply(r: Row): SimilarityEvent = SimilarityEvent(
+object RecommendationEvent {
+  def apply(r: Row): RecommendationEvent = RecommendationEvent(
     Option(r.getString(0)),
     Option(r.getString(1)))
 }

@@ -22,7 +22,7 @@ create_jobs() {
   ! is_open "$BLAH_HOST" 8081 && exit 1
   create_job count
   create_job user
-  create_job similarity
+  create_job recommendation
   create_job funnel-items
   create_job funnel-signup
   create_job referrer
@@ -82,14 +82,14 @@ restart_app() {
       sbt algo/docker:publishLocal
       destroy_job count
       destroy_job user
-      destroy_job similarity
+      destroy_job recommendation
       destroy_job funnel-items
       destroy_job funnel-signup
       destroy_job referrer
       sleep 1
       create_job count
       create_job user
-      create_job similarity
+      create_job recommendation
       create_job funnel-items
       create_job funnel-signup
       create_job referrer

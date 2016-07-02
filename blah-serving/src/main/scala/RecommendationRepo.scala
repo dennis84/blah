@@ -11,17 +11,19 @@ import spray.json._
 import spray.json.lenses.JsonLenses._
 import blah.elastic.ElasticClient
 
-class SimilarityRepo(client: ElasticClient)(
+class RecommendationRepo(client: ElasticClient)(
   implicit system: ActorSystem,
   mat: Materializer
 ) extends SprayJsonSupport with ServingJsonProtocol {
   import system.dispatcher
 
-  def sims(q: SimilarityQuery): Future[SimilarityResult] =
+  def find(q: RecommendationQuery): Future[RecommendationResult] =
     client request HttpRequest(
       method = HttpMethods.GET,
-      uri = "/blah/similarity/" + q.user
+      uri = "/blah/recommendation/" + q.user
     ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
-      Try(json.extract[SimilarityResult]('_source)) getOrElse SimilarityResult(q.user)
+      Try(json.extract[RecommendationResult]('_source)) getOrElse {
+        RecommendationResult(q.user)
+      }
     }
 }

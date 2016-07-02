@@ -52,7 +52,7 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
           ("isMobileDevice" -> ("type" -> "boolean")) ~
           ("isComputer" -> ("type" -> "boolean")) ~
           ("count" -> ("type" -> "integer")))) ~
-      ("similarity" ->
+      ("recommendation" ->
         ("properties" ->
           ("user" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("views" ->

@@ -1,5 +1,5 @@
 package blah.serving
 
-case class SimilarityQuery(
+case class RecommendationQuery(
   user: String,
   limit: Option[String] = None)

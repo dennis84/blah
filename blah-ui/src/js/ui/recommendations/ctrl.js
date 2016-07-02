@@ -12,7 +12,7 @@ import {post} from '../../http'
  * @return {Promise} The model wrapped in a promise
  */
 function recommendations(model, options) {
-  return post('/similarity', options).then((data) => {
+  return post('/recommendation', options).then((data) => {
     var m = clone(model)
     m.user = data.user
     m.views = data.views

@@ -30,7 +30,7 @@ object Boot extends App
     new CountService(env),
     new SumService(env),
     new FunnelService(env),
-    new SimilarityService(env),
+    new RecommendationService(env),
     new UserService(env),
     new MostViewedService(env),
     new ReferrerService(env))
