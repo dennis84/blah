@@ -4,16 +4,23 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.mllib.linalg.{Vectors, SparseVector}
 import org.apache.spark.mllib.linalg.distributed._
+import blah.core.FindOpt._
 
 class SimilarityAlgo extends Algo[Similarity] {
   def train(rdd: RDD[String], ctx: SQLContext, args: Array[String]) = {
     import ctx.implicits._
+
+    val where = args opt "collection" map { coll =>
+      s"""WHERE collection = "$coll""""
+    } getOrElse ""
+
     val reader = ctx.read.schema(SimilaritySchema())
     reader.json(rdd).registerTempTable("similarity")
-    val events = ctx.sql("""|SELECT
-                            |  props.user AS user,
-                            |  props.item AS item
-                            |FROM similarity""".stripMargin)
+    val events = ctx.sql(s"""|SELECT
+                             |  collection AS coll,
+                             |  props.user AS user,
+                             |  props.item AS item
+                             |FROM similarity $where""".stripMargin)
       .filter("user is not null and item is not null")
       .map(SimilarityEvent(_))
     require(!events.isEmpty, "view events cannot be empty")
@@ -26,7 +33,7 @@ class SimilarityAlgo extends Algo[Similarity] {
 
     val itemsByUser = usersRDD collect { case(Some(user), events) =>
       (users.indexOf(user), events collect {
-        case SimilarityEvent(_, Some(item)) => items.indexOf(item)
+        case SimilarityEvent(_, _, Some(item)) => items.indexOf(item)
       })
     }
 
