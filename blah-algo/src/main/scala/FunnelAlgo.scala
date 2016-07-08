@@ -32,40 +32,30 @@ class FunnelAlgo extends Algo[Funnel] {
     val ord = Ordering[Long]
       .on[ZonedDateTime](_.toInstant.toEpochMilli)
 
-    val eventsByUser = events
-      .groupBy(_.user)
-      .collect { case(Some(user), xs) =>
-        (user, xs.toList.sortBy(_.date)(ord))
-      }
+    val eventsByUser = events.groupBy(_.user)
+      .collect { case (Some(user), xs) =>
+        val items = (xs.toList.sortBy(_.date)(ord)
+          .dropWhile(x => x.item.get != config.steps.head)
+          .span(_.item.get != config.steps.last) match {
+            case(head, tail) => head ::: tail.take(1)
+          })
+          .foldRight(List.empty[FunnelEvent])((x, a) => a match {
+            case h :: xs if(h.item == x.item) => a
+            case _ => x :: a
+          })
+        (user, items)
+      } filter (x => !x._2.isEmpty)
 
-    val allSteps = (List(config.steps) /: config.steps) {
-      (a,x) => a ::: List(a.last dropRight 1)
+    eventsByUser flatMap { case(_, items) =>
+      items.zipAll(items.tail.map(Option(_)), None, None)
+    } collect { case (FunnelEvent(_, _, item), maybeNext) =>
+      ((item.get, maybeNext.map(_.item.get)), 1)
+    } reduceByKey (_ + _) map { case((item, next), count) =>
+      val uuid = UUID.nameUUIDFromBytes(ByteBuffer
+        .allocate(Integer.SIZE / 8)
+        .putInt((config.name + item + next).hashCode)
+        .array)
+      (uuid.toString, Funnel(config.name, item, next, count))
     }
-
-    val paths = eventsByUser
-      .flatMap { case(user, events) =>
-        val items = events map (_.item.get)
-        val ys = (items :\ List.empty[String])((x, a) => a match {
-          case h :: xs if(h == x) => a
-          case _ => x :: a
-        })
-
-        allSteps.collect {
-          case x if(x.length > 0 && ys.containsSlice(x)) =>
-            val index = ys.indexOfSlice(x)
-            (ys.slice(index, index + x.length), 1)
-        }
-      }
-
-    paths
-      .filter(_._1.length > 0)
-      .reduceByKey(_ + _)
-      .map { case(path, count) =>
-        val uuid = UUID.nameUUIDFromBytes(ByteBuffer
-          .allocate(Integer.SIZE / 8)
-          .putInt((config.name +: path).hashCode)
-          .array)
-        (uuid.toString, Funnel(config.name, path, count))
-      }
   }
 }

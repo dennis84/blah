@@ -95,7 +95,8 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
       ("funnel" ->
         ("properties" ->
           ("name" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("path" -> ("type" -> "string")) ~
+          ("item" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("next" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("count" -> ("type" -> "integer")))) ~
       ("referrer" ->
         ("properties" ->
