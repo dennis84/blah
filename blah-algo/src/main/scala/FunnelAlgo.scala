@@ -47,15 +47,15 @@ class FunnelAlgo extends Algo[Funnel] {
       } filter (x => !x._2.isEmpty)
 
     eventsByUser flatMap { case(_, items) =>
-      items.zipAll(items.tail.map(Option(_)), None, None)
-    } collect { case (FunnelEvent(_, _, item), maybeNext) =>
-      ((item.get, maybeNext.map(_.item.get)), 1)
-    } reduceByKey (_ + _) map { case((item, next), count) =>
+      items.zip(None +: items.map(Option(_)))
+    } collect { case (FunnelEvent(_, _, item), parent) =>
+      ((item.get, parent.map(_.item.get)), 1)
+    } reduceByKey (_ + _) map { case((item, parent), count) =>
       val uuid = UUID.nameUUIDFromBytes(ByteBuffer
         .allocate(Integer.SIZE / 8)
-        .putInt((config.name + item + next).hashCode)
+        .putInt((config.name + item + parent).hashCode)
         .array)
-      (uuid.toString, Funnel(config.name, item, next, count))
+      (uuid.toString, Funnel(config.name, item, parent, count))
     }
   }
 }

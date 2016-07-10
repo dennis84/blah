@@ -9,7 +9,6 @@ import similarities from './similarity/widget'
 import userCount from './user/count'
 import userBar from './user/bar'
 import sum from './sum/sum'
-import funnel from './funnel/funnel'
 import mostViewedList from './most-viewed/list'
 import referrers from './referrer/list'
 
@@ -199,16 +198,6 @@ function similarityWidget(model, update, conn) {
 }
 
 /**
- * Funnel
- */
-function itemsFunnel(model, update, conn) {
-  return widget(funnel, model, update, {}, conn, {
-    name: 'items',
-    title: 'Items 1-3 Funnel'
-  })
-}
-
-/**
  * Most viewed items
  */
 function mostViewed(model, update, conn) {
@@ -243,7 +232,6 @@ export {
   totalRevenue,
   recommendationWidget,
   similarityWidget,
-  itemsFunnel,
   mostViewed,
   referringSites
 }

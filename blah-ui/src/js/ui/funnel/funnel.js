@@ -4,12 +4,20 @@ import {hook, mount} from '../../hook'
 import bar from '../chart/bar'
 
 function content(model, options) {
-  if(undefined === model.steps || 0 === model.steps.length) return
-  var data = model.steps
-    .sort((a, b) => a.path.length > b.path.length)
-    .map(x => {
-      return {key: x.path.join(' > '), value: x.count}
-    })
+  if(!model.items) return
+  var items = {}
+  for(var i in model.items) {
+    var item = model.items[i]
+    if(undefined === items[item.item]) {
+      items[item.item] = item.count
+    } else {
+      items[item.item] += item.count
+    }
+  }
+
+  var data = options.steps.map(x => {
+    return {key: x, value: items[x]}
+  })
 
   return h('div.chart', {
     hook: hook((node) => bar(node, data))

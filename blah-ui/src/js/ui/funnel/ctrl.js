@@ -15,7 +15,7 @@ function search(model, options) {
   return post('/funnel', mkQuery(options)).then((data) => {
     var m = clone(model)
     m.name = options.name
-    m.steps = data
+    m.items = data
     return m
   })
 }

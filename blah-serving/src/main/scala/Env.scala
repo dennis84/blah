@@ -96,7 +96,7 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
         ("properties" ->
           ("name" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("item" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("next" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("parent" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("count" -> ("type" -> "integer")))) ~
       ("referrer" ->
         ("properties" ->

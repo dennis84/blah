@@ -15,7 +15,6 @@ function render(model, update, conn, storage) {
       className: 'widgets',
       itemSelector: '.widget'
     }, [
-      widgets.itemsFunnel(model, update, conn),
       widgets.totalRevenue(model, update, conn),
       widgets.recommendationWidget(model, update, conn),
       widgets.similarityWidget(model, update, conn),

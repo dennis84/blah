@@ -3,5 +3,5 @@ package blah.algo
 case class Funnel(
   name: String,
   item: String,
-  next: Option[String] = None,
+  parent: Option[String] = None,
   count: Long = 0)

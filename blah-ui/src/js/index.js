@@ -11,6 +11,7 @@ import pageviews from './ui/pageviews'
 import user from './ui/user'
 import misc from './ui/misc'
 import people from './ui/people'
+import funnel from './ui/funnel'
 import segmentation from './ui/segmentation'
 import worldMap from './ui/world-map'
 
@@ -34,6 +35,7 @@ function render() {
   else if('#/user' === model.path) return user(...arguments)
   else if('#/misc' === model.path) return misc(...arguments)
   else if('#/people' === model.path) return people(...arguments)
+  else if('#/funnel' === model.path) return funnel(...arguments)
   else if('#/segmentation' === model.path) return segmentation(...arguments)
   else if('#/world-map' === model.path) return worldMap(...arguments)
   else return pageviews(...arguments)

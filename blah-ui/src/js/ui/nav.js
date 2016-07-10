@@ -8,6 +8,7 @@ function render(model, update, conn, storage) {
       h('a.button.is-link', {href: '#/user'}, 'User Stats'),
       h('a.button.is-link', {href: '#/misc'}, 'Misc'),
       h('a.button.is-link', {href: '#/people'}, 'People'),
+      h('a.button.is-link', {href: '#/funnel'}, 'Funnel'),
       h('a.button.is-link', {href: '#/segmentation'}, 'Segmentation'),
       h('a.button.is-danger.is-outlined', {href: '#/world-map'}, 'Map')
     ]),
