@@ -37,7 +37,7 @@ function mkGraph(xs) {
 }
 
 function flowchart(model, options) {
-  if(undefined === model.items) return
+  if(!model.items || 0 === model.items.length) return
   var data = mkGraph(model.items)
   return h('div.flowchart', {
     hook: hook(node => {

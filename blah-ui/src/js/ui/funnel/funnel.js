@@ -5,7 +5,7 @@ import bar from '../chart/bar'
 import flowchart from './flowchart'
 
 function content(model, options) {
-  if(!model.items) return
+  if(!model.items || 0 === model.items.length) return
   var items = {}
   for(var i in model.items) {
     var item = model.items[i]
