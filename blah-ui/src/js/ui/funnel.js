@@ -12,7 +12,7 @@ function render(model, update, conn, storage) {
     nav(model, update, conn, storage),
     h('h1.has-text-centered', 'Funnel'),
     (model.error) ? error.unknown() : widget(funnel, model, update, {}, conn, {
-      className: 'size-3of3',
+      className: 'size-3of3 funnel',
       name: 'signup',
       steps: ['landingpage', 'signup', 'dashboard'],
       title: 'Sign Up Funnel'

@@ -2,6 +2,7 @@ import {h} from 'virtual-dom'
 import {search} from './ctrl'
 import {hook, mount} from '../../hook'
 import bar from '../chart/bar'
+import flowchart from './flowchart'
 
 function content(model, options) {
   if(!model.items) return
@@ -33,7 +34,8 @@ function render(model, update, conn, options) {
     })
   }, [
     h('h3', options.title),
-    content(model, options)
+    content(model, options),
+    flowchart(model, options)
   ])
 }
 
