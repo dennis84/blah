@@ -1,6 +1,12 @@
 import clone from 'clone'
 import {post} from '../../http'
 
+function openTab(model, tab) {
+  var m = clone(model)
+  m.activeTab = tab
+  return m
+}
+
 /**
  * Search for Funnels.
  *
@@ -31,5 +37,6 @@ function mkQuery(options) {
 }
 
 export {
+  openTab,
   search
 }

@@ -1,5 +1,5 @@
 import {h} from 'virtual-dom'
-import {search} from './ctrl'
+import {search, openTab} from './ctrl'
 import {hook, mount} from '../../hook'
 import bar from '../chart/bar'
 import flowchart from './flowchart'
@@ -34,8 +34,21 @@ function render(model, update, conn, options) {
     })
   }, [
     h('h3', options.title),
-    content(model, options),
-    flowchart(model, options)
+    h('div.tabs', [
+      h('ul', [
+        h('li', {
+          className: 'flowchart' !== model.activeTab ? 'is-active' : ''
+        }, h('a', {
+          onclick: e => update(openTab, 'bar')
+        }, 'Bar Chart')),
+        h('li', {
+          className: 'flowchart' === model.activeTab ? 'is-active' : ''
+        }, h('a', {
+          onclick: e => update(openTab, 'flowchart')
+        }, 'Flowchart'))
+      ])
+    ]),
+    'flowchart' === model.activeTab ? flowchart(model, options) : content(model, options)
   ])
 }
 
