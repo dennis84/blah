@@ -149,6 +149,7 @@ main() {
   source "$(dirname "$0")/kafka.sh"
   source "$(dirname "$0")/marathon.sh"
   source "$(dirname "$0")/samples.sh"
+  source "$(dirname "$0")/fixtures.sh"
   
   local cmd="$1"; shift || true
 
@@ -212,6 +213,9 @@ main() {
     samples)
       create_sample_data "$@"
       ;;
+    fixtures)
+      fixtures "$@"
+      ;;
     *)
       echo "Error: No such command: $cmd"
       echo "Usage: bin/console COMMAND [arg...]"
@@ -230,6 +234,7 @@ main() {
       echo "  run-job NAME                Run a chronos job"
       echo "  restart NAME                Compile and recreate an application"
       echo "  samples [nb] [collection]   Create some sample data"
+      echo "  fixtures                    Load fixtures"
       echo "  env                         Set env vars"
       exit 1
   esac
