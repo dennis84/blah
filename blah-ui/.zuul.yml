@@ -3,8 +3,6 @@ concurrency: 5
 browsers:
   - name: chrome
     version: latest
-  - name: firefox
-    version: latest
 browserify:
   - transform:
       name: babelify
