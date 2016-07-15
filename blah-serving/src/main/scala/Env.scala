@@ -55,7 +55,8 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
       ("recommendation" ->
         ("properties" ->
           ("user" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("views" ->
+          ("collection" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("items" ->
             ("type" -> "nested") ~
             ("properties" ->
               ("item" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
@@ -63,6 +64,7 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
       ("similarity" ->
         ("properties" ->
           ("item" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("collection" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("similarities" ->
             ("type" -> "nested") ~
             ("properties" ->

@@ -6,7 +6,12 @@ import blah.elastic.{QueryDsl => q}
 
 object SimilarityElasticQuery {
   def apply(query: SimilarityQuery): JsValue =
-    q.terms("item", query.items) ~
+    query.collection map { coll =>
+      q.term("collection", coll) merge
+      q.terms("item", query.items)
+    } getOrElse {
+      q.terms("item", query.items)
+    } ~
     ("aggs" -> ("sims" ->
       ("nested" -> ("path", "similarities")) ~
       ("aggs" -> ("items" ->

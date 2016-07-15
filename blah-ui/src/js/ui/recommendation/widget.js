@@ -3,7 +3,7 @@ import {mount} from '../../hook'
 import {find} from './ctrl'
 import debounce from 'debounce'
 
-function views(xs) {
+function mkItems(xs) {
   if(undefined === xs || 0 == xs.length) return
   return h('div.list', xs.map(item => {
     return h('div.list-item.level.is-bordered', [
@@ -33,7 +33,7 @@ function render(model, update, options = {}) {
         })
       ])
     ]),
-    views(model.views)
+    mkItems(model.items)
   ])
 }
 

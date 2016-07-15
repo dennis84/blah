@@ -1,5 +1,7 @@
 package blah.algo
 
+import java.util.UUID
+import java.nio.ByteBuffer
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.mllib.linalg.{Vectors, SparseVector}
@@ -10,7 +12,8 @@ class SimilarityAlgo extends Algo[Similarity] {
   def train(rdd: RDD[String], ctx: SQLContext, args: Array[String]) = {
     import ctx.implicits._
 
-    val where = args opt "collection" map { coll =>
+    val collection = args opt "collection"
+    val where = collection map { coll =>
       s"""WHERE collection = "$coll""""
     } getOrElse ""
 
@@ -66,7 +69,11 @@ class SimilarityAlgo extends Algo[Similarity] {
             .map(x => (SimilarityItem(items(x._1), x._2)))
         } getOrElse Nil
 
-        (item, Similarity(item, sims))
+        val uuid = UUID.nameUUIDFromBytes(ByteBuffer
+          .allocate(Integer.SIZE / 8)
+          .putInt((item + collection.getOrElse("")).hashCode)
+          .array)
+        (uuid.toString, Similarity(item, collection, sims))
       }
   }
 }

@@ -37,6 +37,18 @@ fixtures() {
     "userAgent": "%s"
   }' "$ua_chromium")"
 
+  create_event "products" "$(printf '{
+    "item": "the-fellowship-of-the-ring",
+    "title": "Bought The Fellowship of the Ring",
+    "user": "dennis"
+  }' "$ua_chromium")"
+
+  create_event "products" "$(printf '{
+    "item": "the-two-towers",
+    "title": "Bought The Two Towers",
+    "user": "dennis"
+  }' "$ua_chromium")"
+
   # -------------------------------------------------------
   # User: john
   # -------------------------------------------------------
@@ -83,5 +95,17 @@ fixtures() {
     "title": "Viewed dashboard page",
     "user": "john",
     "userAgent": "%s"
+  }' "$ua_chromium")"
+
+  create_event "products" "$(printf '{
+    "item": "the-two-towers",
+    "title": "Bought The Two Towers",
+    "user": "john"
+  }' "$ua_chromium")"
+
+  create_event "products" "$(printf '{
+    "item": "the-return-of-the-king",
+    "title": "Bought The Return of the King",
+    "user": "john"
   }' "$ua_chromium")"
 }

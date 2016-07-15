@@ -2,7 +2,8 @@ package blah.serving
 
 case class RecommendationResult(
   user: String,
-  views: List[RecommendationItem] = Nil)
+  collection: Option[String],
+  items: List[RecommendationItem] = Nil)
 
 case class RecommendationItem(
   item: String,

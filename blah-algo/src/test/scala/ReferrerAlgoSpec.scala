@@ -35,4 +35,26 @@ class ReferrerAlgoSpec extends FlatSpec with Matchers with SparkFun {
     google.count should be (2)
     bing.count should be (1)
   }
+
+  it should "filter by collection" in withSparkContext { ctx =>
+    val algo = new ReferrerAlgo
+    val input = ctx.sparkContext.parallelize(List(
+      Event("1", "foo", props = Map(
+        "item" -> JsString("page1"),
+        "referrer" -> JsString("google")
+      )).toJson.compactPrint,
+      Event("2", "bar", props = Map(
+        "item" -> JsString("page2"),
+        "referrer" -> JsString("bing")
+      )).toJson.compactPrint))
+
+    algo.train(input, ctx, Array.empty[String])
+      .collect.toList.length should be (2)
+
+    algo.train(input, ctx, Array("--collection", "foo"))
+      .collect.toList.length should be (1)
+
+    algo.train(input, ctx, Array("--collection", "bar"))
+      .collect.toList.length should be (1)
+  }
 }

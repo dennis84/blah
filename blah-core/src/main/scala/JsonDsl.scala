@@ -5,6 +5,7 @@ import spray.json._
 
 trait JsonDsl extends JsonMerge with JsonContains {
   implicit def int2Js(x: Int) = JsNumber(x)
+  implicit def double2Js(x: Double) = JsNumber(x)
   implicit def string2Js(x: String) = JsString(x)
   implicit def boolean2Js(x: Boolean) = JsBoolean(x)
   implicit def traversable2Js[A](xs: Traversable[A])(implicit ev: A => JsValue) =

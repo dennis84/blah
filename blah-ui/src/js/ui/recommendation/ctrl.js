@@ -14,8 +14,8 @@ import {post} from '../../http'
 function find(model, options) {
   return post('/recommendation', options).then((data) => {
     var m = clone(model)
-    m.user = data.user
-    m.views = data.views
+    m.user = options.user
+    m.items = data
     return m
   })
 }

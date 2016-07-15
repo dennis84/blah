@@ -17,13 +17,15 @@ class RecommendationRepo(client: ElasticClient)(
 ) extends SprayJsonSupport with ServingJsonProtocol {
   import system.dispatcher
 
-  def find(q: RecommendationQuery): Future[RecommendationResult] =
+  def find(q: RecommendationQuery): Future[List[RecommendationItem]] =
     client request HttpRequest(
-      method = HttpMethods.GET,
-      uri = "/blah/recommendation/" + q.user
+      method = HttpMethods.POST,
+      uri = "/blah/recommendation/_search?size=50",
+      entity = HttpEntity(
+        ContentTypes.`application/json`,
+        RecommendationElasticQuery(q).compactPrint)
     ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
-      Try(json.extract[RecommendationResult]('_source)) getOrElse {
-        RecommendationResult(q.user)
-      }
+      val lens = 'hits / 'hits / element(0) / '_source / 'items / *
+      Try(json.extract[RecommendationItem](lens).toList) getOrElse Nil
     }
 }

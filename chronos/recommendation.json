@@ -9,7 +9,7 @@
     "network": "BRIDGE"
   },
   "shell": false,
-  "command": "recommendation",
+  "command": "recommendation --collection products",
   "environmentVariables": [
     {"name": "KAFKA_URL", "value": "$BLAH_HOST:31000"},
     {"name": "ZOOKEEPER_URL", "value": "$BLAH_HOST:2181"},

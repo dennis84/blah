@@ -1,19 +1,29 @@
 package blah.algo
 
+import java.util.UUID
+import java.nio.ByteBuffer
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.mllib.linalg.{Vectors, SparseVector}
 import org.apache.spark.mllib.linalg.distributed._
+import blah.core.FindOpt._
 
 class RecommendationAlgo extends Algo[Recommendation] {
   def train(rdd: RDD[String], ctx: SQLContext, args: Array[String]) = {
     import ctx.implicits._
+
+    var collection = args opt "collection"
+    val where = collection map { coll =>
+      s"""WHERE collection = "$coll""""
+    } getOrElse ""
+
     val reader = ctx.read.schema(RecommendationSchema())
     reader.json(rdd).registerTempTable("recommendation")
-    val events = ctx.sql("""|SELECT
-                            |  props.user AS user,
-                            |  props.item AS item
-                            |FROM recommendation""".stripMargin)
+    val events = ctx.sql(s"""|SELECT
+                             |  collection,
+                             |  props.user AS user,
+                             |  props.item AS item
+                             |FROM recommendation $where""".stripMargin)
       .filter("user is not null and item is not null")
       .map(RecommendationEvent(_))
     require(!events.isEmpty, "view events cannot be empty")
@@ -26,7 +36,7 @@ class RecommendationAlgo extends Algo[Recommendation] {
 
     val itemsByUser = usersRDD collect { case(Some(user), events) =>
       (users.indexOf(user), events collect {
-        case RecommendationEvent(_, Some(item)) => items.indexOf(item)
+        case RecommendationEvent(_, _, Some(item)) => items.indexOf(item)
       })
     }
 
@@ -53,7 +63,7 @@ class RecommendationAlgo extends Algo[Recommendation] {
     usersRDD
       .collect { case(Some(u), itemsByUser) =>
         val elems = itemsByUser flatMap {
-          case RecommendationEvent(_, Some(item)) =>
+          case RecommendationEvent(_, _, Some(item)) =>
             data get (items indexOf item) getOrElse Nil
         }
 
@@ -69,7 +79,12 @@ class RecommendationAlgo extends Algo[Recommendation] {
           .collect {
             case(item, score) => RecommendationItem(item, score)
           }
-        (u, Recommendation(u, filtered))
+
+        val uuid = UUID.nameUUIDFromBytes(ByteBuffer
+          .allocate(Integer.SIZE / 8)
+          .putInt((u + collection.getOrElse("")).hashCode)
+          .array)
+        (uuid.toString, Recommendation(u, collection, filtered))
       }
   }
 }

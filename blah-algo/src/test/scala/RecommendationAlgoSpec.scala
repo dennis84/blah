@@ -42,17 +42,47 @@ class RecommendationAlgoSpec extends FlatSpec with Matchers with SparkFun {
 
     val output = algo.train(input, ctx, Array.empty[String])
     val docs = output.collect.toList
-    docs foreach {
-      case ("user1", data) =>
-        val views = data.views
-        views.length should be (1)
-        views(0).item should be ("page4")
-      case ("user2", data) =>
-        val views = data.views
-        views.length should be (2)
-        views(0).item should be ("page3")
-        views(1).item should be ("page2")
-    }
+
+    val user1 = docs.find(_._2.user == "user1").get._2
+    val user2 = docs.find(_._2.user == "user2").get._2
+
+    user1.items.length should be (1)
+    user1.items(0).item should be ("page4")
+
+    user2.items.length should be (2)
+    user2.items(0).item should be ("page3")
+    user2.items(1).item should be ("page2")
+  }
+
+  it should "filter by collection" in withSparkContext { ctx =>
+    val algo = new RecommendationAlgo
+    val input = ctx.sparkContext.parallelize(List(
+      Event("1", "products", props = Map(
+        "item" -> JsString("product1"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("2", "products", props = Map(
+        "item" -> JsString("product2"),
+        "user" -> JsString("user1")
+      )).toJson.compactPrint,
+      Event("3", "products", props = Map(
+        "item" -> JsString("product1"),
+        "user" -> JsString("user2")
+      )).toJson.compactPrint,
+      Event("4", "pageviews", props = Map(
+        "item" -> JsString("page1"),
+        "user" -> JsString("user2")
+      )).toJson.compactPrint))
+
+    val output = algo.train(input, ctx, Array("--collection", "products"))
+    val docs = output.collect.toList
+
+    val user1 = docs.find(_._2.user == "user1").get._2
+    val user2 = docs.find(_._2.user == "user2").get._2
+
+    user1.items.length should be (0)
+    user1.collection should be (Some("products"))
+    user2.items.length should be (1)
   }
 
   it should "not fail with wrong data" in withSparkContext { ctx =>
