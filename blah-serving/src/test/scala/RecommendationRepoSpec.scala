@@ -4,7 +4,7 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import org.scalatest._
 import org.scalamock.scalatest.MockFactory
-import akka.actor._
+import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.model._
 import spray.json._
@@ -36,10 +36,9 @@ class RecommendationRepoSpec
           ("item" -> "c") ~ ("score" -> 0.5)))
       )))).compactPrint
 
-    (client.request _).expects(*) returning {
-      Future(HttpResponse(200, entity = HttpEntity(
+    (client.request _) expects(*) returning Future(
+      HttpResponse(200, entity = HttpEntity(
         ContentTypes.`application/json`, body)))
-    }
 
     val resp = repo.find(RecommendationQuery("dennis", Some("products")))
 

@@ -13,12 +13,12 @@ class ElasticClient(uri: ElasticUri)(
   mat: Materializer) {
   import system.dispatcher
 
-  private val flow =
+  private lazy val flow =
     Http().cachedHostConnectionPool[Promise[HttpResponse]](
       uri.hosts.head._1,
       uri.hosts.head._2)
 
-  private val queue =
+  private lazy val queue =
     Source.queue[(HttpRequest, Promise[HttpResponse])](
       1000, OverflowStrategy.backpressure)
         .via(flow)
