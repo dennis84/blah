@@ -20,12 +20,15 @@ class RecommendationRepo(client: ElasticClient)(
   def find(q: RecommendationQuery): Future[List[RecommendationItem]] =
     client request HttpRequest(
       method = HttpMethods.POST,
-      uri = "/blah/recommendation/_search?size=50",
+      uri = s"/blah/recommendation/_search?size=1",
       entity = HttpEntity(
         ContentTypes.`application/json`,
         RecommendationElasticQuery(q).compactPrint)
     ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
       val lens = 'hits / 'hits / element(0) / '_source / 'items / *
-      Try(json.extract[RecommendationItem](lens).toList) getOrElse Nil
+      val items = json.extract[RecommendationItem](lens).toList
+        .sortBy(- _.score)
+        .take(q.limit.getOrElse(100))
+      Try(items) getOrElse Nil
     }
 }

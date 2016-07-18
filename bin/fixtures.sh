@@ -49,6 +49,12 @@ fixtures() {
     "user": "dennis"
   }' "$ua_chromium")"
 
+  create_event "products" "$(printf '{
+    "item": "the-hobbit-an-unexpected-journey",
+    "title": "Bought The Hobbit: An Unexpected Journey",
+    "user": "dennis"
+  }' "$ua_chromium")"
+
   # -------------------------------------------------------
   # User: john
   # -------------------------------------------------------
