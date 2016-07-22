@@ -24,7 +24,7 @@ function render(model, update, conn, storage) {
         value: moment().add(1, 'hour').format()
       }]
     }, conn, {
-      collection: 'pageviews',
+      collection: 'view',
       className: 'size-3of3 segmentation',
       groups: ['date.year', 'date.month', 'date.day', 'date.hour']
     })

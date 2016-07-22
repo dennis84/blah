@@ -109,24 +109,19 @@ restart_app() {
 
 create_sample_data() {
   ! is_open "api.blah.local" 80 && exit 1
-  declare nb=${1:-1} coll=${2:-"pageviews"}
+  declare nb=${1:-1}
   for i in $(eval echo "{1..$nb}"); do
     echo -ne "Processing $i/$nb\r"
-    case $coll in
-      pageviews)
-        create_event "$coll" "$(make_pageview)"
-        ;;
-      purchases)
-        create_event "$coll" "$(make_purchase)"
-        ;;
-      *)
-        echo "Error: Cannot create event: $coll"
-        echo "Usage: bin/console samples NB COLLECTION"
-        echo "Example:"
-        echo "  samples 100 pageviews"
-        echo "  samples 100 purchases"
-        exit 1
-    esac
+    local user="$(rand_user)"
+    create_event "view" "$(printf '{
+      "item":"%s",
+      "title": "%s",
+      "user": "%s",
+      "email": "d.dietrich84+blah-%s@gmail.com",
+      "ip": "%s",
+      "userAgent": "%s",
+      "referrer": "%s"
+    }' "$(rand_item)" "$(rand_title)" "$user" "$user" "$(rand_ip)" "$(rand_ua)" "$(rand_referrer)")"
   done
   echo -ne '\n'
 }

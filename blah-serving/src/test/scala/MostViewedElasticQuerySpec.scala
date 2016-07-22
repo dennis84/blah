@@ -7,11 +7,11 @@ import blah.core.JsonDsl._
 class MostViewedElasticQuerySpec extends FlatSpec with Matchers {
 
   "The MostViewedElasticQuery" should "works" in {
-    val q = MostViewedQuery("pageviews", Some(10))
+    val q = MostViewedQuery("view", Some(10))
     MostViewedElasticQuery(q) should be (
       ("query" -> ("filtered" ->
         ("query" -> ("bool" -> ("must" -> List(
-          "term" -> ("collection" -> "pageviews"))))))) ~
+          "term" -> ("collection" -> "view"))))))) ~
       ("aggs" -> ("item" ->
         ("terms" ->
           ("field" -> "item") ~

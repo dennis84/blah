@@ -17,7 +17,7 @@ import referrers from './referrer/list'
  */
 function browserStats(model, update, conn) {
   return widget(pie, model, update, {}, conn, {
-    collection: 'pageviews',
+    collection: 'view',
     filterBy: [{
       prop: 'date.from',
       operator: 'gte',
@@ -33,7 +33,7 @@ function browserStats(model, update, conn) {
  */
 function pageviews(model, update, conn) {
   return widget(bar, model, update, {}, conn, {
-    collection: 'pageviews',
+    collection: 'view',
     filterBy: [{
       prop: 'date.from',
       operator: 'gte',
@@ -81,7 +81,7 @@ function uniqueVisitors(model, update, conn) {
  */
 function countOne(model, update, conn, item) {
   return widget(count, model, update, {}, conn, {
-    collection: 'pageviews',
+    collection: 'view',
     filterBy: [{
       prop: 'item',
       operator: 'eq',
@@ -96,7 +96,7 @@ function countOne(model, update, conn, item) {
  */
 function countAll(model, update, conn) {
   return widget(count, model, update, {}, conn, {
-    collection: 'pageviews',
+    collection: 'view',
     title: 'All'
   })
 }
@@ -106,7 +106,7 @@ function countAll(model, update, conn) {
  */
 function platformStats(model, update, conn) {
   return widget(pie, model, update, {}, conn, {
-    collection: 'pageviews',
+    collection: 'view',
     filterBy: [{
       prop: 'date.from',
       operator: 'gte',
@@ -122,7 +122,7 @@ function platformStats(model, update, conn) {
  */
 function pageviewDiff(model, update, conn) {
   return widget(countDiff, model, update, {}, conn, {
-    collection: 'pageviews',
+    collection: 'view',
     percentage: true,
     from: {
       filterBy: [{
@@ -156,7 +156,7 @@ function pageviewDiff(model, update, conn) {
  */
 function mobileOsStats(model, update, conn) {
   return widget(pie, model, update, {}, conn, {
-    collection: 'pageviews',
+    collection: 'view',
     filterBy: [{
       prop: 'date.from',
       operator: 'gte',
@@ -176,7 +176,7 @@ function mobileOsStats(model, update, conn) {
  */
 function totalRevenue(model, update, conn) {
   return widget(sum, model, update, {}, conn, {
-    collection: 'purchases',
+    collection: 'buy',
     template: '$ {value}',
     prop: 'price',
     title: 'Total Revenue'
@@ -203,7 +203,7 @@ function similarityWidget(model, update, conn) {
 function mostViewed(model, update, conn) {
   return widget(mostViewedList, model, update, {}, conn, {
     title: 'Most Viewed Items',
-    collection: 'pageviews',
+    collection: 'view',
     limit: 10
   })
 }

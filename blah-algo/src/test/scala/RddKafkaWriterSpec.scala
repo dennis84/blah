@@ -34,10 +34,10 @@ class RddKafkaWriterSpec extends FlatSpec with Matchers with SparkFun {
 
   it should "write json" in withSparkContext { ctx =>
     val input = ctx.sparkContext.parallelize(List(
-      Event("1", "pageviews", props = Map(
+      Event("1", "view", props = Map(
         "item" -> JsString("page1")
       )).toJson.compactPrint,
-      Event("2", "pageviews", props = Map(
+      Event("2", "view", props = Map(
         "item" -> JsString("page2")
       )).toJson.compactPrint))
 

@@ -5,7 +5,7 @@ var API_URL = 'http://api.blah.local'
  * Tracking API.
  *
  * ```
- * track('pageviews', {
+ * track('view', {
  *   'item': 'home',
  *   'title': 'Visited page',
  *   'user': 'username'

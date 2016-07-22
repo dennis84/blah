@@ -29,7 +29,7 @@ class RecommendationRepoSpec
     val body = ("hits" -> ("hits" -> List(
       ("_source" ->
         ("user" -> "dennis") ~
-        ("collection" -> "products") ~
+        ("collection" -> "buy") ~
         ("items" -> List(
           ("item" -> "a") ~ ("score" -> 1.0),
           ("item" -> "b") ~ ("score" -> 0.7),
@@ -40,7 +40,7 @@ class RecommendationRepoSpec
       HttpResponse(200, entity = HttpEntity(
         ContentTypes.`application/json`, body)))
 
-    val resp = repo.find(RecommendationQuery("dennis", Some("products")))
+    val resp = repo.find(RecommendationQuery("dennis", Some("buy")))
 
     Await.result(resp, 10.seconds) should be (List(
       RecommendationItem("a", 1.0),

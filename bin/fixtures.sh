@@ -6,7 +6,7 @@ fixtures() {
   # -------------------------------------------------------
   # User: dennis
   # -------------------------------------------------------
-  create_event "pageviews" "$(printf '{
+  create_event "view" "$(printf '{
     "item": "landingpage",
     "title": "Viewed landing page",
     "user": "dennis",
@@ -14,14 +14,14 @@ fixtures() {
     "referrer": "google.com"
   }' "$ua_chromium")"
 
-  create_event "pageviews" "$(printf '{
+  create_event "view" "$(printf '{
     "item": "signup",
     "title": "Viewed signup page",
     "user": "dennis",
     "userAgent": "%s"
   }' "$ua_chromium")"
 
-  create_event "registrations" "$(printf '{
+  create_event "signup" "$(printf '{
     "title": "Created a new account",
     "user": "dennis",
     "email": "d.dietrich84@gmail.com",
@@ -30,35 +30,38 @@ fixtures() {
     "userAgent": "%s"
   }' "$ua_chromium")"
 
-  create_event "pageviews" "$(printf '{
+  create_event "view" "$(printf '{
     "item": "dashboard",
     "title": "Viewed dashboard page",
     "user": "dennis",
     "userAgent": "%s"
   }' "$ua_chromium")"
 
-  create_event "products" "$(printf '{
+  create_event "buy" "$(printf '{
     "item": "the-fellowship-of-the-ring",
     "title": "Bought The Fellowship of the Ring",
-    "user": "dennis"
+    "user": "dennis",
+    "price": "10.0"
   }' "$ua_chromium")"
 
-  create_event "products" "$(printf '{
+  create_event "buy" "$(printf '{
     "item": "the-two-towers",
     "title": "Bought The Two Towers",
-    "user": "dennis"
+    "user": "dennis",
+    "price": "10.0"
   }' "$ua_chromium")"
 
-  create_event "products" "$(printf '{
+  create_event "buy" "$(printf '{
     "item": "the-hobbit-an-unexpected-journey",
     "title": "Bought The Hobbit: An Unexpected Journey",
-    "user": "dennis"
+    "user": "dennis",
+    "price": "10.0"
   }' "$ua_chromium")"
 
   # -------------------------------------------------------
   # User: john
   # -------------------------------------------------------
-  create_event "pageviews" "$(printf '{
+  create_event "view" "$(printf '{
     "item": "landingpage",
     "title": "Viewed landing page",
     "user": "john",
@@ -66,28 +69,28 @@ fixtures() {
     "referrer": "google.com"
   }' "$ua_chromium")"
 
-  create_event "pageviews" "$(printf '{
+  create_event "view" "$(printf '{
     "item": "signup",
     "title": "Viewed signup page",
     "user": "john",
     "userAgent": "%s"
   }' "$ua_chromium")"
 
-  create_event "pageviews" "$(printf '{
+  create_event "view" "$(printf '{
     "item": "pricing",
     "title": "Viewed pricing page",
     "user": "john",
     "userAgent": "%s"
   }' "$ua_chromium")"
 
-  create_event "pageviews" "$(printf '{
+  create_event "view" "$(printf '{
     "item": "signup",
     "title": "Viewed signup page",
     "user": "john",
     "userAgent": "%s"
   }' "$ua_chromium")"
 
-  create_event "registrations" "$(printf '{
+  create_event "signup" "$(printf '{
     "title": "Created a new account",
     "user": "john",
     "email": "john@example.com",
@@ -96,22 +99,24 @@ fixtures() {
     "userAgent": "%s"
   }' "$ua_chromium")"
 
-  create_event "pageviews" "$(printf '{
+  create_event "view" "$(printf '{
     "item": "dashboard",
     "title": "Viewed dashboard page",
     "user": "john",
     "userAgent": "%s"
   }' "$ua_chromium")"
 
-  create_event "products" "$(printf '{
+  create_event "buy" "$(printf '{
     "item": "the-two-towers",
     "title": "Bought The Two Towers",
-    "user": "john"
+    "user": "john",
+    "price": "10.0"
   }' "$ua_chromium")"
 
-  create_event "products" "$(printf '{
+  create_event "buy" "$(printf '{
     "item": "the-return-of-the-king",
     "title": "Bought The Return of the King",
-    "user": "john"
+    "user": "john",
+    "price": "10.0"
   }' "$ua_chromium")"
 }

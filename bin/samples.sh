@@ -79,28 +79,6 @@ rand_referrer() {
   esac
 }
 
-make_pageview() {
-  printf '{
-    "item":"%s",
-    "title": "%s",
-    "user": "%s",
-    "email": "d.dietrich84+blah-%s@gmail.com",
-    "ip": "%s",
-    "userAgent": "%s",
-    "referrer": "%s"
-  }' "$(rand_item)" "$(rand_title)" "$(rand_user)" "$(rand_user)" "$(rand_ip)" "$(rand_ua)" "$(rand_referrer)"
-}
-
-make_purchase() {
-  printf '{
-    "item":"%s",
-    "price": 20.00,
-    "user":"%s",
-    "ip": "%s",
-    "userAgent":"%s"
-  }' "$(rand_item)" "$(rand_user)" "$(rand_ip)" "$(rand_ua)"
-}
-
 create_event() {
   curl -s -o /dev/null -H 'Content-Type: application/json' \
     -X POST "http://api.blah.local/events/$1" -d "$2"

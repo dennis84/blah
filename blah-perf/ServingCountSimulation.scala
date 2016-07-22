@@ -9,7 +9,7 @@ class ServingCountSimulation extends Simulation {
 
   val all = http("all")
     .post("/count")
-    .body(StringBody("""{"collection": "pageviews"}""")).asJSON
+    .body(StringBody("""{"collection": "view"}""")).asJSON
 
   val scn = scenario("BasicSimulation")
     .repeat(100) {

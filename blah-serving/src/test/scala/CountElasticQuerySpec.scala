@@ -10,14 +10,14 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
     val empty: JsObject =
       ("query" -> ("filtered" ->
         ("query" -> ("bool" -> ("must" -> List(
-          "term" -> ("collection" -> "pageviews"))))))) ~
+          "term" -> ("collection" -> "view"))))))) ~
       ("aggs" -> ("count" -> ("sum" -> ("field" -> "count"))))
-    CountElasticQuery(CountQuery("pageviews", None, None)) should be (empty)
-    CountElasticQuery(CountQuery("pageviews", Some(Nil), None)) should be (empty)
+    CountElasticQuery(CountQuery("view", None, None)) should be (empty)
+    CountElasticQuery(CountQuery("view", Some(Nil), None)) should be (empty)
   }
 
   it should "convert a query with filters to json" in {
-    val query = CountQuery("pageviews", Some(List(
+    val query = CountQuery("view", Some(List(
       Filter("item", "eq", "home"),
       Filter("user_agent.device.family", "eq", "iPhone"),
       Filter("user_agent.browser.family", "eq", "Chrome"),
@@ -33,7 +33,7 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
           ("lte" -> "2015-09-04")
         ))) ~
         ("query" -> ("bool" -> ("must" -> List(
-          ("term" -> ("collection" -> "pageviews")),
+          ("term" -> ("collection" -> "view")),
           ("term" -> ("item" -> "home")),
           ("term" -> ("deviceFamily" -> "iPhone")),
           ("term" -> ("browserFamily" -> "Chrome")),
@@ -46,13 +46,13 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
   }
 
   it should "convert a query with filters and empty groups to json" in {
-    val query = CountQuery("pageviews", Some(List(
+    val query = CountQuery("view", Some(List(
       Filter("item", "eq", "home")
     )), Some(Nil))
 
     val json: JsObject =
       ("query" -> ("filtered" -> ("query" -> ("bool" -> ("must" -> List(
-        ("term" -> ("collection" -> "pageviews")),
+        ("term" -> ("collection" -> "view")),
         ("term" -> ("item" -> "home"))
       )))))) ~
       ("aggs" -> ("date" ->
@@ -66,7 +66,7 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
   }
 
   it should "convert a query with filters and groups to json" in {
-    val query = CountQuery("pageviews", Some(List(
+    val query = CountQuery("view", Some(List(
       Filter("item", "eq", "home")
     )), Some(List(
       "date.hour",
@@ -76,7 +76,7 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
 
     val json: JsObject =
       ("query" -> ("filtered" -> ("query" -> ("bool" -> ("must" -> List(
-        ("term" -> ("collection" -> "pageviews")),
+        ("term" -> ("collection" -> "view")),
         ("term" -> ("item" -> "home"))
       )))))) ~
       ("aggs" ->

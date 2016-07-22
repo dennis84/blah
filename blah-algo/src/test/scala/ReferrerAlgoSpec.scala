@@ -11,15 +11,15 @@ class ReferrerAlgoSpec extends FlatSpec with Matchers with SparkFun {
   "The ReferrerAlgo" should "train" in withSparkContext { ctx =>
     val algo = new ReferrerAlgo
     val input = ctx.sparkContext.parallelize(List(
-      Event("1", "pageviews", props = Map(
+      Event("1", "view", props = Map(
         "item" -> JsString("page1"),
         "referrer" -> JsString("google")
       )).toJson.compactPrint,
-      Event("2", "pageviews", props = Map(
+      Event("2", "view", props = Map(
         "item" -> JsString("page2"),
         "referrer" -> JsString("google")
       )).toJson.compactPrint,
-      Event("3", "pageviews", props = Map(
+      Event("3", "view", props = Map(
         "item" -> JsString("page1"),
         "referrer" -> JsString("bing")
       )).toJson.compactPrint

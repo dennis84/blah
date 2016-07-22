@@ -11,13 +11,13 @@ class CountAlgoSpec extends FlatSpec with Matchers with SparkFun {
   "The CountAlgo" should "train" in withSparkContext { ctx =>
     val algo = new CountAlgo
     val input = ctx.sparkContext.parallelize(List(
-      Event("1", "pageviews", props = Map(
+      Event("1", "view", props = Map(
         "item" -> JsString("page1")
       )).toJson.compactPrint,
-      Event("2", "pageviews", props = Map(
+      Event("2", "view", props = Map(
         "item" -> JsString("page1")
       )).toJson.compactPrint,
-      Event("3", "purchases", props = Map(
+      Event("3", "buy", props = Map(
         "item" -> JsString("plan-a"),
         "price" -> JsNumber(20.0)
       )).toJson.compactPrint,

@@ -8,7 +8,7 @@ class ApiEventSimulation extends Simulation {
     .header("Content-Type", "application/json")
 
   val insert = http("all")
-    .post("/events/pageviews")
+    .post("/events/view")
     .body(StringBody("""|{
                         |  "item": "item-1",
                         |  "title": "Visit item-1",
