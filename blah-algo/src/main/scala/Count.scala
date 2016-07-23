@@ -14,4 +14,5 @@ case class Count(
   isMobileDevice: Boolean,
   isComputer: Boolean,
   platform: String,
+  price: Double = 0.0,
   count: Long = 0)

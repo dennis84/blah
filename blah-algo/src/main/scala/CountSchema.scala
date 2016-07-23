@@ -1,6 +1,6 @@
 package blah.algo
 
-import org.apache.spark.sql.types.{StructType, StructField, StringType}
+import org.apache.spark.sql.types._
 
 object CountSchema {
   def apply() = StructType(Array(
@@ -8,5 +8,7 @@ object CountSchema {
     StructField("collection", StringType, true),
     StructField("props", StructType(Array(
       StructField("item", StringType, true),
-      StructField("userAgent", StringType, true))), true)))
+      StructField("userAgent", StringType, true),
+      StructField("price", DoubleType, true)
+    )), true)))
 }

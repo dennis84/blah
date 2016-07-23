@@ -41,21 +41,21 @@ fixtures() {
     "item": "the-fellowship-of-the-ring",
     "title": "Bought The Fellowship of the Ring",
     "user": "dennis",
-    "price": "10.0"
+    "price": 10.0
   }' "$ua_chromium")"
 
   create_event "buy" "$(printf '{
     "item": "the-two-towers",
     "title": "Bought The Two Towers",
     "user": "dennis",
-    "price": "10.0"
+    "price": 10.0
   }' "$ua_chromium")"
 
   create_event "buy" "$(printf '{
     "item": "the-hobbit-an-unexpected-journey",
     "title": "Bought The Hobbit: An Unexpected Journey",
     "user": "dennis",
-    "price": "10.0"
+    "price": 10.0
   }' "$ua_chromium")"
 
   # -------------------------------------------------------
@@ -110,13 +110,13 @@ fixtures() {
     "item": "the-two-towers",
     "title": "Bought The Two Towers",
     "user": "john",
-    "price": "10.0"
+    "price": 10.0
   }' "$ua_chromium")"
 
   create_event "buy" "$(printf '{
     "item": "the-return-of-the-king",
     "title": "Bought The Return of the King",
     "user": "john",
-    "price": "10.0"
+    "price": 10.0
   }' "$ua_chromium")"
 }

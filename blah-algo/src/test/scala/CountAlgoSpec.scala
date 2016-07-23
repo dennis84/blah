@@ -30,4 +30,22 @@ class CountAlgoSpec extends FlatSpec with Matchers with SparkFun {
     val docs = output.collect.toList
     docs.length should be (3)
   }
+
+  it should "skip events with invalid property types" in withSparkContext { ctx =>
+    val algo = new CountAlgo
+    val input = ctx.sparkContext.parallelize(List(
+      Event("1", "buy", props = Map(
+        "item" -> JsString("foo"),
+        "price" -> JsString("10.0")
+      )).toJson.compactPrint,
+      Event("2", "buy", props = Map(
+        "item" -> JsString("bar"),
+        "price" -> JsString("10.0")
+      )).toJson.compactPrint
+    ))
+
+    val output = algo.train(input, ctx, Array.empty[String])
+    val docs = output.collect.toList
+    docs.length should be (0)
+  }
 }

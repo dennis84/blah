@@ -16,8 +16,10 @@ class CountAlgo extends Algo[Count] {
                |  date,
                |  collection,
                |  props.item,
-               |  props.userAgent
+               |  props.userAgent,
+               |  props.price
                |FROM count""".stripMargin)
+      .filter("date is not null")
       .map(CountEvent(_))
       .map { event =>
         val ua = event.userAgent.map(UserAgent(_))
@@ -26,6 +28,7 @@ class CountAlgo extends Algo[Count] {
           collection = event.collection,
           date = event.date.truncatedTo(ChronoUnit.HOURS).toString,
           item = event.item.getOrElse("undefined"),
+          price = event.price.getOrElse(0.0),
           browserFamily = ua.map(_.browser.family).getOrElse("N/A"),
           browserMajor = ua.map(_.browser.major).flatten.getOrElse("N/A"),
           osFamily = ua.map(_.os.family).getOrElse("N/A"),
