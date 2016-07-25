@@ -8,12 +8,6 @@ import JsonProtocol._
 
 class FunnelAlgoSpec extends FlatSpec with Matchers with SparkFun {
 
-  val date1 = ZonedDateTime.now(ZoneOffset.UTC)
-  val date2 = ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(1)
-  val date3 = ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(2)
-  val date4 = ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(3)
-  val date5 = ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(4)
-
   "The FunnelAlgo" should "train" in withSparkContext { ctx =>
     val algo = new FunnelAlgo
 
@@ -81,11 +75,13 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with SparkFun {
     } should have message "Invalid arguments"
   }
 
-  def Events(user: String, items: String*) =
+  def Events(user: String, items: String*) = {
+    val date = ZonedDateTime.now(ZoneOffset.UTC)
     items.zipWithIndex map { case(item, index) =>
-      Event("", "view", date1.plusMinutes(index), props = Map(
+      Event("", "view", date.plusMinutes(index), props = Map(
         "item" -> JsString(item),
         "user" -> JsString(user)
       )).toJson.compactPrint
     }
+  }
 }

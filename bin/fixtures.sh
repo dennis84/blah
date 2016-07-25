@@ -27,7 +27,8 @@ fixtures() {
     "email": "d.dietrich84@gmail.com",
     "firstname": "Dennis",
     "lastname": "Dietrich",
-    "userAgent": "%s"
+    "userAgent": "%s",
+    "ip": "8.8.8.8"
   }' "$ua_chromium")"
 
   create_event "view" "$(printf '{
@@ -96,7 +97,8 @@ fixtures() {
     "email": "john@example.com",
     "firstname": "John",
     "lastname": "Doe",
-    "userAgent": "%s"
+    "userAgent": "%s",
+    "ip": "8.8.8.8"
   }' "$ua_chromium")"
 
   create_event "view" "$(printf '{

@@ -15,13 +15,13 @@ case class UserEvent(
 
 object UserEvent {
   def apply(r: Row): UserEvent = UserEvent(
-    r.getString(0),
-    r.getString(1),
-    Option(r.getString(2)),
-    Option(r.getString(3)),
-    Option(r.getString(4)),
-    Option(r.getString(5)),
-    Option(r.getString(6)),
-    Option(r.getString(7)),
-    Option(r.getString(8)))
+    date = r.getString(0),
+    collection = r.getString(1),
+    user = Option(r.getString(2)),
+    email = Option(r.getString(3)),
+    firstname = Option(r.getString(4)),
+    lastname = Option(r.getString(5)),
+    item = Option(r.getString(6)),
+    title = Option(r.getString(7)),
+    ip = Option(r.getString(8)))
 }
