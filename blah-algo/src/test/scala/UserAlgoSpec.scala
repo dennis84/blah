@@ -70,8 +70,8 @@ class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
     users.length should be (1)
     val user = users(0)._2
 
-    user.email should be ("foo@example.com")
-    user.firstname should be ("baz")
-    user.lastname should be ("blub")
+    user.email should be (Some("foo@example.com"))
+    user.firstname should be (Some("baz"))
+    user.lastname should be (Some("blub"))
   }
 }

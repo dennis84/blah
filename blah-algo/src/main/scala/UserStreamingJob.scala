@@ -16,16 +16,16 @@ class UserStreamingJob(
     sparkConf.set("es.update.script",
       """|ctx._source.events = (ctx._source.events += events).takeRight(20);
          |ctx._source.nbEvents += nbEvents;
-         |ctx._source.email = email;
-         |ctx._source.firstname = firstname;
-         |ctx._source.lastname = lastname;
          |ctx._source.date = date;
-         |ctx._source.lng = lng;
-         |ctx._source.lat = lat;
-         |ctx._source.country = country;
-         |ctx._source.countryCode = countryCode;
-         |ctx._source.city = city;
-         |ctx._source.zipCode = zipCode
+         |if(email) ctx._source.email = email;
+         |if(firstname) ctx._source.firstname = firstname;
+         |if(lastname) ctx._source.lastname = lastname;
+         |if(lng) ctx._source.lng = lng;
+         |if(lat) ctx._source.lat = lat;
+         |if(country) ctx._source.country = country;
+         |if(countryCode) ctx._source.countryCode = countryCode;
+         |if(city) ctx._source.city = city;
+         |if(zipCode) ctx._source.zipCode = zipCode
          |""".stripMargin.replaceAll("\n", ""))
     sparkConf.set("es.update.script.params",
       """|events:events,

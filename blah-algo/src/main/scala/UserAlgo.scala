@@ -48,16 +48,16 @@ class UserAlgo extends Algo[User] {
         val geo = event.ip.map(GeoIp.find _).flatten
         val doc = User(
           user = u,
-          email = event.email.getOrElse("N/A"),
-          firstname = event.firstname.getOrElse(""),
-          lastname = event.lastname.getOrElse(""),
           date = event.date.toString,
-          lng = geo.map(_.lng).getOrElse(0),
-          lat = geo.map(_.lat).getOrElse(0),
-          country = geo.map(_.country).flatten.getOrElse("N/A"),
-          countryCode = geo.map(_.countryCode).flatten.getOrElse("N/A"),
-          city = geo.map(_.city).flatten.getOrElse("N/A"),
-          zipCode = geo.map(_.zipCode).flatten.getOrElse("N/A"),
+          email = event.email,
+          firstname = event.firstname,
+          lastname = event.lastname,
+          lng = geo.map(_.lng),
+          lat = geo.map(_.lat),
+          country = geo.map(_.country).flatten,
+          countryCode = geo.map(_.countryCode).flatten,
+          city = geo.map(_.city).flatten,
+          zipCode = geo.map(_.zipCode).flatten,
           events = (sorted take 20),
           nbEvents = events.size)
         (u, doc)
