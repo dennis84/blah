@@ -27,21 +27,21 @@ class CountAlgo extends Algo[Count] {
         val doc = Count(
           collection = event.collection,
           date = event.date.truncatedTo(ChronoUnit.HOURS).toString,
-          item = event.item.getOrElse("undefined"),
-          price = event.price.getOrElse(0.0),
-          browserFamily = ua.map(_.browser.family).getOrElse("N/A"),
-          browserMajor = ua.map(_.browser.major).flatten.getOrElse("N/A"),
-          osFamily = ua.map(_.os.family).getOrElse("N/A"),
-          osMajor = ua.map(_.os.major).flatten.getOrElse("N/A"),
-          deviceFamily = ua.map(_.device.family).getOrElse("N/A"),
-          isMobile = uac.map(_.mobile).getOrElse(false),
-          isTablet = uac.map(_.tablet).getOrElse(false),
-          isMobileDevice = uac.map(_.mobileDevice).getOrElse(false),
-          isComputer = uac.map(_.computer).getOrElse(true),
+          item = event.item,
+          price = event.price,
+          browserFamily = ua.map(_.browser.family),
+          browserMajor = ua.map(_.browser.major).flatten,
+          osFamily = ua.map(_.os.family),
+          osMajor = ua.map(_.os.major).flatten,
+          deviceFamily = ua.map(_.device.family),
+          isMobile = uac.map(_.mobile),
+          isTablet = uac.map(_.tablet),
+          isMobileDevice = uac.map(_.mobileDevice),
+          isComputer = uac.map(_.computer),
           platform = uac match {
-            case Some(c) if c.mobile => "Mobile"
-            case Some(c) if c.spider => "Spider"
-            case _                   => "Computer"
+            case Some(c) if c.mobile => Some("Mobile")
+            case Some(c) if c.spider => Some("Spider")
+            case _                   => Some("Computer")
           })
         val uuid = UUID.nameUUIDFromBytes(ByteBuffer
           .allocate(Integer.SIZE / 8)
