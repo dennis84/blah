@@ -42,7 +42,7 @@ class RddKafkaWriterSpec extends FlatSpec with Matchers with SparkFun {
       )).toJson.compactPrint))
 
     val df = ctx.read.json(input)
-    df.toJSON.writeToKafka(props, x =>
+    df.toJSON.rdd.writeToKafka(props, x =>
       new KeyedMessage[String, Array[Byte]]("test", null, x.getBytes))
   }
 }

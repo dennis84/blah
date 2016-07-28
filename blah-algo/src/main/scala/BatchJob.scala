@@ -7,7 +7,7 @@ import scala.reflect.runtime.universe.TypeTag
 import scala.util.{Success, Failure}
 import akka.util.ByteString
 import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.SparkSession
 import org.apache.hadoop.io.{LongWritable, BytesWritable}
 import org.elasticsearch.spark._
 import org.elasticsearch.spark.rdd.Metadata._
@@ -28,11 +28,11 @@ class BatchJob[T <: Product : TypeTag](
     val path = (args opt "path").getOrElse("*/*/*")
     val hadoopUrl = s"${config getString "hadoop.url"}/events/$path/*.jsonl"
     val sc = new SparkContext(sparkConf)
-    val sqlContext = new SQLContext(sc)
+    val sparkSession = SparkSession.builder.config(sparkConf).getOrCreate()
     val rdd = sc.sequenceFile[LongWritable, BytesWritable](hadoopUrl)
       .map(x => ByteString(x._2.copyBytes).utf8String)
-    val output = algo.train(rdd, sqlContext, args shift "path")
-    import sqlContext.implicits._
+    val output = algo.train(rdd, sparkSession, args shift "path")
+    import sparkSession.implicits._
 
     output.map { case (id, doc: Any) =>
       Map(ID -> id) -> doc
@@ -43,7 +43,7 @@ class BatchJob[T <: Product : TypeTag](
     props.put("serializer.class", "kafka.serializer.StringEncoder")
     props.put("key.serializer.class", "kafka.serializer.StringEncoder")
 
-    output.map(_._2).toDF.toJSON.writeToKafka(props, x =>
+    output.map(_._2).toDF.toJSON.rdd.writeToKafka(props, x =>
       new KeyedMessage[String, String]("trainings", s"$name@$x"))
 
     sc.stop

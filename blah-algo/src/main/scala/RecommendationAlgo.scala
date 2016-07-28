@@ -3,13 +3,13 @@ package blah.algo
 import java.util.UUID
 import java.nio.ByteBuffer
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.mllib.linalg.{Vectors, SparseVector}
 import org.apache.spark.mllib.linalg.distributed._
 import blah.core.FindOpt._
 
 class RecommendationAlgo extends Algo[Recommendation] {
-  def train(rdd: RDD[String], ctx: SQLContext, args: Array[String]) = {
+  def train(rdd: RDD[String], ctx: SparkSession, args: Array[String]) = {
     import ctx.implicits._
 
     var collection = args opt "collection"
@@ -18,7 +18,7 @@ class RecommendationAlgo extends Algo[Recommendation] {
     } getOrElse ""
 
     val reader = ctx.read.schema(RecommendationSchema())
-    reader.json(rdd).registerTempTable("recommendation")
+    reader.json(rdd).createOrReplaceTempView("recommendation")
     val events = ctx.sql(s"""|SELECT
                              |  collection,
                              |  props.user AS user,
@@ -26,6 +26,7 @@ class RecommendationAlgo extends Algo[Recommendation] {
                              |FROM recommendation $where""".stripMargin)
       .filter("user is not null and item is not null")
       .map(RecommendationEvent(_))
+      .rdd
     require(!events.isEmpty, "view events cannot be empty")
 
     val usersRDD = events.groupBy(_.user)

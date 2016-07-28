@@ -2,16 +2,17 @@ package blah.algo
 
 import java.util.UUID
 import java.nio.ByteBuffer
+import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.SparkSession
 import blah.core.{UserAgent, UserAgentClassifier}
 
 class CountAlgo extends Algo[Count] {
-  def train(rdd: RDD[String], ctx: SQLContext, args: Array[String]) = {
+  def train(rdd: RDD[String], ctx: SparkSession, args: Array[String]) = {
     import ctx.implicits._
     val reader = ctx.read.schema(CountSchema())
-    reader.json(rdd).registerTempTable("count")
+    reader.json(rdd).createOrReplaceTempView("count")
     ctx.sql("""|SELECT
                |  date,
                |  collection,
@@ -21,12 +22,14 @@ class CountAlgo extends Algo[Count] {
                |FROM count""".stripMargin)
       .filter("date is not null")
       .map(CountEvent(_))
+      .rdd
       .map { event =>
         val ua = event.userAgent.map(UserAgent(_))
         val uac = ua.map(UserAgentClassifier.classify)
+        val date = ZonedDateTime.parse(event.date)
         val doc = Count(
           collection = event.collection,
-          date = event.date.truncatedTo(ChronoUnit.HOURS).toString,
+          date = date.truncatedTo(ChronoUnit.HOURS).toString,
           item = event.item,
           price = event.price,
           browserFamily = ua.map(_.browser.family),
@@ -49,7 +52,7 @@ class CountAlgo extends Algo[Count] {
           .array)
         ((uuid.toString, doc), 1)
       }
-      .reduceByKey(_ + _)
+      .reduceByKey((a, b) => a + b)
       .map { case((id, count), nb) => (id, count.copy(count = nb)) }
   }
 }

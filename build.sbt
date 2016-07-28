@@ -15,10 +15,12 @@ val deps = Seq(
   "com.typesafe.akka"              %% "akka-http-testkit"                      % "2.4.7",
   "com.typesafe.akka"              %% "akka-http-experimental"                 % "2.4.7",
   "com.typesafe.akka"              %% "akka-http-spray-json-experimental"      % "2.4.7",
-  "org.apache.spark"               %% "spark-core"                             % "1.6.2" % "provided",
-  "org.apache.spark"               %% "spark-streaming"                        % "1.6.2" % "provided",
-  "org.apache.spark"               %% "spark-streaming-kafka"                  % "1.6.2",
-  "org.apache.spark"               %% "spark-mllib"                            % "1.6.2",
+  "org.slf4j" % "slf4j-api" % "1.7.21",
+  "org.slf4j" % "slf4j-simple" % "1.7.21",
+  "org.apache.spark"               %% "spark-core"                             % "2.0.0" % "provided",
+  "org.apache.spark"               %% "spark-streaming"                        % "2.0.0" % "provided",
+  "org.apache.spark"               %% "spark-streaming-kafka-0-8"              % "2.0.0",
+  "org.apache.spark"               %% "spark-mllib"                            % "2.0.0",
   "org.elasticsearch"              %% "elasticsearch-spark"                    % "2.3.2",
   "com.softwaremill.reactivekafka" %% "reactive-kafka-core"                    % "0.8.8",
   "org.clojars.timewarrior"         % "ua-parser"                              % "1.3.0",
@@ -76,8 +78,6 @@ lazy val algo = (project in file("blah-algo"))
   .enablePlugins(DockerPlugin)
   .settings(commonSettings: _*)
   .settings(parallelExecution in Test := false)
-  .settings(dependencyOverrides ++= Set(
-    "com.fasterxml.jackson.core" % "jackson-databind" % "2.4.6"))
   .settings(
     target in assembly := file("blah-algo/target/docker/stage/opt/docker/bin/"),
     assemblyMergeStrategy in assembly := {

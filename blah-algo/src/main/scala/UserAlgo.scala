@@ -2,13 +2,13 @@ package blah.algo
 
 import java.time.ZonedDateTime
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.SparkSession
 
 class UserAlgo extends Algo[User] {
-  def train(rdd: RDD[String], ctx: SQLContext, args: Array[String]) = {
+  def train(rdd: RDD[String], ctx: SparkSession, args: Array[String]) = {
     import ctx.implicits._
     val reader = ctx.read.schema(UserSchema())
-    reader.json(rdd).registerTempTable("event")
+    reader.json(rdd).createOrReplaceTempView("event")
     ctx.sql("""|SELECT
                |  date,
                |  collection,
@@ -22,6 +22,7 @@ class UserAlgo extends Algo[User] {
                |FROM event""".stripMargin)
       .filter("user is not null")
       .map(UserEvent(_))
+      .rdd
       .groupBy(_.user)
       .collect { case(Some(u), events) =>
         val ord = Ordering[Long].on[String](x =>

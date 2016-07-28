@@ -4,11 +4,11 @@ import java.util.UUID
 import java.nio.ByteBuffer
 import java.time.ZonedDateTime
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.SparkSession
 import blah.core.FindOpt._
 
 class FunnelAlgo extends Algo[Funnel] {
-  def train(rdd: RDD[String], ctx: SQLContext, args: Array[String]) = {
+  def train(rdd: RDD[String], ctx: SparkSession, args: Array[String]) = {
     import ctx.implicits._
     val config = (for {
       name <- args opt "name"
@@ -20,7 +20,7 @@ class FunnelAlgo extends Algo[Funnel] {
     }
 
     val reader = ctx.read.schema(FunnelSchema())
-    reader.json(rdd).registerTempTable("funnel")
+    reader.json(rdd).createOrReplaceTempView("funnel")
     val events = ctx.sql("""|SELECT
                             |  date,
                             |  props.user AS user,
@@ -28,9 +28,10 @@ class FunnelAlgo extends Algo[Funnel] {
                             |FROM funnel""".stripMargin)
       .filter("user is not null and item is not null")
       .map(FunnelEvent(_))
+      .rdd
 
-    val ord = Ordering[Long]
-      .on[ZonedDateTime](_.toInstant.toEpochMilli)
+    val ord = Ordering[Long].on[String](x =>
+      ZonedDateTime.parse(x).toInstant.toEpochMilli)
 
     val eventsByUser = events.groupBy(_.user)
       .collect { case (Some(user), xs) =>
@@ -50,7 +51,7 @@ class FunnelAlgo extends Algo[Funnel] {
       items.zip(None +: items.map(Option(_)))
     } collect { case (FunnelEvent(_, _, item), parent) =>
       ((item.get, parent.map(_.item.get)), 1)
-    } reduceByKey (_ + _) map { case((item, parent), count) =>
+    } reduceByKey ((a, b) => a + b) map { case((item, parent), count) =>
       val uuid = UUID.nameUUIDFromBytes(ByteBuffer
         .allocate(Integer.SIZE / 8)
         .putInt((config.name + item + parent).hashCode)

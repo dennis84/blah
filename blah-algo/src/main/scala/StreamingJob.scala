@@ -6,7 +6,7 @@ import scala.reflect.ClassTag
 import scala.reflect.runtime.universe.TypeTag
 import scala.util.{Success, Failure}
 import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming.kafka.KafkaUtils
 import org.elasticsearch.spark._
@@ -35,7 +35,8 @@ class StreamingJob[T <: Product : TypeTag](
         Set("events")).map(_._2)
 
     stream.foreachRDD { rdd =>
-      val sqlContext = SQLContextSingleton.getInstance(rdd.sparkContext)
+      val sqlContext = SparkSessionSingleton
+        .getInstance(rdd.sparkContext.getConf)
       val output = algo.train(rdd, sqlContext, args)
       import sqlContext.implicits._
 
@@ -48,7 +49,7 @@ class StreamingJob[T <: Product : TypeTag](
       props.put("serializer.class", "kafka.serializer.StringEncoder")
       props.put("key.serializer.class", "kafka.serializer.StringEncoder")
 
-      output.map(_._2).toDF.toJSON.writeToKafka(props, x =>
+      output.map(_._2).toDF.toJSON.rdd.writeToKafka(props, x =>
         new KeyedMessage[String, String]("trainings", s"$name@$x"))
     }
 
@@ -58,12 +59,12 @@ class StreamingJob[T <: Product : TypeTag](
   }
 }
 
-object SQLContextSingleton {
-  @transient  private var instance: SQLContext = _
+object SparkSessionSingleton {
+  @transient  private var instance: SparkSession = _
 
-  def getInstance(sc: SparkContext): SQLContext = {
+  def getInstance(conf: SparkConf): SparkSession = {
     if(instance == null) {
-      instance = new SQLContext(sc)
+      instance = SparkSession.builder.config(conf).getOrCreate()
     }
     instance
   }

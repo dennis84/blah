@@ -1,10 +1,9 @@
 package blah.algo
 
-import java.time.ZonedDateTime
 import org.apache.spark.sql.Row
 
 case class CountEvent(
-  date: ZonedDateTime,
+  date: String,
   collection: String,
   item: Option[String] = None,
   userAgent: Option[String] = None,
@@ -12,7 +11,7 @@ case class CountEvent(
 
 object CountEvent {
   def apply(r: Row): CountEvent = CountEvent(
-    date = ZonedDateTime.parse(r.getString(0)),
+    date = r.getString(0),
     collection = r.getString(1),
     item = Option(r.getString(2)),
     userAgent = Option(r.getString(3)),

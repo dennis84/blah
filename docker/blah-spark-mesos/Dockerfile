@@ -10,19 +10,11 @@ RUN apt-get -y update
 RUN apt-get -y install mesos
 
 RUN mkdir /opt/spark
-RUN wget -qO- http://www.eu.apache.org/dist/spark/spark-1.6.2/spark-1.6.2.tgz \
+RUN wget -qO- http://www.eu.apache.org/dist/spark/spark-2.0.0/spark-2.0.0.tgz \
   | tar zxvf - -C /opt/spark --strip 1
 
 ENV SPARK_HOME /opt/spark
 ENV PATH $PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
-
-RUN mkdir -p /opt/maven
-RUN curl -fsSL http://apache.osuosl.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz \
-  | tar zxvf - -C /opt/maven --strip 1
-
-RUN $SPARK_HOME/dev/change-scala-version.sh 2.11
-RUN cd $SPARK_HOME && /opt/maven/bin/mvn \
-  -Pyarn -Phadoop-2.4 -Dscala-2.11 -DskipTests clean package
 
 ENV MESOS_NATIVE_JAVA_LIBRARY /usr/local/lib/libmesos.so
 
