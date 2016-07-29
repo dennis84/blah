@@ -23,17 +23,15 @@ class ReferrerAlgo extends Algo[Referrer] {
                 |  props.referrer AS referrer
                 |FROM referrer $where""".stripMargin)
       .filter("referrer is not null")
-      .map { case Row(collection: String, referrer: String) =>
-        ((collection, referrer), 1)
-      }
-      .rdd
-      .reduceByKey((a, b) => a + b)
-      .map { case((collection, referrer), count) =>
+      .groupBy("collection", "referrer")
+      .count()
+      .map { case Row(coll: String, ref: String, count: Long) =>
         val uuid = UUID.nameUUIDFromBytes(ByteBuffer
           .allocate(Integer.SIZE / 8)
-          .putInt((collection + referrer).hashCode)
+          .putInt((coll + ref).hashCode)
           .array)
-        (uuid.toString, Referrer(collection, referrer, count))
+        (uuid.toString, Referrer(coll, ref, count))
       }
+      .rdd
   }
 }
