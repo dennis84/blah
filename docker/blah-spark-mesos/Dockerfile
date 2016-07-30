@@ -10,7 +10,7 @@ RUN apt-get -y update
 RUN apt-get -y install mesos
 
 RUN mkdir /opt/spark
-RUN wget -qO- http://www.eu.apache.org/dist/spark/spark-2.0.0/spark-2.0.0.tgz \
+RUN wget -qO- http://www.eu.apache.org/dist/spark/spark-2.0.0/spark-2.0.0-bin-hadoop2.7.tgz \
   | tar zxvf - -C /opt/spark --strip 1
 
 ENV SPARK_HOME /opt/spark

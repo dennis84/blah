@@ -19,7 +19,7 @@ val deps = Seq(
   "org.apache.spark"               %% "spark-streaming"                        % "2.0.0" % "provided",
   "org.apache.spark"               %% "spark-streaming-kafka-0-8"              % "2.0.0",
  ("org.apache.spark"               %% "spark-mllib"                            % "2.0.0")  exclude ("org.slf4j", "slf4j-log4j12"),
-  "org.elasticsearch"              %% "elasticsearch-spark"                    % "2.3.2",
+  "org.elasticsearch"              %% "elasticsearch-spark"                    % "2.3.3",
   "com.softwaremill.reactivekafka" %% "reactive-kafka-core"                    % "0.8.8",
   "org.clojars.timewarrior"         % "ua-parser"                              % "1.3.0",
   "net.virtual-void"               %% "json-lenses"                            % "0.6.1",
@@ -81,19 +81,8 @@ lazy val algo = (project in file("blah-algo"))
   .settings(
     target in assembly := file("blah-algo/target/docker/stage/opt/docker/bin/"),
     assemblyMergeStrategy in assembly := {
-      case PathList("org", "apache", xs @ _*) => MergeStrategy.first
-      case PathList("javax", "xml", xs @ _*) => MergeStrategy.first
-      case PathList("io", "netty", xs @ _*) => MergeStrategy.first
-      case PathList("com", "google", xs @ _*) => MergeStrategy.first
-      case PathList("com", "esotericsoftware", xs @ _*) => MergeStrategy.first
-      case PathList("com", "codahale", xs @ _*) => MergeStrategy.first
-      case PathList("akka", xs @ _*) => MergeStrategy.first
-      case "META-INF/io.netty.versions.properties" => MergeStrategy.first
-      case "application.conf" => MergeStrategy.first
-      case PathList(ps @ _*) if ps.last endsWith ".css"  => MergeStrategy.first
-      case x =>
-        val oldStrategy = (assemblyMergeStrategy in assembly).value
-        oldStrategy(x)
+      case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+      case _ => MergeStrategy.first
     })
   .settings(
     packageName in Docker := "blah/algo",
