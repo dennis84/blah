@@ -22,7 +22,6 @@ class CountAlgo extends Algo[Count] {
                |FROM count""".stripMargin)
       .filter("date is not null")
       .map(CountEvent(_))
-      .rdd
       .map { event =>
         val ua = event.userAgent.map(UserAgent(_))
         val uac = ua.map(UserAgentClassifier.classify)
@@ -50,9 +49,14 @@ class CountAlgo extends Algo[Count] {
           .allocate(Integer.SIZE / 8)
           .putInt(doc.hashCode)
           .array)
-        ((uuid.toString, doc), 1)
+        (uuid.toString, doc)
       }
-      .reduceByKey((a, b) => a + b)
-      .map { case((id, count), nb) => (id, count.copy(count = nb)) }
+      .groupBy("_1", "_2")
+      .count()
+      .as[(String, Count, Long)]
+      .map { case(id, doc, count) =>
+        (id, doc.copy(count = count))
+      }
+      .rdd
   }
 }

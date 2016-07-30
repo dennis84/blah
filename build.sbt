@@ -26,6 +26,8 @@ val deps = Seq(
   "com.maxmind.geoip2"              % "geoip2"                                 % "2.5.0"
 )
 
+scalaVersion in ThisBuild := "2.11.8"
+
 lazy val commonSettings = Seq(
   organization  := "com.github.dennis84",
   version       := "0.1.0",
