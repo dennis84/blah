@@ -9,8 +9,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming.kafka.KafkaUtils
-import org.elasticsearch.spark._
-import org.elasticsearch.spark.rdd.Metadata._
+import org.elasticsearch.spark.sql._
 import com.typesafe.config.Config
 import kafka.producer.KeyedMessage
 import kafka.serializer.StringDecoder
@@ -40,16 +39,16 @@ class StreamingJob[T <: Product : TypeTag](
       val output = algo.train(rdd, sqlContext, args)
       import sqlContext.implicits._
 
-      output map { case (id, doc: Any) =>
-        Map(ID -> id) -> doc
-      } saveToEsWithMeta s"blah/$name"
+      output.saveToEs(s"blah/$name", Map(
+        "es.mapping.id" -> "id",
+        "es.mapping.exclude" -> "id"))
 
       val props = new Properties
       props.put("metadata.broker.list", config.getString("producer.broker.list"))
       props.put("serializer.class", "kafka.serializer.StringEncoder")
       props.put("key.serializer.class", "kafka.serializer.StringEncoder")
 
-      output.map(_._2).toDF.toJSON.rdd.writeToKafka(props, x =>
+      output.toJSON.rdd.writeToKafka(props, x =>
         new KeyedMessage[String, String]("trainings", s"$name@$x"))
     }
 

@@ -9,6 +9,7 @@ import JsonProtocol._
 class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
 
   "The UserAlgo" should "train" in withSparkContext { ctx =>
+    import ctx.implicits._
     val algo = new UserAlgo
     val date = ZonedDateTime.now(ZoneOffset.UTC)
     val input = ctx.sparkContext.parallelize(List(
@@ -27,7 +28,7 @@ class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
     val output = algo.train(input, ctx, Array.empty[String])
     val users = output.collect.toList
     users.length should be (1)
-    val events = users(0)._2.events
+    val events = users(0).events
     events(0).title should be (Some("title2"))
     events(1).title should be (Some("title1"))
   }
@@ -68,7 +69,7 @@ class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
     val users = output.collect.toList
 
     users.length should be (1)
-    val user = users(0)._2
+    val user = users(0)
 
     user.email should be (Some("foo@example.com"))
     user.firstname should be (Some("baz"))

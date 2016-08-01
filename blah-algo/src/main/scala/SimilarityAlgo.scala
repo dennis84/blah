@@ -20,33 +20,29 @@ class SimilarityAlgo extends Algo[Similarity] {
     val reader = ctx.read.schema(SimilaritySchema())
     reader.json(rdd).createOrReplaceTempView("similarity")
     val events = ctx.sql(s"""|SELECT
-                             |  collection AS coll,
+                             |  collection,
                              |  props.user AS user,
                              |  props.item AS item
                              |FROM similarity $where""".stripMargin)
       .filter("user is not null and item is not null")
-      .map(SimilarityEvent(_))
-      .rdd
-    require(!events.isEmpty, "view events cannot be empty")
+      .as[SimilarityEvent]
+    require(events.count > 0, "view events cannot be empty")
 
-    val usersRDD = events.groupBy(_.user)
-    val users = usersRDD.keys.collect.toList.flatten
+    val usersRdd = events.rdd.groupBy(_.user)
+    val users = usersRdd.keys.collect.toList
 
-    val itemsRDD = events.groupBy(_.item)
-    val items = itemsRDD.keys.collect.toList.flatten
+    val itemsRdd = events.rdd.groupBy(_.item)
+    val items = itemsRdd.keys.collect.toList
 
-    val itemsByUser = usersRDD collect { case(Some(user), events) =>
-      (users.indexOf(user), events collect {
-        case SimilarityEvent(_, _, Some(item)) => items.indexOf(item)
-      })
-    }
+    val rows = usersRdd map { case(user, events) =>
+      val indices = events.collect {
+        case SimilarityEvent(_, _, item) => items.indexOf(item)
+      }.toArray.distinct
 
-    val rows = itemsByUser map { case(_, indices) =>
-      val distinctIndices = indices.toArray.distinct
       Vectors.sparse(
         items.length,
-        distinctIndices,
-        distinctIndices.map(_ => 5.0))
+        indices,
+        indices.map(_ => 5.0))
     }
 
     val mat = new RowMatrix(rows)
@@ -61,20 +57,19 @@ class SimilarityAlgo extends Algo[Similarity] {
 
     val ord = Ordering[Double].reverse
 
-    itemsRDD
-      .collect { case(Some(item), events) =>
-        val sims = data.get(items indexOf item) map { xs =>
-          xs.toList
-            .sortBy(_._2)(ord)
-            .take(10)
-            .map(x => (SimilarityItem(items(x._1), x._2)))
-        } getOrElse Nil
+    events.groupByKey(_.item) mapGroups { case(item, events) =>
+      val sims = data.get(items indexOf item) map { xs =>
+        xs.toList
+          .sortBy(_._2)(ord)
+          .take(10)
+          .map(x => (SimilarityItem(items(x._1), x._2)))
+      } getOrElse Nil
 
-        val uuid = UUID.nameUUIDFromBytes(ByteBuffer
-          .allocate(Integer.SIZE / 8)
-          .putInt((item + collection.getOrElse("")).hashCode)
-          .array)
-        (uuid.toString, Similarity(item, collection, sims))
-      }
+      val uuid = UUID.nameUUIDFromBytes(ByteBuffer
+        .allocate(Integer.SIZE / 8)
+        .putInt((item + collection.getOrElse("")).hashCode)
+        .array)
+      Similarity(uuid.toString, item, collection, sims)
+    }
   }
 }

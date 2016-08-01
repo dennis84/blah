@@ -30,8 +30,7 @@ class ReferrerAlgo extends Algo[Referrer] {
           .allocate(Integer.SIZE / 8)
           .putInt((coll + ref).hashCode)
           .array)
-        (uuid.toString, Referrer(coll, ref, count))
+        Referrer(uuid.toString, coll, ref, count)
       }
-      .rdd
   }
 }

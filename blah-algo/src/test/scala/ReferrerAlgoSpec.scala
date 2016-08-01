@@ -29,8 +29,8 @@ class ReferrerAlgoSpec extends FlatSpec with Matchers with SparkFun {
     val docs = output.collect.toList
     docs.length should be (2)
 
-    val google = docs.find(_._2.url == "google").get._2
-    val bing = docs.find(_._2.url == "bing").get._2
+    val google = docs.find(_.url == "google").get
+    val bing = docs.find(_.url == "bing").get
 
     google.count should be (2)
     bing.count should be (1)

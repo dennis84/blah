@@ -1,6 +1,7 @@
 package blah.algo
 
 case class Count(
+  id: Option[String] = None,
   collection: String,
   date: String,
   item: Option[String] = None,

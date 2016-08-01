@@ -6,6 +6,7 @@ import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions._
 import blah.core.{UserAgent, UserAgentClassifier}
 
 class CountAlgo extends Algo[Count] {
@@ -49,14 +50,13 @@ class CountAlgo extends Algo[Count] {
           .allocate(Integer.SIZE / 8)
           .putInt(doc.hashCode)
           .array)
-        (uuid.toString, doc)
+        doc.copy(id = Some(uuid.toString))
       }
-      .groupBy("_1", "_2")
+      .groupBy("id", "collection", "date", "item", "price", "browserFamily",
+               "browserMajor", "osFamily", "osMajor", "deviceFamily",
+               "isMobile", "isTablet", "isMobileDevice", "isComputer",
+               "platform")
       .count()
-      .as[(String, Count, Long)]
-      .map { case(id, doc, count) =>
-        (id, doc.copy(count = count))
-      }
-      .rdd
+      .as[Count]
   }
 }

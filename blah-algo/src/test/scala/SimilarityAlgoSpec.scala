@@ -32,9 +32,9 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
     val docs = output.collect.toList
 
     docs.length should be (3)
-    val item1 = docs.find(x => x._2.item == "item1").get._2
-    val item2 = docs.find(x => x._2.item == "item2").get._2
-    val item3 = docs.find(x => x._2.item == "item3").get._2
+    val item1 = docs.find(x => x.item == "item1").get
+    val item2 = docs.find(x => x.item == "item2").get
+    val item3 = docs.find(x => x.item == "item3").get
 
     item1.similarities.map(_.item) should be (List("item2"))
     item2.similarities.map(_.item) should be (List("item1"))

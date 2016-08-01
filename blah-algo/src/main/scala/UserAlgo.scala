@@ -21,10 +21,9 @@ class UserAlgo extends Algo[User] {
                |  props.ip
                |FROM event""".stripMargin)
       .filter("user is not null")
-      .map(UserEvent(_))
-      .rdd
-      .groupBy(_.user)
-      .collect { case(Some(u), events) =>
+      .as[UserEvent]
+      .groupByKey(_.user)
+      .mapGroups { case(user, events) =>
         val ord = Ordering[Long].on[String](x =>
           ZonedDateTime.parse(x).toInstant.toEpochMilli).reverse
         val sorted = events.toList.sortBy(_.date)(ord)
@@ -47,8 +46,9 @@ class UserAlgo extends Algo[User] {
 
         val event = mergeEvents(sorted.tail, sorted.head)
         val geo = event.ip.map(GeoIp.find _).flatten
-        val doc = User(
-          user = u,
+        User(
+          id = user,
+          user = user,
           date = event.date.toString,
           email = event.email,
           firstname = event.firstname,
@@ -61,7 +61,6 @@ class UserAlgo extends Algo[User] {
           zipCode = geo.map(_.zipCode).flatten,
           events = (sorted take 20),
           nbEvents = events.size)
-        (u, doc)
       }
   }
 }

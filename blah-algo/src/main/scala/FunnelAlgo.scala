@@ -4,7 +4,7 @@ import java.util.UUID
 import java.nio.ByteBuffer
 import java.time.ZonedDateTime
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{SparkSession, Dataset, Row}
 import blah.core.FindOpt._
 
 class FunnelAlgo extends Algo[Funnel] {
@@ -21,42 +21,42 @@ class FunnelAlgo extends Algo[Funnel] {
 
     val reader = ctx.read.schema(FunnelSchema())
     reader.json(rdd).createOrReplaceTempView("funnel")
-    val events = ctx.sql("""|SELECT
-                            |  date,
-                            |  props.user AS user,
-                            |  props.item AS item
-                            |FROM funnel""".stripMargin)
-      .filter("user is not null and item is not null")
-      .map(FunnelEvent(_))
-      .rdd
 
     val ord = Ordering[Long].on[String](x =>
       ZonedDateTime.parse(x).toInstant.toEpochMilli)
 
-    val eventsByUser = events.groupBy(_.user)
-      .collect { case (Some(user), xs) =>
-        val items = (xs.toList.sortBy(_.date)(ord)
-          .dropWhile(x => x.item.get != config.steps.head)
-          .span(_.item.get != config.steps.last) match {
+    ctx.sql("""|SELECT
+               |  date,
+               |  props.user AS user,
+               |  props.item AS item
+               |FROM funnel""".stripMargin)
+      .filter("user is not null and item is not null")
+      .as[FunnelEvent]
+      .groupByKey(_.user)
+      .flatMapGroups { case(user, xs) =>
+        val eventsByUser = (xs.toList.sortBy(_.date)(ord)
+          .dropWhile(x => x.item != config.steps.head)
+          .span(_.item != config.steps.last) match {
             case(head, tail) => head ::: tail.take(1)
           })
           .foldRight(List.empty[FunnelEvent])((x, a) => a match {
             case h :: xs if(h.item == x.item) => a
             case _ => x :: a
           })
-        (user, items)
-      } filter (x => !x._2.isEmpty)
 
-    eventsByUser flatMap { case(_, items) =>
-      items.zip(None +: items.map(Option(_)))
-    } collect { case (FunnelEvent(_, _, item), parent) =>
-      ((item.get, parent.map(_.item.get)), 1)
-    } reduceByKey ((a, b) => a + b) map { case((item, parent), count) =>
-      val uuid = UUID.nameUUIDFromBytes(ByteBuffer
-        .allocate(Integer.SIZE / 8)
-        .putInt((config.name + item + parent).hashCode)
-        .array)
-      (uuid.toString, Funnel(config.name, item, parent, count))
-    }
+        eventsByUser.zip(None +: eventsByUser.map(Option(_)))
+      }
+      .groupBy("_1.item", "_2.item")
+      .count()
+      .map { row =>
+        val item = row.getString(0)
+        val parent = Option(row.getString(1))
+        val count = row.getLong(2)
+        val uuid = UUID.nameUUIDFromBytes(ByteBuffer
+          .allocate(Integer.SIZE / 8)
+          .putInt((config.name + item + parent.getOrElse("null")).hashCode)
+          .array)
+        Funnel(uuid.toString, config.name, item, parent, count)
+      }
   }
 }

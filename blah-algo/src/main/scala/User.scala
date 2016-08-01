@@ -1,6 +1,7 @@
 package blah.algo
 
 case class User(
+  id: String,
   user: String,
   date: String,
   email: Option[String] = None,
@@ -12,5 +13,5 @@ case class User(
   countryCode: Option[String] = None,
   city: Option[String] = None,
   zipCode: Option[String] = None,
-  events: List[UserEvent] = Nil,
-  nbEvents: Int = 0)
+  events: Seq[UserEvent] = Nil,
+  nbEvents: Long = 0)

@@ -21,11 +21,11 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with SparkFun {
       "--steps", "homepage,signup,signedup"))
 
     val docs = output.collect.toList
-    docs.filter(_._2.item == "homepage").map(_._2.count).sum should be(3)
-    docs.filter(_._2.item == "signup").map(_._2.count).sum should be(3)
-    docs.filter(_._2.item == "signedup").map(_._2.count).sum should be(2)
-    docs.filter(_._2.item == "pricing").map(_._2.count).sum should be(1)
-    docs.filter(_._2.item == "terms").map(_._2.count).sum should be(1)
+    docs.filter(_.item == "homepage").map(_.count).sum should be(3)
+    docs.filter(_.item == "signup").map(_.count).sum should be(3)
+    docs.filter(_.item == "signedup").map(_.count).sum should be(2)
+    docs.filter(_.item == "pricing").map(_.count).sum should be(1)
+    docs.filter(_.item == "terms").map(_.count).sum should be(1)
   }
 
   it should "match no steps" in withSparkContext { ctx =>
@@ -51,7 +51,7 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with SparkFun {
 
     val docs = output.collect.toList
     docs.length should be (5)
-    docs.filter(_._2.item == "signup").map(_._2.count).sum should be (2)
+    docs.filter(_.item == "signup").map(_.count).sum should be (2)
   }
 
   it should "parse args" in withSparkContext { ctx =>
