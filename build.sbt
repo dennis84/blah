@@ -15,10 +15,11 @@ val deps = Seq(
   "com.typesafe.akka"              %% "akka-http-testkit"                      % "2.4.7",
   "com.typesafe.akka"              %% "akka-http-experimental"                 % "2.4.7",
   "com.typesafe.akka"              %% "akka-http-spray-json-experimental"      % "2.4.7",
+  "org.slf4j"                       % "slf4j-simple"                           % "1.7.21",
   "org.apache.spark"               %% "spark-core"                             % "2.0.0" % "provided",
   "org.apache.spark"               %% "spark-streaming"                        % "2.0.0" % "provided",
   "org.apache.spark"               %% "spark-streaming-kafka-0-8"              % "2.0.0",
- ("org.apache.spark"               %% "spark-mllib"                            % "2.0.0")  exclude ("org.slf4j", "slf4j-log4j12"),
+  "org.apache.spark"               %% "spark-mllib"                            % "2.0.0",
  ("org.elasticsearch"               % "elasticsearch-spark-20"                 % "5.0.0")
     .from("https://oss.sonatype.org/content/repositories/snapshots/org/elasticsearch/elasticsearch-spark-20_2.10/5.0.0.BUILD-SNAPSHOT/elasticsearch-spark-20_2.10-5.0.0.BUILD-20160731.020522-3.jar"),
   "com.softwaremill.reactivekafka" %% "reactive-kafka-core"                    % "0.8.8",
