@@ -22,7 +22,7 @@ class CountAlgo extends Algo[Count] {
                |  props.price
                |FROM count""".stripMargin)
       .filter("date is not null")
-      .map(CountEvent(_))
+      .as[CountEvent]
       .map { event =>
         val ua = event.userAgent.map(UserAgent(_))
         val uac = ua.map(UserAgentClassifier.classify)

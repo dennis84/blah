@@ -8,7 +8,7 @@ class UserAlgo extends Algo[User] {
   def train(rdd: RDD[String], ctx: SparkSession, args: Array[String]) = {
     import ctx.implicits._
     val reader = ctx.read.schema(UserSchema())
-    reader.json(rdd).createOrReplaceTempView("event")
+    reader.json(rdd).createOrReplaceTempView("user")
     ctx.sql("""|SELECT
                |  date,
                |  collection,
@@ -19,7 +19,7 @@ class UserAlgo extends Algo[User] {
                |  props.item,
                |  props.title,
                |  props.ip
-               |FROM event""".stripMargin)
+               |FROM user""".stripMargin)
       .filter("user is not null")
       .as[UserEvent]
       .groupByKey(_.user)

@@ -34,10 +34,9 @@ class StreamingJob[T <: Product : TypeTag](
         Set("events")).map(_._2)
 
     stream.foreachRDD { rdd =>
-      val sqlContext = SparkSessionSingleton
+      val sparkSession = SparkSessionSingleton
         .getInstance(rdd.sparkContext.getConf)
-      val output = algo.train(rdd, sqlContext, args)
-      import sqlContext.implicits._
+      val output = algo.train(rdd, sparkSession, args)
 
       output.saveToEs(s"blah/$name", Map(
         "es.mapping.id" -> "id",

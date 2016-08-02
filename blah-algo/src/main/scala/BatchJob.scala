@@ -31,7 +31,6 @@ class BatchJob[T <: Product : TypeTag](
     val rdd = sc.sequenceFile[LongWritable, BytesWritable](hadoopUrl)
       .map(x => ByteString(x._2.copyBytes).utf8String)
     val output = algo.train(rdd, sparkSession, args shift "path")
-    import sparkSession.implicits._
 
     output.saveToEs(s"blah/$name", Map(
       "es.mapping.id" -> "id",
