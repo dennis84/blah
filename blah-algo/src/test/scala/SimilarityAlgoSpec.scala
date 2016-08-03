@@ -5,11 +5,11 @@ import spray.json._
 import blah.core._
 import JsonProtocol._
 
-class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
+class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkTest {
 
-  "The SimilarityAlgo" should "train" in withSparkContext { ctx =>
+  "The SimilarityAlgo" should "train" in withSparkSession { session =>
     val algo = new SimilarityAlgo
-    val input = ctx.sparkContext.parallelize(List(
+    val input = session.sparkContext.parallelize(List(
       Event("1", "view", props = Map(
         "item" -> JsString("item1"),
         "user" -> JsString("user1")
@@ -28,7 +28,7 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input, ctx, Array.empty[String])
+    val output = algo.train(input, session, Array.empty[String])
     val docs = output.collect.toList
 
     docs.length should be (3)
@@ -41,9 +41,9 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
     item3.similarities.length should be (0)
   }
 
-  it should "filter by collection" in withSparkContext { ctx =>
+  it should "filter by collection" in withSparkSession { session =>
     val algo = new SimilarityAlgo
-    val input = ctx.sparkContext.parallelize(List(
+    val input = session.sparkContext.parallelize(List(
       Event("1", "foo", props = Map(
         "item" -> JsString("item1"),
         "user" -> JsString("user1")
@@ -66,13 +66,13 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkFun {
       )).toJson.compactPrint
     ))
 
-    algo.train(input, ctx, Array.empty[String])
+    algo.train(input, session, Array.empty[String])
       .collect.toList.length should be (5)
 
-    algo.train(input, ctx, Array("--collection", "foo"))
+    algo.train(input, session, Array("--collection", "foo"))
       .collect.toList.length should be (2)
 
-    algo.train(input, ctx, Array("--collection", "bar"))
+    algo.train(input, session, Array("--collection", "bar"))
       .collect.toList.length should be (3)
   }
 }

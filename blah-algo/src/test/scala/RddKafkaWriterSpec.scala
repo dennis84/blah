@@ -19,21 +19,21 @@ import RddKafkaWriter._
  * ```
  */
 @Ignore
-class RddKafkaWriterSpec extends FlatSpec with Matchers with SparkFun {
+class RddKafkaWriterSpec extends FlatSpec with Matchers with SparkTest {
 
   val props = new Properties
   props.put("metadata.broker.list", "localhost:9092")
   props.put("serializer.class", "kafka.serializer.DefaultEncoder")
   props.put("key.serializer.class", "kafka.serializer.StringEncoder")
 
-  "The RddKafkaWriter" should "write to kafka" in withSparkContext { ctx =>
-    val input = ctx.sparkContext.parallelize(List("foo", "bar", "baz"))
+  "The RddKafkaWriter" should "write to kafka" in withSparkSession { session =>
+    val input = session.sparkContext.parallelize(List("foo", "bar", "baz"))
     input.writeToKafka(props, x =>
       new KeyedMessage[String, Array[Byte]]("test", null, x.getBytes))
   }
 
-  it should "write json" in withSparkContext { ctx =>
-    val input = ctx.sparkContext.parallelize(List(
+  it should "write json" in withSparkSession { session =>
+    val input = session.sparkContext.parallelize(List(
       Event("1", "view", props = Map(
         "item" -> JsString("page1")
       )).toJson.compactPrint,
@@ -41,7 +41,7 @@ class RddKafkaWriterSpec extends FlatSpec with Matchers with SparkFun {
         "item" -> JsString("page2")
       )).toJson.compactPrint))
 
-    val df = ctx.read.json(input)
+    val df = session.read.json(input)
     df.toJSON.rdd.writeToKafka(props, x =>
       new KeyedMessage[String, Array[Byte]]("test", null, x.getBytes))
   }

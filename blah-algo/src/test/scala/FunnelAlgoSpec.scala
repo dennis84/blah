@@ -6,17 +6,17 @@ import spray.json._
 import blah.core._
 import JsonProtocol._
 
-class FunnelAlgoSpec extends FlatSpec with Matchers with SparkFun {
+class FunnelAlgoSpec extends FlatSpec with Matchers with SparkTest {
 
-  "The FunnelAlgo" should "train" in withSparkContext { ctx =>
+  "The FunnelAlgo" should "train" in withSparkSession { session =>
     val algo = new FunnelAlgo
 
-    val input = ctx.sparkContext.parallelize(
+    val input = session.sparkContext.parallelize(
       Events("user1", "homepage",            "signup", "signedup") ++
       Events("user2", "homepage", "pricing", "signup", "signedup") ++
       Events("user3", "homepage", "terms",   "signup"))
 
-    val output = algo.train(input, ctx, Array(
+    val output = algo.train(input, session, Array(
       "--name", "signup",
       "--steps", "homepage,signup,signedup"))
 
@@ -28,24 +28,24 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with SparkFun {
     docs.filter(_.item == "terms").map(_.count).sum should be(1)
   }
 
-  it should "match no steps" in withSparkContext { ctx =>
+  it should "match no steps" in withSparkSession { session =>
     val algo = new FunnelAlgo
-    val input = ctx.sparkContext.parallelize(
+    val input = session.sparkContext.parallelize(
       Events("user1", "foo", "bar"))
 
-    val output = algo.train(input, ctx, Array(
+    val output = algo.train(input, session, Array(
       "--name", "signup",
       "--steps", "landingpage,signup,dashboard"))
     val docs = output.collect.toList
     docs.length should be (0)
   }
 
-  it should "remove contiguous duplicates" in withSparkContext { ctx =>
+  it should "remove contiguous duplicates" in withSparkSession { session =>
     val algo = new FunnelAlgo
-    val input = ctx.sparkContext.parallelize(Events("user1",
+    val input = session.sparkContext.parallelize(Events("user1",
       "landingpage", "signup", "signup", "terms", "signup", "dashboard"))
 
-    val output = algo.train(input, ctx, Array(
+    val output = algo.train(input, session, Array(
       "--name", "signup",
       "--steps", "landingpage,signup,dashboard"))
 
@@ -54,28 +54,28 @@ class FunnelAlgoSpec extends FlatSpec with Matchers with SparkFun {
     docs.filter(_.item == "signup").map(_.count).sum should be (2)
   }
 
-  it should "parse args" in withSparkContext { ctx =>
+  it should "parse args" in withSparkSession { session =>
     val algo = new FunnelAlgo
-    val input = ctx.sparkContext.parallelize(
+    val input = session.sparkContext.parallelize(
       Events("user1", "foo", "bar", "baz"))
 
-    val output = algo.train(input, ctx, Array(
+    val output = algo.train(input, session, Array(
       "--name", "foobar",
       "--steps", "foo,bar,baz"))
     val docs = output.collect.toList
     docs.length should be (3)
   }
 
-  it should "fail with illegal args" in withSparkContext { ctx =>
+  it should "fail with illegal args" in withSparkSession { session =>
     val algo = new FunnelAlgo
     the [java.lang.IllegalArgumentException] thrownBy {
-      algo.train(ctx.sparkContext.parallelize(Nil), ctx, Array(
+      algo.train(session.sparkContext.parallelize(Nil), session, Array(
         "--hello", "foobar",
         "--world", "foo,bar,baz"))
     } should have message "Invalid arguments"
   }
 
-  def Events(user: String, items: String*) = {
+  private def Events(user: String, items: String*) = {
     val date = ZonedDateTime.now(ZoneOffset.UTC)
     items.zipWithIndex map { case(item, index) =>
       Event("", "view", date.plusMinutes(index), props = Map(

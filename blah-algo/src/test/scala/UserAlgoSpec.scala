@@ -6,13 +6,13 @@ import spray.json._
 import blah.core._
 import JsonProtocol._
 
-class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
+class UserAlgoSpec extends FlatSpec with Matchers with SparkTest {
 
-  "The UserAlgo" should "train" in withSparkContext { ctx =>
-    import ctx.implicits._
+  "The UserAlgo" should "train" in withSparkSession { session =>
+    import session.implicits._
     val algo = new UserAlgo
     val date = ZonedDateTime.now(ZoneOffset.UTC)
-    val input = ctx.sparkContext.parallelize(List(
+    val input = session.sparkContext.parallelize(List(
       Event("1", "view", date.plusMinutes(0), props = Map(
         "item" -> JsString("page1"),
         "title" -> JsString("title1"),
@@ -25,7 +25,7 @@ class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input, ctx, Array.empty[String])
+    val output = algo.train(input, session, Array.empty[String])
     val users = output.collect.toList
     users.length should be (1)
     val events = users(0).events
@@ -33,10 +33,10 @@ class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
     events(1).title should be (Some("title1"))
   }
 
-  it should "update users" in withSparkContext { ctx =>
+  it should "update users" in withSparkSession { session =>
     val algo = new UserAlgo
     val date = ZonedDateTime.now(ZoneOffset.UTC)
-    val input = ctx.sparkContext.parallelize(List(
+    val input = session.sparkContext.parallelize(List(
       Event("1", "view", date.plusMinutes(0), props = Map(
         "item" -> JsString("page1"),
         "user" -> JsString("test")
@@ -65,7 +65,7 @@ class UserAlgoSpec extends FlatSpec with Matchers with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input, ctx, Array.empty[String])
+    val output = algo.train(input, session, Array.empty[String])
     val users = output.collect.toList
 
     users.length should be (1)

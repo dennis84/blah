@@ -6,11 +6,11 @@ import spray.json._
 import blah.core._
 import JsonProtocol._
 
-class CountAlgoSpec extends FlatSpec with Matchers with SparkFun {
+class CountAlgoSpec extends FlatSpec with Matchers with SparkTest {
 
-  "The CountAlgo" should "train" in withSparkContext { ctx =>
+  "The CountAlgo" should "train" in withSparkSession { session =>
     val algo = new CountAlgo
-    val input = ctx.sparkContext.parallelize(List(
+    val input = session.sparkContext.parallelize(List(
       Event("1", "view", props = Map(
         "item" -> JsString("page1")
       )).toJson.compactPrint,
@@ -26,14 +26,14 @@ class CountAlgoSpec extends FlatSpec with Matchers with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input, ctx, Array.empty[String])
+    val output = algo.train(input, session, Array.empty[String])
     val docs = output.collect.toList
     docs.length should be (3)
   }
 
-  it should "skip events with invalid property types" in withSparkContext { ctx =>
+  it should "skip events with invalid property types" in withSparkSession { session =>
     val algo = new CountAlgo
-    val input = ctx.sparkContext.parallelize(List(
+    val input = session.sparkContext.parallelize(List(
       Event("1", "buy", props = Map(
         "item" -> JsString("foo"),
         "price" -> JsString("10.0")
@@ -44,7 +44,7 @@ class CountAlgoSpec extends FlatSpec with Matchers with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input, ctx, Array.empty[String])
+    val output = algo.train(input, session, Array.empty[String])
     val docs = output.collect.toList
     docs.length should be (0)
   }

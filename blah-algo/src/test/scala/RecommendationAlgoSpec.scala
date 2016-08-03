@@ -5,11 +5,11 @@ import spray.json._
 import blah.core._
 import JsonProtocol._
 
-class RecommendationAlgoSpec extends FlatSpec with Matchers with SparkFun {
+class RecommendationAlgoSpec extends FlatSpec with Matchers with SparkTest {
 
-  "The RecommendationAlgo" should "train" in withSparkContext { ctx =>
+  "The RecommendationAlgo" should "train" in withSparkSession { session =>
     val algo = new RecommendationAlgo
-    val input = ctx.sparkContext.parallelize(List(
+    val input = session.sparkContext.parallelize(List(
       Event("1", "view", props = Map(
         "item" -> JsString("page1"),
         "user" -> JsString("user1")
@@ -40,7 +40,7 @@ class RecommendationAlgoSpec extends FlatSpec with Matchers with SparkFun {
       )).toJson.compactPrint
     ))
 
-    val output = algo.train(input, ctx, Array.empty[String])
+    val output = algo.train(input, session, Array.empty[String])
     val docs = output.collect.toList
 
     val user1 = docs.find(_.user == "user1").get
@@ -54,9 +54,9 @@ class RecommendationAlgoSpec extends FlatSpec with Matchers with SparkFun {
     user2.items(1).item should be ("page2")
   }
 
-  it should "filter by collection" in withSparkContext { ctx =>
+  it should "filter by collection" in withSparkSession { session =>
     val algo = new RecommendationAlgo
-    val input = ctx.sparkContext.parallelize(List(
+    val input = session.sparkContext.parallelize(List(
       Event("1", "buy", props = Map(
         "item" -> JsString("product1"),
         "user" -> JsString("user1")
@@ -74,7 +74,7 @@ class RecommendationAlgoSpec extends FlatSpec with Matchers with SparkFun {
         "user" -> JsString("user2")
       )).toJson.compactPrint))
 
-    val output = algo.train(input, ctx, Array("--collection", "buy"))
+    val output = algo.train(input, session, Array("--collection", "buy"))
     val docs = output.collect.toList
 
     val user1 = docs.find(_.user == "user1").get
@@ -85,9 +85,9 @@ class RecommendationAlgoSpec extends FlatSpec with Matchers with SparkFun {
     user2.items.length should be (1)
   }
 
-  it should "not fail with wrong data" in withSparkContext { ctx =>
+  it should "not fail with wrong data" in withSparkSession { session =>
     val algo = new RecommendationAlgo
-    val input = ctx.sparkContext.parallelize(List(
+    val input = session.sparkContext.parallelize(List(
       Event("1", "foo", props = Map(
         "x" -> JsString("bar")
       )).toJson.compactPrint,
@@ -97,7 +97,7 @@ class RecommendationAlgoSpec extends FlatSpec with Matchers with SparkFun {
     ))
 
     val thrown = intercept[IllegalArgumentException] {
-      algo.train(input, ctx, Array.empty[String])
+      algo.train(input, session, Array.empty[String])
     }
 
     thrown.getMessage should be
