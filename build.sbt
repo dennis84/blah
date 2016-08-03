@@ -21,7 +21,7 @@ val deps = Seq(
   "org.apache.spark"               %% "spark-streaming-kafka-0-8"              % "2.0.0",
   "org.apache.spark"               %% "spark-mllib"                            % "2.0.0",
  ("org.elasticsearch"               % "elasticsearch-spark-20"                 % "5.0.0")
-    .from("https://oss.sonatype.org/content/repositories/snapshots/org/elasticsearch/elasticsearch-spark-20_2.10/5.0.0.BUILD-SNAPSHOT/elasticsearch-spark-20_2.10-5.0.0.BUILD-20160731.020522-3.jar"),
+    .from("https://oss.sonatype.org/content/repositories/snapshots/org/elasticsearch/elasticsearch-spark-20_2.10/5.0.0.BUILD-SNAPSHOT/elasticsearch-spark-20_2.10-5.0.0.BUILD-20160803.050105-6.jar"),
   "com.softwaremill.reactivekafka" %% "reactive-kafka-core"                    % "0.8.8",
   "org.clojars.timewarrior"         % "ua-parser"                              % "1.3.0",
   "net.virtual-void"               %% "json-lenses"                            % "0.6.1",

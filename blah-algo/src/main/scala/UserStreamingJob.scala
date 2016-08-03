@@ -14,8 +14,7 @@ class UserStreamingJob(
     args: Array[String]
   )(implicit ec: ExecutionContext) {
     sparkConf.set("es.update.script",
-      """|ctx._source.events = (ctx._source.events += events).takeRight(20);
-         |ctx._source.nbEvents += nbEvents;
+      """|ctx._source.nbEvents += nbEvents;
          |ctx._source.date = date;
          |if(email) ctx._source.email = email;
          |if(firstname) ctx._source.firstname = firstname;
@@ -28,8 +27,7 @@ class UserStreamingJob(
          |if(zipCode) ctx._source.zipCode = zipCode
          |""".stripMargin.replaceAll("\n", ""))
     sparkConf.set("es.update.script.params",
-      """|events:events,
-         |nbEvents:nbEvents,
+      """|nbEvents:nbEvents,
          |email:email,
          |firstname:firstname,
          |lastname:lastname,
