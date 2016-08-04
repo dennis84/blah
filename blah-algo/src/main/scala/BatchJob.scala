@@ -13,7 +13,7 @@ import org.elasticsearch.spark.sql._
 import com.typesafe.config.Config
 import kafka.producer.KeyedMessage
 import blah.core.FindOpt._
-import RddKafkaWriter._
+import DatasetKafkaWriter._
 
 class BatchJob[T <: Product : TypeTag](
   name: String,
@@ -41,7 +41,7 @@ class BatchJob[T <: Product : TypeTag](
     props.put("serializer.class", "kafka.serializer.StringEncoder")
     props.put("key.serializer.class", "kafka.serializer.StringEncoder")
 
-    output.toJSON.rdd.writeToKafka(props, x =>
+    output.toJSON.writeToKafka(props, x =>
       new KeyedMessage[String, String]("trainings", s"$name@$x"))
 
     sc.stop

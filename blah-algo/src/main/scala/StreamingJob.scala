@@ -13,7 +13,7 @@ import org.elasticsearch.spark.sql._
 import com.typesafe.config.Config
 import kafka.producer.KeyedMessage
 import kafka.serializer.StringDecoder
-import RddKafkaWriter._
+import DatasetKafkaWriter._
 
 class StreamingJob[T <: Product : TypeTag](
   name: String,
@@ -47,7 +47,7 @@ class StreamingJob[T <: Product : TypeTag](
       props.put("serializer.class", "kafka.serializer.StringEncoder")
       props.put("key.serializer.class", "kafka.serializer.StringEncoder")
 
-      output.toJSON.rdd.writeToKafka(props, x =>
+      output.toJSON.writeToKafka(props, x =>
         new KeyedMessage[String, String]("trainings", s"$name@$x"))
     }
 

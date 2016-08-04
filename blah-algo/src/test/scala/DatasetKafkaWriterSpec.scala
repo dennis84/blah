@@ -6,7 +6,7 @@ import kafka.producer.KeyedMessage
 import spray.json._
 import blah.core._
 import JsonProtocol._
-import RddKafkaWriter._
+import DatasetKafkaWriter._
 
 /**
  * Start kafka:
@@ -19,7 +19,7 @@ import RddKafkaWriter._
  * ```
  */
 @Ignore
-class RddKafkaWriterSpec extends FlatSpec with Matchers with SparkTest {
+class DatasetKafkaWriterSpec extends FlatSpec with Matchers with SparkTest {
 
   val props = new Properties
   props.put("metadata.broker.list", "localhost:9092")
@@ -27,8 +27,9 @@ class RddKafkaWriterSpec extends FlatSpec with Matchers with SparkTest {
   props.put("key.serializer.class", "kafka.serializer.StringEncoder")
 
   "The RddKafkaWriter" should "write to kafka" in withSparkSession { session =>
+    import session.implicits._
     val input = session.sparkContext.parallelize(List("foo", "bar", "baz"))
-    input.writeToKafka(props, x =>
+    input.toDS.writeToKafka(props, x =>
       new KeyedMessage[String, Array[Byte]]("test", null, x.getBytes))
   }
 
@@ -42,7 +43,7 @@ class RddKafkaWriterSpec extends FlatSpec with Matchers with SparkTest {
       )).toJson.compactPrint))
 
     val df = session.read.json(input)
-    df.toJSON.rdd.writeToKafka(props, x =>
+    df.toJSON.writeToKafka(props, x =>
       new KeyedMessage[String, Array[Byte]]("test", null, x.getBytes))
   }
 }
