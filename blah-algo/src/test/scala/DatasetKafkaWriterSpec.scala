@@ -4,6 +4,7 @@ import java.util.Properties
 import org.scalatest._
 import kafka.producer.KeyedMessage
 import spray.json._
+import blah.testkit._
 import blah.core._
 import JsonProtocol._
 import DatasetKafkaWriter._

@@ -40,11 +40,18 @@ lazy val commonSettings = Seq(
 lazy val root = (project in file("."))
   .aggregate(core, api, serving, algo, elastic)
 
+lazy val testkit = (project in file("blah-testkit"))
+  .settings(commonSettings: _*)
+  .settings(
+    libraryDependencies ++= deps,
+    resolvers ++= res)
+
 lazy val core = (project in file("blah-core"))
   .settings(commonSettings: _*)
   .settings(
     libraryDependencies ++= deps,
     resolvers ++= res)
+  .dependsOn(testkit % "test->test")
 
 lazy val elastic = (project in file("blah-elastic"))
   .settings(commonSettings: _*)

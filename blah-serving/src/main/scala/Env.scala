@@ -5,7 +5,7 @@ import akka.stream.Materializer
 import kafka.serializer.StringDecoder
 import com.softwaremill.react.kafka.{ReactiveKafka, ConsumerProperties}
 import spray.json._
-import blah.elastic.{ElasticClient, ElasticUri, IndexUpdater}
+import blah.elastic.{ElasticClient, ElasticUri, MappingUpdater}
 import blah.core.JsonDsl._
 
 class Env(implicit system: ActorSystem, mat: Materializer) {
@@ -24,7 +24,7 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
   lazy val elasticClient = new ElasticClient(ElasticUri(
     config.getString("elasticsearch.url")))
 
-  lazy val indexUpdater = new IndexUpdater(elasticClient)
+  lazy val indexUpdater = new MappingUpdater(elasticClient)
 
   lazy val elasticIndex: JsObject =
     ("settings" ->

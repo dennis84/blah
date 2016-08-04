@@ -10,10 +10,9 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import spray.json._
 import blah.core.JsonDsl._
+import blah.testkit._
 
-object ElasticTest extends Tag("blah.elastic.ElasticTest")
-
-class IndexUpdaterSpec
+class MappingUpdaterSpec
   extends FlatSpec
   with Matchers
   with ScalaFutures
@@ -74,41 +73,41 @@ class IndexUpdaterSpec
   implicit val mat = ActorMaterializer()
   import system.dispatcher
 
-  "The IndexUpdater" should "create the initial index" taggedAs(ElasticTest) in {
+  "The MappingUpdater" should "create the initial index" taggedAs(ElasticTag) in {
     val client = new ElasticClient(ElasticUri("localhost:9200"))
-    val updater = new IndexUpdater(client)
+    val updater = new MappingUpdater(client)
     val resp = Await.result(updater.update("test", indexV1), 10.seconds)
-    resp should be (IndexUpdater.Created("test-1"))
+    resp should be (MappingUpdater.Created("test-1"))
   }
 
-  it should "update to v2" taggedAs(ElasticTest) in {
+  it should "update to v2" taggedAs(ElasticTag) in {
     val client = new ElasticClient(ElasticUri("localhost:9200"))
-    val updater = new IndexUpdater(client)
+    val updater = new MappingUpdater(client)
     val resp = Await.result(updater.update("test", indexV2), 10.seconds)
-    resp should be (IndexUpdater.Updated("test-2"))
+    resp should be (MappingUpdater.Updated("test-2"))
   }
 
-  it should "skip, because nothing has changed" taggedAs(ElasticTest) in {
+  it should "skip, because nothing has changed" taggedAs(ElasticTag) in {
     val client = new ElasticClient(ElasticUri("localhost:9200"))
-    val updater = new IndexUpdater(client)
+    val updater = new MappingUpdater(client)
     val resp = Await.result(updater.update("test", indexV2), 10.seconds)
-    resp should be (IndexUpdater.Skipped("test-2"))
+    resp should be (MappingUpdater.Skipped("test-2"))
   }
 
-  it should "update to v3" taggedAs(ElasticTest) in {
+  it should "update to v3" taggedAs(ElasticTag) in {
     val client = new ElasticClient(ElasticUri("localhost:9200"))
-    val updater = new IndexUpdater(client)
+    val updater = new MappingUpdater(client)
     val resp = Await.result(updater.update("test", indexV3), 10.seconds)
-    resp should be (IndexUpdater.Updated("test-3"))
+    resp should be (MappingUpdater.Updated("test-3"))
   }
 
-  it should "fail with v4" taggedAs(ElasticTest) in {
+  it should "fail with v4" taggedAs(ElasticTag) in {
     val client = new ElasticClient(ElasticUri("localhost:9200"))
-    val updater = new IndexUpdater(client)
+    val updater = new MappingUpdater(client)
     val fut = updater.update("test", indexV4)
     whenReady(fut.failed) { e =>
-      e shouldBe a [IndexUpdater.UpdateFailed]
-      val exception = e.asInstanceOf[IndexUpdater.UpdateFailed]
+      e shouldBe a [MappingUpdater.UpdateFailed]
+      val exception = e.asInstanceOf[MappingUpdater.UpdateFailed]
       exception.response.status should be (StatusCodes.BadRequest)
     }
   }

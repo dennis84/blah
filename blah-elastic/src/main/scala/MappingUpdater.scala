@@ -10,12 +10,12 @@ import spray.json._
 import spray.json.lenses.JsonLenses._
 import blah.core.JsonDsl._
 
-class IndexUpdater(client: ElasticClient)(
+class MappingUpdater(client: ElasticClient)(
   implicit system: ActorSystem,
   mat: Materializer
 ) extends SprayJsonSupport with DefaultJsonProtocol {
   import system.dispatcher
-  import IndexUpdater._
+  import MappingUpdater._
 
   private def getIndex(index: String) =
     client request HttpRequest(
@@ -79,7 +79,7 @@ class IndexUpdater(client: ElasticClient)(
     }
 }
 
-object IndexUpdater {
+object MappingUpdater {
   sealed trait Result
   case class Created(index: String) extends Result
   case class Updated(index: String) extends Result

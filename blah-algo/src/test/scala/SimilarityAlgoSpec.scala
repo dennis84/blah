@@ -2,6 +2,7 @@ package blah.algo
 
 import org.scalatest._
 import spray.json._
+import blah.testkit._
 import blah.core._
 import JsonProtocol._
 
