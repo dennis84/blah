@@ -5,7 +5,7 @@ val res = Seq(
 )
 
 val deps = Seq(
-  "org.scalatest"                   % "scalatest_2.11"                         % "2.2.6" % "test",
+  "org.scalactic"                  %% "scalactic"                              % "3.0.0" % "test",
   "org.scalamock"                  %% "scalamock-scalatest-support"            % "3.2.2" % "test",
   "com.typesafe.akka"              %% "akka-actor"                             % "2.4.7",
   "com.typesafe.akka"              %% "akka-testkit"                           % "2.4.7",

@@ -73,35 +73,40 @@ class MappingUpdaterSpec
   implicit val mat = ActorMaterializer()
   import system.dispatcher
 
-  "The MappingUpdater" should "create the initial index" taggedAs(ElasticTag) in {
+  "The MappingUpdater" should "create the initial index" in {
+    assume(isReachable("localhost", 9000))
     val client = new ElasticClient(ElasticUri("localhost:9200"))
     val updater = new MappingUpdater(client)
     val resp = Await.result(updater.update("test", indexV1), 10.seconds)
     resp should be (MappingUpdater.Created("test-1"))
   }
 
-  it should "update to v2" taggedAs(ElasticTag) in {
+  it should "update to v2" in {
+    assume(isReachable("localhost", 9000))
     val client = new ElasticClient(ElasticUri("localhost:9200"))
     val updater = new MappingUpdater(client)
     val resp = Await.result(updater.update("test", indexV2), 10.seconds)
     resp should be (MappingUpdater.Updated("test-2"))
   }
 
-  it should "skip, because nothing has changed" taggedAs(ElasticTag) in {
+  it should "skip, because nothing has changed" in {
+    assume(isReachable("localhost", 9000))
     val client = new ElasticClient(ElasticUri("localhost:9200"))
     val updater = new MappingUpdater(client)
     val resp = Await.result(updater.update("test", indexV2), 10.seconds)
     resp should be (MappingUpdater.Skipped("test-2"))
   }
 
-  it should "update to v3" taggedAs(ElasticTag) in {
+  it should "update to v3" in {
+    assume(isReachable("localhost", 9000))
     val client = new ElasticClient(ElasticUri("localhost:9200"))
     val updater = new MappingUpdater(client)
     val resp = Await.result(updater.update("test", indexV3), 10.seconds)
     resp should be (MappingUpdater.Updated("test-3"))
   }
 
-  it should "fail with v4" taggedAs(ElasticTag) in {
+  it should "fail with v4" in {
+    assume(isReachable("localhost", 9000))
     val client = new ElasticClient(ElasticUri("localhost:9200"))
     val updater = new MappingUpdater(client)
     val fut = updater.update("test", indexV4)
@@ -112,7 +117,7 @@ class MappingUpdaterSpec
     }
   }
 
-  override def beforeAll() = {
+  override def beforeAll() = if(isReachable("localhost", 9000)) {
     val client = new ElasticClient(ElasticUri("localhost:9200"))
     val deleteFut = for {
       _ <- client request HttpRequest(HttpMethods.DELETE, "/test")

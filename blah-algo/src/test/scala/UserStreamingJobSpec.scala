@@ -6,6 +6,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import com.typesafe.config.ConfigFactory
 import org.apache.spark.SparkConf
 import blah.core._
+import blah.testkit._
 
 /**
  * ```
@@ -18,10 +19,12 @@ import blah.core._
  * {"id":"1","collection":"test","date":"2016-08-02T18:21:12.946Z","props":{"item":"landingpage","user": "dennis"}}
  * ```
  */
-@Ignore
 class UserStreamingJobSpec extends FlatSpec with Matchers {
 
   "The UserStreamingJob" should "run" in {
+    assume(isReachable("localhost", 9200))
+    assume(isReachable("localhost", 9092))
+
     val sparkConf = new SparkConf()
       .setMaster("local")
       .setAppName("user streaming job test")

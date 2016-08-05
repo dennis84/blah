@@ -19,7 +19,6 @@ import DatasetKafkaWriter._
  * bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic test
  * ```
  */
-@Ignore
 class DatasetKafkaWriterSpec extends FlatSpec with Matchers with SparkTest {
 
   val props = new Properties
@@ -28,6 +27,7 @@ class DatasetKafkaWriterSpec extends FlatSpec with Matchers with SparkTest {
   props.put("key.serializer.class", "kafka.serializer.StringEncoder")
 
   "The RddKafkaWriter" should "write to kafka" in withSparkSession { session =>
+    assume(isReachable("localhost", 9092))
     import session.implicits._
     val input = session.sparkContext.parallelize(List("foo", "bar", "baz"))
     input.toDS.writeToKafka(props, x =>
@@ -35,6 +35,7 @@ class DatasetKafkaWriterSpec extends FlatSpec with Matchers with SparkTest {
   }
 
   it should "write json" in withSparkSession { session =>
+    assume(isReachable("localhost", 9092))
     val input = session.sparkContext.parallelize(List(
       Event("1", "view", props = Map(
         "item" -> JsString("page1")
