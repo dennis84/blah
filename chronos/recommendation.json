@@ -1,5 +1,5 @@
 {
-  "schedule": "R/2015-11-26T00:00:00Z/PT30M",
+  "schedule": "R0/2015-11-26T00:00:00Z/PT30M",
   "name": "recommendation",
   "cpus": "0.5",
   "mem": "1024",

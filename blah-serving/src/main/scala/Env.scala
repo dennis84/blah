@@ -5,6 +5,7 @@ import akka.stream.Materializer
 import kafka.serializer.StringDecoder
 import com.softwaremill.react.kafka.{ReactiveKafka, ConsumerProperties}
 import spray.json._
+import blah.core.HttpClient
 import blah.elastic.{ElasticClient, ElasticUri, MappingUpdater}
 import blah.core.JsonDsl._
 
@@ -23,6 +24,10 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
 
   lazy val elasticClient = new ElasticClient(ElasticUri(
     config.getString("elasticsearch.url")))
+
+  lazy val chronosUrl = config.getString("chronos.url").split(":")
+  lazy val chronosClient = new HttpClient(
+    chronosUrl(0), chronosUrl(1).toInt)
 
   lazy val indexUpdater = new MappingUpdater(elasticClient)
 
