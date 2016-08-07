@@ -14,6 +14,7 @@ import people from './ui/people'
 import funnel from './ui/funnel'
 import segmentation from './ui/segmentation'
 import worldMap from './ui/world-map'
+import jobs from './ui/jobs'
 
 var conn = connect(SERVING_WS_URL)
 var storage = new Storage(window.localStorage)
@@ -38,6 +39,7 @@ function render() {
   else if('#/funnel' === model.path) return funnel(...arguments)
   else if('#/segmentation' === model.path) return segmentation(...arguments)
   else if('#/world-map' === model.path) return worldMap(...arguments)
+  else if('#/jobs' === model.path) return jobs(...arguments)
   else return pageviews(...arguments)
 }
 

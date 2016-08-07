@@ -197,7 +197,6 @@ main() {
     create-all)
       create_apps
       create_jobs
-      create_streaming_apps
       ;;
     run-job)
       run_job "$@"

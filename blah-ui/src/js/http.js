@@ -60,7 +60,26 @@ function post(path, params) {
   })
 }
 
+function put(path, params) {
+  return new Promise((resolve, reject) => {
+    xhr({
+      uri: url(path),
+      method: 'PUT',
+      json: params,
+      timeout: 10000,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    }, (err, resp, body) => {
+      if(0 === resp.statusCode) reject(resp)
+      resolve(body)
+    })
+  })
+}
+
 export {
   get,
-  post
+  post,
+  put
 }

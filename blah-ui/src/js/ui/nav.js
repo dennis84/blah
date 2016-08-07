@@ -23,6 +23,7 @@ function render(model, update, conn, storage) {
       h('a.nav-item.button.is-danger.is-outlined', {href: '#/world-map'}, 'Map')
     ]),
     h('div.level-right.nav-menu', [
+      h('a.button.is-link', {href: '#/jobs'}, 'Jobs'),
       h('a.button.is-link', {
         onclick: node => update('theme', storage)
       }, h('i.material-icons', 'color_lens'))
