@@ -78,8 +78,31 @@ function put(path, params) {
   })
 }
 
+/**
+ * Makes a DELETE call.
+ *
+ * @param {String} path   The api path
+ * @param {Object} params Query params
+ *
+ * @return {Promise} A promise with parsed JSON data
+ */
+function del(path, params) {
+  return new Promise((resolve, reject) => {
+    xhr({
+      uri: url(path, params),
+      method: 'DELETE',
+      timeout: 10000,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    }, (err, resp, body) => resolve(JSON.parse(body)))
+  })
+}
+
 export {
   get,
   post,
-  put
+  put,
+  del
 }

@@ -45,6 +45,6 @@ class JobRepo(client: HttpClient)(
       uri = s"/scheduler/task/kill/$name"
     ) collect {
       case r if r.status.isSuccess =>
-        Message("Job was successfully deleted.")
+        Message("Job was successfully stopped.")
     }
 }

@@ -1,5 +1,5 @@
 import clone from 'clone'
-import {get, put} from '../../http'
+import {get, put, del} from '../../http'
 
 /**
  * List jobs.
@@ -43,7 +43,12 @@ function run(model, name) {
  * @return {Promise} The model wrapped in a promise
  */
 function stop(model, name) {
-  return model
+  return del('/jobs/' + name).then(data => {
+    var m = clone(model)
+    var index = findIndexByName(m.jobs, name)
+    m.jobs[index].running = false
+    return m
+  })
 }
 
 function findIndexByName(xs, name) {
@@ -53,7 +58,6 @@ function findIndexByName(xs, name) {
 
   return -1
 }
-
 
 export {
   list,
