@@ -18,15 +18,28 @@ class JobRepo(client: HttpClient)(
 ) extends SprayJsonSupport with ServingJsonProtocol {
   import system.dispatcher
 
-  def list(): Future[List[Job]] =
-    client request HttpRequest(
+  def list(): Future[List[Job]] = {
+    val jobsFut = client request HttpRequest(
       method = HttpMethods.GET,
-      uri = "/scheduler/jobs"
-    ) flatMap { resp =>
-      Unmarshal(resp.entity).to[List[ChronosJob]]
-    } map { chronosJobs =>
-      chronosJobs.map(_.toJob)
+      uri = "/scheduler/jobs")
+    val csvFut = client request HttpRequest(
+      method = HttpMethods.GET,
+      uri = "/scheduler/graph/csv") 
+    for {
+      jobsResp <- jobsFut
+      chronosJobs <- Unmarshal(jobsResp.entity).to[List[ChronosJob]]
+      csvResp <- csvFut 
+      csv <- Unmarshal(csvResp.entity).to[String]
+    } yield {
+      val csvData = csv.lines.collect(_.split(",") match {
+        case Array(_, name, last, status) => name -> status
+      }).toMap
+
+      chronosJobs map { chronosJob =>
+        chronosJob.toJob(csvData get chronosJob.name)
+      }
     }
+  }
 
   def run(name: String): Future[Message] =
     client request HttpRequest(

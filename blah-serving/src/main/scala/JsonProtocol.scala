@@ -22,7 +22,7 @@ trait ServingJsonProtocol extends JsonProtocol {
   implicit val mostViewedFmt = jsonFormat2(MostViewed)
   implicit val referrerQueryFmt = jsonFormat1(ReferrerQuery)
   implicit val referrerFmt = jsonFormat2(Referrer)
-  implicit val jobFmt = jsonFormat3(Job)
+  implicit val jobFmt = jsonFormat4(Job)
   implicit val chronosJobFmt = jsonFormat3(ChronosJob)
 }
 

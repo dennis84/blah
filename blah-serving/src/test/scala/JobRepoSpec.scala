@@ -28,7 +28,7 @@ class JobRepoSpec
   "The JobRepo" should "list" in {
     var client = mock[MockChronosClient]
     val repo = new JobRepo(client)
-    val body = List(
+    val json = List(
       ("name" -> "foo") ~
       ("lastSuccess" -> "") ~
       ("schedule" -> "R0/2015-11-26T00:00:00Z/PT10M"),
@@ -40,16 +40,25 @@ class JobRepoSpec
       ("schedule" -> "R1/2015-11-26T00:00:00Z/PT10M")
     ).compactPrint
 
+    val csv = """|node,foo,fresh,running
+                 |node,bar,success,idle
+                 |node,baz,fresh,idle
+                 |""".stripMargin
+
     (client.request _) expects(*) returning Future(
       HttpResponse(200, entity = HttpEntity(
-        ContentTypes.`application/json`, body)))
+        ContentTypes.`application/json`, json)))
+
+    (client.request _) expects(*) returning Future(
+      HttpResponse(200, entity = HttpEntity(
+        ContentTypes.`application/json`, csv)))
 
     val resp = repo.list()
 
     Await.result(resp, 10.seconds) should be(List(
-      Job("foo", false, None),
-      Job("bar", true, Some(ZonedDateTime.parse("2016-08-06T00:00:00Z"))),
-      Job("baz", true, None)))
+      Job("foo", "running", false, None),
+      Job("bar", "idle", true, Some(ZonedDateTime.parse("2016-08-06T00:00:00Z"))),
+      Job("baz", "idle", true, None)))
   }
 
   it should "run" in {
