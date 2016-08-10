@@ -5,6 +5,7 @@ import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.event.LoggingAdapter
 import akka.http.scaladsl.model._
+import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
@@ -18,28 +19,18 @@ class JobRepo(client: HttpClient)(
 ) extends SprayJsonSupport with ServingJsonProtocol {
   import system.dispatcher
 
-  def list(): Future[List[Job]] = {
-    val jobsFut = client request HttpRequest(
-      method = HttpMethods.GET,
-      uri = "/scheduler/jobs")
-    val csvFut = client request HttpRequest(
-      method = HttpMethods.GET,
-      uri = "/scheduler/graph/csv") 
+  def list(): Future[List[Job]] =
     for {
-      jobsResp <- jobsFut
+      jobsResp <- client request HttpRequest(GET, "/scheduler/jobs")
       chronosJobs <- Unmarshal(jobsResp.entity).to[List[ChronosJob]]
-      csvResp <- csvFut 
+      csvResp <- client request HttpRequest(GET, "/scheduler/graph/csv")
       csv <- Unmarshal(csvResp.entity).to[String]
-    } yield {
-      val csvData = csv.lines.collect(_.split(",") match {
+      csvData = csv.lines.collect(_ split "," match {
         case Array(_, name, last, status) => name -> status
       }).toMap
-
-      chronosJobs map { chronosJob =>
-        chronosJob.toJob(csvData get chronosJob.name)
-      }
+    } yield chronosJobs map { chronosJob =>
+      chronosJob.toJob(csvData get chronosJob.name)
     }
-  }
 
   def run(name: String): Future[Message] =
     client request HttpRequest(
