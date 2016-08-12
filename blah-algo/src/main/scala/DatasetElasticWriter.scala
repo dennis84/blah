@@ -9,7 +9,7 @@ import scala.concurrent.duration._
 import org.apache.spark.sql.Dataset
 import org.apache.spark.SparkEnv
 import akka.actor.ActorSystem
-import akka.stream.{ActorMaterializer, ActorMaterializerSettings}
+import akka.stream.ActorMaterializer
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
@@ -21,7 +21,7 @@ case class ElasticWriteConfig(
   script: String)
 
 class DatasetElasticWriter[T: ClassTag](ds: Dataset[T]) extends Serializable {
-  def writeToElastic() = {
+  def writeToElastic(index: String, tpe: String) = {
     val url = SparkEnv.get.conf.get("elastic.url")
     val inline = Try(SparkEnv.get.conf.get("elastic.script"))
       .map(Some(_)).getOrElse(None)
@@ -33,42 +33,36 @@ class DatasetElasticWriter[T: ClassTag](ds: Dataset[T]) extends Serializable {
 
       val data = xs.flatMap(x => (parse(x), inline) match {
         case ((json, Some(id)), Some(in)) => Seq(
-          update format (id, "test", "person"),
+          update format (id, index, tpe),
           script format (in, json, json))
         case ((json, Some(id)), None) => Seq(
-          update format (id, "test", "person"),
-          doc format json)
+          update format (id, index, tpe),
+          doc format (json, true))
         case ((json, None), _) => Seq(
-          create format ("test", "person"),
-          doc format json)
+          create format (index, tpe), json)
       }).mkString("\n") + "\n"
-      println(data)
 
       val res = Http() singleRequest HttpRequest(
         method = HttpMethods.POST,
         uri = s"$url/_bulk",
-        entity = HttpEntity(data)
-      ) map { resp =>
-        println(resp.status)
-        println(resp.entity)
-      }
+        entity = HttpEntity(data))
 
       Await.ready(res, 10.seconds)
     }
   }
 
   private val update =
-    """{"update":{"_id": "%s","_index":"%s","_type":"%s"}}"""
+    """{"update":{"_id":"%s","_index":"%s","_type":"%s"}}"""
   private val create =
-    """{"create":{"_index": "%s","_type":"%s"}}"""
+    """{"create":{"_index":"%s","_type":"%s"}}"""
   private val script = 
     """{"script":{"inline":"%s","lang":"groovy","params":%s},"upsert":%s}"""
   private val doc = 
-    """{"doc":%s}"""
+    """{"doc":%s,"doc_as_upsert":%s}"""
 
   private def parse(json: String): (String, Option[String]) = {
-    val pat1 = """.*"id":"(.*)",.*""".r
-    val pat2 = """"id":"(.*)",""".r
+    val pat1 = """.*"id":"(.*?)",.*""".r
+    val pat2 = """"id":".*?",""".r
     json match {
       case pat1(id) => (pat2.replaceAllIn(json, ""), Some(id))
       case _ => (json, None)

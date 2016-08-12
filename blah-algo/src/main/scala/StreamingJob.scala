@@ -9,11 +9,11 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming.kafka.KafkaUtils
-import org.elasticsearch.spark.sql._
 import com.typesafe.config.Config
 import kafka.producer.KeyedMessage
 import kafka.serializer.StringDecoder
 import DatasetKafkaWriter._
+import DatasetElasticWriter._
 
 class StreamingJob[T <: Product : TypeTag](
   name: String,
@@ -24,8 +24,6 @@ class StreamingJob[T <: Product : TypeTag](
     sparkConf: SparkConf,
     args: Array[String]
   )(implicit ec: ExecutionContext) {
-    sparkConf.set("es.write.operation", "upsert")
-
     val ssc = new StreamingContext(sparkConf,
       Seconds(config.getInt("streaming.batch.interval")))
     val stream = KafkaUtils
@@ -38,9 +36,7 @@ class StreamingJob[T <: Product : TypeTag](
         .getInstance(rdd.sparkContext.getConf)
       val output = algo.train(rdd, sparkSession, args)
 
-      output.saveToEs(s"blah/$name", Map(
-        "es.mapping.id" -> "id",
-        "es.mapping.exclude" -> "id"))
+      output.writeToElastic("blah", name)
 
       val props = new Properties
       props.put("metadata.broker.list", config.getString("producer.broker.list"))

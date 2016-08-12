@@ -20,8 +20,6 @@ val deps = Seq(
   "org.apache.spark"               %% "spark-streaming"                        % "2.0.0" % "provided",
   "org.apache.spark"               %% "spark-streaming-kafka-0-8"              % "2.0.0",
   "org.apache.spark"               %% "spark-mllib"                            % "2.0.0",
- ("org.elasticsearch"               % "elasticsearch-spark-20"                 % "5.0.0")
-    .from("https://oss.sonatype.org/content/repositories/snapshots/org/elasticsearch/elasticsearch-spark-20_2.10/5.0.0.BUILD-SNAPSHOT/elasticsearch-spark-20_2.10-5.0.0.BUILD-20160803.050105-6.jar"),
   "com.softwaremill.reactivekafka" %% "reactive-kafka-core"                    % "0.8.8",
   "org.clojars.timewarrior"         % "ua-parser"                              % "1.3.0",
   "net.virtual-void"               %% "json-lenses"                            % "0.6.1",
@@ -91,6 +89,7 @@ lazy val algo = (project in file("blah-algo"))
     target in assembly := file("blah-algo/target/docker/stage/opt/docker/bin/"),
     assemblyMergeStrategy in assembly := {
       case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+      case "application.conf" => MergeStrategy.concat
       case _ => MergeStrategy.first
     })
   .settings(

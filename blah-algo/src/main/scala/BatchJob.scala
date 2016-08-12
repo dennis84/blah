@@ -9,11 +9,11 @@ import akka.util.ByteString
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SparkSession
 import org.apache.hadoop.io.{LongWritable, BytesWritable}
-import org.elasticsearch.spark.sql._
 import com.typesafe.config.Config
 import kafka.producer.KeyedMessage
 import blah.core.FindOpt._
 import DatasetKafkaWriter._
+import DatasetElasticWriter._
 
 class BatchJob[T <: Product : TypeTag](
   name: String,
@@ -32,9 +32,7 @@ class BatchJob[T <: Product : TypeTag](
       .map(x => ByteString(x._2.copyBytes).utf8String)
     val output = algo.train(rdd, sparkSession, args shift "path")
 
-    output.saveToEs(s"blah/$name", Map(
-      "es.mapping.id" -> "id",
-      "es.mapping.exclude" -> "id"))
+    output.writeToElastic("blah", name)
 
     val props = new Properties
     props.put("metadata.broker.list", config.getString("producer.broker.list"))
