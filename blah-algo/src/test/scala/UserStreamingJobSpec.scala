@@ -28,9 +28,9 @@ class UserStreamingJobSpec extends FlatSpec with Matchers {
     val sparkConf = new SparkConf()
       .setMaster("local")
       .setAppName("user streaming job test")
+    sparkConf.set("elastic.url", "http://localhost:9200")
 
     val conf = ConfigFactory.parseMap(Map(
-      "es.nodes" -> "localhost:9200",
       "streaming.batch.interval" -> 10,
       "consumer.broker.list" -> "localhost:9092",
       "producer.broker.list" -> "localhost:9092"

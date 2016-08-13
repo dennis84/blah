@@ -31,7 +31,7 @@ class StreamingJob[T <: Product : TypeTag](
         Map("metadata.broker.list" -> config.getString("consumer.broker.list")),
         Set("events")).map(_._2)
 
-    stream.foreachRDD { rdd =>
+    stream.foreachRDD(rdd => if(!rdd.isEmpty) {
       val sparkSession = SparkSessionSingleton
         .getInstance(rdd.sparkContext.getConf)
       val output = algo.train(rdd, sparkSession, args)
@@ -45,7 +45,7 @@ class StreamingJob[T <: Product : TypeTag](
 
       output.toJSON.writeToKafka(props, x =>
         new KeyedMessage[String, String]("trainings", s"$name@$x"))
-    }
+    })
 
     stream.print()
     ssc.start()
