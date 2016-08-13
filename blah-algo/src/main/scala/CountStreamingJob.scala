@@ -14,8 +14,8 @@ class CountStreamingJob(
     args: Array[String]
   )(implicit ec: ExecutionContext) {
     sparkConf.set("elastic.script",
-      """|ctx._source.count += count;
-         |ctx._source.price += price
+      """|ctx._source.count += params.count;
+         |ctx._source.price += params.price
          |""".stripMargin.replaceAll("\n", ""))
     super.run(config, sparkConf, args)
   }

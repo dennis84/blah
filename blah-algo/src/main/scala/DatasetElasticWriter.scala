@@ -46,7 +46,7 @@ class DatasetElasticWriter[T: ClassTag](ds: Dataset[T]) extends Serializable {
   private val create =
     """{"create":{"_index":"%s","_type":"%s"}}"""
   private val script = 
-    """{"script":{"inline":"%s","lang":"groovy","params":%s},"upsert":%s}"""
+    """{"script":{"inline":"%s","lang":"groovy","params":{"params":%s}},"upsert":%s}"""
   private val doc = 
     """{"doc":%s,"doc_as_upsert":true}"""
 

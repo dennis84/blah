@@ -60,7 +60,7 @@ class UserAlgo extends Algo[User] {
           city = geo.map(_.city).flatten,
           zipCode = geo.map(_.zipCode).flatten,
           events = (sorted take 20),
-          nbEvents = events.size)
+          nbEvents = sorted.length)
       }
   }
 }

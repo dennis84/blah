@@ -14,18 +14,18 @@ class UserStreamingJob(
     args: Array[String]
   )(implicit ec: ExecutionContext) {
     sparkConf.set("elastic.script",
-      """|ctx._source.events = (ctx._source.events += events).takeRight(20);
-         |ctx._source.nbEvents += nbEvents;
-         |ctx._source.date = date;
-         |if(email) ctx._source.email = email;
-         |if(firstname) ctx._source.firstname = firstname;
-         |if(lastname) ctx._source.lastname = lastname;
-         |if(lng) ctx._source.lng = lng;
-         |if(lat) ctx._source.lat = lat;
-         |if(country) ctx._source.country = country;
-         |if(countryCode) ctx._source.countryCode = countryCode;
-         |if(city) ctx._source.city = city;
-         |if(zipCode) ctx._source.zipCode = zipCode
+      """|ctx._source.events = (ctx._source.events += params.events).takeRight(20);
+         |ctx._source.nbEvents += params.nbEvents;
+         |ctx._source.date = params.date;
+         |if(params.email) ctx._source.email = params.email;
+         |if(params.firstname) ctx._source.firstname = params.firstname;
+         |if(params.lastname) ctx._source.lastname = params.lastname;
+         |if(params.lng) ctx._source.lng = params.lng;
+         |if(params.lat) ctx._source.lat = params.lat;
+         |if(params.country) ctx._source.country = params.country;
+         |if(params.countryCode) ctx._source.countryCode = params.countryCode;
+         |if(params.city) ctx._source.city = params.city;
+         |if(params.zipCode) ctx._source.zipCode = params.zipCode
          |""".stripMargin.replaceAll("\n", ""))
     super.run(config, sparkConf, args)
   }

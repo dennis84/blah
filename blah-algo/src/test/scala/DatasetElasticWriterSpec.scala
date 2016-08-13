@@ -21,7 +21,8 @@ import DatasetElasticWriter._
 case class Person(
   id: Option[String],
   firstname: String,
-  lastname: String)
+  lastname: String,
+  address: Option[String] = None)
 
 class DatasetElasticWriterSpec
   extends FlatSpec
@@ -42,8 +43,9 @@ class DatasetElasticWriterSpec
     .setAppName(this.getClass.getName)
   scriptConf.set("elastic.url", "http://localhost:9200")
   scriptConf.set("elastic.script",
-    """|ctx._source.firstname = lastname;
-       |ctx._source.lastname = firstname
+    """|ctx._source.firstname = params.lastname;
+       |ctx._source.lastname = params.firstname;
+       |if(params.address) ctx._source.address = 'c'
        |""".stripMargin.replaceAll("\n", ""))
 
   "A DatasetElasticWriter" should "insert" in withSparkSession(conf) { session =>
@@ -94,8 +96,8 @@ class DatasetElasticWriterSpec
 
     import session.implicits._
     val input = session.sparkContext.parallelize(List(
-      Person(Some("3"), "a", "b"),
-      Person(Some("4"), "c", "d")
+      Person(Some("1"), "a", "b"),
+      Person(Some("2"), "c", "d")
     ))
 
     input.toDS.writeToElastic("test", "person")
@@ -116,6 +118,21 @@ class DatasetElasticWriterSpec
     res2 should contain theSameElementsAs List(
       ("firstname" -> "b") ~ ("lastname" -> "a"),
       ("firstname" -> "d") ~ ("lastname" -> "c")
+    )
+
+    val withAddress = session.sparkContext.parallelize(List(
+      Person(Some("1"), "a", "b", Some("x")),
+      Person(Some("2"), "c", "d", Some("x"))
+    ))
+
+    withAddress.toDS.writeToElastic("test", "person")
+    Thread.sleep(1000)
+
+    val res3 = Await.result(search, 10.seconds)
+
+    res3 should contain theSameElementsAs List(
+      ("firstname" -> "b") ~ ("lastname" -> "a") ~ ("address" -> "c"),
+      ("firstname" -> "d") ~ ("lastname" -> "c") ~ ("address" -> "c")
     )
   }
 
