@@ -1,20 +1,12 @@
 package blah.algo
 
 import java.util.Properties
+import java.net.{URL, HttpURLConnection}
 import scala.reflect.ClassTag
 import scala.util.Try
 import scala.language.implicitConversions
-import scala.concurrent._
-import scala.concurrent.duration._
 import org.apache.spark.sql.Dataset
 import org.apache.spark.SparkEnv
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model._
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import blah.elastic.{ElasticClient, ElasticUri}
-import akka.util.ByteString
 
 case class ElasticWriteConfig(
   url: String,
@@ -27,27 +19,25 @@ class DatasetElasticWriter[T: ClassTag](ds: Dataset[T]) extends Serializable {
       .map(Some(_)).getOrElse(None)
 
     ds.toJSON foreachPartition { xs =>
-      implicit val system = ActorSystem()
-      implicit val mat = ActorMaterializer()
-      import system.dispatcher
-
       val data = xs.flatMap(x => (parse(x), inline) match {
         case ((json, Some(id)), Some(in)) => Seq(
           update format (id, index, tpe),
           script format (in, json, json))
         case ((json, Some(id)), None) => Seq(
           update format (id, index, tpe),
-          doc format (json, true))
+          doc format json)
         case ((json, None), _) => Seq(
           create format (index, tpe), json)
       }).mkString("\n") + "\n"
 
-      val res = Http() singleRequest HttpRequest(
-        method = HttpMethods.POST,
-        uri = s"$url/_bulk",
-        entity = HttpEntity(data))
-
-      Await.ready(res, 10.seconds)
+      val conn = new URL(s"$url/_bulk").openConnection()
+        .asInstanceOf[HttpURLConnection]
+      conn.setRequestMethod("POST")
+      conn.setDoOutput(true)
+      conn.getOutputStream().write(data.getBytes("UTF-8"))
+      conn.getOutputStream().flush()
+      conn.getResponseCode()
+      conn.disconnect()
     }
   }
 
@@ -58,7 +48,7 @@ class DatasetElasticWriter[T: ClassTag](ds: Dataset[T]) extends Serializable {
   private val script = 
     """{"script":{"inline":"%s","lang":"groovy","params":%s},"upsert":%s}"""
   private val doc = 
-    """{"doc":%s,"doc_as_upsert":%s}"""
+    """{"doc":%s,"doc_as_upsert":true}"""
 
   private def parse(json: String): (String, Option[String]) = {
     val pat1 = """.*"id":"(.*?)",.*""".r
