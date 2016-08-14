@@ -2,8 +2,10 @@ package blah.serving
 
 import akka.actor.{ActorSystem, Props}
 import akka.stream.Materializer
-import kafka.serializer.StringDecoder
-import com.softwaremill.react.kafka.{ReactiveKafka, ConsumerProperties}
+import akka.kafka._
+import akka.kafka.scaladsl._
+import org.apache.kafka.common.serialization.StringDeserializer
+import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import spray.json._
 import blah.core.HttpClient
 import blah.elastic.{ElasticClient, ElasticUri, MappingUpdater}
@@ -14,13 +16,13 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
   lazy val websocketRoom = new WebsocketRoom(system)
   lazy val websocketHub = system.actorOf(Props(new WebsocketHub(websocketRoom)))
 
-  lazy val kafka = new ReactiveKafka
-  lazy val consumer = kafka.consume(ConsumerProperties(
-    brokerList = config.getString("consumer.broker.list"),
-    zooKeeperHost = config.getString("consumer.zookeeper.connect"),
-    topic = "trainings",
-    groupId = "websocket",
-    decoder = new StringDecoder))
+  lazy val consumerSettings = ConsumerSettings(system,
+    new ByteArrayDeserializer,
+    new StringDeserializer)
+    .withBootstrapServers(config.getString("consumer.broker.list"))
+    .withGroupId("websocket")
+  lazy val subscription = Subscriptions.topics("trainings")
+  lazy val consumer = Consumer.plainSource(consumerSettings, subscription)
 
   lazy val elasticClient = new ElasticClient(ElasticUri(
     config.getString("elasticsearch.url")))

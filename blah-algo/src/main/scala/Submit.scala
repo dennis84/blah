@@ -3,7 +3,6 @@ package blah.algo
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.apache.spark.SparkConf
 import com.typesafe.config.ConfigFactory
-import kafka.serializer.StringEncoder
 
 object Submit {
   def main(args: Array[String]) {

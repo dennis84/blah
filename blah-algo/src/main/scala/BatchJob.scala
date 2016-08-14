@@ -9,8 +9,8 @@ import akka.util.ByteString
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SparkSession
 import org.apache.hadoop.io.{LongWritable, BytesWritable}
+import org.apache.kafka.clients.producer.ProducerRecord
 import com.typesafe.config.Config
-import kafka.producer.KeyedMessage
 import blah.core.FindOpt._
 import DatasetKafkaWriter._
 import DatasetElasticWriter._
@@ -35,12 +35,12 @@ class BatchJob[T <: Product : TypeTag](
     output.writeToElastic("blah", name)
 
     val props = new Properties
-    props.put("metadata.broker.list", config.getString("producer.broker.list"))
-    props.put("serializer.class", "kafka.serializer.StringEncoder")
-    props.put("key.serializer.class", "kafka.serializer.StringEncoder")
+    props.put("bootstrap.servers", config.getString("producer.broker.list"))
+    props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+    props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
     output.toJSON.writeToKafka(props, x =>
-      new KeyedMessage[String, String]("trainings", s"$name@$x"))
+      new ProducerRecord[String, String]("trainings", s"$name@$x"))
 
     sc.stop
   }

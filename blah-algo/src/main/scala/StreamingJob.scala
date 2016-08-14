@@ -8,10 +8,10 @@ import scala.util.{Success, Failure}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.{Seconds, StreamingContext}
-import org.apache.spark.streaming.kafka.KafkaUtils
+import org.apache.spark.streaming.kafka010._
+import org.apache.kafka.common.serialization.StringDeserializer
+import org.apache.kafka.clients.producer.ProducerRecord
 import com.typesafe.config.Config
-import kafka.producer.KeyedMessage
-import kafka.serializer.StringDecoder
 import DatasetKafkaWriter._
 import DatasetElasticWriter._
 
@@ -26,10 +26,15 @@ class StreamingJob[T <: Product : TypeTag](
   )(implicit ec: ExecutionContext) {
     val ssc = new StreamingContext(sparkConf,
       Seconds(config.getInt("streaming.batch.interval")))
-    val stream = KafkaUtils
-      .createDirectStream[String, String, StringDecoder, StringDecoder](ssc,
-        Map("metadata.broker.list" -> config.getString("consumer.broker.list")),
-        Set("events")).map(_._2)
+    val kafkaParams = Map(
+      "bootstrap.servers" -> config.getString("consumer.broker.list"),
+      "key.deserializer" -> classOf[StringDeserializer],
+      "value.deserializer" -> classOf[StringDeserializer],
+      "group.id" -> "trainings")
+    val stream = KafkaUtils.createDirectStream[String, String](ssc,
+      LocationStrategies.PreferConsistent,
+      ConsumerStrategies.Subscribe[String, String](Set("events"), kafkaParams))
+      .map(_.value)
 
     stream.foreachRDD(rdd => if(!rdd.isEmpty) {
       val sparkSession = SparkSessionSingleton
@@ -39,12 +44,12 @@ class StreamingJob[T <: Product : TypeTag](
       output.writeToElastic("blah", name)
 
       val props = new Properties
-      props.put("metadata.broker.list", config.getString("producer.broker.list"))
-      props.put("serializer.class", "kafka.serializer.StringEncoder")
-      props.put("key.serializer.class", "kafka.serializer.StringEncoder")
+      props.put("bootstrap.servers", config.getString("producer.broker.list"))
+      props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+      props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
 
       output.toJSON.writeToKafka(props, x =>
-        new KeyedMessage[String, String]("trainings", s"$name@$x"))
+        new ProducerRecord[String, String]("trainings", s"$name@$x"))
     })
 
     stream.print()

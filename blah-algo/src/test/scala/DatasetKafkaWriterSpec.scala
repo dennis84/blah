@@ -2,7 +2,7 @@ package blah.algo
 
 import java.util.Properties
 import org.scalatest._
-import kafka.producer.KeyedMessage
+import org.apache.kafka.clients.producer.ProducerRecord
 import spray.json._
 import blah.testkit._
 import blah.core._
@@ -22,16 +22,16 @@ import DatasetKafkaWriter._
 class DatasetKafkaWriterSpec extends FlatSpec with Matchers with SparkTest {
 
   val props = new Properties
-  props.put("metadata.broker.list", "localhost:9092")
-  props.put("serializer.class", "kafka.serializer.DefaultEncoder")
-  props.put("key.serializer.class", "kafka.serializer.StringEncoder")
+  props.put("bootstrap.servers", "localhost:9092")
+  props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+  props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
 
   "The RddKafkaWriter" should "write to kafka" in withSparkSession { session =>
     assume(isReachable("localhost", 9092))
     import session.implicits._
     val input = session.sparkContext.parallelize(List("foo", "bar", "baz"))
     input.toDS.writeToKafka(props, x =>
-      new KeyedMessage[String, Array[Byte]]("test", null, x.getBytes))
+      new ProducerRecord[String, String]("test", x))
   }
 
   it should "write json" in withSparkSession { session =>
@@ -46,6 +46,6 @@ class DatasetKafkaWriterSpec extends FlatSpec with Matchers with SparkTest {
 
     val df = session.read.json(input)
     df.toJSON.writeToKafka(props, x =>
-      new KeyedMessage[String, Array[Byte]]("test", null, x.getBytes))
+      new ProducerRecord[String, String]("test", x))
   }
 }

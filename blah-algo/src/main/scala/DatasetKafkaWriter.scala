@@ -4,13 +4,13 @@ import java.util.Properties
 import scala.reflect.ClassTag
 import scala.language.implicitConversions
 import org.apache.spark.sql.Dataset
-import kafka.producer.{ProducerConfig, Producer, KeyedMessage}
+import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 
 class DatasetKafkaWriter[T: ClassTag](ds: Dataset[T]) extends Serializable {
-  def writeToKafka[K, V](props: Properties, fn: T => KeyedMessage[K, V]) =
+  def writeToKafka[K, V](props: Properties, fn: T => ProducerRecord[K, V]) =
     ds foreachPartition { events =>
-      val producer = new Producer[K, V](new ProducerConfig(props))
-      producer.send((events map fn).toArray: _*)
+      val producer = new KafkaProducer[K, V](props)
+      (events map fn) foreach producer.send
     }
 }
 

@@ -7,6 +7,7 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
+import akka.kafka.scaladsl._
 import blah.core.CorsSupport
 import blah.elastic.MappingUpdater
 
@@ -40,8 +41,8 @@ object Boot extends App
 
   Try(env.consumer) match {
     case Failure(e) => log.warning("Unable to connect to zookeeper.")
-    case Success(c) => Source.fromPublisher(c).runForeach { x =>
-      (x.message.split("@", 2)).toList match {
+    case Success(c) => c runForeach { x =>
+      (x.value.split("@", 2)).toList match {
         case e +: m +: Nil => env.websocketHub ! (e, m)
         case _ => println("Could not handle message")
       }
