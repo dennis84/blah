@@ -6,12 +6,11 @@ import spray.json._
 import JsonProtocol._
 
 class KafkaProducerActor(
-  producer: KafkaProducer[Array[Byte], String],
-  topic: String,
-  partition: Int
+  producer: KafkaProducer[String, String],
+  topic: String
 ) extends Actor {
   def receive = {
-    case e: Event => producer.send(new ProducerRecord(
-      topic, partition, null: Array[Byte], e.toJson.compactPrint))
+    case e: Event => producer.send(
+      new ProducerRecord(topic, e.toJson.compactPrint))
   }
 }
