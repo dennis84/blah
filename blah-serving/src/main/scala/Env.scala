@@ -5,7 +5,6 @@ import akka.stream.Materializer
 import akka.kafka._
 import akka.kafka.scaladsl._
 import org.apache.kafka.common.serialization.StringDeserializer
-import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import spray.json._
 import blah.core.HttpClient
 import blah.elastic.{ElasticClient, ElasticUri, MappingUpdater}
@@ -17,8 +16,7 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
   lazy val websocketHub = system.actorOf(Props(new WebsocketHub(websocketRoom)))
 
   lazy val consumerSettings = ConsumerSettings(system,
-    new ByteArrayDeserializer,
-    new StringDeserializer)
+    new StringDeserializer, new StringDeserializer)
     .withBootstrapServers(config.getString("consumer.broker.list"))
     .withGroupId("websocket")
   lazy val subscription = Subscriptions.topics("trainings")
