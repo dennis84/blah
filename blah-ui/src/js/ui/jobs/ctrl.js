@@ -29,7 +29,7 @@ function run(model, name) {
   return put('/jobs/' + name).then(data => {
     var m = clone(model)
     var index = findIndexByName(m.jobs, name)
-    m.jobs[index].running = true
+    m.jobs[index].clicked = true
     return m
   })
 }
@@ -46,7 +46,7 @@ function stop(model, name) {
   return del('/jobs/' + name).then(data => {
     var m = clone(model)
     var index = findIndexByName(m.jobs, name)
-    m.jobs[index].running = false
+    m.jobs[index].clicked = true
     return m
   })
 }
