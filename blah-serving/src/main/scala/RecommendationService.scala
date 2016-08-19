@@ -8,7 +8,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 class RecommendationService(env: Env)(
   implicit system: ActorSystem,
   materializer: Materializer
-) extends Service with ServingJsonProtocol with SprayJsonSupport {
+) extends Service with RecommendationJsonFormat with SprayJsonSupport {
   import system.dispatcher
 
   private val repo = new RecommendationRepo(env.elasticClient)

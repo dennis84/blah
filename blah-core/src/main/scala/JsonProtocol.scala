@@ -3,7 +3,7 @@ package blah.core
 import spray.json._
 import java.time.ZonedDateTime
 
-trait JsonProtocol extends DefaultJsonProtocol with NullOptions {
+trait JsonProtocol extends DefaultJsonProtocol {
   implicit val zonedDateTimeFmt = new RootJsonFormat[ZonedDateTime] {
     def write(d: ZonedDateTime): JsValue = JsString(d.toString)
     def read(v: JsValue): ZonedDateTime = v match {

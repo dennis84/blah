@@ -16,7 +16,7 @@ class SimilarityRepo(client: ElasticClient)(
   implicit system: ActorSystem,
   log: LoggingAdapter,
   mat: Materializer
-) extends SprayJsonSupport with ServingJsonProtocol {
+) extends SprayJsonSupport with SimilarityJsonFormat {
   import system.dispatcher
 
   def find(q: SimilarityQuery): Future[List[SimilarityItem]] =

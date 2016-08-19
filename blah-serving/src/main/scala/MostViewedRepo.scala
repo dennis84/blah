@@ -15,7 +15,7 @@ import blah.elastic.AggregationParser
 class MostViewedRepo(client: ElasticClient)(
   implicit system: ActorSystem,
   mat: Materializer
-) extends SprayJsonSupport with ServingJsonProtocol {
+) extends SprayJsonSupport with MostViewedJsonFormat {
   import system.dispatcher
 
   def find(q: MostViewedQuery): Future[List[MostViewed]] =

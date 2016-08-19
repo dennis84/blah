@@ -14,7 +14,7 @@ import blah.elastic.ElasticClient
 class RecommendationRepo(client: ElasticClient)(
   implicit system: ActorSystem,
   mat: Materializer
-) extends SprayJsonSupport with ServingJsonProtocol {
+) extends SprayJsonSupport with RecommendationJsonFormat {
   import system.dispatcher
 
   def find(q: RecommendationQuery): Future[List[RecommendationItem]] =

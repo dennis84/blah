@@ -14,7 +14,7 @@ import blah.elastic.ElasticClient
 class ReferrerRepo(client: ElasticClient)(
   implicit system: ActorSystem,
   mat: Materializer
-) extends SprayJsonSupport with ServingJsonProtocol {
+) extends SprayJsonSupport with ReferrerJsonFormat {
   import system.dispatcher
 
   def search(q: ReferrerQuery): Future[List[Referrer]] =

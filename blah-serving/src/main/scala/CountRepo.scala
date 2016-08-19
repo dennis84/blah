@@ -17,7 +17,7 @@ class CountRepo(client: ElasticClient)(
   implicit system: ActorSystem,
   log: LoggingAdapter,
   mat: Materializer
-) extends SprayJsonSupport with ServingJsonProtocol {
+) extends SprayJsonSupport with CountJsonFormat {
   import system.dispatcher
 
   def count(q: CountQuery): Future[Count] = client request HttpRequest(

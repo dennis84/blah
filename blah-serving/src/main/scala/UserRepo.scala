@@ -17,7 +17,7 @@ class UserRepo(client: ElasticClient)(
   implicit system: ActorSystem,
   log: LoggingAdapter,
   mat: Materializer
-) extends SprayJsonSupport with ServingJsonProtocol {
+) extends SprayJsonSupport with UserJsonFormat {
   import system.dispatcher
 
   def search(q: UserQuery): Future[List[User]] =

@@ -17,7 +17,7 @@ class SumRepo(client: ElasticClient)(
   implicit system: ActorSystem,
   log: LoggingAdapter,
   mat: Materializer
-) extends SprayJsonSupport with ServingJsonProtocol {
+) extends SprayJsonSupport with SumJsonFormat {
   import system.dispatcher
 
   def sum(q: SumQuery): Future[Sum] = client request HttpRequest(

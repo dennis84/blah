@@ -10,7 +10,7 @@ class MostViewedService(env: Env)(
   implicit system: ActorSystem,
   log: LoggingAdapter,
   materializer: Materializer
-) extends Service with ServingJsonProtocol with SprayJsonSupport {
+) extends Service with MostViewedJsonFormat with SprayJsonSupport {
   import system.dispatcher
 
   private val repo = new MostViewedRepo(env.elasticClient)

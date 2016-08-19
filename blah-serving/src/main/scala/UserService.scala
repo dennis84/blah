@@ -10,7 +10,7 @@ class UserService(env: Env)(
   implicit system: ActorSystem,
   log: LoggingAdapter,
   materializer: Materializer
-) extends Service with ServingJsonProtocol with SprayJsonSupport {
+) extends Service with UserJsonFormat with SprayJsonSupport {
   import system.dispatcher
 
   private val repo = new UserRepo(env.elasticClient)

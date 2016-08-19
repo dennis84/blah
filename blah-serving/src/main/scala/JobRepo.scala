@@ -16,7 +16,7 @@ class JobRepo(client: HttpClient)(
   implicit system: ActorSystem,
   log: LoggingAdapter,
   mat: Materializer
-) extends SprayJsonSupport with ServingJsonProtocol {
+) extends SprayJsonSupport with JobJsonFormat {
   import system.dispatcher
 
   def list(): Future[List[Job]] =
