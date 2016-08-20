@@ -1,0 +1,30 @@
+{
+  "id": "ui",
+  "cpus": 0.1,
+  "mem": 128.0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "blah/ui",
+      "network": "BRIDGE",
+      "portMappings": [
+        {"containerPort": 8002, "hostPort": 0, "servicePort": 8002, "protocol": "tcp"}
+      ]
+    }
+  },
+  "env": {
+    "RUST_LOG": "info",
+    "RUST_BACKTRACE": "1"
+  },
+  "labels":{
+    "HAPROXY_GROUP": "external",
+    "HAPROXY_0_VHOST": "ui.blah.local",
+    "HAPROXY_0_BACKEND_HTTP_HEALTHCHECK_OPTIONS": "  option  httpchk GET {healthCheckPath} HTTP/1.1\\r\\nHost:\\ ui.blah.local\n  timeout check {healthCheckTimeoutSeconds}s\n"
+  },
+  "healthChecks": [{
+    "protocol": "HTTP",
+    "path": "/healthcheck",
+    "intervalSeconds": 10
+  }]
+}

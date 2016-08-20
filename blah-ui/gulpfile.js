@@ -51,5 +51,12 @@ gulp.task('watch', function() {
   gulp.watch('src/css/**', ['css'])
 })
 
-gulp.task('build', ['css', 'js'])
-gulp.task('default', ['watch', 'css', 'js'])
+gulp.task('copy', function() {
+  gulp.src('./node_modules/bulma/css/bulma.css')
+    .pipe(gulp.dest('./assets/css'))
+  gulp.src('./node_modules/pikaday/css/pikaday.css')
+    .pipe(gulp.dest('./assets/css'))
+})
+
+gulp.task('build', ['css', 'js', 'copy'])
+gulp.task('default', ['watch', 'css', 'js', 'copy'])

@@ -29,7 +29,7 @@ eval $(bin/console env)
 bin/console build-all
 docker-compose up
 bin/console create-all
-open blah-ui/index.html
+open http://ui.blah.local
 ```
 
 ## Collecting

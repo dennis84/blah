@@ -1,0 +1,10 @@
+[package]
+name = "blah-ui"
+version = "0.0.1"
+
+[dependencies.nickel]
+version = "*"
+
+[[bin]]
+name = "blah-ui"
+path = "server.rs"
