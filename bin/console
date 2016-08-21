@@ -99,12 +99,19 @@ restart_app() {
       create_job funnel-signup
       create_job referrer
       ;;
+    ui)
+      docker build -t blah/ui blah-ui/
+      destroy_app "$app"
+      sleep 1
+      create_app "$app"
+      ;;
     *)
       echo "Error: App does not exist: $app"
       echo "Usage:"
       echo "  console restart api"
       echo "  console restart serving"
       echo "  console restart algo"
+      echo "  console restart ui"
       exit 1
   esac
 }

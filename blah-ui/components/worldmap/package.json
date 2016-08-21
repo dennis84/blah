@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "datamaps": "^0.5.7",
+    "emitter-component": "^1.1.1"
+  },
+  "scripts": {
+    "build": "browserify index.js --standalone WorldMap | uglifyjs > worldmap.js"
+  }
+}

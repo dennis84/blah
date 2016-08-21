@@ -1,9 +1,9 @@
 import {h} from 'virtual-dom'
 import nav from './nav'
 import widget from '../widget'
-import world from './map/world'
 import * as error from './common/error'
 import theme from './theme'
+import component from './common/component'
 
 function render(model, update, conn, storage) {
   return h('div.container', {
@@ -11,7 +11,9 @@ function render(model, update, conn, storage) {
   }, [
     nav(model, update, conn, storage),
     h('h1.has-text-centered', 'World Map'),
-    (model.error) ? error.unknown() : widget(world, model, update, {}, conn)
+    (model.error) ? error.unknown() : widget(component, model, update, {}, WorldMap, {
+      className: 'world-map'
+    })
   ])
 }
 

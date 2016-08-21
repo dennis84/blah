@@ -6,5 +6,6 @@ fn main() {
     let mut server = Nickel::new();
     server.get("/healthcheck", middleware!(""));
     server.utilize(StaticFilesHandler::new("assets"));
+    server.utilize(StaticFilesHandler::new("components"));
     server.listen("0.0.0.0:8002");
 }
