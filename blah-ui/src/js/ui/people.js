@@ -1,7 +1,7 @@
 import {h} from 'virtual-dom'
 import nav from './nav'
 import widget from '../widget'
-import explore from './people/explore'
+import component from './common/component'
 import * as error from './common/error'
 import theme from './theme'
 
@@ -11,7 +11,9 @@ function render(model, update, conn, storage) {
   }, [
     nav(model, update, conn, storage),
     h('h1.has-text-centered', 'People'),
-    (model.error) ? error.unknown() : widget(explore, model, update)
+    (model.error) ? error.unknown() : component(People, {
+      className: 'people'
+    })
   ])
 }
 

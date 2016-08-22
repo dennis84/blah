@@ -1,6 +1,6 @@
 var d3 = require('d3')
 var Datamap = require('datamaps')
-var connect = require('./websocket')
+var connect = require('../util/websocket')
 
 function WorldMap(node) {
   var conn = connect('ws://serving.blah.local/ws')

@@ -1,5 +1,5 @@
-import clone from 'clone'
-import {post} from '../../http'
+var clone = require('clone')
+var http = require('../util/http')
 
 /**
  * Search users.
@@ -9,14 +9,17 @@ import {post} from '../../http'
  *
  * @return {Promise} The model wrapped in a promise
  */
-function search(model, options = {}) {
-  return post('/users', options).then(data => {
+function search(model, options) {
+  if(options === undefined) options = {}
+  return http.post('/users', options).then(function(data) {
     var m = clone(model)
-    data.map(user => {
-      user.events = user.events.map(event => {
+    data.map(function(user) {
+      user.events = user.events.map(function(event) {
         event.date = new Date(event.date)
         return event
-      }).sort((a,b) => b.date - a.date)
+      }).sort(function(a,b) {
+        return b.date - a.date
+      })
     })
 
     m.users = data
@@ -45,7 +48,7 @@ function open(model, user) {
   return m
 }
 
-export {
-  search,
-  open
+module.exports = {
+  search: search,
+  open: open
 }
