@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "snabbdom": "^0.5.1"
+  },
+  "scripts": {
+    "build": "browserify index.js --standalone Jobs | uglifyjs > jobs.js"
+  }
+}
