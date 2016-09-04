@@ -49,6 +49,7 @@ gulp.task('css', function() {
 gulp.task('watch', function() {
   watch = true
   gulp.watch('src/css/**', ['css'])
+  gulp.watch('components/**', ['copy'])
 })
 
 gulp.task('copy', function() {
@@ -56,6 +57,12 @@ gulp.task('copy', function() {
     .pipe(gulp.dest('./assets/css'))
   gulp.src('./node_modules/pikaday/css/pikaday.css')
     .pipe(gulp.dest('./assets/css'))
+  gulp.src('./components/worldmap/worldmap.js')
+    .pipe(gulp.dest('./assets/js'))
+  gulp.src('./components/people/people.js')
+    .pipe(gulp.dest('./assets/js'))
+  gulp.src('./components/jobs/jobs.js')
+    .pipe(gulp.dest('./assets/js'))
 })
 
 gulp.task('build', ['css', 'js', 'copy'])

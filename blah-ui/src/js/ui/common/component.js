@@ -8,7 +8,11 @@ class Component {
 
   init() {
     var elem = document.createElement('div')
-    new this.Fn(elem)
+    var Fn = this.Fn
+    setTimeout(function() {
+      new Fn(elem)
+    }, 0)
+
     return elem
   }
 
