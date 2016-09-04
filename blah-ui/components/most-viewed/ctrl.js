@@ -1,5 +1,5 @@
-import clone from 'clone'
-import {post} from '../../http'
+var clone = require('clone')
+var http = require('../util/http')
 
 /**
  * Find most viewed items by collection.
@@ -12,12 +12,13 @@ import {post} from '../../http'
  * @return {Promise} The model wrapped in a promise
  */
 function find(model, options) {
-  return post('/most-viewed', mkQuery(options)).then((data) => {
-    var m = clone(model)
-    m.collection = options.collection
-    m.items = data
-    return m
-  })
+  return http.post('/most-viewed', mkQuery(options))
+    .then(function(data) {
+      var m = clone(model)
+      m.collection = options.collection
+      m.items = data
+      return m
+    })
 }
 
 function mkQuery(options) {
@@ -32,6 +33,6 @@ function mkQuery(options) {
   return query
 }
 
-export {
-  find
+module.exports = {
+  find: find
 }

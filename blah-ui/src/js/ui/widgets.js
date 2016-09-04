@@ -9,8 +9,8 @@ import similarities from './similarity/widget'
 import userCount from './user/count'
 import userBar from './user/bar'
 import sum from './sum/sum'
-import mostViewedList from './most-viewed/list'
 import referrers from './referrer/list'
+import component from './common/component'
 
 /**
  * Pie Chart: Browser Statistics Over a Year
@@ -200,8 +200,8 @@ function similarityWidget(model, update, conn) {
 /**
  * Most viewed items
  */
-function mostViewed(model, update, conn) {
-  return widget(mostViewedList, model, update, {}, conn, {
+function mostViewed() {
+  return component(MostViewed, {}, {
     title: 'Most Viewed Items',
     collection: 'view',
     limit: 10

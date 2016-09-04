@@ -18,7 +18,7 @@ function render(model, update, conn, storage) {
       widgets.totalRevenue(model, update, conn),
       widgets.recommendationWidget(model, update, conn),
       widgets.similarityWidget(model, update, conn),
-      widgets.mostViewed(model, update, conn),
+      widgets.mostViewed(),
       widgets.referringSites(model, update, conn)
     ])
   ])
