@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "clone": "^1.0.2",
+    "snabbdom": "^0.5.1"
+  },
+  "scripts": {
+    "build": "browserify index.js --standalone Sum | uglifyjs > sum.js"
+  }
+}

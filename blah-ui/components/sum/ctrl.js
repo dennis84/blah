@@ -1,5 +1,5 @@
-import clone from 'clone'
-import {post} from '../../http'
+var clone = require('clone')
+var http = require('../util/http')
 
 /**
  * Fetch sum from serving layer.
@@ -10,11 +10,12 @@ import {post} from '../../http'
  * @return {Promise} The model wrapped in a promise
  */
 function sum(model, options) {
-  return post('/sum', mkQuery(options)).then((data) => {
-    var m = clone(model)
-    m.sum = data.sum
-    return m
-  })
+  return http.post('/sum', mkQuery(options))
+    .then(function(data) {
+      var m = clone(model)
+      m.sum = data.sum
+      return m
+    })
 }
 
 function mkQuery(options) {
@@ -34,6 +35,6 @@ function mkQuery(options) {
   return query
 }
 
-export {
-  sum
+module.exports = {
+  sum: sum
 }

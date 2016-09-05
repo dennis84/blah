@@ -67,6 +67,8 @@ gulp.task('copy', function() {
     .pipe(gulp.dest('./assets/js'))
   gulp.src('./components/referrer/referrer.js')
     .pipe(gulp.dest('./assets/js'))
+  gulp.src('./components/sum/sum.js')
+    .pipe(gulp.dest('./assets/js'))
 })
 
 gulp.task('build', ['css', 'js', 'copy'])

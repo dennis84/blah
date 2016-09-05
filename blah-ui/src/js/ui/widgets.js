@@ -8,7 +8,6 @@ import recommendations from './recommendation/widget'
 import similarities from './similarity/widget'
 import userCount from './user/count'
 import userBar from './user/bar'
-import sum from './sum/sum'
 import component from './common/component'
 
 /**
@@ -174,7 +173,7 @@ function mobileOsStats(model, update, conn) {
  * Sum: Total Revenue
  */
 function totalRevenue(model, update, conn) {
-  return widget(sum, model, update, {}, conn, {
+  return component(Sum, {}, {
     collection: 'buy',
     template: '$ {value}',
     prop: 'price',
