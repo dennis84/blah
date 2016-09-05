@@ -19,7 +19,7 @@ function render(model, update, conn, storage) {
       widgets.recommendationWidget(model, update, conn),
       widgets.similarityWidget(model, update, conn),
       widgets.mostViewed(),
-      widgets.referringSites(model, update, conn)
+      widgets.referringSites()
     ])
   ])
 }

@@ -1,5 +1,5 @@
-import clone from 'clone'
-import {post} from '../../http'
+var clone = require('clone')
+var http = require('../util/http')
 
 /**
  * Find all referrers.
@@ -12,11 +12,12 @@ import {post} from '../../http'
  * @return {Promise} The model wrapped in a promise
  */
 function search(model, options) {
-  return post('/referrer', mkQuery(options)).then((data) => {
-    var m = clone(model)
-    m.referrers = data
-    return m
-  })
+  return http.post('/referrer', mkQuery(options))
+    .then(function(data) {
+      var m = clone(model)
+      m.referrers = data
+      return m
+    })
 }
 
 function mkQuery(options) {
@@ -27,6 +28,6 @@ function mkQuery(options) {
   return query
 }
 
-export {
-  search
+module.exports = {
+  search: search
 }

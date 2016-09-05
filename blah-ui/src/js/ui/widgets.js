@@ -9,7 +9,6 @@ import similarities from './similarity/widget'
 import userCount from './user/count'
 import userBar from './user/bar'
 import sum from './sum/sum'
-import referrers from './referrer/list'
 import component from './common/component'
 
 /**
@@ -211,8 +210,8 @@ function mostViewed() {
 /**
  * Referring Sites
  */
-function referringSites(model, update, conn) {
-  return widget(referrers, model, update, {}, conn, {
+function referringSites() {
+  return component(Referrer, {}, {
     title: 'Referring Sites',
     limit: 10
   })
