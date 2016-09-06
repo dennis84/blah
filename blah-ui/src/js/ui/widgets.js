@@ -172,8 +172,8 @@ function mobileOsStats(model, update, conn) {
 /**
  * Sum: Total Revenue
  */
-function totalRevenue(model, update, conn) {
-  return component(Sum, {}, {
+function totalRevenue(conn) {
+  return component(Sum, {}, conn.ws, {
     collection: 'buy',
     template: '$ {value}',
     prop: 'price',
@@ -198,8 +198,8 @@ function similarityWidget(model, update, conn) {
 /**
  * Most viewed items
  */
-function mostViewed() {
-  return component(MostViewed, {}, {
+function mostViewed(conn) {
+  return component(MostViewed, {}, conn.ws, {
     title: 'Most Viewed Items',
     collection: 'view',
     limit: 10
@@ -209,8 +209,8 @@ function mostViewed() {
 /**
  * Referring Sites
  */
-function referringSites() {
-  return component(Referrer, {}, {
+function referringSites(conn) {
+  return component(Referrer, {}, conn.ws, {
     title: 'Referring Sites',
     limit: 10
   })

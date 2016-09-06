@@ -1,9 +1,9 @@
 var d3 = require('d3')
 var Datamap = require('datamaps')
-var connect = require('../util/websocket')
+var WebSocketListener = require('../util/websocket')
 
-function WorldMap(node) {
-  var conn = connect('ws://serving.blah.local/ws')
+function WorldMap(node, ws) {
+  var conn = new WebSocketListener(ws)
 
   setTimeout(function draw() {
     var ratio = 750 / 500

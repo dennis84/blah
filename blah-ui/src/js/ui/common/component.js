@@ -1,20 +1,17 @@
 import {h} from 'virtual-dom'
 
 class Component {
-  constructor(Fn, options = {}) {
+  constructor(Fn, ...args) {
     this.type = 'Widget'
     this.Fn = Fn
-    this.options = options
+    this.args = args
   }
 
   init() {
     var elem = document.createElement('div')
     var Fn = this.Fn
-    var options = this.options
-    setTimeout(function() {
-      new Fn(elem, options)
-    }, 0)
-
+    var args = this.args
+    setTimeout(() => new Fn(elem, ...args), 0)
     return elem
   }
 
@@ -25,8 +22,8 @@ class Component {
   }
 }
 
-function component(Fn, attrs = {}, options = {}) {
-  return h('div', attrs, new Component(Fn, options))
+function component(Fn, attrs = {}, ...args) {
+  return h('div', attrs, new Component(Fn, ...args))
 }
 
 export default component

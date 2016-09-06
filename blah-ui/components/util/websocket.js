@@ -1,32 +1,25 @@
 var emitter = require('emitter-component')
 
-function Connection(ws) {
-  this.ws = ws
-}
-
-emitter(Connection.prototype)
-
-function connect(url) {
-  var ws = new WebSocket(url)
-  var conn = new Connection(ws)
+function WebSocketListener(ws) {
+  var that = this
 
   ws.onopen = function() {
-    conn.emit('opened', conn)
+    that.emit('opened', that)
   }
 
   ws.onclose = function() {
-    conn.emit('closed', conn)
+    that.emit('closed', that)
   }
 
   ws.onmessage = function(e) {
     try {
       var res = parse(e.data)
-      conn.emit(res.event, res.data)
+      that.emit(res.event, res.data)
     } catch(e) {}
   }
-
-  return conn
 }
+
+emitter(WebSocketListener.prototype)
 
 function parse(text) {
   var res = text.match(/^([a-z-]+)@(.*)$/)
@@ -34,4 +27,4 @@ function parse(text) {
   return {event: res[1], data: data}
 }
 
-module.exports = connect
+module.exports = WebSocketListener

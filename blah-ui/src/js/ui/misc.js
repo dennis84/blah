@@ -15,11 +15,11 @@ function render(model, update, conn, storage) {
       className: 'widgets',
       itemSelector: '.widget'
     }, [
-      widgets.totalRevenue(model, update, conn),
+      widgets.totalRevenue(conn),
       widgets.recommendationWidget(model, update, conn),
       widgets.similarityWidget(model, update, conn),
-      widgets.mostViewed(),
-      widgets.referringSites()
+      widgets.mostViewed(conn),
+      widgets.referringSites(conn)
     ])
   ])
 }

@@ -5,12 +5,12 @@ var patch = snabbdom.init([
   require('snabbdom/modules/style'),
   require('snabbdom/modules/eventlisteners'),
 ])
-var connect = require('../util/websocket')
+var WebSocketListener = require('../util/websocket')
 var ctrl = require('./ctrl')
 var render = require('./render')
 
-function Sum(node, options) {
-  var conn = connect('ws://serving.blah.local/ws')
+function Sum(node, ws, options) {
+  var conn = new WebSocketListener(ws)
   var state = {}
   var vnode = render(state, update, options)
 
