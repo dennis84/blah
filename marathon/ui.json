@@ -9,13 +9,9 @@
       "image": "blah/ui",
       "network": "BRIDGE",
       "portMappings": [
-        {"containerPort": 8002, "hostPort": 0, "servicePort": 8002, "protocol": "tcp"}
+        {"containerPort": 80, "hostPort": 0, "servicePort": 8002, "protocol": "tcp"}
       ]
     }
-  },
-  "env": {
-    "RUST_LOG": "info",
-    "RUST_BACKTRACE": "1"
   },
   "labels":{
     "HAPROXY_GROUP": "external",

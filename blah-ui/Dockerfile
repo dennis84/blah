@@ -1,10 +1,3 @@
-FROM blah/rust
+FROM nginx:alpine
 
-RUN mkdir /app
-ADD . /app
-
-WORKDIR /app
-
-RUN cargo build --release
-
-ENTRYPOINT ["target/release/blah-ui"]
+COPY assets /usr/share/nginx/html
