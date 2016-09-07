@@ -4,7 +4,6 @@ import count from './count/count'
 import countDiff from './count/count-diff'
 import bar from './count/bar'
 import pie from './count/pie'
-import recommendations from './recommendation/widget'
 import similarities from './similarity/widget'
 import userCount from './user/count'
 import userBar from './user/bar'
@@ -185,7 +184,7 @@ function totalRevenue(conn) {
  * Recommendations
  */
 function recommendationWidget(model, update, conn) {
-  return widget(recommendations, model, update, {})
+  return component(Recommendation, {}, {})
 }
 
 /**
