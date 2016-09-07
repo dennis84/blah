@@ -4,7 +4,6 @@ import count from './count/count'
 import countDiff from './count/count-diff'
 import bar from './count/bar'
 import pie from './count/pie'
-import similarities from './similarity/widget'
 import userCount from './user/count'
 import userBar from './user/bar'
 import component from './common/component'
@@ -183,15 +182,15 @@ function totalRevenue(conn) {
 /**
  * Recommendations
  */
-function recommendationWidget(model, update, conn) {
+function recommendationWidget() {
   return component(Recommendation, {}, {})
 }
 
 /**
  * Simiarities
  */
-function similarityWidget(model, update, conn) {
-  return widget(similarities, model, update, {})
+function similarityWidget() {
+  return component(Similarity, {}, {})
 }
 
 /**

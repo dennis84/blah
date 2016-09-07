@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "clone": "^1.0.2",
+    "debounce": "^1.0.0",
+    "snabbdom": "^0.5.1"
+  },
+  "scripts": {
+    "build": "browserify index.js --standalone Similarity | uglifyjs > similarity.js"
+  }
+}
