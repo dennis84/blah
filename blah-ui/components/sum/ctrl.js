@@ -1,5 +1,5 @@
 var clone = require('clone')
-var http = require('../util/http')
+var xhr = require('xhr')
 
 /**
  * Fetch sum from serving layer.
@@ -10,12 +10,20 @@ var http = require('../util/http')
  * @return {Promise} The model wrapped in a promise
  */
 function sum(model, options) {
-  return http.post('/sum', mkQuery(options))
-    .then(function(data) {
+  return new Promise(function(resolve, reject) {
+    xhr.post(options.baseUrl + '/sum', {
+      json: mkQuery(options)
+    }, function(err, resp, body) {
+      if(0 === resp.statusCode) {
+        reject(resp)
+        return
+      }
+
       var m = clone(model)
-      m.sum = data.sum
-      return m
+      m.sum = body.sum
+      resolve(m)
     })
+  })
 }
 
 function mkQuery(options) {

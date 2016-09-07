@@ -7,6 +7,7 @@ import pie from './count/pie'
 import userCount from './user/count'
 import userBar from './user/bar'
 import component from './common/component'
+import {SERVING_URL} from './../config'
 
 /**
  * Pie Chart: Browser Statistics Over a Year
@@ -172,6 +173,7 @@ function mobileOsStats(model, update, conn) {
  */
 function totalRevenue(conn) {
   return component(Sum, {}, conn.ws, {
+    baseUrl: SERVING_URL,
     collection: 'buy',
     template: '$ {value}',
     prop: 'price',
