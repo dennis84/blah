@@ -2,7 +2,8 @@
   "dependencies": {
     "clone": "^1.0.2",
     "moment": "^2.14.1",
-    "snabbdom": "^0.5.1"
+    "snabbdom": "^0.5.1",
+    "xhr": "^2.2.2"
   },
   "scripts": {
     "build": "browserify index.js --standalone Jobs | uglifyjs > jobs.js"

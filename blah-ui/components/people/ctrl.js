@@ -1,5 +1,5 @@
 var clone = require('clone')
-var http = require('../util/http')
+var xhr = require('xhr')
 
 /**
  * Search users.
@@ -10,20 +10,23 @@ var http = require('../util/http')
  * @return {Promise} The model wrapped in a promise
  */
 function search(model, options) {
-  if(options === undefined) options = {}
-  return http.post('/users', options).then(function(data) {
-    var m = clone(model)
-    data.map(function(user) {
-      user.events = user.events.map(function(event) {
-        event.date = new Date(event.date)
-        return event
-      }).sort(function(a,b) {
-        return b.date - a.date
+  return new Promise(function(resolve, reject) {
+    xhr.post(options.baseUrl + '/users', {
+      json: mkQuery(options)
+    }, function(err, resp, body) {
+      var m = clone(model)
+      body.map(function(user) {
+        user.events = user.events.map(function(event) {
+          event.date = new Date(event.date)
+          return event
+        }).sort(function(a,b) {
+          return b.date - a.date
+        })
       })
-    })
 
-    m.users = data
-    return m
+      m.users = body
+      resolve(m)
+    })
   })
 }
 
@@ -46,6 +49,12 @@ function open(model, user) {
   }
 
   return m
+}
+
+function mkQuery(options) {
+  var query = {}
+  query.filterBy = options.filterBy
+  return query
 }
 
 module.exports = {

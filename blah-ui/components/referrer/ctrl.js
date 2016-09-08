@@ -1,5 +1,5 @@
 var clone = require('clone')
-var http = require('../util/http')
+var xhr = require('xhr')
 
 /**
  * Find all referrers.
@@ -12,12 +12,15 @@ var http = require('../util/http')
  * @return {Promise} The model wrapped in a promise
  */
 function search(model, options) {
-  return http.post('/referrer', mkQuery(options))
-    .then(function(data) {
+  return new Promise(function(resolve, reject) {
+    xhr.post(options.baseUrl + '/referrer', {
+      json: mkQuery(options)
+    }, function(err, resp, body) {
       var m = clone(model)
-      m.referrers = data
-      return m
+      m.referrers = body
+      resolve(m)
     })
+  })
 }
 
 function mkQuery(options) {

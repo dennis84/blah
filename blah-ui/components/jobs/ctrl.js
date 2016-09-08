@@ -1,5 +1,5 @@
 var clone = require('clone')
-var http = require('../util/http')
+var xhr = require('xhr')
 
 /**
  * List jobs.
@@ -10,13 +10,13 @@ var http = require('../util/http')
  * @return {Promise} The model wrapped in a promise
  */
 function list(model, options) {
-  if(undefined === options) options = {}
-  return http.get('/jobs', options)
-    .then(function(data) {
+  return new Promise(function(resolve, reject) {
+    xhr.get(options.baseUrl + '/jobs', {}, function(err, resp, body) {
       var m = clone(model)
-      m.jobs = data
-      return m
+      m.jobs = JSON.parse(body)
+      resolve(m)
     })
+  })
 }
 
 /**
@@ -27,14 +27,15 @@ function list(model, options) {
  *
  * @return {Promise} The model wrapped in a promise
  */
-function run(model, name) {
-  return http.put('/jobs/' + name)
-    .then(function(data) {
+function run(model, name, options) {
+  return new Promise(function(resolve, reject) {
+    xhr.put(options.baseUrl + '/jobs/' + name, {}, function(err, resp, body) {
       var m = clone(model)
       var index = findIndexByName(m.jobs, name)
       m.jobs[index].clicked = true
-      return m
+      resolve(m)
     })
+  })
 }
 
 /**
@@ -45,14 +46,15 @@ function run(model, name) {
  *
  * @return {Promise} The model wrapped in a promise
  */
-function stop(model, name) {
-  return del('/jobs/' + name)
-    .then(function(data) {
+function stop(model, name, options) {
+  return new Promise(function(resolve, reject) {
+    xhr.del(options.baseUrl + '/jobs/' + name, {}, function(err, resp, body) {
       var m = clone(model)
       var index = findIndexByName(m.jobs, name)
       m.jobs[index].clicked = true
-      return m
+      resolve(m)
     })
+  })
 }
 
 function findIndexByName(xs, name) {

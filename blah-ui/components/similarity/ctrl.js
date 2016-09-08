@@ -1,5 +1,5 @@
 var clone = require('clone')
-var http = require('../util/http')
+var xhr = require('xhr')
 
 /**
  * Fetch similar items from serving layer.
@@ -12,13 +12,24 @@ var http = require('../util/http')
  * @return {Promise} The model wrapped in a promise
  */
 function find(model, options) {
-  return http.post('/similarity', options)
-    .then(function(data) {
+  return new Promise(function(resolve, reject) {
+    xhr.post(options.baseUrl + '/similarity', {
+      json: mkQuery(options)
+    }, function(err, resp, body) {
       var m = clone(model)
       m.items = options.items
-      m.similarities = data
-      return m
+      m.similarities = body
+      resolve(m)
     })
+  })
+}
+
+function mkQuery(options) {
+  var query = {}
+  query.user = options.user
+  if(options.collection) query.collection = options.collection
+  if(options.limit) query.limit = options.limit
+  return query
 }
 
 module.exports = {

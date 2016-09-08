@@ -1,23 +1,23 @@
-var h = require('virtual-dom/h')
+var h = require('snabbdom/h')
 var moment = require('moment')
 var debounce = require('debounce')
 var ctrl = require('./ctrl')
 
 function views(xs, update) {
-  if(undefined === xs || 0 == xs.length) return
-  return h('div.people-list', xs.map(function(user) {
+  if(undefined === xs || 0 == xs.length) return []
+  return [h('div.people-list', xs.map(function(user) {
     return h('div.card.is-fullwidth', [
       h('header.card-header', [
         h('p.card-header-title', user.user),
         h('a.card-header-icon', {
-          onclick: function() {
+          on: {click: function() {
             update(ctrl.open, user)
-          }
-        }, h('i.material-icons', 'expand_more'))
+          }}
+        }, [h('i.material-icons', 'expand_more')])
       ]),
       user.opened ? h('div.card-content', [
         h('div.media', [
-          h('div.media-left', h('i.material-icons', 'face')),
+          h('div.media-left', [h('i.material-icons', 'face')]),
           h('div.media-content', [
             h('p.title.is-5', user.user),
             h('p.subtitle.is-6', [
@@ -31,39 +31,45 @@ function views(xs, update) {
         h('div.list', user.events.map(function(evt) {
           return h('div.level.list-item', [
             h('div.level-left', [
-              h('div.level-item', h('span.tag', {
+              h('div.level-item', [h('span.tag', {
                 className: 'is-collection-' + evt.collection
-              }, moment(evt.date).calendar())),
-              evt.item ? h('div.level-item', h('span.tag', evt.item)) : null,
+              }, moment(evt.date).calendar())]),
+              evt.item ? h('div.level-item', [h('span.tag', evt.item)]) : '',
               h('div.level-item', evt.title)
             ])
           ])
         }))
-      ]) : null
+      ]) : ''
     ])
-  }))
+  }))]
 }
 
-function render(model, update) {
+function render(model, update, options) {
   return h('div.explore', [
     h('div.control', [
       h('input.input.is-large', {
-        placeholder: 'Search users ...',
-        oninput: debounce(function(e) {
-          if(!e.target.value) {
-            e.target.classList.remove('dirty')
-            return
-          }
+        props: {
+          placeholder: 'Search users ...',
+        },
+        on: {
+          input: debounce(function(e) {
+            if(!e.target.value) {
+              e.target.classList.remove('dirty')
+              return
+            }
 
-          e.target.classList.add('dirty')
-          update(ctrl.search, {filterBy: [
-            {prop: 'user', operator: 'contains', value: e.target.value}
-          ]})
-        }, 500)
+            e.target.classList.add('dirty')
+            update(ctrl.search, {
+              baseUrl: options.baseUrl,
+              filterBy: [
+                {prop: 'user', operator: 'contains', value: e.target.value}
+              ]
+            })
+          }, 500)
+        }
       })
-    ]),
-    views(model.users, update)
-  ])
+    ])
+  ].concat(views(model.users, update)))
 }
 
 module.exports = render

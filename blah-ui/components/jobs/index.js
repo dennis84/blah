@@ -9,9 +9,9 @@ var h = require('snabbdom/h')
 var ctrl = require('./ctrl')
 var render = require('./render')
 
-function Jobs(node) {
+function Jobs(node, options) {
   var state = {}
-  var vnode = render(state, update)
+  var vnode = render(state, update, options)
 
   function update(fn) {
     var args = [].slice.call(arguments, 1)
@@ -20,19 +20,19 @@ function Jobs(node) {
     if(res instanceof Promise) {
       res.then(function(m) {
         state = m
-        vnode = patch(vnode, render(m, update))
+        vnode = patch(vnode, render(m, update, options))
       })
     } else {
       state = res
-      vnode = patch(vnode, render(res, update))
+      vnode = patch(vnode, render(res, update, options))
     }
   }
 
   patch(node, vnode)
-  update(ctrl.list)
+  update(ctrl.list, options)
 
   setInterval(function() {
-    update(ctrl.list)
+    update(ctrl.list, options)
   }, 5000)
 }
 

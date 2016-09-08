@@ -29,7 +29,10 @@ function render(model, update, options) {
             input: debounce(function(e) {
               if(!e.target.value) return
               var items = e.target.value.split(",")
-              update(ctrl.find, {items: items})
+              update(ctrl.find, {
+                baseUrl: options.baseUrl,
+                items: items
+              })
             }, 500)
           }
         })

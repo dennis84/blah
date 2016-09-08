@@ -185,14 +185,18 @@ function totalRevenue(conn) {
  * Recommendations
  */
 function recommendationWidget() {
-  return component(Recommendation, {}, {})
+  return component(Recommendation, {}, {
+    baseUrl: SERVING_URL
+  })
 }
 
 /**
  * Simiarities
  */
 function similarityWidget() {
-  return component(Similarity, {}, {})
+  return component(Similarity, {}, {
+    baseUrl: SERVING_URL
+  })
 }
 
 /**
@@ -200,6 +204,7 @@ function similarityWidget() {
  */
 function mostViewed(conn) {
   return component(MostViewed, {}, conn.ws, {
+    baseUrl: SERVING_URL,
     title: 'Most Viewed Items',
     collection: 'view',
     limit: 10
@@ -211,6 +216,7 @@ function mostViewed(conn) {
  */
 function referringSites(conn) {
   return component(Referrer, {}, conn.ws, {
+    baseUrl: SERVING_URL,
     title: 'Referring Sites',
     limit: 10
   })

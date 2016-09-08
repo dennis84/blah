@@ -28,7 +28,10 @@ function render(model, update, options) {
           on: {
             input: debounce(function(e) {
               if(!e.target.value) return
-              update(ctrl.find, {user: e.target.value})
+              update(ctrl.find, {
+                baseUrl: options.baseUrl,
+                user: e.target.value
+              })
             }, 500)
           }
         })

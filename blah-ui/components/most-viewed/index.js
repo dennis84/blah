@@ -6,12 +6,12 @@ var patch = snabbdom.init([
   require('snabbdom/modules/eventlisteners'),
 ])
 var h = require('snabbdom/h')
-var WebSocketListener = require('../util/websocket')
+var listen = require('./websocket')
 var ctrl = require('./ctrl')
 var render = require('./render')
 
 function MostViewed(node, ws, options) {
-  var conn = new WebSocketListener(ws)
+  var conn = listen(ws)
   var state = {}
   var vnode = render(state, update, options)
 

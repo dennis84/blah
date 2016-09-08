@@ -1,27 +1,35 @@
-var mainLoop = require('../util/main-loop')
-var bindAppend = require('../util/bind-append')
-var render = require('./render')
+var snabbdom = require('snabbdom')
+var patch = snabbdom.init([
+  require('snabbdom/modules/class'),
+  require('snabbdom/modules/props'),
+  require('snabbdom/modules/style'),
+  require('snabbdom/modules/eventlisteners'),
+])
+var h = require('snabbdom/h')
 var ctrl = require('./ctrl')
+var render = require('./render')
 
-function People(node) {
+function People(node, options) {
   var state = {}
-  var renderFn = bindAppend(render, null, update)
-  var loop = mainLoop(state, renderFn, node)
+  var vnode = render(state, update, options)
 
   function update(fn) {
     var args = [].slice.call(arguments, 1)
-    var res = fn.apply(null, [loop.state].concat(args))
+    var res = fn.apply(null, [state].concat(args))
 
     if(res instanceof Promise) {
       res.then(function(m) {
-        loop.update(m)
+        state = m
+        vnode = patch(vnode, render(m, update, options))
       })
     } else {
-      loop.update(res)
+      state = res
+      vnode = patch(vnode, render(res, update, options))
     }
   }
 
-  update(ctrl.search)
+  patch(node, vnode)
+  update(ctrl.search, options)
 }
 
 module.exports = People

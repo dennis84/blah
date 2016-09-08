@@ -1,5 +1,5 @@
 var clone = require('clone')
-var http = require('../util/http')
+var xhr = require('xhr')
 
 /**
  * Find most viewed items by collection.
@@ -12,13 +12,16 @@ var http = require('../util/http')
  * @return {Promise} The model wrapped in a promise
  */
 function find(model, options) {
-  return http.post('/most-viewed', mkQuery(options))
-    .then(function(data) {
+  return new Promise(function(resolve, reject) {
+    xhr.post(options.baseUrl + '/most-viewed', {
+      json: mkQuery(options)
+    }, function(err, resp, body) {
       var m = clone(model)
       m.collection = options.collection
-      m.items = data
-      return m
+      m.items = body
+      resolve(m)
     })
+  })
 }
 
 function mkQuery(options) {

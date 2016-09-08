@@ -2,7 +2,7 @@ var h = require('snabbdom/h')
 var moment = require('moment')
 var ctrl = require('./ctrl')
 
-function button(job, update) {
+function button(job, update, options) {
   if('queued' === job.status || job.clicked) {
     return h('a.button.is-loading', 'Loa')
   }
@@ -11,7 +11,7 @@ function button(job, update) {
     return h('a.button.is-danger', {
       on: {
         click: function(e) {
-          update(ctrl.stop, job.name)
+          update(ctrl.stop, job.name, options)
         }
       }
     }, 'Stop')
@@ -20,13 +20,13 @@ function button(job, update) {
   return h('a.button.is-primary', {
     on: {
       click: function(e) {
-        update(ctrl.run, job.name)
+        update(ctrl.run, job.name, options)
       }
     }
   }, 'Run')
 }
 
-function jobs(xs, update) {
+function jobs(xs, update, options) {
   if(undefined === xs || 0 == xs.length) return []
   return h('div.people-list', xs.map(function(job) {
     var lastSuccess = job.lastSuccess
@@ -35,15 +35,15 @@ function jobs(xs, update) {
       h('header.card-header', [
         h('p.card-header-title', job.name),
         h('i', 'Last success: ' + (lastSuccess || '-')),
-        button(job, update)
+        button(job, update, options)
       ])
     ])
   }))
 }
 
-function render(model, update) {
+function render(model, update, options) {
   return h('div.jobs', [
-    jobs(model.jobs, update)
+    jobs(model.jobs, update, options)
   ])
 }
 
