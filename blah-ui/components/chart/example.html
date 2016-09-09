@@ -24,13 +24,13 @@
         {key: '3', value: 30}
       ])
 
-      var now = moment()
-      var from = now.subtract(1, 'hour')
-      var to = now.add(1, 'hour')
+      var from = moment().subtract(3, 'hour')
+      var to = moment().add(1, 'hour')
       Chart.line(line, Chart.timeframe([
-        {date: now.subtract(30, 'minutes').toISOString(), count: 10},
-        {date: now.subtract(20, 'minutes').toISOString(), value: 20},
-        {date: now.subtract(10, 'minutes').toISOString(), value: 30}
+        {date: moment().startOf('hour').subtract(3, 'hour').toISOString(), count: 10},
+        {date: moment().startOf('hour').subtract(2, 'hour').toISOString(), count: 20},
+        {date: moment().startOf('hour').subtract(1, 'hour').toISOString(), count: 30},
+        {date: moment().startOf('hour').toISOString(), count: 40}
       ], from, to))
 
       Chart.donut(donut, [
