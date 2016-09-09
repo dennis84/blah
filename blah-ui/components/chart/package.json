@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "d3": "^4.2.2",
+    "moment": "^2.14.1",
+    "xtend": "^4.0.1"
+  },
+  "scripts": {
+    "build": "browserify index.js --standalone Chart | uglifyjs > chart.js"
+  }
+}
