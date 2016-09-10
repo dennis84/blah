@@ -16,9 +16,9 @@ function render(model, update, conn, storage) {
       className: 'widgets',
       itemSelector: '.widget'
     }, [
-      widgets.visitorsToday(model, update, conn),
-      widgets.visitorsByCountry(model, update, conn),
-      widgets.uniqueVisitors(model, update, conn)
+      widgets.visitorsToday(conn),
+      widgets.visitorsByCountry(conn),
+      widgets.uniqueVisitors(conn)
     ])
   ])
 }

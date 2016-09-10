@@ -1,5 +1,5 @@
-import clone from 'clone'
-import {post} from '../../http'
+var clone = require('clone')
+var xhr = require('xhr')
 
 /**
  * Gets the user count from serving layer.
@@ -13,10 +13,14 @@ import {post} from '../../http'
  * @return {Promise} The model wrapped in a promise
  */
 function count(model, options) {
-  return post('/user-count', mkQuery(options)).then((data) => {
-    var m = clone(model)
-    m.count = data.count
-    return m
+  return new Promise(function(resolve, reject) {
+    xhr.post(options.baseUrl + '/user-count', {
+      json: mkQuery(options)
+    }, function(err, resp, body) {
+      var m = clone(model)
+      m.count = body.count
+      resolve(m)
+    })
   })
 }
 
@@ -32,10 +36,14 @@ function count(model, options) {
  * @return {Promise} The model wrapped in a promise
  */
 function grouped(model, options) {
-  return post('/user-count', mkQuery(options)).then((data) => {
-    var m = clone(model)
-    m.users = data
-    return m
+  return new Promise(function(resolve, reject) {
+    xhr.post(options.baseUrl + '/user-count', {
+      json: mkQuery(options)
+    }, function(err, resp, body) {
+      var m = clone(model)
+      m.users = body
+      resolve(m)
+    })
   })
 }
 
@@ -52,7 +60,7 @@ function mkQuery(options) {
   return query
 }
 
-export {
-  count,
-  grouped
+module.exports = {
+  count: count,
+  grouped: grouped
 }

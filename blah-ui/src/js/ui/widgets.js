@@ -4,8 +4,6 @@ import count from './count/count'
 import countDiff from './count/count-diff'
 import bar from './count/bar'
 import pie from './count/pie'
-import userCount from './user/count'
-import userBar from './user/bar'
 import component from './common/component'
 import {SERVING_URL} from './../config'
 
@@ -45,8 +43,9 @@ function pageviews(model, update, conn) {
 /**
  * Count: Number of Visitors Today
  */
-function visitorsToday(model, update, conn) {
-  return widget(userCount, model, update, {}, conn, {
+function visitorsToday(conn) {
+  return component(User.Count, {}, conn.ws, {
+    baseUrl: SERVING_URL,
     filterBy: [{
       prop: 'date.from',
       operator: 'gte',
@@ -59,8 +58,9 @@ function visitorsToday(model, update, conn) {
 /**
  * Bar Chart: Visitors by Country
  */
-function visitorsByCountry(model, update, conn) {
-  return widget(userBar, model, update, {}, conn, {
+function visitorsByCountry(conn) {
+  return component(User.Bar, {}, conn.ws, {
+    baseUrl: SERVING_URL,
     groupBy: ['country'],
     title: 'Visitors by Country'
   })
@@ -69,8 +69,11 @@ function visitorsByCountry(model, update, conn) {
 /**
  * Count: Unique Visitors
  */
-function uniqueVisitors(model, update, conn) {
-  return widget(userCount, model, update, {}, conn, {title: 'Unique Visitors'})
+function uniqueVisitors(conn) {
+  return component(User.Count, {}, conn.ws, {
+    baseUrl: SERVING_URL,
+    title: 'Unique Visitors'
+  })
 }
 
 /**

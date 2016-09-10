@@ -77,6 +77,8 @@ gulp.task('copy', function() {
     .pipe(gulp.dest('./assets/js'))
   gulp.src('./components/funnel/funnel.js')
     .pipe(gulp.dest('./assets/js'))
+  gulp.src('./components/user/user.js')
+    .pipe(gulp.dest('./assets/js'))
 })
 
 gulp.task('build', ['css', 'js', 'copy'])
