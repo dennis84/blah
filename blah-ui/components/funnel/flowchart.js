@@ -1,6 +1,5 @@
-import h from 'virtual-dom/h'
-import {hook} from '../../hook'
-import mermaid from 'mermaid'
+var h = require('snabbdom/h')
+var mermaid = require('mermaid')
 
 /**
  * Generate flowchart data from funnel response.
@@ -30,22 +29,30 @@ function mkGraph(xs) {
     var parent = item.parent ? item.parent : 'x'
     var parentChar = getChar(parent)
     var itemChar = getChar(item.item)
-    data += `${parentChar}((${parent})) -- ${item.count} --> ${itemChar}((${item.item}))\n`
+
+    data += parentChar + '((' + parent + ')) -- '
+    data += item.count + ' --> ' + itemChar + '((' + item.item + '))\n'
   }
 
   return data
 }
 
 function flowchart(model, options) {
-  if(!model.items || 0 === model.items.length) return
+  if(!model.items || 0 === model.items.length) {
+    return h('div.is-empty')
+  }
+
   var data = mkGraph(model.items)
   return h('div.flowchart', {
-    hook: hook(node => {
-      mermaid.mermaidAPI.render('flowchart', data, svg => {
-        node.innerHTML = svg
-      })
-    })
+    hook: {
+      insert: function(vnode) {
+        mermaid.initialize({cloneCssStyles: false})
+        mermaid.mermaidAPI.render('flowchart', data, function(svg) {
+          vnode.elm.innerHTML = svg
+        })
+      }
+    }
   })
 }
 
-export default flowchart
+module.exports = flowchart

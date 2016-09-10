@@ -1,5 +1,5 @@
-import clone from 'clone'
-import {post} from '../../http'
+var clone = require('clone')
+var xhr = require('xhr')
 
 function openTab(model, tab) {
   var m = clone(model)
@@ -18,11 +18,15 @@ function openTab(model, tab) {
  * @return {Promise} The model wrapped in a promise
  */
 function search(model, options) {
-  return post('/funnel', mkQuery(options)).then((data) => {
-    var m = clone(model)
-    m.name = options.name
-    m.items = data
-    return m
+  return new Promise(function(resolve, reject) {
+    xhr.post(options.baseUrl + '/funnel', {
+      json: mkQuery(options)
+    }, function(err, resp, body) {
+      var m = clone(model)
+      m.name = options.name
+      m.items = body
+      resolve(m)
+    })
   })
 }
 
@@ -36,7 +40,7 @@ function mkQuery(options) {
   return query
 }
 
-export {
-  openTab,
-  search
+module.exports = {
+  openTab: openTab,
+  search: search
 }

@@ -1,9 +1,9 @@
 import {h} from 'virtual-dom'
 import nav from './nav'
-import widget from '../widget'
-import funnel from './funnel/funnel'
 import * as error from './common/error'
+import component from './common/component'
 import theme from './theme'
+import {SERVING_URL} from './../config'
 
 function render(model, update, conn, storage) {
   return h('div.container', {
@@ -11,7 +11,8 @@ function render(model, update, conn, storage) {
   }, [
     nav(model, update, conn, storage),
     h('h1.has-text-centered', 'Sign Up Funnel'),
-    (model.error) ? error.unknown() : widget(funnel, model, update, {}, conn, {
+    (model.error) ? error.unknown() : component(Funnel, {}, conn.ws, {
+      baseUrl: SERVING_URL,
       className: 'size-3of3 funnel',
       name: 'signup',
       steps: ['landingpage', 'signup', 'dashboard']

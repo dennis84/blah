@@ -73,6 +73,10 @@ gulp.task('copy', function() {
     .pipe(gulp.dest('./assets/js'))
   gulp.src('./components/similarity/similarity.js')
     .pipe(gulp.dest('./assets/js'))
+  gulp.src('./components/chart/chart.js')
+    .pipe(gulp.dest('./assets/js'))
+  gulp.src('./components/funnel/funnel.js')
+    .pipe(gulp.dest('./assets/js'))
 })
 
 gulp.task('build', ['css', 'js', 'copy'])
