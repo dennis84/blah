@@ -1,6 +1,9 @@
 {
   "dependencies": {
     "clone": "^1.0.2",
+    "debounce": "^1.0.0",
+    "moment": "^2.14.1",
+    "pikaday": "^1.4.0",
     "snabbdom": "^0.5.1"
   },
   "scripts": {

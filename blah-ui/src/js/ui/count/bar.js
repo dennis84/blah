@@ -2,7 +2,6 @@ import {h} from 'virtual-dom'
 import moment from 'moment'
 import {hook, mount} from '../../hook'
 import timeframe from '../../timeframe'
-import {filterBy, groupBy, form} from '../builder/all'
 import {grouped} from './ctrl'
 import bar from '../chart/bar'
 
@@ -33,7 +32,6 @@ function render(model, update, conn, options) {
     })
   }, [
     h('h3', options.title),
-    model.builder ? form(model, update, filterBy, groupBy) : null,
     chart(model)
   ])
 }

@@ -1,10 +1,10 @@
 import {h} from 'virtual-dom'
 import moment from 'moment'
 import nav from './nav'
-import widget from '../widget'
-import seg from './count/segmentation'
+import component from './common/component'
 import * as error from './common/error'
 import theme from './theme'
+import {SERVING_URL} from './../config'
 
 function render(model, update, conn, storage) {
   return h('div.container', {
@@ -12,7 +12,12 @@ function render(model, update, conn, storage) {
   }, [
     nav(model, update, conn, storage),
     h('h1.has-text-centered', 'Segmentation'),
-    (model.error) ? error.unknown() : widget(seg, model, update, {
+    (model.error) ? error.unknown() : component(Segmentation, {}, conn.ws, {
+      baseUrl: SERVING_URL,
+      collection: 'view',
+      className: 'size-3of3 segmentation',
+      groups: ['date.year', 'date.month', 'date.day', 'date.hour']
+    }, {
       groupBy: ['date.hour'],
       filterBy: [{
         prop: 'date.from',
@@ -23,10 +28,6 @@ function render(model, update, conn, storage) {
         operator: 'lte',
         value: moment().add(1, 'hour').format()
       }]
-    }, conn, {
-      collection: 'view',
-      className: 'size-3of3 segmentation',
-      groups: ['date.year', 'date.month', 'date.day', 'date.hour']
     })
   ])
 }
