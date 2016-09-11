@@ -81,6 +81,8 @@ gulp.task('copy', function() {
     .pipe(gulp.dest('./assets/js'))
   gulp.src('./components/segmentation/segmentation.js')
     .pipe(gulp.dest('./assets/js'))
+  gulp.src('./components/count/count.js')
+    .pipe(gulp.dest('./assets/js'))
 })
 
 gulp.task('build', ['css', 'js', 'copy'])

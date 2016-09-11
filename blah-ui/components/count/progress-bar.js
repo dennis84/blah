@@ -1,6 +1,4 @@
-import {h} from 'virtual-dom'
-import {hook} from '../../hook'
-import donut from '../chart/donut'
+var h = require('snabbdom/h')
 
 /**
  * Returns a div with a pie chart.
@@ -21,8 +19,12 @@ function progressBar(value) {
   ]
 
   return h('div.circle-progress-bar', {
-    hook: hook(node => donut(node, data, {donutWidth: 10}))
+    hook: {
+      insert: function(vnode) {
+        Chart.donut(vnode.elm, data, {donutWidth: 10})
+      }
+    }
   })
 }
 
-export default progressBar
+module.exports = progressBar

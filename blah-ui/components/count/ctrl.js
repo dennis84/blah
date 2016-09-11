@@ -1,6 +1,5 @@
-import clone from 'clone'
-import xtend from 'xtend'
-import {post} from '../../http'
+var clone = require('clone')
+var xhr = require('xhr')
 
 /**
  * Fetch views from serving layer.
@@ -14,11 +13,12 @@ import {post} from '../../http'
  * @return {Promise} The model wrapped in a promise
  */
 function count(model, options) {
-  return post('/count', mkQuery(options)).then((data) => {
-    var m = clone(model)
-    m.count = data.count
-    return m
-  })
+  return post(options.baseUrl + '/count', mkQuery(options))
+    .then(function(data) {
+      var m = clone(model)
+      m.count = data.count
+      return m
+    })
 }
 
 /**
@@ -38,10 +38,19 @@ function countDiff(model, options) {
   fromQuery.collection = options.collection
   toQuery.collection = options.collection
 
-  var from = post('/count', fromQuery).then(data => data.count)
-  var to = post('/count', toQuery).then(data => data.count)
+  var from = post(options.baseUrl + '/count', fromQuery)
+    .then(function(data) {
+      return data.count
+    })
 
-  return Promise.all([from, to]).then(([a ,b]) => {
+  var to = post(options.baseUrl + '/count', toQuery)
+    .then(function(data) {
+      return data.count
+    })
+
+  return Promise.all([from, to]).then(function(values) {
+    var a = values[0]
+    var b = values[1]
     var m = clone(model)
     m.from = a
     m.to = b
@@ -67,10 +76,21 @@ function countDiff(model, options) {
  * @return {Promise} The model wrapped in a promise
  */
 function grouped(model, options) {
-  return post('/count', mkQuery(options)).then((data) => {
-    var m = clone(model)
-    m.groups = data
-    return m
+  return post(options.baseUrl + '/count', mkQuery(options))
+    .then(function(data) {
+      var m = clone(model)
+      m.groups = data
+      return m
+    })
+}
+
+function post(url, params) {
+  return new Promise(function(resolve, reject) {
+    xhr.post(url, {
+      json: params
+    }, function(err, resp, body) {
+      resolve(body)
+    })
   })
 }
 
@@ -91,8 +111,8 @@ function mkQuery(options) {
   return query
 }
 
-export {
-  count,
-  countDiff,
-  grouped
+module.exports = {
+  count: count,
+  countDiff: countDiff,
+  grouped: grouped
 }

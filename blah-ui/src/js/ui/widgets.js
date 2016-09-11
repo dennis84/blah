@@ -1,9 +1,4 @@
 import moment from 'moment'
-import widget from '../widget'
-import count from './count/count'
-import countDiff from './count/count-diff'
-import bar from './count/bar'
-import pie from './count/pie'
 import component from './common/component'
 import {SERVING_URL} from './../config'
 
@@ -11,7 +6,8 @@ import {SERVING_URL} from './../config'
  * Pie Chart: Browser Statistics Over a Year
  */
 function browserStats(model, update, conn) {
-  return widget(pie, model, update, {}, conn, {
+  return component(Count.Pie, {}, conn.ws, {
+    baseUrl: SERVING_URL,
     collection: 'view',
     filterBy: [{
       prop: 'date.from',
@@ -27,7 +23,8 @@ function browserStats(model, update, conn) {
  * Bar Chart: Page Views in the past 24 hours
  */
 function pageviews(model, update, conn) {
-  return widget(bar, model, update, {}, conn, {
+  return component(Count.Bar, {}, conn.ws, {
+    baseUrl: SERVING_URL,
     collection: 'view',
     filterBy: [{
       prop: 'date.from',
@@ -80,7 +77,8 @@ function uniqueVisitors(conn) {
  * Count one
  */
 function countOne(model, update, conn, item) {
-  return widget(count, model, update, {}, conn, {
+  return component(Count.Num, {}, conn.ws, {
+    baseUrl: SERVING_URL,
     collection: 'view',
     filterBy: [{
       prop: 'item',
@@ -95,7 +93,8 @@ function countOne(model, update, conn, item) {
  * Count: All Page Views
  */
 function countAll(model, update, conn) {
-  return widget(count, model, update, {}, conn, {
+  return component(Count.Num, {}, conn.ws, {
+    baseUrl: SERVING_URL,
     collection: 'view',
     title: 'All'
   })
@@ -105,7 +104,8 @@ function countAll(model, update, conn) {
  * Pie Chart: Platform Statistics
  */
 function platformStats(model, update, conn) {
-  return widget(pie, model, update, {}, conn, {
+  return component(Count.Pie, {}, conn.ws, {
+    baseUrl: SERVING_URL,
     collection: 'view',
     filterBy: [{
       prop: 'date.from',
@@ -121,7 +121,8 @@ function platformStats(model, update, conn) {
  * Count Diff: Page View Difference Between Yesterday and Today
  */
 function pageviewDiff(model, update, conn) {
-  return widget(countDiff, model, update, {}, conn, {
+  return component(Count.Diff, {}, conn.ws, {
+    baseUrl: SERVING_URL,
     collection: 'view',
     percentage: true,
     from: {
@@ -155,7 +156,8 @@ function pageviewDiff(model, update, conn) {
  * Pie Chart: Mobile Operating Statistics
  */
 function mobileOsStats(model, update, conn) {
-  return widget(pie, model, update, {}, conn, {
+  return component(Count.Pie, {}, conn.ws, {
+    baseUrl: SERVING_URL,
     collection: 'view',
     filterBy: [{
       prop: 'date.from',
