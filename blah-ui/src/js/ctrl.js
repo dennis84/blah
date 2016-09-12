@@ -1,18 +1,4 @@
 /**
- * Sets the widget state into global state.
- *
- * @param {Object} The global state
- * @param {String} The widget ID
- * @param {Object} The widget state
- *
- * @return {Object} The global state
- */
-function widget(model, id, m) {
-  model[id] = m
-  return model
-}
-
-/**
  * Handle errors.
  *
  * @param {Object} model The global state
@@ -52,9 +38,20 @@ function theme(model, storage) {
   return model
 }
 
+/**
+ * A quick workaround to allow rerendering without state changes.
+ *
+ * @param {Object} model The global state
+ *
+ * @return {Object} The same state
+ */
+function noop(model) {
+  return model
+}
+
 export {
-  widget,
   error,
   path,
-  theme
+  theme,
+  noop
 }

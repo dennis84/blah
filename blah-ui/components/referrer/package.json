@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "clone": "^1.0.2",
-    "snabbdom": "^0.5.1"
+    "snabbdom": "^0.5.1",
+    "xhr": "^2.2.2"
   },
   "scripts": {
     "build": "browserify index.js --standalone Referrer | uglifyjs > referrer.js"

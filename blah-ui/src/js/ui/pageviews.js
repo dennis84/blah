@@ -2,7 +2,7 @@ import {h} from 'virtual-dom'
 import * as widgets from './widgets'
 import masonry from './masonry'
 import nav from './nav'
-import * as error from './common/error'
+import * as error from './error'
 import theme from './theme'
 
 function render(model, update, conn, storage) {
@@ -15,13 +15,13 @@ function render(model, update, conn, storage) {
       className: 'widgets',
       itemSelector: '.widget'
     }, [
-      widgets.browserStats(model, update, conn),
-      widgets.pageviews(model, update, conn),
-      widgets.countAll(model, update, conn),
-      widgets.countOne(model, update, conn, 'item-1'),
-      widgets.platformStats(model, update, conn),
-      widgets.pageviewDiff(model, update, conn),
-      widgets.mobileOsStats(model, update, conn)
+      widgets.browserStats(update, conn),
+      widgets.pageviews(conn),
+      widgets.countAll(conn),
+      widgets.countOne(conn, 'item-1'),
+      widgets.platformStats(conn),
+      widgets.pageviewDiff(conn),
+      widgets.mobileOsStats(conn)
     ])
   ])
 }

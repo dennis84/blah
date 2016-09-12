@@ -1,8 +1,8 @@
 import {h} from 'virtual-dom'
 import moment from 'moment'
 import nav from './nav'
-import component from './common/component'
-import * as error from './common/error'
+import component from './component'
+import * as error from './error'
 import theme from './theme'
 import {SERVING_URL} from './../config'
 

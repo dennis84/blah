@@ -2,7 +2,7 @@ import {h} from 'virtual-dom'
 import * as widgets from './widgets'
 import masonry from './masonry'
 import nav from './nav'
-import * as error from './common/error'
+import * as error from './error'
 import theme from './theme'
 
 function render(model, update, conn, storage) {
@@ -16,8 +16,8 @@ function render(model, update, conn, storage) {
       itemSelector: '.widget'
     }, [
       widgets.totalRevenue(conn),
-      widgets.recommendationWidget(model, update, conn),
-      widgets.similarityWidget(model, update, conn),
+      widgets.recommendationWidget(update),
+      widgets.similarityWidget(update),
       widgets.mostViewed(conn),
       widgets.referringSites(conn)
     ])

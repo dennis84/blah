@@ -1,7 +1,7 @@
 import {h} from 'virtual-dom'
 import nav from './nav'
-import * as error from './common/error'
-import component from './common/component'
+import * as error from './error'
+import component from './component'
 import theme from './theme'
 import {SERVING_URL} from './../config'
 

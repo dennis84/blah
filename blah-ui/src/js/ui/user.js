@@ -3,7 +3,7 @@ import debounce from 'debounce'
 import * as widgets from './widgets'
 import masonry from './masonry'
 import nav from './nav'
-import * as error from './common/error'
+import * as error from './error'
 import theme from './theme'
 
 function render(model, update, conn, storage) {

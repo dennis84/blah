@@ -1,8 +1,8 @@
-import test from 'tape'
-import moment from 'moment'
-import timeframe from '../src/js/timeframe'
+var test = require('tape')
+var moment = require('moment')
+var timeframe = require('./timeframe')
 
-test('daily', (assert) => {
+test('daily', function(assert) {
   assert.plan(2)
   var data = timeframe([], moment().subtract(24, 'hour'), moment())
   assert.equal(data.length, 24)
@@ -13,7 +13,7 @@ test('daily', (assert) => {
   assert.end()
 })
 
-test('weekly', (assert) => {
+test('weekly', function(assert) {
   assert.plan(1)
   var data = timeframe([], moment().subtract(7, 'day'), moment(), {
     step: 'day'
@@ -23,7 +23,7 @@ test('weekly', (assert) => {
   assert.end()
 })
 
-test('monthly', (assert) => {
+test('monthly', function(assert) {
   assert.plan(1)
   var data = timeframe([],
     moment('2016-03-01'),
@@ -35,7 +35,7 @@ test('monthly', (assert) => {
   assert.end()
 })
 
-test('yearly', (assert) => {
+test('yearly', function(assert) {
   assert.plan(1)
   var data = timeframe([],
     moment('2016-01-01'),
@@ -47,7 +47,7 @@ test('yearly', (assert) => {
   assert.end()
 })
 
-test('set count', (assert) => {
+test('set count', function(assert) {
   assert.plan(2)
   var data = timeframe([
     {date: moment().subtract(24, 'hour').startOf('hour').format(), count: 42},

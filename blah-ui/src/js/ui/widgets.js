@@ -1,11 +1,11 @@
 import moment from 'moment'
-import component from './common/component'
+import component from './component'
 import {SERVING_URL} from './../config'
 
 /**
  * Pie Chart: Browser Statistics Over a Year
  */
-function browserStats(model, update, conn) {
+function browserStats(update, conn) {
   return component(Count.Pie, {}, conn.ws, {
     baseUrl: SERVING_URL,
     collection: 'view',
@@ -15,14 +15,15 @@ function browserStats(model, update, conn) {
       value: moment().subtract(1, 'year')
     }],
     groupBy: ['date.year', 'user_agent.browser.family'],
-    title: 'Browser Statistics Over a Year'
+    title: 'Browser Statistics Over a Year',
+    update: () => update('noop')
   })
 }
 
 /**
  * Bar Chart: Page Views in the past 24 hours
  */
-function pageviews(model, update, conn) {
+function pageviews(conn) {
   return component(Count.Bar, {}, conn.ws, {
     baseUrl: SERVING_URL,
     collection: 'view',
@@ -76,14 +77,14 @@ function uniqueVisitors(conn) {
 /**
  * Count one
  */
-function countOne(model, update, conn, item) {
+function countOne(conn, item) {
   return component(Count.Num, {}, conn.ws, {
     baseUrl: SERVING_URL,
     collection: 'view',
     filterBy: [{
       prop: 'item',
       operator: 'eq',
-      value: 'item-4'
+      value: item
     }],
     title: 'Count: ' + item
   })
@@ -92,7 +93,7 @@ function countOne(model, update, conn, item) {
 /**
  * Count: All Page Views
  */
-function countAll(model, update, conn) {
+function countAll(conn) {
   return component(Count.Num, {}, conn.ws, {
     baseUrl: SERVING_URL,
     collection: 'view',
@@ -103,7 +104,7 @@ function countAll(model, update, conn) {
 /**
  * Pie Chart: Platform Statistics
  */
-function platformStats(model, update, conn) {
+function platformStats(conn) {
   return component(Count.Pie, {}, conn.ws, {
     baseUrl: SERVING_URL,
     collection: 'view',
@@ -120,7 +121,7 @@ function platformStats(model, update, conn) {
 /**
  * Count Diff: Page View Difference Between Yesterday and Today
  */
-function pageviewDiff(model, update, conn) {
+function pageviewDiff(conn) {
   return component(Count.Diff, {}, conn.ws, {
     baseUrl: SERVING_URL,
     collection: 'view',
@@ -155,7 +156,7 @@ function pageviewDiff(model, update, conn) {
 /**
  * Pie Chart: Mobile Operating Statistics
  */
-function mobileOsStats(model, update, conn) {
+function mobileOsStats(conn) {
   return component(Count.Pie, {}, conn.ws, {
     baseUrl: SERVING_URL,
     collection: 'view',
@@ -189,18 +190,20 @@ function totalRevenue(conn) {
 /**
  * Recommendations
  */
-function recommendationWidget() {
+function recommendationWidget(update) {
   return component(Recommendation, {}, {
-    baseUrl: SERVING_URL
+    baseUrl: SERVING_URL,
+    update: () => update('noop')
   })
 }
 
 /**
  * Simiarities
  */
-function similarityWidget() {
+function similarityWidget(update) {
   return component(Similarity, {}, {
-    baseUrl: SERVING_URL
+    baseUrl: SERVING_URL,
+    update: () => update('noop')
   })
 }
 

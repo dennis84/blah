@@ -14,18 +14,22 @@ function Sum(node, ws, options) {
   var state = {}
   var vnode = render(state, update, options)
 
+  function doUpdate(data) {
+    state = data
+    vnode = patch(vnode, render(data, update, options))
+    if(typeof options.update === 'function') {
+      options.update()
+    }
+  }
+
   function update(fn) {
     var args = [].slice.call(arguments, 1)
     var res = fn.apply(null, [state].concat(args))
 
     if(res instanceof Promise) {
-      res.then(function(m) {
-        state = m
-        vnode = patch(vnode, render(m, update, options))
-      })
+      res.then(doUpdate)
     } else {
-      state = res
-      vnode = patch(vnode, render(res, update, options))
+      doUpdate(res)
     }
   }
 

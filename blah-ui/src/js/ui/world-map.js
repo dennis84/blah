@@ -1,9 +1,8 @@
 import {h} from 'virtual-dom'
 import nav from './nav'
-import widget from '../widget'
-import * as error from './common/error'
+import * as error from './error'
 import theme from './theme'
-import component from './common/component'
+import component from './component'
 
 function render(model, update, conn, storage) {
   return h('div.container', {
