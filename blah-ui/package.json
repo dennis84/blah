@@ -5,11 +5,9 @@
     "bulma": "0.1.0",
     "clone": "^1.0.2",
     "debounce": "^1.0.0",
-    "emitter-component": "^1.1.1",
     "masonry-layout": "^4.1.0",
     "moment": "^2.13.0",
-    "raf": "^3.2.0",
-    "virtual-dom": "2.1.1",
+    "snabbdom": "^0.5.3",
     "xtend": "^4.0.1"
   },
   "devDependencies": {

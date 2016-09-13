@@ -38,20 +38,8 @@ function theme(model, storage) {
   return model
 }
 
-/**
- * A quick workaround to allow rerendering without state changes.
- *
- * @param {Object} model The global state
- *
- * @return {Object} The same state
- */
-function noop(model) {
-  return model
-}
-
 export {
   error,
   path,
-  theme,
-  noop
+  theme
 }

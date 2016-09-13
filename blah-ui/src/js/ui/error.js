@@ -1,11 +1,11 @@
-import {h} from 'virtual-dom' 
+import h from 'snabbdom/h'
 
 function unknown() {
   return h('div.has-text-centered', [
     h('i.material-icons.is-large', 'cloud_off'),
     h('p', 'No connection'),
     h('a.button.is-danger.is-outlined', {
-      onclick: () => window.location.reload()
+      on: {click: () => window.location.reload()}
     }, 'Retry')
   ])
 }

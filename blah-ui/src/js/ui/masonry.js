@@ -1,22 +1,23 @@
-import {h} from 'virtual-dom'
+import h from 'snabbdom/h'
 import Masonry from 'masonry-layout'
 import debounce from 'debounce'
-import {hook} from '../hook'
 
 function render(options = {}, items = []) {
   return h('div', {
-    className: options.className,
-    hook: hook(debounce((node) => {
-      if(undefined === node.masonry) {
-        node.masonry = new Masonry(node, {
-          itemSelector: options.itemSelector,
-          transitionDuration: 0
-        })
-      } else {
-        node.masonry.reloadItems()
-        node.masonry.layout()
-      }
-    }), 100)
+    props: {className: options.className},
+    hook: {
+      insert: debounce((vnode) => {
+        if(undefined === vnode.elm.masonry) {
+          vnode.elm.masonry = new Masonry(vnode.elm, {
+            itemSelector: options.itemSelector,
+            transitionDuration: 0
+          })
+        } else {
+          vnode.elm.masonry.reloadItems()
+          vnode.elm.masonry.layout()
+        }
+      }, 100)
+    }
   }, items)
 }
 

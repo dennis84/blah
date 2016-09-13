@@ -16,7 +16,7 @@ function browserStats(update, conn) {
     }],
     groupBy: ['date.year', 'user_agent.browser.family'],
     title: 'Browser Statistics Over a Year',
-    update: () => update('noop')
+    update: () => update()
   })
 }
 
