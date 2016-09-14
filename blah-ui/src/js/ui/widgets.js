@@ -193,7 +193,7 @@ function totalRevenue(conn) {
 function recommendationWidget(update) {
   return component(Recommendation, {}, {
     baseUrl: SERVING_URL,
-    update: () => update('noop')
+    update: () => update()
   })
 }
 
@@ -203,7 +203,7 @@ function recommendationWidget(update) {
 function similarityWidget(update) {
   return component(Similarity, {}, {
     baseUrl: SERVING_URL,
-    update: () => update('noop')
+    update: () => update()
   })
 }
 

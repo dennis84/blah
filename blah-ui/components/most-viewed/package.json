@@ -5,6 +5,6 @@
     "xhr": "^2.2.2"
   },
   "scripts": {
-    "build": "browserify index.js --standalone MostViewed | uglifyjs > most-viewed.js"
+    "build": "browserify index.js --standalone MostViewed | uglifyjs > most-viewed.min.js"
   }
 }

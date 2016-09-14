@@ -59,6 +59,12 @@ build_ui() {
   pushd "$(dirname "$0")/../blah-ui" > /dev/null
   npm install
   gulp build
+  for d in ./components/*; do
+    pushd "$d" > /dev/null
+    npm install
+    npm run build
+    popd > /dev/null
+  done
   popd > /dev/null
 }
 

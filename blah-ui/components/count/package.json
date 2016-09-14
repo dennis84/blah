@@ -7,6 +7,6 @@
     "xhr": "^2.2.2"
   },
   "scripts": {
-    "build": "browserify index.js --standalone Count | uglifyjs > count.js"
+    "build": "browserify index.js --standalone Count | uglifyjs > count.min.js"
   }
 }

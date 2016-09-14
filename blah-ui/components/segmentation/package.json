@@ -9,6 +9,6 @@
     "xtend": "^4.0.1"
   },
   "scripts": {
-    "build": "browserify index.js --standalone Segmentation | uglifyjs > segmentation.js"
+    "build": "browserify index.js --standalone Segmentation | uglifyjs > segmentation.min.js"
   }
 }

@@ -56,7 +56,13 @@ function render() {
 }
 
 window.addEventListener('hashchange', () => {
-  update(ctrl.path, location.hash)
+  var container = document.createElement('div')
+
+  state = ctrl.path(state, location.hash)
+  vnode = patch(container, render(state, update, conn, storage))
+
+  document.body.innerHTML = ''
+  document.body.appendChild(vnode.elm)
 })
 
-patch(document.body, vnode)
+patch(document.getElementById('container'), vnode)

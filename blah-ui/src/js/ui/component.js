@@ -4,8 +4,9 @@ import xtend from 'xtend'
 function component(Fn, attrs = {}, ...args) {
   return h('div', xtend({
     hook: {
-      insert: (vnode) => new Fn(vnode.elm, ...args),
-      update: (vnode) => new Fn(vnode.elm, ...args)
+      insert: (vnode) => {
+        new Fn(vnode.elm, ...args)
+      }
     }
   }, attrs))
 }

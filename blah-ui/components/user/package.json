@@ -7,6 +7,6 @@
     "xhr": "^2.2.2"
   },
   "scripts": {
-    "build": "browserify index.js --standalone User | uglifyjs > user.js"
+    "build": "browserify index.js --standalone User | uglifyjs > user.min.js"
   }
 }

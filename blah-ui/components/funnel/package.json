@@ -6,6 +6,6 @@
     "xhr": "^2.2.2"
   },
   "scripts": {
-    "build": "browserify index.js --standalone Funnel | uglifyjs > funnel.js"
+    "build": "browserify index.js --standalone Funnel | uglifyjs > funnel.min.js"
   }
 }

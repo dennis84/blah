@@ -3,6 +3,6 @@
     "datamaps": "^0.5.7"
   },
   "scripts": {
-    "build": "browserify index.js --standalone WorldMap | uglifyjs > worldmap.js"
+    "build": "browserify index.js --standalone WorldMap | uglifyjs > worldmap.min.js"
   }
 }

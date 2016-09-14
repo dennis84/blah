@@ -89,6 +89,7 @@ function post(url, params) {
     xhr.post(url, {
       json: params
     }, function(err, resp, body) {
+      if(err) reject(err)
       resolve(body)
     })
   })
