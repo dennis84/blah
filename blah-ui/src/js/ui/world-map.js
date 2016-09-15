@@ -9,7 +9,7 @@ function render(model, update, conn, storage) {
     nav(model, update, conn, storage),
     h('h1.has-text-centered', 'World Map'),
     (model.error) ? error.unknown() : component(WorldMap, {
-      className: 'world-map'
+      props: {className: 'world-map'}
     }, conn.ws)
   ])
 }
