@@ -5,8 +5,8 @@ import {SERVING_URL} from './../config'
 /**
  * Pie Chart: Browser Statistics Over a Year
  */
-function browserStats(update, conn) {
-  return component(Count.Pie, {}, conn.ws, {
+function browserStats(update, ws) {
+  return component(Count.Pie, {}, ws, {
     baseUrl: SERVING_URL,
     collection: 'view',
     filterBy: [{
@@ -23,8 +23,8 @@ function browserStats(update, conn) {
 /**
  * Bar Chart: Page Views in the past 24 hours
  */
-function pageviews(conn) {
-  return component(Count.Bar, {}, conn.ws, {
+function pageviews(ws) {
+  return component(Count.Bar, {}, ws, {
     baseUrl: SERVING_URL,
     collection: 'view',
     filterBy: [{
@@ -41,8 +41,8 @@ function pageviews(conn) {
 /**
  * Count: Number of Visitors Today
  */
-function visitorsToday(conn) {
-  return component(User.Count, {}, conn.ws, {
+function visitorsToday(ws) {
+  return component(User.Count, {}, ws, {
     baseUrl: SERVING_URL,
     filterBy: [{
       prop: 'date.from',
@@ -56,8 +56,8 @@ function visitorsToday(conn) {
 /**
  * Bar Chart: Visitors by Country
  */
-function visitorsByCountry(conn) {
-  return component(User.Bar, {}, conn.ws, {
+function visitorsByCountry(ws) {
+  return component(User.Bar, {}, ws, {
     baseUrl: SERVING_URL,
     groupBy: ['country'],
     title: 'Visitors by Country'
@@ -67,8 +67,8 @@ function visitorsByCountry(conn) {
 /**
  * Count: Unique Visitors
  */
-function uniqueVisitors(conn) {
-  return component(User.Count, {}, conn.ws, {
+function uniqueVisitors(ws) {
+  return component(User.Count, {}, ws, {
     baseUrl: SERVING_URL,
     title: 'Unique Visitors'
   })
@@ -77,8 +77,8 @@ function uniqueVisitors(conn) {
 /**
  * Count one
  */
-function countOne(conn, item) {
-  return component(Count.Num, {}, conn.ws, {
+function countOne(ws, item) {
+  return component(Count.Num, {}, ws, {
     baseUrl: SERVING_URL,
     collection: 'view',
     filterBy: [{
@@ -93,8 +93,8 @@ function countOne(conn, item) {
 /**
  * Count: All Page Views
  */
-function countAll(conn) {
-  return component(Count.Num, {}, conn.ws, {
+function countAll(ws) {
+  return component(Count.Num, {}, ws, {
     baseUrl: SERVING_URL,
     collection: 'view',
     title: 'All'
@@ -104,8 +104,8 @@ function countAll(conn) {
 /**
  * Pie Chart: Platform Statistics
  */
-function platformStats(conn) {
-  return component(Count.Pie, {}, conn.ws, {
+function platformStats(ws) {
+  return component(Count.Pie, {}, ws, {
     baseUrl: SERVING_URL,
     collection: 'view',
     filterBy: [{
@@ -121,8 +121,8 @@ function platformStats(conn) {
 /**
  * Count Diff: Page View Difference Between Yesterday and Today
  */
-function pageviewDiff(conn) {
-  return component(Count.Diff, {}, conn.ws, {
+function pageviewDiff(ws) {
+  return component(Count.Diff, {}, ws, {
     baseUrl: SERVING_URL,
     collection: 'view',
     percentage: true,
@@ -156,8 +156,8 @@ function pageviewDiff(conn) {
 /**
  * Pie Chart: Mobile Operating Statistics
  */
-function mobileOsStats(conn) {
-  return component(Count.Pie, {}, conn.ws, {
+function mobileOsStats(ws) {
+  return component(Count.Pie, {}, ws, {
     baseUrl: SERVING_URL,
     collection: 'view',
     filterBy: [{
@@ -177,8 +177,8 @@ function mobileOsStats(conn) {
 /**
  * Sum: Total Revenue
  */
-function totalRevenue(conn) {
-  return component(Sum, {}, conn.ws, {
+function totalRevenue(ws) {
+  return component(Sum, {}, ws, {
     baseUrl: SERVING_URL,
     collection: 'buy',
     template: '$ {value}',
@@ -210,8 +210,8 @@ function similarityWidget(update) {
 /**
  * Most viewed items
  */
-function mostViewed(conn) {
-  return component(MostViewed, {}, conn.ws, {
+function mostViewed(ws) {
+  return component(MostViewed, {}, ws, {
     baseUrl: SERVING_URL,
     title: 'Most Viewed Items',
     collection: 'view',
@@ -222,8 +222,8 @@ function mostViewed(conn) {
 /**
  * Referring Sites
  */
-function referringSites(conn) {
-  return component(Referrer, {}, conn.ws, {
+function referringSites(ws) {
+  return component(Referrer, {}, ws, {
     baseUrl: SERVING_URL,
     title: 'Referring Sites',
     limit: 10

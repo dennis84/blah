@@ -5,7 +5,6 @@ var patch = snabbdom.init([
   require('snabbdom/modules/style'),
   require('snabbdom/modules/eventlisteners')
 ])
-var h = require('snabbdom/h')
 var ctrl = require('./ctrl')
 var render = require('./render')
 

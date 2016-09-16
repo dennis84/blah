@@ -6,17 +6,17 @@ import nav from './nav'
 import * as error from './error'
 import container from './container'
 
-function render(model, update, conn, storage) {
+function render(model, update, ws, storage) {
   return container(model, [
-    nav(model, update, conn, storage),
+    nav(model, update, ws, storage),
     h('h1.has-text-centered', 'User Stats'),
     (model.error) ? error.unknown() : masonry({
       className: 'widgets',
       itemSelector: '.widget'
     }, [
-      widgets.visitorsToday(conn),
-      widgets.visitorsByCountry(conn),
-      widgets.uniqueVisitors(conn)
+      widgets.visitorsToday(ws),
+      widgets.visitorsByCountry(ws),
+      widgets.uniqueVisitors(ws)
     ])
   ])
 }

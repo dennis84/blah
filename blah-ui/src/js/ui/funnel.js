@@ -5,11 +5,11 @@ import component from './component'
 import container from './container'
 import {SERVING_URL} from './../config'
 
-function render(model, update, conn, storage) {
+function render(model, update, ws, storage) {
   return container(model, [
-    nav(model, update, conn, storage),
+    nav(model, update, ws, storage),
     h('h1.has-text-centered', 'Sign Up Funnel'),
-    (model.error) ? error.unknown() : component(Funnel, {}, conn.ws, {
+    (model.error) ? error.unknown() : component(Funnel, {}, ws, {
       baseUrl: SERVING_URL,
       className: 'size-3of3 funnel',
       name: 'signup',

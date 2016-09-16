@@ -1,31 +1,25 @@
-import emitter from 'emitter-component'
+import events from 'events'
 
-function Connection(ws) {
-  this.ws = ws
-}
-
-emitter(Connection.prototype)
-
-function connect(url) {
+function listen(url) {
   var ws = new WebSocket(url)
-  var conn = new Connection(ws)
+  var emitter = new events.EventEmitter
 
   ws.onopen = () => {
-    conn.emit('opened', conn)
+    emitter.emit('opened')
   }
 
   ws.onclose = () => {
-    conn.emit('closed', conn)
+    emitter.emit('closed')
   }
 
   ws.onmessage = (e) => {
     try {
       var res = parse(e.data)
-      conn.emit(res.event, res.data)
+      emitter.emit(res.event, res.data)
     } catch(e) {}
   }
 
-  return conn
+  return emitter
 }
 
 function parse(text) {
@@ -34,4 +28,4 @@ function parse(text) {
   return {event: res[1], data: data}
 }
 
-export default connect
+export default listen

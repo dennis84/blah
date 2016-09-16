@@ -5,21 +5,21 @@ import nav from './nav'
 import * as error from './error'
 import container from './container'
 
-function render(model, update, conn, storage) {
+function render(model, update, ws, storage) {
   return container(model, [
-    nav(model, update, conn, storage),
+    nav(model, update, ws, storage),
     h('h1.has-text-centered', 'Pageviews'),
     (model.error) ? error.unknown() : masonry({
       className: 'widgets',
       itemSelector: '.widget'
     }, [
-      widgets.browserStats(update, conn),
-      widgets.pageviews(conn),
-      widgets.countAll(conn),
-      widgets.countOne(conn, 'item-1'),
-      widgets.platformStats(conn),
-      widgets.pageviewDiff(conn),
-      widgets.mobileOsStats(conn)
+      widgets.browserStats(update, ws),
+      widgets.pageviews(ws),
+      widgets.countAll(ws),
+      widgets.countOne(ws, 'item-1'),
+      widgets.platformStats(ws),
+      widgets.pageviewDiff(ws),
+      widgets.mobileOsStats(ws)
     ])
   ])
 }

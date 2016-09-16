@@ -5,9 +5,7 @@ var patch = snabbdom.init([
   require('snabbdom/modules/style'),
   require('snabbdom/modules/eventlisteners'),
 ])
-var h = require('snabbdom/h')
 var xtend = require('xtend')
-var listen = require('./websocket')
 var ctrl = require('./ctrl')
 var render = require('./render')
 
@@ -35,7 +33,7 @@ function Segmentation(node, ws, options, initial) {
   patch(node, vnode)
   update(ctrl.grouped, xtend(options, state))
 
-  conn.on('count', function(data) {
+  ws.on('count', function(data) {
     update(ctrl.grouped, xtend(options, state))
   })
 }

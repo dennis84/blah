@@ -1,10 +1,7 @@
 var d3 = require('d3')
 var Datamap = require('datamaps')
-var listen = require('./websocket')
 
 function WorldMap(node, ws) {
-  var conn = listen(ws)
-
   setTimeout(function draw() {
     var ratio = 750 / 500
     var width = node.offsetWidth
@@ -57,7 +54,7 @@ function WorldMap(node, ws) {
       }
     })
 
-    conn.on('user', function(d) {
+    ws.on('user', function(d) {
       map.pins([{user: d.user, lat: d.lat, lng: d.lng}])
     })
 

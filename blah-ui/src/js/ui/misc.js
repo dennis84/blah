@@ -5,19 +5,19 @@ import nav from './nav'
 import * as error from './error'
 import container from './container'
 
-function render(model, update, conn, storage) {
+function render(model, update, ws, storage) {
   return container(model, [
-    nav(model, update, conn, storage),
+    nav(model, update, ws, storage),
     h('h1.has-text-centered', 'Misc'),
     (model.error) ? error.unknown() : masonry({
       className: 'widgets',
       itemSelector: '.widget'
     }, [
-      widgets.totalRevenue(conn),
+      widgets.totalRevenue(ws),
       widgets.recommendationWidget(update),
       widgets.similarityWidget(update),
-      widgets.mostViewed(conn),
-      widgets.referringSites(conn)
+      widgets.mostViewed(ws),
+      widgets.referringSites(ws)
     ])
   ])
 }

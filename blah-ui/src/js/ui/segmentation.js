@@ -6,11 +6,11 @@ import * as error from './error'
 import container from './container'
 import {SERVING_URL} from './../config'
 
-function render(model, update, conn, storage) {
+function render(model, update, ws, storage) {
   return container(model, [
-    nav(model, update, conn, storage),
+    nav(model, update, ws, storage),
     h('h1.has-text-centered', 'Segmentation'),
-    (model.error) ? error.unknown() : component(Segmentation, {}, conn.ws, {
+    (model.error) ? error.unknown() : component(Segmentation, {}, ws, {
       baseUrl: SERVING_URL,
       collection: 'view',
       className: 'size-3of3 segmentation',

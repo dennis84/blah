@@ -5,13 +5,10 @@ var patch = snabbdom.init([
   require('snabbdom/modules/style'),
   require('snabbdom/modules/eventlisteners'),
 ])
-var h = require('snabbdom/h')
-var listen = require('./websocket')
 var ctrl = require('./ctrl')
 var render = require('./render')
 
 function Funnel(node, ws, options) {
-  var conn = listen(ws)
   var state = {}
   var vnode = render(state, update, options)
 
@@ -37,7 +34,7 @@ function Funnel(node, ws, options) {
   patch(node, vnode)
   update(ctrl.search, options)
 
-  conn.on('funnel', function(data) {
+  ws.on('funnel', function(data) {
     update(ctrl.search, options)
   })
 }

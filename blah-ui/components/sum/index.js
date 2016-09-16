@@ -5,7 +5,6 @@ var patch = snabbdom.init([
   require('snabbdom/modules/style'),
   require('snabbdom/modules/eventlisteners'),
 ])
-var listen = require('./websocket')
 var ctrl = require('./ctrl')
 var render = require('./render')
 
@@ -36,7 +35,7 @@ function Sum(node, ws, options) {
   patch(node, vnode)
   update(ctrl.sum, options)
 
-  conn.on('count', function(data) {
+  ws.on('count', function(data) {
     update(ctrl.sum, options)
   })
 }

@@ -6,7 +6,7 @@ import styleModule from 'snabbdom/modules/style'
 import eventlistenersModule from 'snabbdom/modules/eventlisteners'
 import xtend from 'xtend'
 import {SERVING_WS_URL} from './config'
-import connect from './connection'
+import listen from './websocket'
 import Storage from './storage'
 import * as ctrl from './ctrl'
 import pageviews from './ui/pageviews'
@@ -25,7 +25,7 @@ var patch = snabbdom.init([
   eventlistenersModule
 ])
 
-var conn = connect(SERVING_WS_URL)
+var ws = listen(SERVING_WS_URL)
 var storage = new Storage(window.localStorage)
 
 var state = xtend({
@@ -33,14 +33,14 @@ var state = xtend({
   theme: 'light'
 }, storage.get('settings'))
 
-var vnode = render(state, update, conn, storage)
+var vnode = render(state, update, ws, storage)
 
 function update(fn, ...args) {
   if(typeof fn === 'function') {
     state = fn(state, ...args)
   }
 
-  vnode = patch(vnode, render(state, update, conn, storage))
+  vnode = patch(vnode, render(state, update, ws, storage))
 }
 
 function render() {
@@ -59,7 +59,7 @@ window.addEventListener('hashchange', () => {
   var container = document.createElement('div')
 
   state = ctrl.path(state, location.hash)
-  vnode = patch(container, render(state, update, conn, storage))
+  vnode = patch(container, render(state, update, ws, storage))
 
   document.body.innerHTML = ''
   document.body.appendChild(vnode.elm)

@@ -1,7 +1,7 @@
 import h from 'snabbdom/h'
 import {theme} from '../ctrl'
 
-function render(model, update, conn, storage) {
+function render(model, update, ws, storage) {
   return h('nav.level.nav', [
     h('span.nav-toggle', {
       on: {click: (e) => {
