@@ -1,5 +1,3 @@
 require('babel-register')
 require('babel-polyfill')
-require('./connection')
-require('./hook')
-require('./bind-append')
+require('./websocket')

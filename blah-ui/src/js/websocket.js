@@ -1,7 +1,10 @@
 import events from 'events'
 
-function listen(url) {
-  var ws = new WebSocket(url)
+function listen(ws) {
+  if(typeof ws !== 'object') {
+    ws = new WebSocket(ws)
+  }
+
   var emitter = new events.EventEmitter
   emitter.setMaxListeners(0)
 

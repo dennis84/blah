@@ -29,8 +29,7 @@
   },
   "scripts": {
     "test": "node --harmony test/index.js",
-    "browser-test": "browserify -t babelify test/index.js | tap-closer | browser-run -b phantom",
     "travis-test": "./node_modules/zuul/bin/zuul -- test/index.js",
-    "zuul": "./node_modules/zuul/bin/zuul --local 8080 -- test/index.js"
+    "zuul": "./node_modules/zuul/bin/zuul --local 3000 -- test/index.js"
   }
 }
