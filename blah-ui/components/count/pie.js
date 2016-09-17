@@ -12,13 +12,16 @@ function chart(model) {
 
   return [
     h('div.has-text-centered', data.map(function(d,i) {
-      return h('span.tag', {
-        props: {className: 'is-colored-' + String.fromCharCode(i + 97)}
-      }, d.key)
+      var classAttrs = {}
+      classAttrs['is-colored-' + String.fromCharCode(i + 97)] = true
+      return h('span.tag', {class: classAttrs}, d.key)
     })),
     h('div.chart', {
       hook: {
         insert: function(vnode) {
+          Chart.donut(vnode.elm, data)
+        },
+        update: function(vnode) {
           Chart.donut(vnode.elm, data)
         }
       }
@@ -28,7 +31,7 @@ function chart(model) {
 
 function render(model, update, options) {
   return h('div.widget.widget-pie', {
-    props: {className: options.className}
+    class: options.class
   }, [
     h('h3', options.title)
   ].concat(chart(model)))

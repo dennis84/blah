@@ -13,7 +13,7 @@ function render(model, update, ws, storage) {
     (model.error) ? error.unknown() : component(Segmentation, {}, ws, {
       baseUrl: SERVING_URL,
       collection: 'view',
-      className: 'size-3of3 segmentation',
+      class: {'size-3of3': true, 'segmentation': true},
       groups: ['date.year', 'date.month', 'date.day', 'date.hour']
     }, {
       groupBy: ['date.hour'],

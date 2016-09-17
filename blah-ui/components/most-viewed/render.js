@@ -17,7 +17,7 @@ function mkItems(xs, update) {
 
 function render(model, update, options) {
   return h('div.widget.is-borderless.widget-most-viewed', {
-    props: {className: options.className}
+    class: options.class
   }, [
     h('div.is-bordered', [h('h3', options.title)]),
   ].concat(mkItems(model.items, update)))

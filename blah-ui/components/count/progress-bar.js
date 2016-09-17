@@ -22,6 +22,9 @@ function progressBar(value) {
     hook: {
       insert: function(vnode) {
         Chart.donut(vnode.elm, data, {donutWidth: 10})
+      },
+      update: function(vnode) {
+        Chart.donut(vnode.elm, data, {donutWidth: 10})
       }
     }
   })

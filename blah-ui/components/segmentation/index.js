@@ -10,7 +10,6 @@ var ctrl = require('./ctrl')
 var render = require('./render')
 
 function Segmentation(node, ws, options, initial) {
-  var conn = listen(ws)
   var state = initial
   var vnode = render(state, update, options)
 

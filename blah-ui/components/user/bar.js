@@ -15,7 +15,7 @@ function chart(model, limit) {
 
 function render(model, update, options) {
   return h('div.widget.widget-bar', {
-    props: {className: options.className}
+    class: options.class
   }, [
     h('h3', options.title)
   ].concat(chart(model, options.limit || 8)))

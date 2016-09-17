@@ -3,10 +3,10 @@ var render = require('./render')
 
 test('empty widget', function(assert) {
   var node = render({}, undefined, {
-    className: 'test'
+    class: {'test': true}
   })
 
-  assert.ok(node.data.props.className === 'test')
+  assert.ok(node.data.class.test)
   assert.equal(0, node.children.length)
   assert.end()
 })

@@ -34,7 +34,7 @@ function pageviews(ws) {
     }],
     groupBy: ['date.hour'],
     title: 'Page Views in the past 24 hours',
-    className: 'size-2of3'
+    class: {'size-2of3': true}
   })
 }
 

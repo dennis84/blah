@@ -30,20 +30,20 @@ function content(model, options) {
 
 function render(model, update, options) {
   return h('div.widget.widget-funnel', {
-    props: {className: options.className}
+    class: options.class
   }, [
     h('h3', options.title),
     h('div.tabs', [
       h('ul', [
         h('li', {
-          props: {className: 'flowchart' !== model.activeTab ? 'is-active' : ''}
+          class: {'is-active': 'bar' === model.activeTab}
         }, [h('a', {
           on: {click: function(e) {
             update(ctrl.openTab, 'bar')
           }}
         }, 'Bar Chart')]),
         h('li', {
-          props: {className: 'flowchart' === model.activeTab ? 'is-active' : ''}
+          class: {'is-active': 'flowchart' === model.activeTab}
         }, [h('a', {
           on: {click: function(e) {
             update(ctrl.openTab, 'flowchart')

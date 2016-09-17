@@ -23,7 +23,7 @@ function diff(value, percentage) {
 
 function content(model, options) {
   return h('div', {
-    props: {className: options.progressBar ? 'has-progress-bar' : ''}
+    class: {'has-progress-bar': options.progressBar}
   }, (undefined === model.diff || !Number.isFinite(model.diff)) ? [noData()] : [
     diff(model.diff, options.percentage),
     h('div.widget-title', options.title),
@@ -33,7 +33,7 @@ function content(model, options) {
 
 function render(model, update, options) {
   return h('div.widget.widget-diff.is-centered-hv', {
-    props: {className: options.className}
+    class: options.class
   }, [content(model, options)])
 }
 

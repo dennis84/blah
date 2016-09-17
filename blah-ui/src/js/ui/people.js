@@ -10,7 +10,7 @@ function render(model, update, ws, storage) {
     nav(model, update, ws, storage),
     h('h1.has-text-centered', 'People'),
     (model.error) ? error.unknown() : component(People, {
-      className: 'people'
+      class: {people: true}
     }, {
       baseUrl: SERVING_URL
     })

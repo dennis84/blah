@@ -16,7 +16,7 @@ function render(options = {}, items = []) {
   }, 100)
 
   return h('div', {
-    props: {className: options.className},
+    class: options.class,
     hook: {
       insert: masonryFn,
       update: masonryFn

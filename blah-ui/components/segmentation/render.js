@@ -39,7 +39,7 @@ function render(model, update, options) {
   return h('div', [
     form(model, update, dateRange, filterBy, groupBy(options)),
     h('div.widget.widget-line', {
-      props: {className: options.className},
+      class: options.class
     }, [
       h('h3', options.title),
       chart(model)

@@ -3,6 +3,7 @@ import events from 'events'
 function listen(url) {
   var ws = new WebSocket(url)
   var emitter = new events.EventEmitter
+  emitter.setMaxListeners(0)
 
   ws.onopen = () => {
     emitter.emit('opened')

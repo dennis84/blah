@@ -11,7 +11,7 @@ function render(model, update, ws, storage) {
     nav(model, update, ws, storage),
     h('h1.has-text-centered', 'User Stats'),
     (model.error) ? error.unknown() : masonry({
-      className: 'widgets',
+      class: {'widgets': true},
       itemSelector: '.widget'
     }, [
       widgets.visitorsToday(ws),

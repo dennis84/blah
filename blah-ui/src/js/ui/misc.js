@@ -10,7 +10,7 @@ function render(model, update, ws, storage) {
     nav(model, update, ws, storage),
     h('h1.has-text-centered', 'Misc'),
     (model.error) ? error.unknown() : masonry({
-      className: 'widgets',
+      class: {'widgets': true},
       itemSelector: '.widget'
     }, [
       widgets.totalRevenue(ws),

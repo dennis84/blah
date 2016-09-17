@@ -9,7 +9,6 @@ var ctrl = require('./ctrl')
 var render = require('./render')
 
 function Sum(node, ws, options) {
-  var conn = listen(ws)
   var state = {}
   var vnode = render(state, update, options)
 

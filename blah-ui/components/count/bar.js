@@ -12,6 +12,9 @@ function chart(model) {
     hook: {
       insert: function(vnode) {
         Chart.bar(vnode.elm, data)
+      },
+      update: function(vnode) {
+        Chart.bar(vnode.elm, data)
       }
     }
   })
@@ -19,7 +22,7 @@ function chart(model) {
 
 function render(model, update, options) {
   return h('div.widget.widget-bar', {
-    props: {className: options.className}
+    class: options.class
   }, [
     h('h3', options.title),
     chart(model)

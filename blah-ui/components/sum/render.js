@@ -14,7 +14,7 @@ function content(model, options) {
 
 function render(model, update, options) {
   return h('div.widget.widget-sum.is-centered-hv', {
-    props: {className: options.className},
+    class: options.class
   }, content(model, options))
 }
 
