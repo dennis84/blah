@@ -14,8 +14,8 @@ function sum(model, options) {
     xhr.post(options.baseUrl + '/sum', {
       json: mkQuery(options)
     }, function(err, resp, body) {
-      if(0 === resp.statusCode) {
-        reject(resp)
+      if(err) {
+        reject(err)
         return
       }
 

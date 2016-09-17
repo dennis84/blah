@@ -7,12 +7,13 @@
 
   <body>
     <div id="sum"></div>
-    <script src="sum.js"></script>
+    <script src="sum.min.js"></script>
 
     <script>
       var elem = document.getElementById('sum')
       var comp = new Sum(elem, {}, {
-        baseUrl: 'http://localhost'
+        baseUrl: 'http://localhost',
+        title: 'Example'
       })
     </script>
   </body>

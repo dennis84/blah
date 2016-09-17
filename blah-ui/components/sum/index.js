@@ -3,13 +3,13 @@ var patch = snabbdom.init([
   require('snabbdom/modules/class'),
   require('snabbdom/modules/props'),
   require('snabbdom/modules/style'),
-  require('snabbdom/modules/eventlisteners'),
+  require('snabbdom/modules/eventlisteners')
 ])
 var ctrl = require('./ctrl')
 var render = require('./render')
 
 function Sum(node, ws, options) {
-  var state = {}
+  var state = {sum: 0}
   var vnode = render(state, update, options)
 
   function doUpdate(data) {
