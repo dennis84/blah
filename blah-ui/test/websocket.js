@@ -1,20 +1,24 @@
-import test from 'tape'
-import listen from '../src/js/websocket'
+var test = require('tape')
+var listen = require('../src/js/websocket')
 
 function WebSocketMock() {}
 
-test('connection API', (assert) => {
+test('connection API', function(assert) {
   assert.plan(3)
 
   var ws = new WebSocketMock
   var emitter = listen(ws)
-  emitter.on('opened', (c) => assert.pass())
+  emitter.on('opened', function(c) {
+    assert.pass()
+  })
   ws.onopen()
 
-  emitter.on('closed', (c) => assert.pass())
+  emitter.on('closed', function(c) {
+    assert.pass()
+  })
   ws.onclose()
 
-  emitter.on('type', (data) => {
+  emitter.on('type', function(data) {
     assert.deepEqual({foo: 'bar'}, data)
   })
 
@@ -23,12 +27,12 @@ test('connection API', (assert) => {
   assert.end()
 })
 
-test('invalid message format', (assert) => {
+test('invalid message format', function(assert) {
   assert.plan(0)
 
   var ws = new WebSocketMock
   var emitter = listen(ws)
-  emitter.on('type', (data) => {
+  emitter.on('type', function(data) {
     assert.fail('This must not happen')
   })
 
