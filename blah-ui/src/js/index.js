@@ -1,31 +1,25 @@
-import 'babel-polyfill'
-import snabbdom from 'snabbdom'
-import classModule from 'snabbdom/modules/class'
-import propsModule from 'snabbdom/modules/props'
-import styleModule from 'snabbdom/modules/style'
-import eventlistenersModule from 'snabbdom/modules/eventlisteners'
-import xtend from 'xtend'
-import {SERVING_WS_URL} from './config'
-import listen from './websocket'
-import Storage from './storage'
-import * as ctrl from './ctrl'
-import pageviews from './ui/pageviews'
-import user from './ui/user'
-import misc from './ui/misc'
-import people from './ui/people'
-import funnel from './ui/funnel'
-import segmentation from './ui/segmentation'
-import worldMap from './ui/world-map'
-import jobs from './ui/jobs'
-
+var snabbdom = require('snabbdom')
 var patch = snabbdom.init([
-  classModule,
-  propsModule,
-  styleModule,
-  eventlistenersModule
+  require('snabbdom/modules/class'),
+  require('snabbdom/modules/props'),
+  require('snabbdom/modules/style'),
+  require('snabbdom/modules/eventlisteners')
 ])
+var xtend = require('xtend')
+var config = require('./config')
+var listen = require('./websocket')
+var Storage = require('./storage')
+var ctrl = require('./ctrl')
+var pageviews = require('./ui/pageviews')
+var user = require('./ui/user')
+var misc = require('./ui/misc')
+var people = require('./ui/people')
+var funnel = require('./ui/funnel')
+var segmentation = require('./ui/segmentation')
+var worldMap = require('./ui/world-map')
+var jobs = require('./ui/jobs')
 
-var ws = listen(SERVING_WS_URL)
+var ws = listen(config.SERVING_WS_URL)
 var storage = new Storage(window.localStorage)
 
 var state = xtend({
@@ -35,27 +29,28 @@ var state = xtend({
 
 var vnode = render(state, update, ws, storage)
 
-function update(fn, ...args) {
+function update(fn) {
+  var args = [].slice.call(arguments, 1)
   if(typeof fn === 'function') {
-    state = fn(state, ...args)
+    state = fn.apply(null, [state].concat(args))
   }
 
   vnode = patch(vnode, render(state, update, ws, storage))
 }
 
 function render() {
-  if('#/pageviews' === state.path) return pageviews(...arguments)
-  else if('#/user' === state.path) return user(...arguments)
-  else if('#/misc' === state.path) return misc(...arguments)
-  else if('#/people' === state.path) return people(...arguments)
-  else if('#/funnel' === state.path) return funnel(...arguments)
-  else if('#/segmentation' === state.path) return segmentation(...arguments)
-  else if('#/world-map' === state.path) return worldMap(...arguments)
-  else if('#/jobs' === state.path) return jobs(...arguments)
-  else return pageviews(...arguments)
+  if('#/pageviews' === state.path) return pageviews.apply(null, arguments)
+  else if('#/user' === state.path) return user.apply(null, arguments)
+  else if('#/misc' === state.path) return misc.apply(null, arguments)
+  else if('#/people' === state.path) return people.apply(null, arguments)
+  else if('#/funnel' === state.path) return funnel.apply(null, arguments)
+  else if('#/segmentation' === state.path) return segmentation.apply(null, arguments)
+  else if('#/world-map' === state.path) return worldMap.apply(null, arguments)
+  else if('#/jobs' === state.path) return jobs.apply(null, arguments)
+  else return pageviews.apply(null, arguments)
 }
 
-window.addEventListener('hashchange', () => {
+window.addEventListener('hashchange', function() {
   var container = document.createElement('div')
 
   state = ctrl.path(state, location.hash)

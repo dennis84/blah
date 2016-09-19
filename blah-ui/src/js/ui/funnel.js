@@ -1,16 +1,16 @@
-import h from 'snabbdom/h'
-import nav from './nav'
-import * as error from './error'
-import component from './component'
-import container from './container'
-import {SERVING_URL} from './../config'
+var h = require('snabbdom/h')
+var nav = require('./nav')
+var error = require('./error')
+var component = require('./component')
+var container = require('./container')
+var config = require('./../config')
 
 function render(model, update, ws, storage) {
   return container(model, [
     nav(model, update, ws, storage),
     h('h1.has-text-centered', 'Sign Up Funnel'),
     (model.error) ? error.unknown() : component(Funnel, {}, ws, {
-      baseUrl: SERVING_URL,
+      baseUrl: config.SERVING_URL,
       class: {'size-3of3': true, 'funnel': true},
       name: 'signup',
       steps: ['landingpage', 'signup', 'dashboard']
@@ -18,4 +18,4 @@ function render(model, update, ws, storage) {
   ])
 }
 
-export default render
+module.exports = render

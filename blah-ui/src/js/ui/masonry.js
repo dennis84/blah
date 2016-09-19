@@ -1,9 +1,9 @@
-import h from 'snabbdom/h'
-import Masonry from 'masonry-layout'
-import debounce from 'debounce'
+var h = require('snabbdom/h')
+var Masonry = require('masonry-layout')
+var debounce = require('debounce')
 
-function render(options = {}, items = []) {
-  var masonryFn = debounce((vnode) => {
+function render(options, items) {
+  var masonryFn = debounce(function(vnode) {
     if(undefined === vnode.masonry) {
       vnode.masonry = new Masonry(vnode.elm, {
         itemSelector: options.itemSelector,
@@ -24,4 +24,4 @@ function render(options = {}, items = []) {
   }, items)
 }
 
-export default render
+module.exports = render

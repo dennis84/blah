@@ -38,8 +38,8 @@ function theme(model, storage) {
   return model
 }
 
-export {
-  error,
-  path,
-  theme
+module.exports = {
+  error: error,
+  path: path,
+  theme: theme
 }

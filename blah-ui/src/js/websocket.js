@@ -1,4 +1,4 @@
-import events from 'events'
+var events = require('events')
 
 function listen(ws) {
   if(typeof ws !== 'object') {
@@ -8,15 +8,15 @@ function listen(ws) {
   var emitter = new events.EventEmitter
   emitter.setMaxListeners(0)
 
-  ws.onopen = () => {
+  ws.onopen = function() {
     emitter.emit('opened')
   }
 
-  ws.onclose = () => {
+  ws.onclose = function() {
     emitter.emit('closed')
   }
 
-  ws.onmessage = (e) => {
+  ws.onmessage = function(e) {
     try {
       var res = parse(e.data)
       emitter.emit(res.event, res.data)
@@ -32,4 +32,4 @@ function parse(text) {
   return {event: res[1], data: data}
 }
 
-export default listen
+module.exports = listen

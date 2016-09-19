@@ -1,14 +1,16 @@
-import h from 'snabbdom/h'
-import xtend from 'xtend'
+var h = require('snabbdom/h')
+var xtend = require('xtend')
 
-function component(Fn, attrs = {}, ...args) {
+function component(Fn, attrs) {
+  var args = [].slice.call(arguments, 2)
   return h('div', xtend({
     hook: {
-      insert: (vnode) => {
-        new Fn(vnode.elm, ...args)
+      insert: function(vnode) {
+        var ComponentFn = Fn.bind.apply(Fn, [null, vnode.elm].concat(args))
+        new ComponentFn
       }
     }
   }, attrs))
 }
 
-export default component
+module.exports = component

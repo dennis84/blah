@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "clone": "^1.0.2",
+    "debounce": "^1.0.0",
+    "moment": "^2.14.1",
+    "pikaday": "^1.4.0",
+    "snabbdom": "^0.5.3",
+    "xhr": "^2.2.2",
+    "xtend": "^4.0.1"
+  },
+  "scripts": {
+    "build-js": "browserify index.js --standalone Segmentation | uglifyjs > segmentation.min.js",
+    "build-css": "cleancss -o segmentation.min.css node_modules/pikaday/css/pikaday.css",
+    "build": "npm run build-js && npm run build-css"
+  }
+}

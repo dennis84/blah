@@ -1,9 +1,9 @@
-import h from 'snabbdom/h'
-import * as widgets from './widgets'
-import masonry from './masonry'
-import nav from './nav'
-import * as error from './error'
-import container from './container'
+var h = require('snabbdom/h')
+var nav = require('./nav')
+var error = require('./error')
+var container = require('./container')
+var widgets = require('./widgets')
+var masonry = require('./masonry')
 
 function render(model, update, ws, storage) {
   return container(model, [
@@ -24,4 +24,4 @@ function render(model, update, ws, storage) {
   ])
 }
 
-export default render
+module.exports = render

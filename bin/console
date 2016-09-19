@@ -56,15 +56,21 @@ build_images() {
 }
 
 build_ui() {
-  pushd "$(dirname "$0")/../blah-ui" > /dev/null
-  for d in ./components/*; do
+  local project_root="$(dirname "$0")/.."
+  pushd "$project_root/blah-ui" > /dev/null
+  npm install
+  npm run build
+  popd > /dev/null
+
+  pushd "$project_root/blah-ui-components" > /dev/null
+  for d in */; do
     pushd "$d" > /dev/null
     npm install
     npm run build
+    cp *.min.js ../../blah-ui/assets/js || true
+    cp *.min.css ../../blah-ui/assets/css || true
     popd > /dev/null
   done
-  npm install
-  gulp build
   popd > /dev/null
 }
 
@@ -151,6 +157,21 @@ run_env() {
   print_setenv BLAH_DOCKER_BIN "$(which docker)"
 }
 
+run_test() {
+  pushd "$(dirname "$0")/.." > /dev/null
+  sbt test
+  bin/console build-ui
+  pushd "blah-ui" > /dev/null
+  npm run travis-test
+  popd > /dev/null
+  for d in blah-ui-components/*/; do
+    pushd "$d" > /dev/null
+    npm test
+    popd > /dev/null
+  done
+  popd > /dev/null
+}
+
 main() {
   set -eo pipefail
 
@@ -224,6 +245,9 @@ main() {
       ;;
     fixtures)
       fixtures "$@"
+      ;;
+    test)
+      run_test "$@"
       ;;
     *)
       echo "Error: No such command: $cmd"

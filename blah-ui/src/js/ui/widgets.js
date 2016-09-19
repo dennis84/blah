@@ -1,13 +1,13 @@
-import moment from 'moment'
-import component from './component'
-import {SERVING_URL} from './../config'
+var moment = require('moment')
+var component = require('./component')
+var config = require('./../config')
 
 /**
  * Pie Chart: Browser Statistics Over a Year
  */
 function browserStats(update, ws) {
   return component(Count.Pie, {}, ws, {
-    baseUrl: SERVING_URL,
+    baseUrl: config.SERVING_URL,
     collection: 'view',
     filterBy: [{
       prop: 'date.from',
@@ -16,7 +16,7 @@ function browserStats(update, ws) {
     }],
     groupBy: ['date.year', 'user_agent.browser.family'],
     title: 'Browser Statistics Over a Year',
-    update: () => update()
+    update: update
   })
 }
 
@@ -25,7 +25,7 @@ function browserStats(update, ws) {
  */
 function pageviews(ws) {
   return component(Count.Bar, {}, ws, {
-    baseUrl: SERVING_URL,
+    baseUrl: config.SERVING_URL,
     collection: 'view',
     filterBy: [{
       prop: 'date.from',
@@ -43,7 +43,7 @@ function pageviews(ws) {
  */
 function visitorsToday(ws) {
   return component(User.Count, {}, ws, {
-    baseUrl: SERVING_URL,
+    baseUrl: config.SERVING_URL,
     filterBy: [{
       prop: 'date.from',
       operator: 'gte',
@@ -58,7 +58,7 @@ function visitorsToday(ws) {
  */
 function visitorsByCountry(ws) {
   return component(User.Bar, {}, ws, {
-    baseUrl: SERVING_URL,
+    baseUrl: config.SERVING_URL,
     groupBy: ['country'],
     title: 'Visitors by Country'
   })
@@ -69,7 +69,7 @@ function visitorsByCountry(ws) {
  */
 function uniqueVisitors(ws) {
   return component(User.Count, {}, ws, {
-    baseUrl: SERVING_URL,
+    baseUrl: config.SERVING_URL,
     title: 'Unique Visitors'
   })
 }
@@ -79,7 +79,7 @@ function uniqueVisitors(ws) {
  */
 function countOne(ws, item) {
   return component(Count.Num, {}, ws, {
-    baseUrl: SERVING_URL,
+    baseUrl: config.SERVING_URL,
     collection: 'view',
     filterBy: [{
       prop: 'item',
@@ -95,7 +95,7 @@ function countOne(ws, item) {
  */
 function countAll(ws) {
   return component(Count.Num, {}, ws, {
-    baseUrl: SERVING_URL,
+    baseUrl: config.SERVING_URL,
     collection: 'view',
     title: 'All'
   })
@@ -106,7 +106,7 @@ function countAll(ws) {
  */
 function platformStats(ws) {
   return component(Count.Pie, {}, ws, {
-    baseUrl: SERVING_URL,
+    baseUrl: config.SERVING_URL,
     collection: 'view',
     filterBy: [{
       prop: 'date.from',
@@ -122,8 +122,12 @@ function platformStats(ws) {
  * Count Diff: Page View Difference Between Yesterday and Today
  */
 function pageviewDiff(ws) {
+  var from = moment().subtract(1, 'days').endOf('hour').calendar()
+  var to = moment().endOf('hour').calendar()
+  var title = 'Difference between ' + from + ' and Today ' + to
+
   return component(Count.Diff, {}, ws, {
-    baseUrl: SERVING_URL,
+    baseUrl: config.SERVING_URL,
     collection: 'view',
     percentage: true,
     from: {
@@ -148,8 +152,7 @@ function pageviewDiff(ws) {
         value: moment().endOf('hour')
       }]
     },
-    title: `Difference between ${moment().subtract(1, 'days').endOf('hour').calendar()}
-            and Today ${moment().endOf('hour').calendar()}`
+    title: title
   })
 }
 
@@ -158,7 +161,7 @@ function pageviewDiff(ws) {
  */
 function mobileOsStats(ws) {
   return component(Count.Pie, {}, ws, {
-    baseUrl: SERVING_URL,
+    baseUrl: config.SERVING_URL,
     collection: 'view',
     filterBy: [{
       prop: 'date.from',
@@ -179,7 +182,7 @@ function mobileOsStats(ws) {
  */
 function totalRevenue(ws) {
   return component(Sum, {}, ws, {
-    baseUrl: SERVING_URL,
+    baseUrl: config.SERVING_URL,
     collection: 'buy',
     template: '$ {value}',
     prop: 'price',
@@ -192,8 +195,8 @@ function totalRevenue(ws) {
  */
 function recommendationWidget(update) {
   return component(Recommendation, {}, {
-    baseUrl: SERVING_URL,
-    update: () => update()
+    baseUrl: config.SERVING_URL,
+    update: update
   })
 }
 
@@ -202,8 +205,8 @@ function recommendationWidget(update) {
  */
 function similarityWidget(update) {
   return component(Similarity, {}, {
-    baseUrl: SERVING_URL,
-    update: () => update()
+    baseUrl: config.SERVING_URL,
+    update: update
   })
 }
 
@@ -212,7 +215,7 @@ function similarityWidget(update) {
  */
 function mostViewed(ws) {
   return component(MostViewed, {}, ws, {
-    baseUrl: SERVING_URL,
+    baseUrl: config.SERVING_URL,
     title: 'Most Viewed Items',
     collection: 'view',
     limit: 10
@@ -224,26 +227,26 @@ function mostViewed(ws) {
  */
 function referringSites(ws) {
   return component(Referrer, {}, ws, {
-    baseUrl: SERVING_URL,
+    baseUrl: config.SERVING_URL,
     title: 'Referring Sites',
     limit: 10
   })
 }
 
-export {
-  browserStats,
-  pageviews,
-  visitorsToday,
-  visitorsByCountry,
-  uniqueVisitors,
-  countAll,
-  countOne,
-  platformStats,
-  pageviewDiff,
-  mobileOsStats,
-  totalRevenue,
-  recommendationWidget,
-  similarityWidget,
-  mostViewed,
-  referringSites
+module.exports = {
+  browserStats: browserStats,
+  pageviews: pageviews,
+  visitorsToday: visitorsToday,
+  visitorsByCountry: visitorsByCountry,
+  uniqueVisitors: uniqueVisitors,
+  countAll: countAll,
+  countOne: countOne,
+  platformStats: platformStats,
+  pageviewDiff: pageviewDiff,
+  mobileOsStats: mobileOsStats,
+  totalRevenue: totalRevenue,
+  recommendationWidget: recommendationWidget,
+  similarityWidget: similarityWidget,
+  mostViewed: mostViewed,
+  referringSites: referringSites
 }

@@ -1,7 +1,7 @@
-import h from 'snabbdom/h'
+var h = require('snabbdom/h')
 
-function container(model, children = []) {
-  var theme = (vnode) => {
+function container(model, children) {
+  var theme = function(vnode) {
     var html = document.documentElement
     html.className = ''
     html.classList.add(model.theme)
@@ -15,4 +15,4 @@ function container(model, children = []) {
   }, children)
 }
 
-export default container
+module.exports = container

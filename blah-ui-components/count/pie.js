@@ -7,7 +7,12 @@ function chart(model) {
     var y = clone(x)
     delete y['count']
     delete y['date']
-    return {key: Object.values(y).join(', '), value: x.count}
+
+    var values = Object.keys(y).map(function(key) {
+      return y[key]
+    })
+
+    return {key: values.join(', '), value: x.count}
   })
 
   return [

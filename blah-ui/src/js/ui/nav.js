@@ -1,10 +1,10 @@
-import h from 'snabbdom/h'
-import {theme} from '../ctrl'
+var h = require('snabbdom/h')
+var ctrl = require('../ctrl')
 
 function render(model, update, ws, storage) {
   return h('nav.level.nav', [
     h('span.nav-toggle', {
-      on: {click: (e) => {
+      on: {click: function(e) {
         var elem = e.currentTarget
         var display = elem.classList.contains('is-active') ? 'none' : 'block'
         elem.classList.toggle('is-active')
@@ -25,10 +25,12 @@ function render(model, update, ws, storage) {
     h('div.level-right.nav-menu', [
       h('a.button.is-link', {props: {href: '#/jobs'}}, 'Jobs'),
       h('a.button.is-link', {
-        on: {click: node => update(theme, storage)}
+        on: {click: function(node) {
+          update(ctrl.theme, storage)
+        }}
       }, [h('i.material-icons', 'color_lens')])
     ])
   ])
 }
 
-export default render
+module.exports = render

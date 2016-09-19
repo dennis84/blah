@@ -1,8 +1,8 @@
-import h from 'snabbdom/h'
-import nav from './nav'
-import * as error from './error'
-import component from './component'
-import container from './container'
+var h = require('snabbdom/h')
+var nav = require('./nav')
+var error = require('./error')
+var component = require('./component')
+var container = require('./container')
 
 function render(model, update, ws, storage) {
   return container(model, [
@@ -14,4 +14,4 @@ function render(model, update, ws, storage) {
   ])
 }
 
-export default render
+module.exports = render
