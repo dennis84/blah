@@ -8,6 +8,7 @@ script:
     bin/console test
 before_script:
   - npm install -g npm@next
+  - npm install -g browserify stylus nib clean-css uglify-js
 env:
   global:
   - secure: ibsXOz7zktcSHK17D90B9HlSYs35aBW/ROeu2BxGxcPYQBowt103Em5hEFn8MrftnHlgYi6qxiSsuXlBrLFcIoTNNVhOSsiOE42/Qc681zad1E3oDMMoJF+ZTEEn1uOs6afMqs5jTpDLBi9tYCkFkBRo9DDsf2PnGRMo6tRjBe4=
