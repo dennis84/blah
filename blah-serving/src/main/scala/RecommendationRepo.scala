@@ -26,9 +26,9 @@ class RecommendationRepo(client: ElasticClient)(
         RecommendationElasticQuery(q).compactPrint)
     ) flatMap(resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
       val lens = 'hits / 'hits / element(0) / '_source / 'items / *
-      val items = json.extract[RecommendationItem](lens).toList
-        .sortBy(- _.score)
-        .take(q.limit.getOrElse(100))
-      Try(items) getOrElse Nil
+      Try {
+        json.extract[RecommendationItem](lens).toList.sortBy(- _.score)
+          .take(q.limit.getOrElse(100))
+      } getOrElse Nil
     }
 }
