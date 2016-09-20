@@ -3,7 +3,3 @@ concurrency: 5
 browsers:
   - name: chrome
     version: latest
-browserify:
-  - transform:
-      name: babelify
-      presets: es2015
