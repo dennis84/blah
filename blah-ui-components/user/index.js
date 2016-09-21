@@ -30,12 +30,17 @@ function Main(render, ctrlFn, node, ws, options) {
     }
   }
 
+  function onUser(data) {
+    update(ctrlFn, options)
+  }
+
   patch(node, vnode)
   update(ctrlFn, options)
+  ws.on('user', onUser)
 
-  ws.on('user', function(data) {
-    update(ctrlFn, options)
-  })
+  this.destroy = function() {
+    ws.removeListener('user', onUser)
+  }
 }
 
 module.exports = {

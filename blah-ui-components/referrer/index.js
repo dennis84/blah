@@ -31,12 +31,17 @@ function Referrer(node, ws, options) {
     }
   }
 
+  function onReferrer(data) {
+    update(ctrl.search, options)
+  }
+
   patch(node, vnode)
   update(ctrl.search, options)
+  ws.on('referrer', onReferrer)
 
-  ws.on('referrer', function(data) {
-    update(ctrl.search, options)
-  })
+  this.destroy = function() {
+    ws.removeListener('referrer', onReferrer)
+  }
 }
 
 module.exports = Referrer

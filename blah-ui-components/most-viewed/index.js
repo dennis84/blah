@@ -31,12 +31,17 @@ function MostViewed(node, ws, options) {
     }
   }
 
+  function onCount(data) {
+    update(ctrl.find, options)
+  }
+
   patch(node, vnode)
   update(ctrl.find, options)
+  ws.on('count', onCount)
 
-  ws.on('count', function(data) {
-    update(ctrl.find, options)
-  })
+  this.destroy = function() {
+    ws.removeListener('count', onCount)
+  }
 }
 
 module.exports = MostViewed

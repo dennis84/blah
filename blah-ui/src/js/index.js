@@ -53,11 +53,22 @@ function render() {
 window.addEventListener('hashchange', function() {
   var container = document.createElement('div')
 
+  destroy(vnode)
   state = ctrl.path(state, location.hash)
   vnode = patch(container, render(state, update, ws, storage))
 
   document.body.innerHTML = ''
   document.body.appendChild(vnode.elm)
 })
+
+function destroy(node) {
+  if(node.data.hook && node.data.hook.destroy) {
+    node.data.hook.destroy(node)
+  }
+
+  for(var i in node.children) {
+    destroy(node.children[i])
+  }
+}
 
 patch(document.getElementById('container'), vnode)

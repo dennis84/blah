@@ -31,12 +31,17 @@ function Sum(node, ws, options) {
     }
   }
 
+  function onCount(data) {
+    update(ctrl.sum, options)
+  }
+
   patch(node, vnode)
   update(ctrl.sum, options)
+  ws.on('count', onCount)
 
-  ws.on('count', function(data) {
-    update(ctrl.sum, options)
-  })
+  this.destroy = function() {
+    ws.removeListener('count', onCount)
+  }
 }
 
 module.exports = Sum

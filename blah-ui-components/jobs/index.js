@@ -30,9 +30,13 @@ function Jobs(node, options) {
   patch(node, vnode)
   update(ctrl.list, options)
 
-  setInterval(function() {
+  var intervalId = setInterval(function() {
     update(ctrl.list, options)
   }, 5000)
+
+  this.destroy = function() {
+    clearInterval(intervalId)
+  }
 }
 
 module.exports = Jobs

@@ -29,12 +29,17 @@ function Segmentation(node, ws, options, initial) {
     }
   }
 
+  function onCount(data) {
+    update(ctrl.grouped, xtend(options, state))
+  }
+
   patch(node, vnode)
   update(ctrl.grouped, xtend(options, state))
+  ws.on('count', onCount)
 
-  ws.on('count', function(data) {
-    update(ctrl.grouped, xtend(options, state))
-  })
+  this.destroy = function() {
+    ws.removeListener('count', onCount)
+  }
 }
 
 module.exports = Segmentation

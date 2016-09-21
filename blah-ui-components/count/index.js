@@ -30,12 +30,17 @@ function Main(render, ctrlFn, node, ws, options) {
     }
   }
 
+  function onCount(data) {
+    update(ctrlFn, options)
+  }
+
   patch(node, vnode)
   update(ctrlFn, options)
+  ws.on('count', onCount)
 
-  ws.on('count', function(data) {
-    update(ctrlFn, options)
-  })
+  this.destroy = function() {
+    ws.removeListener('count', onCount)
+  }
 }
 
 module.exports = {

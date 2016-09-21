@@ -31,12 +31,17 @@ function Funnel(node, ws, options) {
     }
   }
 
+  function onFunnel(data) {
+    update(ctrl.search, options)
+  }
+
   patch(node, vnode)
   update(ctrl.search, options)
+  ws.on('funnel', onFunnel)
 
-  ws.on('funnel', function(data) {
-    update(ctrl.search, options)
-  })
+  this.destroy = function() {
+    ws.removeListener('funnel', onFunnel)
+  }
 }
 
 module.exports = Funnel

@@ -7,7 +7,15 @@ function component(Fn, attrs) {
     hook: {
       insert: function(vnode) {
         var ComponentFn = Fn.bind.apply(Fn, [null, vnode.elm].concat(args))
-        new ComponentFn
+        vnode.component = new ComponentFn
+      },
+      update: function(oldVnode, vnode) {
+        vnode.component = oldVnode.component
+      },
+      destroy: function(vnode) {
+        if(vnode.component && vnode.component.destroy) {
+          vnode.component.destroy()
+        }
       }
     }
   }, attrs))

@@ -2,13 +2,15 @@ var d3 = require('d3')
 var Datamap = require('datamaps')
 
 function WorldMap(node, ws) {
+  var map = null
+
   setTimeout(function draw() {
     var ratio = 750 / 500
     var width = node.offsetWidth
     var height = width / ratio
     node.innerHTML = ''
 
-    var map = new Datamap({
+    map = new Datamap({
       element: node,
       projection: 'mercator',
       width: width,
@@ -54,12 +56,18 @@ function WorldMap(node, ws) {
       }
     })
 
-    ws.on('user', function(d) {
-      map.pins([{user: d.user, lat: d.lat, lng: d.lng}])
-    })
-
     window.addEventListener('resize', draw)
   }, 0)
+
+  function onUser(data) {
+    map.pins([{user: d.user, lat: d.lat, lng: d.lng}])
+  }
+
+  ws.on('user', onUser)
+
+  this.destroy = function() {
+    ws.removeListener('user', onUser)
+  }
 }
 
 module.exports = WorldMap
