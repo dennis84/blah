@@ -28,6 +28,7 @@ services:
     pid: host
     privileged: true
     environment:
+      MESOS_WORK_DIR: /var/lib/mesos
       MESOS_MASTER: "zk://$BLAH_HOST:2181/mesos"
       MESOS_HOSTNAME: $BLAH_HOST
       MESOS_IP: $BLAH_HOST
@@ -48,6 +49,7 @@ services:
     pid: host
     privileged: true
     environment:
+      MESOS_WORK_DIR: /var/lib/mesos
       MESOS_MASTER: "zk://$BLAH_HOST:2181/mesos"
       MESOS_HOSTNAME: $BLAH_HOST
       MESOS_IP: $BLAH_HOST

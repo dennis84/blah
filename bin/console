@@ -75,8 +75,8 @@ build_ui() {
 }
 
 pull_images() {
-  docker pull mesosphere/mesos-master:0.28.1-2.0.20.ubuntu1404
-  docker pull mesosphere/mesos-slave:0.28.1-2.0.20.ubuntu1404
+  docker pull mesosphere/mesos-master:1.0.1-2.0.93.ubuntu1404
+  docker pull mesosphere/mesos-slave:1.0.1-2.0.93.ubuntu1404
   docker pull mesosphere/marathon:latest-dev
   docker pull mesosphere/chronos
   docker pull mesosphere/marathon-lb

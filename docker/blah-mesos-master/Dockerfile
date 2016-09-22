@@ -1,1 +1,1 @@
-FROM mesosphere/mesos-master:0.28.1-2.0.20.ubuntu1404
+FROM mesosphere/mesos-master:1.0.1-2.0.93.ubuntu1404
