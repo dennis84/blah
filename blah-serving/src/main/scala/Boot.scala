@@ -42,9 +42,12 @@ object Boot extends App
   Try(env.consumer) match {
     case Failure(e) => log.warning("Unable to connect to zookeeper.")
     case Success(c) => c runForeach { x =>
-      (x.value.split("@", 2)).toList match {
-        case e +: m +: Nil => env.websocketHub ! (e, m)
-        case _ => println("Could not handle message")
+      x.topic match {
+        case "events" => env.websocketHub ! ("events", x.value)
+        case "trainings" => (x.value.split("@", 2)).toList match {
+          case e +: m +: Nil => env.websocketHub ! (e, m)
+          case _ => println("Could not handle message")
+        }
       }
     }
   }
