@@ -19,7 +19,7 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
     new StringDeserializer, new StringDeserializer)
     .withBootstrapServers(config.getString("consumer.broker.list"))
     .withGroupId("websocket")
-  lazy val subscription = Subscriptions.topics("trainings", "events")
+  lazy val subscription = Subscriptions.topics("trainings")
   lazy val consumer = Consumer.plainSource(consumerSettings, subscription)
 
   lazy val elasticClient = new ElasticClient(ElasticUri(

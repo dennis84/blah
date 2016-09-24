@@ -15,6 +15,7 @@ object Submit {
     lazy val referrerAlgo = new ReferrerAlgo
     lazy val recommendationAlgo = new RecommendationAlgo
     lazy val similarityAlgo = new SimilarityAlgo
+    lazy val collectionCountAlgo = new CollectionCountAlgo
 
     lazy val countBatch = new BatchJob("count", countAlgo)
     lazy val userBatch = new BatchJob("user", userAlgo)
@@ -24,6 +25,8 @@ object Submit {
     lazy val similarityBatch = new BatchJob("similarity", similarityAlgo)
     lazy val countStreaming = new CountStreamingJob("count", countAlgo)
     lazy val userStreaming = new UserStreamingJob("user", userAlgo)
+    lazy val collectionCountStreaming =
+      new StreamingJob("collection_count", collectionCountAlgo)
 
     lazy val jobs = Map(
       "count" -> countBatch,
@@ -33,7 +36,8 @@ object Submit {
       "recommendation" -> recommendationBatch,
       "similarity" -> similarityBatch,
       "count-streaming" -> countStreaming,
-      "user-streaming" -> userStreaming)
+      "user-streaming" -> userStreaming,
+      "collection-count-streaming" -> collectionCountStreaming)
 
     (for {
       algo <- arguments lift 0
@@ -63,6 +67,7 @@ object Submit {
                   |  similarity
                   |  count-streaming
                   |  user-streaming
+                  |  collection-count-streaming
                   |""".stripMargin)
       sys exit 1
     }
