@@ -233,6 +233,17 @@ function referringSites(ws) {
   })
 }
 
+/**
+ * Collection Count
+ */
+function collectionCount(ws) {
+  return component(CollectionCount, {}, ws, {
+    title: 'Collection Count',
+    collection: 'view',
+    class: {'size-2of3': true}
+  })
+}
+
 module.exports = {
   browserStats: browserStats,
   pageviews: pageviews,
@@ -248,5 +259,6 @@ module.exports = {
   recommendationWidget: recommendationWidget,
   similarityWidget: similarityWidget,
   mostViewed: mostViewed,
-  referringSites: referringSites
+  referringSites: referringSites,
+  collectionCount: collectionCount
 }

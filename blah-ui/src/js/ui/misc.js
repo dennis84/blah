@@ -14,6 +14,7 @@ function render(model, update, ws, storage) {
       itemSelector: '.widget'
     }, [
       widgets.totalRevenue(ws),
+      widgets.collectionCount(ws),
       widgets.recommendationWidget(update),
       widgets.similarityWidget(update),
       widgets.mostViewed(ws),

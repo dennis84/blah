@@ -27,7 +27,7 @@ function listen(ws) {
 }
 
 function parse(text) {
-  var res = text.match(/^([a-z-]+)@(.*)$/)
+  var res = text.match(/^([a-z-_]+)@(.*)$/)
   var data = JSON.parse(res[2])
   return {event: res[1], data: data}
 }
