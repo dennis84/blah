@@ -17,15 +17,8 @@ function Chart(node) {
     .domain([0, maxY])
     .range([height, 0])
 
-  var line = d3.line()
-    .x(function(d) {
-      return x(d.key)
-    })
-    .y(function(d) {
-      return y(d.value)
-    });
-
   var area = d3.area()
+    .curve(d3.curveMonotoneX)
     .x(function(d) {
       return x(d.key)
     })
@@ -59,11 +52,6 @@ function Chart(node) {
     .attr('transform', 'translate(0,0)')
     .call(yAxis)
 
-  var lineSvg = svg.append('path')
-    .datum(data)
-    .attr('class', 'line')
-    .attr('d', line)
-  
   var areaSvg = svg.append('path')
     .datum(data)
     .attr('class', 'area')
@@ -79,20 +67,13 @@ function Chart(node) {
       hasNewData = false
     }
 
-    lineSvg
-      .attr("d", line)
-      .transition()
-      .duration(1000)
-      .ease(d3.easeLinear)
-      .attr("transform", "translate(" + x(now - 60000) + ")")
-      .on("end", tick)
-
     areaSvg
       .attr("d", area)
       .transition()
       .duration(1000)
       .ease(d3.easeLinear)
       .attr("transform", "translate(" + x(now - 60000) + ")")
+      .on("end", tick)
 
     xAxisSvg
       .transition()

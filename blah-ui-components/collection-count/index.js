@@ -1,4 +1,4 @@
-var LineChart = require('./chart')
+var RealtimeChart = require('./chart')
 
 function CollectionCount(node, ws, options) {
   var widget = document.createElement('div')
@@ -20,7 +20,7 @@ function CollectionCount(node, ws, options) {
   chartElem.classList.add('chart')
 
   setTimeout(function draw() {
-    var chart = new LineChart(chartElem)
+    var chart = new RealtimeChart(chartElem)
     chart.start(ws)
 
     ws.on('collection_count', function(data) {
