@@ -1,8 +1,12 @@
 package blah.algo
 
+import java.util.UUID
+import java.nio.ByteBuffer
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions._
+import org.apache.spark.sql.Row
 
 class CollectionCountAlgo extends Algo[CollectionCount] {
   def train(rdd: RDD[String], ctx: SparkSession, args: Array[String]) = {
@@ -13,8 +17,18 @@ class CollectionCountAlgo extends Algo[CollectionCount] {
                |  date,
                |  collection AS name
                |FROM collection_count""".stripMargin)
-      .groupBy("name")
-      .agg(first("date").as("date"), count("name").as("count"))
+      .filter("date is not null")
+      .map { case Row(date: String, name: String) =>
+        val d = ZonedDateTime.parse(date)
+          .truncatedTo(ChronoUnit.SECONDS).toString
+        val uuid = UUID.nameUUIDFromBytes(ByteBuffer
+          .allocate(Integer.SIZE / 8)
+          .putInt((d + name).hashCode)
+          .array)
+        CollectionCount(uuid.toString, name, d)
+      }
+      .groupBy("id", "date", "name")
+      .count()
       .as[CollectionCount]
   }
 }
