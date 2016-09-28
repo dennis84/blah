@@ -13,8 +13,6 @@ class WebsocketHub(room: WebsocketRoom) extends Actor {
     case ("funnel", message: String) =>
       room.send("funnel", message)
     case ("collection_count", message: String) =>
-      println("collection_count")
-      println(message)
       room.send("collection_count", message)
   }
 }

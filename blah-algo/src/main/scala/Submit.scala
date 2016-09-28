@@ -26,7 +26,7 @@ object Submit {
     lazy val countStreaming = new CountStreamingJob("count", countAlgo)
     lazy val userStreaming = new UserStreamingJob("user", userAlgo)
     lazy val collectionCountStreaming =
-      new StreamingJob("collection_count", collectionCountAlgo)
+      new CollectionCountStreamingJob("collection_count", collectionCountAlgo)
 
     lazy val jobs = Map(
       "count" -> countBatch,
