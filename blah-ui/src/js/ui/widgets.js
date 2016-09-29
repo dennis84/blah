@@ -238,8 +238,9 @@ function referringSites(ws) {
  */
 function collectionCount(ws) {
   return component(CollectionCount, {}, ws, {
-    title: 'Collection Count',
+    baseUrl: config.SERVING_URL,
     collection: 'view',
+    title: 'Collection Count',
     class: {'size-2of3': true}
   })
 }

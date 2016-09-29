@@ -1,3 +1,4 @@
+var xhr = require('xhr')
 var RealtimeChart = require('./chart')
 
 function CollectionCount(node, ws, options) {
@@ -19,8 +20,27 @@ function CollectionCount(node, ws, options) {
   var chartElem = document.createElement('div')
   chartElem.classList.add('chart')
 
-  setTimeout(function draw() {
-    var chart = new RealtimeChart(chartElem)
+  xhr.post(options.baseUrl + '/collection', {
+    json: {name: options.collection}
+  }, function(err, resp, body) {
+    if(err) return
+    var now = Date.now()
+    var data = []
+    var existing = {}
+
+    for(var i in body) {
+      var key = new Date(body[i].date).getTime()
+      var second = Math.floor(key / 1000)
+      existing[second] = {key: key, value: body[i].count}
+    }
+
+    for(var i = 60; i > 0; i--) {
+      var key = now - (i * 1000)
+      var second = Math.floor(key / 1000)
+      data.push(existing[second] ? existing[second] : {key: key, value: 0})
+    }
+
+    var chart = new RealtimeChart(chartElem, data)
     chart.start(ws)
 
     ws.on('collection_count', function(data) {
@@ -30,7 +50,7 @@ function CollectionCount(node, ws, options) {
         value: data.count
       })
     })
-  }, 0)
+  })
 
   widget.appendChild(h3)
   widget.appendChild(chartElem)

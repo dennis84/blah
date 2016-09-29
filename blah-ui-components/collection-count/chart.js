@@ -1,11 +1,11 @@
 var d3 = require('d3')
 
-function Chart(node) {
+function Chart(node, initial) {
   var margin = [10, 10, 30, 20]
   var width = node.offsetWidth - margin[1] - margin[3]
   var height = node.offsetHeight - margin[0] - margin[2]
   var now = Date.now()
-  var data = []
+  var data = initial || []
   var maxY = 10
   var hasNewData = false
 

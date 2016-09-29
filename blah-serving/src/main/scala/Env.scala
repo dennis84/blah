@@ -105,6 +105,12 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
           ("item" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("parent" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
           ("count" -> ("type" -> "integer")))) ~
+      ("collection_count" ->
+        ("_ttl" -> ("enabled" -> true) ~ ("default" -> "1m")) ~
+        ("properties" ->
+          ("name" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("date" -> ("type" -> "date") ~ ("format" -> "dateOptionalTime")) ~
+          ("count" -> ("type" -> "integer")))) ~
       ("referrer" ->
         ("properties" ->
           ("referrer" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~

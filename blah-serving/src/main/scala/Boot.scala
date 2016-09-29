@@ -36,7 +36,8 @@ object Boot extends App
     new UserService(env),
     new MostViewedService(env),
     new ReferrerService(env),
-    new JobService(env))
+    new JobService(env),
+    new CollectionService(env))
   val routes = services.map(_.route)
 
   Try(env.consumer) match {
