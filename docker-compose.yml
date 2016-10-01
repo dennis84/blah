@@ -8,11 +8,13 @@ volumes:
 
 services:
   zookeeper:
+    container_name: zookeeper
     image: blah/zookeeper
     network_mode: host
 
   mesos:
     image: blah/mesos-master
+    container_name: mesos
     network_mode: host
     environment:
       MESOS_ZK: "zk://$BLAH_HOST:2181/mesos"
@@ -21,9 +23,11 @@ services:
       MESOS_QUORUM: 1
       MESOS_WORK_DIR: /var/lib/mesos
       MESOS_LOG_DIR: /var/log/mesos
+      MESOS_NATIVE_JAVA_LIBRARY: "/usr/lib/libmesos.so"
 
   slave1:
     image: blah/mesos-slave
+    container_name: slave1
     network_mode: host
     pid: host
     privileged: true
@@ -38,6 +42,7 @@ services:
       MESOS_ISOLATION: "cgroups/cpu,cgroups/mem"
       MESOS_RESOURCES: "cpus:2;mem:4096;disk:10000;ports(*):[31000-31100]"
       MESOS_LOG_DIR: /var/log/mesos
+      MESOS_NATIVE_JAVA_LIBRARY: "/usr/lib/libmesos.so"
     volumes:
       - /proc:/host/proc:ro
       - /sys/fs/cgroup:/sys/fs/cgroup
@@ -45,6 +50,7 @@ services:
 
   slave2:
     image: blah/mesos-slave
+    container_name: slave2
     network_mode: host
     pid: host
     privileged: true
@@ -59,11 +65,13 @@ services:
       MESOS_ISOLATION: "cgroups/cpu,cgroups/mem"
       MESOS_RESOURCES: "cpus:2;mem:4096;disk:10000;ports(*):[31000-31100]"
       MESOS_LOG_DIR: /var/log/mesos
+      MESOS_NATIVE_JAVA_LIBRARY: "/usr/lib/libmesos.so"
     volumes_from:
       - slave1
 
   marathon:
     image: mesosphere/marathon:latest-dev
+    container_name: marathon
     network_mode: host
     environment: 
       MARATHON_MASTER: "zk://$BLAH_HOST:2181/mesos"
@@ -72,10 +80,12 @@ services:
   kafka:
     network_mode: host
     image: blah/kafka-mesos
+    container_name: kafka
     command: scheduler --master=zk://$BLAH_HOST:2181/mesos --zk=$BLAH_HOST:2181 --api=http://$BLAH_HOST:7000
 
   chronos:
     image: mesosphere/chronos
+    container_name: chronos
     network_mode: host
     entrypoint: /usr/bin/chronos
     command: "--master zk://$BLAH_HOST:2181/mesos --http_port 8081"
