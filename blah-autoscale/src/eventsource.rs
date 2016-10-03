@@ -17,7 +17,8 @@ use std::borrow::Borrow;
 use mio::tcp::{TcpStream};
 use hyper::http::h1::parse_response;
 use hyper::buffer::BufReader;
-use mio::*;
+use mio::{PollOpt, Ready, Token};
+use mio::deprecated::{EventLoop, Handler};
 use url::Url;
 
 #[derive(Debug)]
@@ -105,7 +106,7 @@ impl<F> Handler for EventSourceHandler<F>
     type Message = ();
 
     fn ready(&mut self, _: &mut EventLoop<Self>,
-             token: Token, _: EventSet) {
+             token: Token, _: Ready) {
         assert_eq!(token, Token(1));
         self.read();
     }
@@ -130,7 +131,7 @@ pub fn connect<F,U>(url: U, fun: F) -> io::Result<()>
 
     let mut event_loop = try!(EventLoop::new());
     try!(event_loop.register(&stream, Token(1),
-                             EventSet::readable(),
+                             Ready::readable(),
                              PollOpt::edge()));
     try!(event_loop.run(&mut EventSourceHandler {
         reader: BufReader::new(stream),
