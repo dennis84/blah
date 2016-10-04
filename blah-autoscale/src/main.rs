@@ -11,6 +11,7 @@ extern crate rustc_serialize;
 mod error;
 mod service;
 mod eventsource;
+mod server;
 
 use std::env;
 use std::collections::HashMap;
@@ -20,6 +21,7 @@ use mioco::sync::mpsc;
 use service::{Service, Statistic, App};
 use eventsource::{connect};
 use error::{AutoscaleResult};
+use server::*;
 
 #[derive(Debug)]
 enum Message {
@@ -94,7 +96,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     let mut opts = Options::new();
-    opts.reqopt("", "host", "Set marathon/mesos hostname", "172.17.42.1");
+    //opts.reqopt("", "host", "Set marathon/mesos hostname", "172.17.42.1");
     opts.optopt("", "cpu-percent", "Set maximum CPU usage", "80");
     opts.optopt("", "mem-percent", "Set maximum memory usage", "80");
     opts.optopt("", "max", "Set maximum instances", "20");
@@ -105,7 +107,8 @@ fn main() {
         ::std::process::exit(1);
     });
 
-    let host = matches.opt_str("host").unwrap();
+    //let host = matches.opt_str("host").unwrap();
+    let host = "127.0.0.1:8080".to_string();
 
     let max_mem_usage = matches
         .opt_str("mem-percent")
@@ -134,6 +137,8 @@ fn main() {
         client: Client::new(),
     };
 
+    let (sse, mut server) = Server::new().unwrap();
+
     let mut handler = Autoscale {
         service: service,
         apps: HashMap::new(),
@@ -142,16 +147,22 @@ fn main() {
     };
 
     mioco::start(move || {
+        mioco::spawn({
+            move || server.start()
+        });
+
         let (sender, receiver) = mpsc::channel::<Message>();
-        mioco::spawn(move || loop {
-            match receiver.recv() {
-                Ok(Message::Tick) => handler.tick().unwrap_or_else(|e| {
-                    debug!("Update failed {:?}. Continue ...", e);
-                }),
-                Ok(Message::Update) => handler.update().unwrap_or_else(|e| {
-                    debug!("Tick failed {:?}. Continue ...", e);
-                }),
-                Err(_) => {},
+        mioco::spawn({
+            move || loop {
+                match receiver.recv() {
+                    Ok(Message::Tick) => handler.tick().unwrap_or_else(|e| {
+                        debug!("Update failed {:?}. Continue ...", e);
+                    }),
+                    Ok(Message::Update) => handler.update().unwrap_or_else(|e| {
+                        debug!("Tick failed {:?}. Continue ...", e);
+                    }),
+                    Err(_) => {},
+                }
             }
         });
 
