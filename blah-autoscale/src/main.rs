@@ -12,83 +12,21 @@ mod error;
 mod service;
 mod eventsource;
 mod server;
+mod autoscale;
 
 use std::env;
-use std::collections::HashMap;
 use getopts::Options;
 use hyper::client::Client;
 use mioco::sync::mpsc;
-use service::{Service, Statistic, App};
+use service::{Service};
 use eventsource::{connect};
-use error::{AutoscaleResult};
 use server::*;
+use autoscale::{Autoscale, ConsoleOutput, SSEOutput};
 
 #[derive(Debug)]
 enum Message {
     Update,
     Tick,
-}
-
-struct Autoscale {
-    service: Service,
-    apps: HashMap<String, App>,
-    stats: HashMap<String, Statistic>,
-    need_update: bool,
-}
-
-impl Autoscale {
-    fn update(&mut self) -> AutoscaleResult<()> {
-        self.need_update = true;
-        Ok(())
-    }
-
-    fn tick(&mut self) -> AutoscaleResult<()> {
-        let slaves = try!(self.service.get_slaves());
-
-        if self.need_update {
-            self.apps.clear();
-            self.stats.clear();
-            let apps = try!(self.service.get_apps());
-            for id in apps {
-                let app = try!(self.service.get_app(id.as_ref()));
-                if app.is_some() {
-                    self.apps.insert(id, app.unwrap());
-                }
-            }
-
-            self.need_update = false;
-        }
-
-        for (id, app) in &self.apps {
-            let stat = {
-                let prev = self.stats.get(id);
-                self.service.get_statistic(&app, &slaves, prev)
-            };
-
-            if stat.is_err() {
-                continue;
-            }
-
-            let stat = stat.unwrap();
-            if stat.cpu_usage > app.max_cpu_usage ||
-               stat.mem_usage > app.max_mem_usage {
-                match self.service.scale(&app) {
-                    Ok(_) => {},
-                    Err(_) => {},
-                }
-            }
-
-            info!("----------------------------------------");
-            info!("App: {}", app.name);
-            info!("Instances: {}/{}", app.instances, app.max_instances);
-            info!("CPU: {}", stat.cpu_usage);
-            info!("MEM: {}", stat.mem_usage);
-
-            self.stats.insert(id.to_owned(), stat);
-        }
-
-        Ok(())
-    }
 }
 
 fn main() {
@@ -138,13 +76,9 @@ fn main() {
     };
 
     let (sse, mut server) = Server::new().unwrap();
-
-    let mut handler = Autoscale {
-        service: service,
-        apps: HashMap::new(),
-        stats: HashMap::new(),
-        need_update: true,
-    };
+    let mut handler = Autoscale::new(service, SSEOutput {
+        sender: sse,
+    });
 
     mioco::start(move || {
         mioco::spawn({

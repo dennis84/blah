@@ -70,9 +70,12 @@ impl Server {
     }
 
     fn handle_message(&mut self) {
-        let msg = self.rx.try_recv();
-        for (id, mut client) in &self.clients {
-            client.write(b"data: Test\n\n");
+        if let Ok(msg) = self.rx.try_recv() {
+            let data = format!("data: {}\n\n", msg);
+            let bytes = data.as_bytes();
+            for (id, mut client) in &self.clients {
+                client.write(bytes);
+            }
         }
     }
 
