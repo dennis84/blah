@@ -2,8 +2,10 @@ use std::collections::HashMap;
 use service::{Service, Statistic, App};
 use error::{AutoscaleResult};
 use mio::channel::{Sender};
+use rustc_serialize::json::{encode};
 
-struct AppInfo {
+#[derive(Debug, RustcEncodable)]
+pub struct AppInfo {
     app: String,
     instances: i64,
     max_instances: i32,
@@ -11,7 +13,7 @@ struct AppInfo {
     mem_usage: f64,
 }
 
-trait Output {
+pub trait Output {
     fn write(&self, info: AppInfo);
 }
 
@@ -22,18 +24,23 @@ pub struct SSEOutput {
 
 impl Output for ConsoleOutput {
     fn write(&self, info: AppInfo) {
-        info!("----------------------------------------");
-        info!("App: {}", info.app);
-        info!("Instances: {}/{}", info.instances, info.max_instances);
-        info!("CPU: {}", info.cpu_usage);
-        info!("MEM: {}", info.mem_usage);
+        log_app_info(&info);
     }
 }
 
 impl Output for SSEOutput {
     fn write(&self, info: AppInfo) {
-        self.sender.send(info.app);
+        log_app_info(&info);
+        self.sender.send(encode(&info).unwrap()).unwrap();
     }
+}
+
+fn log_app_info(info: &AppInfo) {
+    info!("----------------------------------------");
+    info!("App: {}", info.app);
+    info!("Instances: {}/{}", info.instances, info.max_instances);
+    info!("CPU: {}", info.cpu_usage);
+    info!("MEM: {}", info.mem_usage);
 }
 
 pub struct Autoscale<O> {

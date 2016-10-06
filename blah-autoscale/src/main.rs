@@ -46,7 +46,7 @@ fn main() {
     });
 
     //let host = matches.opt_str("host").unwrap();
-    let host = "127.0.0.1:8080".to_string();
+    let host = "172.17.42.1".to_string();
 
     let max_mem_usage = matches
         .opt_str("mem-percent")
