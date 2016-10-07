@@ -17,17 +17,14 @@ mod autoscale;
 use std::env;
 use getopts::Options;
 use hyper::client::Client;
-use mioco::sync::mpsc;
 use service::{Service};
 use eventsource::{connect};
 use server::*;
-use autoscale::{Autoscale, ConsoleOutput, SSEOutput};
-
-#[derive(Debug)]
-enum Message {
-    Update,
-    Tick,
-}
+use autoscale::{Autoscale, Message, AppInfo};
+use mio::*;
+use mio::channel::{channel, Sender, Receiver};
+use std::thread;
+use rustc_serialize::json::{encode};
 
 fn main() {
     env_logger::init().unwrap();
@@ -75,43 +72,75 @@ fn main() {
         client: Client::new(),
     };
 
-    let (sse, mut server) = Server::new().unwrap();
-    let mut handler = Autoscale::new(service, SSEOutput {
-        sender: sse,
+    let mut autoscale = Autoscale::new(service);
+
+    const TIMER: Token = Token(0);
+    const MARATHON: Token = Token(1);
+
+    let mut poll = Poll::new().unwrap();
+
+    let (timer_sender, timer_receiver) = channel::<Message>();
+    poll.register(&timer_receiver, TIMER, Ready::readable(),
+                  PollOpt::edge()).unwrap();
+
+    let (marathon_sender, marathon_receiver) = channel::<Message>();
+    poll.register(&marathon_receiver, MARATHON, Ready::readable(),
+                  PollOpt::edge()).unwrap();
+
+    thread::spawn(move || loop {
+        timer_sender.send(Message::Tick).unwrap();
+        thread::sleep_ms(10000);
     });
 
-    mioco::start(move || {
-        mioco::spawn({
-            move || server.start()
-        });
+    thread::spawn(move || connect(format!("http://{}:8080/v2/events", host), |e| {
+        if e.event == Some("status_update_event".to_string()) {
+            marathon_sender.send(Message::Update).unwrap();
+        }
+    }));
 
-        let (sender, receiver) = mpsc::channel::<Message>();
-        mioco::spawn({
-            move || loop {
-                match receiver.recv() {
-                    Ok(Message::Tick) => handler.tick().unwrap_or_else(|e| {
+    let (server_sender, mut server) = Server::new().unwrap();
+    let is_sse = true;
+
+    if is_sse {
+        thread::spawn(move || server.start());
+    }
+
+    let mut events = Events::with_capacity(1024);
+    loop {
+        poll.poll(&mut events, None).unwrap();
+        for event in events.iter() {
+            match event.token() {
+                TIMER => match timer_receiver.try_recv() {
+                    Ok(_) => match autoscale.tick() {
+                        Ok(apps) => {
+                            log_apps(&apps);
+                            if is_sse {
+                                server_sender.send(encode(&apps).unwrap()).unwrap();
+                            }
+                        }
+                        Err(e) => debug!("Tick failed {:?}.", e),
+                    },
+                    _ => {}
+                },
+                MARATHON => match marathon_receiver.try_recv() {
+                    Ok(_) => autoscale.update().unwrap_or_else(|e| {
                         debug!("Update failed {:?}. Continue ...", e);
                     }),
-                    Ok(Message::Update) => handler.update().unwrap_or_else(|e| {
-                        debug!("Tick failed {:?}. Continue ...", e);
-                    }),
-                    Err(_) => {},
-                }
+                    _ => {}
+                },
+
+                _ => {},
             }
-        });
-
-        mioco::spawn({
-            let sender = sender.clone();
-            move || connect(format!("http://{}:8080/v2/events", host), |e| {
-                if e.event == Some("status_update_event".to_string()) {
-                    sender.send(Message::Update).unwrap();
-                }
-            })
-        });
-
-        loop {
-            sender.send(Message::Tick).unwrap();
-            mioco::sleep_ms(10000);
         }
-    }).unwrap();
+    }
+}
+
+fn log_apps(apps: &Vec<AppInfo>) {
+    for app in apps.iter() {
+        info!("----------------------------------------");
+        info!("App: {}", app.app);
+        info!("Instances: {}/{}", app.instances, app.max_instances);
+        info!("CPU: {}", app.cpu_usage);
+        info!("MEM: {}", app.mem_usage);
+    }
 }

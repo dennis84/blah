@@ -3,62 +3,37 @@ use service::{Service, Statistic, App};
 use error::{AutoscaleResult};
 use mio::channel::{Sender};
 use rustc_serialize::json::{encode};
+use mio::*;
+
+#[derive(Debug)]
+pub enum Message {
+    Update,
+    Tick,
+}
 
 #[derive(Debug, RustcEncodable)]
 pub struct AppInfo {
-    app: String,
-    instances: i64,
-    max_instances: i32,
-    cpu_usage: f64,
-    mem_usage: f64,
+    pub app: String,
+    pub instances: i64,
+    pub max_instances: i32,
+    pub cpu_usage: f64,
+    pub mem_usage: f64,
 }
 
-pub trait Output {
-    fn write(&self, info: AppInfo);
-}
-
-pub struct ConsoleOutput {}
-pub struct SSEOutput {
-    pub sender: Sender<String>,
-}
-
-impl Output for ConsoleOutput {
-    fn write(&self, info: AppInfo) {
-        log_app_info(&info);
-    }
-}
-
-impl Output for SSEOutput {
-    fn write(&self, info: AppInfo) {
-        log_app_info(&info);
-        self.sender.send(encode(&info).unwrap()).unwrap();
-    }
-}
-
-fn log_app_info(info: &AppInfo) {
-    info!("----------------------------------------");
-    info!("App: {}", info.app);
-    info!("Instances: {}/{}", info.instances, info.max_instances);
-    info!("CPU: {}", info.cpu_usage);
-    info!("MEM: {}", info.mem_usage);
-}
-
-pub struct Autoscale<O> {
+pub struct Autoscale {
     service: Service,
     apps: HashMap<String, App>,
     stats: HashMap<String, Statistic>,
     need_update: bool,
-    output: O,
 }
 
-impl<O: Output> Autoscale<O> {
-    pub fn new(service: Service, output: O) -> Autoscale<O> {
+impl Autoscale {
+    pub fn new(service: Service) -> Autoscale {
         Autoscale {
             service: service,
             apps: HashMap::new(),
             stats: HashMap::new(),
             need_update: true,
-            output: output,
         }
     }
 
@@ -67,8 +42,9 @@ impl<O: Output> Autoscale<O> {
         Ok(())
     }
 
-    pub fn tick(&mut self) -> AutoscaleResult<()> {
+    pub fn tick(&mut self) -> AutoscaleResult<Vec<AppInfo>> {
         let slaves = try!(self.service.get_slaves());
+        let mut apps = vec![];
 
         if self.need_update {
             self.apps.clear();
@@ -103,7 +79,7 @@ impl<O: Output> Autoscale<O> {
                 }
             }
 
-            self.output.write(AppInfo {
+            apps.push(AppInfo {
                 app: app.name.to_owned(),
                 instances: app.instances,
                 max_instances: app.max_instances,
@@ -114,6 +90,6 @@ impl<O: Output> Autoscale<O> {
             self.stats.insert(id.to_owned(), stat);
         }
 
-        Ok(())
+        Ok(apps)
     }
 }
