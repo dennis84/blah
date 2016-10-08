@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "clone": "^2.0.0",
+    "snabbdom": "^0.5.3"
+  },
+  "scripts": {
+    "build": "browserify index.js --standalone Autoscale | uglifyjs > autoscale.min.js",
+    "test": "node test.js"
+  }
+}

@@ -18,6 +18,7 @@ var funnel = require('./ui/funnel')
 var segmentation = require('./ui/segmentation')
 var worldMap = require('./ui/world-map')
 var jobs = require('./ui/jobs')
+var autoscale = require('./ui/autoscale')
 
 var ws = listen(config.SERVING_WS_URL)
 var storage = new Storage(window.localStorage)
@@ -47,6 +48,7 @@ function render() {
   else if('#/segmentation' === state.path) return segmentation.apply(null, arguments)
   else if('#/world-map' === state.path) return worldMap.apply(null, arguments)
   else if('#/jobs' === state.path) return jobs.apply(null, arguments)
+  else if('#/autoscale' === state.path) return autoscale.apply(null, arguments)
   else return pageviews.apply(null, arguments)
 }
 
