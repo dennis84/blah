@@ -5,12 +5,12 @@ use rustc_serialize::json::{self, Json};
 use error::{AutoscaleResult, Error};
 
 pub struct Service {
-    pub host: String,
-    pub max_mem_usage: f64,
-    pub max_cpu_usage: f64,
-    pub multiplier: f64,
-    pub max_instances: i32,
-    pub client: Client,
+    host: String,
+    max_mem_usage: f64,
+    max_cpu_usage: f64,
+    multiplier: f64,
+    max_instances: i32,
+    client: Client,
 }
 
 #[derive(Debug)]
@@ -42,6 +42,19 @@ struct TaskStatistic {
 }
 
 impl Service {
+    pub fn new(host: String, max_mem_usage: f64,
+               max_cpu_usage: f64, multiplier: f64,
+               max_instances: i32) -> Service {
+        Service {
+            host: host.clone(),
+            max_mem_usage: max_mem_usage,
+            max_cpu_usage: max_cpu_usage,
+            multiplier: multiplier,
+            max_instances: max_instances,
+            client: Client::new(),
+        }
+    }
+
     pub fn get_apps(&self) -> AutoscaleResult<Vec<String>> {
         let url = format!("http://{}:8080/v2/apps", &self.host);
         let mut res = try!(self.client.get(&url).send());
@@ -55,15 +68,6 @@ impl Service {
         let mut apps = Vec::new();
 
         for x in data.iter() {
-            let labels = x.find("labels").unwrap();
-            let labels = labels.as_object().unwrap();
-            let label = labels.iter()
-                .find(|&(x,_)| x.starts_with("AUTOSCALE_"));
-
-            if label.is_none() {
-                continue;
-            }
-
             let id = x.find("id").unwrap();
             let id = id.as_string().unwrap();
             apps.push(id[1..].to_string());
@@ -88,28 +92,20 @@ impl Service {
 
         let labels = data.find_path(&["app", "labels"]).unwrap();
         let labels = labels.as_object().unwrap();
-        let mut has_labels = false;
 
         for (label, value) in labels {
             match (label.as_ref(), value) {
                 ("AUTOSCALE_MAX_INSTANCES", &Json::String(ref v)) => {
                     max_instances = v.parse::<i32>().unwrap();
-                    has_labels = true;
                 }
                 ("AUTOSCALE_MEM_PERCENT", &Json::String(ref v)) => {
                     max_mem_usage = v.parse::<f64>().unwrap();
-                    has_labels = true;
                 }
                 ("AUTOSCALE_CPU_PERCENT", &Json::String(ref v)) => {
                     max_cpu_usage = v.parse::<f64>().unwrap();
-                    has_labels = true;
                 }
                 _ => {}
             }
-        }
-
-        if ! has_labels {
-            return Ok(None);
         }
 
         let xs = data.find_path(&["app", "tasks"]).unwrap();

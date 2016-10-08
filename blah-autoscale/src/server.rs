@@ -54,8 +54,6 @@ impl Server {
                 }
             }
         }
-
-        Ok(())
     }
 
     fn handle_conn(&mut self) -> io::Result<()> {

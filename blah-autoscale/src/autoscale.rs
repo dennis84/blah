@@ -1,15 +1,6 @@
 use std::collections::HashMap;
 use service::{Service, Statistic, App};
 use error::{AutoscaleResult};
-use mio::channel::{Sender};
-use rustc_serialize::json::{encode};
-use mio::*;
-
-#[derive(Debug)]
-pub enum Message {
-    Update,
-    Tick,
-}
 
 #[derive(Debug, RustcEncodable)]
 pub struct AppInfo {
