@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "clone": "^2.0.0",
+    "d3": "^4.2.6",
     "snabbdom": "^0.5.3"
   },
   "scripts": {
