@@ -17,8 +17,7 @@ use std::borrow::Borrow;
 use mio::tcp::{TcpStream};
 use hyper::http::h1::parse_response;
 use hyper::buffer::BufReader;
-use mio::{PollOpt, Ready, Token};
-use mio::deprecated::{EventLoop, Handler};
+use mio::{Poll, PollOpt, Events, Ready, Token};
 use url::Url;
 
 #[derive(Debug)]
@@ -29,17 +28,15 @@ pub struct Event {
     pub retry: Option<u64>,
 }
 
-struct EventSourceHandler<F>
-    where F: FnMut(Event) -> () {
+struct Connection<F> {
     reader: BufReader<TcpStream>,
     initialized: bool,
     callback: F,
 }
 
-impl<F> EventSourceHandler<F>
+impl<F> Connection<F>
     where F: FnMut(Event) -> () {
-
-    fn read(&mut self) {
+    fn handle_req(&mut self) {
         if false == self.initialized {
             parse_response(&mut self.reader).unwrap();
             self.initialized = true;
@@ -100,18 +97,6 @@ impl<F> EventSourceHandler<F>
     }
 }
 
-impl<F> Handler for EventSourceHandler<F>
-    where F: FnMut(Event) -> () {
-    type Timeout = ();
-    type Message = ();
-
-    fn ready(&mut self, _: &mut EventLoop<Self>,
-             token: Token, _: Ready) {
-        assert_eq!(token, Token(1));
-        self.read();
-    }
-}
-
 pub fn connect<F,U>(url: U, fun: F) -> io::Result<()> 
     where F: FnMut(Event) -> (),
           U: Borrow<str> {
@@ -122,6 +107,7 @@ pub fn connect<F,U>(url: U, fun: F) -> io::Result<()>
     let stream = try!(TcpStream::connect(&addr));
     let writer = try!(stream.try_clone());
     let mut writer = BufWriter::new(writer);
+
     try!(writer.write(&format!(
         "GET {} HTTP/1.1\r\n", url.path()).into_bytes()[..]));
     try!(writer.write(&format!(
@@ -129,17 +115,28 @@ pub fn connect<F,U>(url: U, fun: F) -> io::Result<()>
     try!(writer.write(b"accept: text/event-stream\r\n\r\n"));
     try!(writer.flush());
 
-    let mut event_loop = try!(EventLoop::new());
-    try!(event_loop.register(&stream, Token(1),
-                             Ready::readable(),
-                             PollOpt::edge()));
-    try!(event_loop.run(&mut EventSourceHandler {
+    const CLIENT: Token = Token(0);
+
+    let poll = try!(Poll::new());
+    try!(poll.register(&stream, CLIENT, Ready::readable(),
+                       PollOpt::edge()));
+
+    let mut events = Events::with_capacity(1024);
+    let mut conn = Connection {
         reader: BufReader::new(stream),
         initialized: false,
         callback: fun,
-    }));
+    };
 
-    Ok(())
+    loop {
+        try!(poll.poll(&mut events, None));
+        for event in events.iter() {
+            match event.token() {
+                CLIENT => conn.handle_req(),
+                _ => unreachable!(),
+            }
+        }
+    }
 }
 
 fn parse_url(url: &Url) -> io::Result<SocketAddr> {
