@@ -1,17 +1,19 @@
 var d3 = require('d3')
 
 var nodes = [
-  {id: 'Foo', cpu_usage: 0, mem_usage: 0},
-  {id: 'Bar', cpu_usage: 20, mem_usage: 20},
-  {id: 'Baz', cpu_usage: 30, mem_usage: 60},
-  {id: 'Qux 1', cpu_usage: 70, mem_usage: 30},
-  {id: 'Qux 2', cpu_usage: 20, mem_usage: 10},
-  {id: 'Qux 3', cpu_usage: 20, mem_usage: 10}
+  {id: 'Foo', cpu_usage: 0, mem_usage: 0, instances: 1},
+  {id: 'Bar', cpu_usage: 20, mem_usage: 20, instances: 1},
+  {id: 'Baz', cpu_usage: 30, mem_usage: 60, instances: 1},
+  {id: 'Buz', cpu_usage: 30, mem_usage: 60, instances: 1},
+  {id: 'Qux 1', cpu_usage: 70, mem_usage: 30, instances: 4},
+  {id: 'Qux 2', cpu_usage: 20, mem_usage: 10, instances: 4},
+  {id: 'Qux 3', cpu_usage: 20, mem_usage: 10, instances: 4}
 ]
 
 var links = [
   {source: 'Foo', target: 'Bar'},
   {source: 'Foo', target: 'Baz'},
+  {source: 'Foo', target: 'Buz'},
   {source: 'Foo', target: 'Qux 1'},
   {source: 'Qux 1', target: 'Qux 2'},
   {source: 'Qux 1', target: 'Qux 3'}
@@ -27,9 +29,10 @@ function chart(node) {
     .force("collide", d3.forceCollide().radius(function(d) {
       return 30
     }).iterations(2))
-    .force('link', d3.forceLink().distance(80).id(function(d) {
-      return d.id
-    }))
+    .force('link', d3.forceLink()
+      .distance(80)
+      .id(function(d) { return d.id })
+      .strength(1))
 
   var svg = d3.select(node)
     .append('svg')
@@ -64,7 +67,7 @@ function chart(node) {
           }))
         var cpuUsageArc = d3.arc()
           .outerRadius(30)
-          .innerRadius(24)
+          .innerRadius(28)
         var cpuUsagePie = d3.pie()
           .sort(null)
           .value(function(d) {
@@ -77,8 +80,8 @@ function chart(node) {
             return String.fromCharCode(97 + i)
           }))
         var memUsageArc = d3.arc()
-          .outerRadius(25)
-          .innerRadius(20)
+          .outerRadius(28)
+          .innerRadius(26)
         var memUsagePie = d3.pie()
           .sort(null)
           .value(function(d) {
@@ -107,7 +110,7 @@ function chart(node) {
 
         elem
           .append('circle')
-          .attr('r', 20)
+          .attr('r', 26)
       })
 
   simulation
