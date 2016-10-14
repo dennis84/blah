@@ -1,24 +1,30 @@
 var h = require('snabbdom/h')
+var chart = require('./chart')
+
+function renderChart(app, vnode) {
+  if(!app.empty) setTimeout(function() {
+    chart(vnode.elm, app)
+  }, 0)
+}
 
 function render(model, options) {
-  return h('div', model.apps.map(function(app) {
-    return h('div', [
-      h('h2.title.is-2', app.app),
-      h('div', 'Instances: ' + app.instances + '/' + app.max_instances),
-      h('progress', {
-        class: {'progress': true, 'is-primary': true},
-        props: {value: app.instances, max: app.max_instances}
-      }),
-      h('div', 'CPU Usage: ' + app.cpu_usage),
-      h('progress', {
-        class: {'progress': true, 'is-primary': true},
-        props: {value: app.cpu_usage, max: 100}
-      }),
-      h('div', 'Memory Usage: ' + app.mem_usage),
-      h('progress', {
-        class: {'progress': true, 'is-primary': true},
-        props: {value: app.mem_usage, max: 100}
-      })
+  return h('div.autoscale.columns.is-multiline', model.apps.map(function(app) {
+    return h('div.column.is-2', [
+      h('div.app', {
+        class: {'is-empty': app.empty}
+      }, [
+        h('div.chart', {
+          hook: {
+            insert: renderChart.bind(null, app),
+            update: renderChart.bind(null, app),
+          }
+        }),
+        h('div.content.is-centered-hv', [h('div', [
+          h('div.name', app.app),
+          !app.empty ? h('div.cpu-usage', 'CPU: ' + app.cpu_usage + '%') : '',
+          !app.empty ? h('div.mem-usage', 'RAM: ' + app.mem_usage + '%') : ''
+        ])])
+      ])
     ])
   }))
 }
