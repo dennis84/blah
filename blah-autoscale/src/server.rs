@@ -1,10 +1,9 @@
-
 use std::io::{self, Write, Read};
 use std::collections::HashMap;
-use std::str::from_utf8;
 use mio::*;
 use mio::tcp::{TcpListener, TcpStream, Shutdown};
 use mio::channel::{channel, Sender, Receiver};
+use httparse;
 
 const MESSAGE: Token = Token(0);
 const SERVER: Token = Token(1);
@@ -20,7 +19,7 @@ pub struct Server {
 impl Server {
     pub fn new() -> io::Result<(Sender<String>, Server)> {
         let (tx, rx) = channel::<String>();
-        let addr = "127.0.0.1:8003".parse().unwrap();
+        let addr = "0.0.0.0:8003".parse().unwrap();
         let socket = try!(TcpListener::bind(&addr));
         let poll = try!(Poll::new());
 
@@ -59,15 +58,11 @@ impl Server {
     }
 
     fn handle_conn(&mut self) -> io::Result<()> {
-        if let Ok((mut stream, _)) = self.socket.accept() {
+        if let Ok((stream, _)) = self.socket.accept() {
             try!(self.poll.register(&stream,
                                     Token(self.next_client),
                                     Ready::all(),
                                     PollOpt::edge()));
-            try!(stream.write(b"HTTP/1.1 200 OK\r\n"));
-            try!(stream.write(b"Content-Type: text/event-stream\r\n"));
-            try!(stream.write(b"Cache-Control: no-cache\r\n"));
-            try!(stream.write(b"Access-Control-Allow-Origin: *\r\n\r\n"));
             self.clients.insert(self.next_client, stream);
             self.next_client += 1;
         }
@@ -95,10 +90,27 @@ impl Server {
                 match stream.read(&mut buf) {
                     Err(_) => {},
                     Ok(bytes_read) => {
-                        let vec = buf[..bytes_read].to_vec();
-                        match from_utf8(&vec) {
-                            Ok(x) => println!("{}", x),
-                            Err(_) => {},
+                        let mut headers = [httparse::EMPTY_HEADER; 16];
+                        let mut req = httparse::Request::new(&mut headers);
+                        req.parse(&buf[..bytes_read]).unwrap();
+
+                        match (req.method, req.path) {
+                            (Some("GET"), Some("/healthcheck")) => {
+                                try!(stream.write(b"HTTP/1.1 200 OK\r\n"));
+                                try!(stream.write(b"Content-Length: 7\r\n"));
+                                try!(stream.write(b"Connection: close\r\n\r\n"));
+                                try!(stream.write(b"healthy"));
+                            },
+                            (Some("GET"), Some("/")) => {
+                                try!(stream.write(b"HTTP/1.1 200 OK\r\n"));
+                                try!(stream.write(b"Content-Type: text/event-stream\r\n"));
+                                try!(stream.write(b"Cache-Control: no-cache\r\n"));
+                                try!(stream.write(b"Access-Control-Allow-Origin: *\r\n"));
+                                try!(stream.write(b"Access-Control-Headers: *\r\n\r\n"));
+                            },
+                            (_, _) => {
+                                try!(stream.write(b"HTTP/1.1 404 OK\r\n\r\n"));
+                            },
                         }
                     },
                 }

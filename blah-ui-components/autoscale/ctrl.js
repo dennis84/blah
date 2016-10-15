@@ -6,23 +6,18 @@ var clone = require('clone')
 function update(model, data) {
   var m = clone(model)
   var apps = []
-  var prev = null
   for(var i in data) {
     var app = data[i]
-
-    if(prev && prev.app !== app.app) {
-      for(var j = prev.instances; j < prev.max_instances; j ++) {
-        apps.push({
-          app: prev.app,
-          instances: prev.instances,
-          max_instances: prev.max_instances,
-          empty: true
-        })
-      }
+    for(var j = 0; j < app.max_instances; j ++) {
+      apps.push({
+        app: app.app,
+        instances: app.instances,
+        max_instances: app.max_instances,
+        cpu_usage: app.cpu_usage,
+        mem_usage: app.mem_usage,
+        empty: j >= app.instances
+      })
     }
-
-    apps.push(app)
-    prev = app
   }
 
   m.apps = apps

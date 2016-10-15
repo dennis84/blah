@@ -3,6 +3,7 @@ var chart = require('./chart')
 
 function renderChart(app, vnode) {
   if(!app.empty) setTimeout(function() {
+    vnode.elm.innerHTML = ''
     chart(vnode.elm, app)
   }, 0)
 }
@@ -21,8 +22,8 @@ function render(model, options) {
         }),
         h('div.content.is-centered-hv', [h('div', [
           h('div.name', app.app),
-          !app.empty ? h('div.cpu-usage', 'CPU: ' + app.cpu_usage + '%') : '',
-          !app.empty ? h('div.mem-usage', 'RAM: ' + app.mem_usage + '%') : ''
+          !app.empty ? h('div.cpu-usage', 'CPU: ' + Math.round(app.cpu_usage) + '%') : '',
+          !app.empty ? h('div.mem-usage', 'RAM: ' + Math.round(app.mem_usage) + '%') : ''
         ])])
       ])
     ])

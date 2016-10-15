@@ -6,6 +6,7 @@ extern crate hyper;
 extern crate url;
 extern crate mio;
 extern crate rustc_serialize;
+extern crate httparse;
 
 mod error;
 mod service;
