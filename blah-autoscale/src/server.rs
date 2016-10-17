@@ -11,7 +11,7 @@ const SERVER: Token = Token(1);
 pub struct Server {
     socket: TcpListener,
     rx: Receiver<String>,
-    clients: HashMap<usize, TcpStream>,
+    clients: HashMap<Token, TcpStream>,
     next_client: usize,
     poll: Poll,
 }
@@ -38,6 +38,7 @@ impl Server {
     }
 
     pub fn start(&mut self) -> io::Result<()> {
+        println!("Start server");
         let mut events = Events::with_capacity(1024);
         loop {
             try!(self.poll.poll(&mut events, None));
@@ -49,7 +50,7 @@ impl Server {
                     SERVER => self.handle_conn().unwrap_or_else(|e| {
                         debug!("Error during connection handling: {}", e);
                     }),
-                    Token(id) => self.handle_req(event, id).unwrap_or_else(|e| {
+                    token => self.handle_req(event, token).unwrap_or_else(|e| {
                         debug!("Error during req: {}", e);
                     }),
                 }
@@ -59,11 +60,11 @@ impl Server {
 
     fn handle_conn(&mut self) -> io::Result<()> {
         if let Ok((stream, _)) = self.socket.accept() {
-            try!(self.poll.register(&stream,
-                                    Token(self.next_client),
-                                    Ready::all(),
-                                    PollOpt::edge()));
-            self.clients.insert(self.next_client, stream);
+            let token = Token(self.next_client);
+            self.clients.insert(token, stream);
+            try!(self.poll.register(&self.clients[&token],
+                                    token, Ready::readable(),
+                                    PollOpt::edge() | PollOpt::oneshot()));
             self.next_client += 1;
         }
 
@@ -83,49 +84,63 @@ impl Server {
         Ok(())
     }
 
-    fn handle_req(&mut self, event: Event, id: usize) -> io::Result<()> {
+    fn handle_req(&mut self, event: Event, token: Token) -> io::Result<()> {
         if event.kind().is_readable() {
-            if let Some(mut stream) = self.clients.get(&id) {
-                let mut buf = [0u8; 1024];
+            let mut buf = [0u8; 1024];
+            let mut headers = [httparse::EMPTY_HEADER; 16];
+            let mut req = httparse::Request::new(&mut headers);
+
+            if let Some(stream) = self.clients.get_mut(&token) {
                 match stream.read(&mut buf) {
                     Err(_) => {},
                     Ok(bytes_read) => {
-                        let mut headers = [httparse::EMPTY_HEADER; 16];
-                        let mut req = httparse::Request::new(&mut headers);
-                        req.parse(&buf[..bytes_read]).unwrap();
+                        match req.parse(&buf[..bytes_read]) {
+                            Ok(_) => {},
+                            Err(e) => error!("Cannot parse request: {:?}", e),
+                        };
+                    }
+                }
 
-                        match (req.method, req.path) {
-                            (Some("GET"), Some("/healthcheck")) => {
-                                try!(stream.write(b"HTTP/1.1 200 OK\r\n"));
-                                try!(stream.write(b"Content-Length: 7\r\n"));
-                                try!(stream.write(b"Connection: close\r\n\r\n"));
-                                try!(stream.write(b"healthy"));
-                            },
-                            (Some("GET"), Some("/")) => {
-                                try!(stream.write(b"HTTP/1.1 200 OK\r\n"));
-                                try!(stream.write(b"Content-Type: text/event-stream\r\n"));
-                                try!(stream.write(b"Cache-Control: no-cache\r\n"));
-                                try!(stream.write(b"Access-Control-Allow-Origin: *\r\n"));
-                                try!(stream.write(b"Access-Control-Headers: *\r\n\r\n"));
-                            },
-                            (_, _) => {
-                                try!(stream.write(b"HTTP/1.1 404 OK\r\n\r\n"));
-                            },
-                        }
+                match (req.method, req.path) {
+                    (Some("GET"), Some("/healthcheck")) => {
+                        try!(stream.write(b"HTTP/1.1 200 OK\r\n"));
+                        try!(stream.write(b"Content-Length: 7\r\n"));
+                        try!(stream.write(b"Connection: close\r\n\r\n"));
+                        try!(stream.write(b"healthy"));
+                    },
+                    (Some("GET"), Some("/")) => {
+                        try!(stream.write(b"HTTP/1.1 200 OK\r\n"));
+                        try!(stream.write(b"Content-Type: text/event-stream\r\n"));
+                        try!(stream.write(b"Cache-Control: no-cache\r\n"));
+                        try!(stream.write(b"Access-Control-Allow-Origin: *\r\n"));
+                        try!(stream.write(b"Access-Control-Headers: *\r\n\r\n"));
+                    },
+                    (_, _) => {
+                        try!(stream.write(b"HTTP/1.1 404 OK\r\n\r\n"));
                     },
                 }
+            }
+
+            match (req.method, req.path) {
+                (Some("GET"), Some("/")) => {},
+                (_, _) => try!(self.close_connection(&token)),
             }
         }
 
         if event.kind().is_error() || event.kind().is_hup() {
-            if let Some(stream) = self.clients.get_mut(&id) {
-                self.poll.deregister(stream).unwrap();
-                try!(stream.shutdown(Shutdown::Both));
-            }
-
-            self.clients.remove(&id);
+            try!(self.close_connection(&token));
         }
 
+        Ok(())
+    }
+
+    fn close_connection(&mut self, token: &Token) -> io::Result<()> {
+        if let Some(stream) = self.clients.get_mut(&token) {
+            try!(self.poll.deregister(stream));
+            try!(stream.shutdown(Shutdown::Both));
+        }
+
+        self.clients.remove(&token);
         Ok(())
     }
 }
