@@ -11,7 +11,6 @@ extern crate httparse;
 mod error;
 mod service;
 mod eventsource;
-mod server;
 mod autoscale;
 
 use std::env;
@@ -20,11 +19,9 @@ use std::time::Duration;
 use getopts::Options;
 use mio::*;
 use mio::channel::channel;
-use rustc_serialize::json::encode;
 use service::Service;
 use eventsource::connect;
 use autoscale::{Autoscale, AppInfo};
-use server::Server;
 
 fn main() {
     env_logger::init().unwrap();
@@ -35,7 +32,6 @@ fn main() {
     opts.optopt("", "cpu-percent", "Set maximum CPU usage", "80");
     opts.optopt("", "mem-percent", "Set maximum memory usage", "80");
     opts.optopt("", "max", "Set maximum instances", "10");
-    opts.optflag("", "sse", "Enable sse output");
 
     let matches = opts.parse(&args[1..]).unwrap_or_else(|_| {
         let brief = format!("Usage: autoscale [options]");
@@ -72,10 +68,8 @@ fn main() {
                                max_instances);
 
     let mut autoscale = Autoscale::new(service);
-    let (server_tx, mut server) = Server::new().unwrap();
     let (timer_tx, timer_rx) = channel::<Message>();
     let (marathon_tx, marathon_rx) = channel::<Message>();
-    let is_sse = matches.opt_present("sse");
 
     let poll = Poll::new().unwrap();
 
@@ -86,10 +80,6 @@ fn main() {
                   PollOpt::edge()).unwrap();
     poll.register(&marathon_rx, MARATHON, Ready::readable(),
                   PollOpt::edge()).unwrap();
-
-    if is_sse {
-        thread::spawn(move || server.start());
-    }
 
     thread::spawn(move || loop {
         timer_tx.send(Message::Tick).unwrap();
@@ -113,10 +103,6 @@ fn main() {
                         Err(e) => debug!("Error during tick: {}", e),
                         Ok(apps) => {
                             log_apps(&apps);
-                            if is_sse {
-                                let json = encode(&apps).unwrap();
-                                server_tx.send(json).unwrap();
-                            }
                         }
                     }
                 },

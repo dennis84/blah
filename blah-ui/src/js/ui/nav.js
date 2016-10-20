@@ -24,7 +24,6 @@ function render(model, update, ws, storage) {
     ]),
     h('div.level-right.nav-menu', [
       h('a.button.is-link', {props: {href: '#/jobs'}}, 'Jobs'),
-      h('a.button.is-link', {props: {href: '#/autoscale'}}, 'Autoscale'),
       h('a.button.is-link', {
         on: {click: function(node) {
           update(ctrl.theme, storage)
