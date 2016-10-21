@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+if [[ ! -z "$ELASTICSEARCH_URL" ]]; then
+  sed -ri "s!^(\#\s*)?(elasticsearch\.url:).*!\2 '$ELASTICSEARCH_URL'!" /opt/kibana/config/kibana.yml
+fi
+
+/opt/kibana/bin/kibana

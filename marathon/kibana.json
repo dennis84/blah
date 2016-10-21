@@ -1,0 +1,29 @@
+{
+  "id": "kibana",
+  "cpus": 0.1,
+  "mem": 128.0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "blah/kibana",
+      "network": "BRIDGE",
+      "portMappings": [
+        {"containerPort": 5601, "hostPort": 0, "servicePort": 5601, "protocol": "tcp"}
+      ]
+    }
+  },
+  "env": {
+    "ELASTICSEARCH_URL": "http://$BLAH_HOST:9200"
+  },
+  "labels":{
+    "HAPROXY_GROUP": "external",
+    "HAPROXY_0_VHOST": "kibana.blah.local",
+    "HAPROXY_0_BACKEND_HTTP_HEALTHCHECK_OPTIONS": "  option  httpchk GET {healthCheckPath} HTTP/1.1\\r\\nHost:\\ kibana.blah.local\n  timeout check {healthCheckTimeoutSeconds}s\n"
+  },
+  "healthChecks": [{
+    "protocol": "HTTP",
+    "path": "/",
+    "intervalSeconds": 10
+  }]
+}
