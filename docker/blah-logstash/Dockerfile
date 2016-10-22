@@ -13,10 +13,12 @@ RUN mv logstash-2.4.0 /opt/logstash
 
 RUN rm logstash-2.4.0.tar.gz
 
-ADD logstash.json /logstash.json
+ADD logstash.conf /logstash.conf
 
 RUN /opt/logstash/bin/logstash-plugin install logstash-input-beats
 
 EXPOSE 5044
 
-ENTRYPOINT ["/opt/logstash/bin/logstash", "-f", "/logstash.conf"]
+ADD docker-entrypoint /docker-entrypoint
+
+ENTRYPOINT ["/docker-entrypoint", "-v", "-f", "/logstash.conf"]

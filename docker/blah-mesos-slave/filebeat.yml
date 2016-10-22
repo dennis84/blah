@@ -1,0 +1,12 @@
+filebeat:
+  prospectors:
+    -
+      paths:
+        - "/var/lib/mesos/slaves/*/frameworks/*/executors/*/runs/latest/stdout"
+        - "/var/lib/mesos/slaves/*/frameworks/*/executors/*/runs/latest/stderr"
+      input_type: log
+      document_type: "filebeat-docker-logs"
+
+output:
+  logstash:
+    hosts: ["localhost:5044"]

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+if [[ ! -z "$LOGSTASH_URL" ]]; then
+  sed -ri "s/localhost:5044/$LOGSTASH_URL/" /filebeat.yml
+fi
+
+supervisord -n "$@"
