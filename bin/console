@@ -12,6 +12,7 @@ create_apps() {
   create_app serving
   create_app ui
   create_app kibana
+  create_app logstash
 }
 
 create_streaming_apps() {

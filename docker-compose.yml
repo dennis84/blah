@@ -12,11 +12,6 @@ services:
     image: blah/zookeeper
     network_mode: host
 
-  logstash:
-    container_name: logstash
-    image: blah/logstash
-    network_mode: host
-
   mesos:
     image: blah/mesos-master
     container_name: mesos
