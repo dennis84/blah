@@ -7,11 +7,13 @@ extern crate url;
 extern crate mio;
 extern crate rustc_serialize;
 extern crate httparse;
+extern crate chrono;
 
 mod error;
 mod service;
 mod eventsource;
 mod autoscale;
+mod logger;
 
 use std::env;
 use std::thread;
@@ -22,9 +24,10 @@ use mio::channel::channel;
 use service::Service;
 use eventsource::connect;
 use autoscale::{Autoscale, AppInfo};
+use rustc_serialize::json;
 
 fn main() {
-    env_logger::init().unwrap();
+    logger::new_logger();
     let args: Vec<String> = env::args().collect();
 
     let mut opts = Options::new();
@@ -123,12 +126,7 @@ enum Message {
 }
 
 fn log_apps(apps: &Vec<AppInfo>) {
-    info!("----------------------------------------");
-    info!("Nb apps: {}", apps.len());
     for app in apps.iter() {
-        info!("App: {}", app.app);
-        info!("Instances: {}/{}", app.instances, app.max_instances);
-        info!("CPU: {}", app.cpu_usage);
-        info!("MEM: {}", app.mem_usage);
+        info!("{}", json::encode(&app).unwrap());
     }
 }
