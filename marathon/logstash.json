@@ -13,6 +13,7 @@
       ]
     }
   },
+  "args": ["--quiet"],
   "env": {
     "ELASTICSEARCH_URL": "$BLAH_HOST:9200"
   },

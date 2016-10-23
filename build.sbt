@@ -16,8 +16,11 @@ val deps = Seq(
   "com.typesafe.akka"              %% "akka-http-experimental"                 % "2.4.8",
   "com.typesafe.akka"              %% "akka-http-spray-json-experimental"      % "2.4.8",
   "com.typesafe.akka"              %% "akka-stream-kafka"                      % "0.11-M4",
-  "org.slf4j"                       % "slf4j-simple"                           % "1.7.21",
-  "org.apache.spark"               %% "spark-core"                             % "2.0.0" % "provided",
+  "com.typesafe.akka"              %% "akka-slf4j"                             % "2.4.8",
+  "ch.qos.logback"                  % "logback-classic"                        % "1.1.7",
+  "net.logstash.logback"            % "logstash-logback-encoder"               % "4.7",
+ ("org.apache.spark"               %% "spark-core"                             % "2.0.0" % "provided")
+    .exclude("org.slf4j", "slf4j-log4j12"),
   "org.apache.spark"               %% "spark-streaming"                        % "2.0.0" % "provided",
   "org.apache.spark"               %% "spark-streaming-kafka-0-10"             % "2.0.0",
   "org.apache.spark"               %% "spark-mllib"                            % "2.0.0",
