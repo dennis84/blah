@@ -9,7 +9,8 @@ pub fn new_logger() {
             format!("\"@timestamp\":\"{:?}\"", chrono::Local::now()),
             format!("\"@version\":\"{}\"", "1"),
             format!("\"message\":\"{}\"", record.args()),
-            format!("\"level\":\"{}\"", record.level())
+            format!("\"level\":\"{}\"", record.level()),
+            format!("\"app\":\"{}\"", "autoscale"),
         ].join(",");
 
         format!("{{{}}}", string)

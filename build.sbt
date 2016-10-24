@@ -19,8 +19,7 @@ val deps = Seq(
   "com.typesafe.akka"              %% "akka-slf4j"                             % "2.4.8",
   "ch.qos.logback"                  % "logback-classic"                        % "1.1.7",
   "net.logstash.logback"            % "logstash-logback-encoder"               % "4.7",
- ("org.apache.spark"               %% "spark-core"                             % "2.0.0" % "provided")
-    .exclude("org.slf4j", "slf4j-log4j12"),
+  "org.apache.spark"               %% "spark-core"                             % "2.0.0" % "provided",
   "org.apache.spark"               %% "spark-streaming"                        % "2.0.0" % "provided",
   "org.apache.spark"               %% "spark-streaming-kafka-0-10"             % "2.0.0",
   "org.apache.spark"               %% "spark-mllib"                            % "2.0.0",
@@ -62,6 +61,7 @@ lazy val api = (project in file("blah-api"))
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
   .settings(commonSettings: _*)
+  .settings(assemblyMergeStrategy in assembly := defaultMergeStrategy)
   .settings(
     packageName in Docker := "blah/api",
     version in Docker := version.value,
@@ -74,6 +74,7 @@ lazy val serving = (project in file("blah-serving"))
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
   .settings(commonSettings: _*)
+  .settings(assemblyMergeStrategy in assembly := defaultMergeStrategy)
   .settings(
     packageName in Docker := "blah/serving",
     version in Docker := version.value,
@@ -90,12 +91,7 @@ lazy val algo = (project in file("blah-algo"))
   .settings(parallelExecution in Test := false)
   .settings(
     target in assembly := file("blah-algo/target/docker/stage/opt/docker/bin/"),
-    assemblyMergeStrategy in assembly := {
-      case PathList("META-INF", xs @ _*) => MergeStrategy.discard
-      case "application.conf" => MergeStrategy.concat
-      case "reference.conf" => MergeStrategy.concat
-      case _ => MergeStrategy.first
-    })
+    assemblyMergeStrategy in assembly := defaultMergeStrategy)
   .settings(
     packageName in Docker := "blah/algo",
     version in Docker := version.value,
@@ -108,3 +104,10 @@ lazy val algo = (project in file("blah-algo"))
   )
   .dependsOn(core % "compile->compile;test->test")
   .dependsOn(elastic)
+
+val defaultMergeStrategy: String => sbtassembly.MergeStrategy = {
+  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case "application.conf" => MergeStrategy.concat
+  case "reference.conf" => MergeStrategy.concat
+  case _ => MergeStrategy.first
+}
