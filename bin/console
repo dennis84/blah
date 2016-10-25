@@ -53,6 +53,8 @@ build_images() {
     --build-arg DOCKER_VERSION="$(docker version --format '{{.Client.Version}}')" \
     -t blah/mesos-slave docker/blah-mesos-slave
   docker build -t blah/rust docker/blah-rust/
+  docker build -t blah/kibana docker/blah-kibana/
+  docker build -t blah/logstash docker/blah-logstash/
   docker build -t blah/autoscale blah-autoscale/
   docker build -t blah/ui blah-ui/
 }

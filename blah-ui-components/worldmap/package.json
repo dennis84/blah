@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "d3": "^4.2.8",
     "datamaps": "^0.5.7"
   },
   "scripts": {
