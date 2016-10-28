@@ -10,10 +10,30 @@
   font-size 62px
 
 .nav
-  background: none
+  background none
 .nav a
   text-transform uppercase
   margin 5px
+.nav-menu
+  background base2
+  .divider
+    border-bottom 1px solid base1
+
+@media screen and (max-width: tablet - 1px)
+  .dropdown
+    .nav-toggle
+      display none
+
+@media screen and (min-width: tablet)
+  .dropdown
+    .nav-toggle
+      display block
+    .nav-menu
+      position absolute
+      display none
+      background base3
+      .nav-item
+        justify-content flex-start;
 
 @media screen and (max-width: tablet - 1px)
   .nav-menu .nav-item
