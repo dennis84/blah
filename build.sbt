@@ -25,7 +25,8 @@ val deps = Seq(
   "org.apache.spark"               %% "spark-mllib"                            % "2.0.0",
   "org.clojars.timewarrior"         % "ua-parser"                              % "1.3.0",
   "net.virtual-void"               %% "json-lenses"                            % "0.6.1",
-  "com.maxmind.geoip2"              % "geoip2"                                 % "2.5.0"
+  "com.maxmind.geoip2"              % "geoip2"                                 % "2.5.0",
+  "net.logstash.log4j"              % "jsonevent-layout"                       % "1.7"
 )
 
 scalaVersion in ThisBuild := "2.11.8"
