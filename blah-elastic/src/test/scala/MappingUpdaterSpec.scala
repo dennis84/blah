@@ -9,7 +9,7 @@ import akka.stream.ActorMaterializer
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import spray.json._
-import blah.core.JsonDsl._
+import blah.json.JsonDsl._
 import blah.testkit._
 
 class MappingUpdaterSpec

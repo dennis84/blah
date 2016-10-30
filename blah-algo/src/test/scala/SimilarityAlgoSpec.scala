@@ -3,8 +3,7 @@ package blah.algo
 import org.scalatest._
 import spray.json._
 import blah.testkit._
-import blah.core._
-import JsonProtocol._
+import EventJsonProtocol._
 
 class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkTest {
 

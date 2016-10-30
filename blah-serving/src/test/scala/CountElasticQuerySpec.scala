@@ -2,7 +2,7 @@ package blah.serving
 
 import org.scalatest._
 import spray.json._
-import blah.core.JsonDsl._
+import blah.json.JsonDsl._
 
 class CountElasticQuerySpec extends FlatSpec with Matchers {
 

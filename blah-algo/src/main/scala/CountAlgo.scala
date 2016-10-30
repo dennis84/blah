@@ -7,7 +7,6 @@ import java.time.temporal.ChronoUnit
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
-import blah.core.{UserAgent, UserAgentClassifier}
 
 class CountAlgo extends Algo[Count] {
   def train(rdd: RDD[String], ctx: SparkSession, args: Array[String]) = {

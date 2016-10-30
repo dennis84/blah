@@ -2,7 +2,7 @@ package blah.elastic
 
 import spray.json._
 import spray.json.lenses.JsonLenses._
-import blah.core.JsonDsl._
+import blah.json.JsonDsl._
 import DefaultJsonProtocol._
 
 object AggregationParser {

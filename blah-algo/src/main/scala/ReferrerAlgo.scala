@@ -5,8 +5,7 @@ import java.nio.ByteBuffer
 import java.time.temporal.ChronoUnit
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{SparkSession, Row}
-import blah.core.{UserAgent, UserAgentClassifier}
-import blah.core.FindOpt._
+import FindOpt._
 
 class ReferrerAlgo extends Algo[Referrer] {
   def train(rdd: RDD[String], ctx: SparkSession, args: Array[String]) = {

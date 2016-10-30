@@ -13,10 +13,9 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json._
 import spray.json.lenses.JsonLenses._
 import blah.testkit._
-import blah.core._
-import blah.core.JsonDsl._
-import JsonProtocol._
+import blah.json.JsonDsl._
 import DatasetElasticWriter._
+import DefaultJsonProtocol._
 
 case class Person(
   id: Option[String],
@@ -62,6 +61,7 @@ class DatasetElasticWriterSpec
     Thread.sleep(1000)
 
     val res = Await.result(search, 10.seconds)
+    println(res)
 
     res should contain theSameElementsAs List(
       ("firstname" -> "baz") ~ ("lastname" -> "qux"),
@@ -141,7 +141,7 @@ class DatasetElasticWriterSpec
       method = HttpMethods.DELETE,
       uri = "http://localhost:9200/test")
 
-  private def search() =
+  private def search(): Future[List[JsObject]] =
     Http() singleRequest HttpRequest(
       method = HttpMethods.POST,
       uri = "http://localhost:9200/test/person/_search?q=*:*"

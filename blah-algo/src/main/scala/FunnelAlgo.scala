@@ -5,7 +5,7 @@ import java.nio.ByteBuffer
 import java.time.ZonedDateTime
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{SparkSession, Dataset, Row}
-import blah.core.FindOpt._
+import FindOpt._
 
 class FunnelAlgo extends Algo[Funnel] {
   def train(rdd: RDD[String], ctx: SparkSession, args: Array[String]) = {

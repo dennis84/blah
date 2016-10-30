@@ -10,7 +10,7 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json._
-import blah.core.{HttpClient, Message}
+import blah.http.HttpClient
 
 class JobRepo(client: HttpClient)(
   implicit system: ActorSystem,

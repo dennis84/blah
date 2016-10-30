@@ -6,7 +6,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.mllib.linalg.{Vectors, SparseVector}
 import org.apache.spark.mllib.linalg.distributed._
-import blah.core.FindOpt._
+import FindOpt._
 
 class SimilarityAlgo extends Algo[Similarity] {
   def train(rdd: RDD[String], ctx: SparkSession, args: Array[String]) = {

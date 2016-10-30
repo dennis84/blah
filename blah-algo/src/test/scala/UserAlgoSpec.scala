@@ -4,8 +4,8 @@ import org.scalatest._
 import java.time.{ZonedDateTime, ZoneOffset}
 import spray.json._
 import blah.testkit._
-import blah.core._
-import JsonProtocol._
+import UserAgentJsonProtocol._
+import EventJsonProtocol._
 
 class UserAlgoSpec extends FlatSpec with Matchers with SparkTest {
 

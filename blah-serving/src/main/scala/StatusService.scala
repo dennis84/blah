@@ -4,7 +4,6 @@ import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import blah.core.Message
 
 class StatusService(
   implicit system: ActorSystem,

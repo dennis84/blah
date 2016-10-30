@@ -1,7 +1,7 @@
 package blah.elastic
 
 import spray.json._
-import blah.core.JsonDsl._
+import blah.json.JsonDsl._
 
 trait AggregationDsl {
   def terms(k: String): JsObject =

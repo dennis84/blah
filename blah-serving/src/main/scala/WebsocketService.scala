@@ -2,7 +2,7 @@ package blah.serving
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.model.ws.{Message, TextMessage}
+import akka.http.scaladsl.model.ws.{Message => WsMessage, TextMessage}
 import akka.stream.scaladsl.Flow
 
 class WebsocketService(
@@ -14,7 +14,7 @@ class WebsocketService(
     handleWebSocketMessages(flow)
   }
 
-  def flow = Flow[Message]
+  def flow = Flow[WsMessage]
     .collect {
       case TextMessage.Strict(msg) => msg
     }

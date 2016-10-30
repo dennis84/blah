@@ -4,7 +4,7 @@ import akka.event.Logging
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.Http
-import blah.core.CorsSupport
+import blah.http.CorsSupport
 
 object Boot extends App with CorsSupport {
   implicit val system = ActorSystem()

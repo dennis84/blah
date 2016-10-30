@@ -1,7 +1,7 @@
 package blah.elastic
 
 import spray.json._
-import blah.core.JsonDsl._
+import blah.json.JsonDsl._
 
 trait FilterDsl {
   def filter(json: JsObject): JsObject =

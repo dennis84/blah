@@ -4,8 +4,7 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import blah.core.Message
-import blah.core.CorsSupport
+import blah.http.CorsSupport
 
 trait RejectionHandling
   extends SprayJsonSupport

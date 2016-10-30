@@ -6,7 +6,6 @@ import akka.kafka._
 import org.apache.kafka.common.serialization.StringSerializer
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
-import blah.core.{HdfsWriter, HdfsWriterConfig, KafkaProducerActor}
 
 class Env(system: ActorSystem) {
   import system.dispatcher

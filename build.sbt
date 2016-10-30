@@ -1,33 +1,5 @@
 import com.typesafe.sbt.packager.docker._
-
-val res = Seq(
-  "clojars" at "https://clojars.org/repo/"
-)
-
-val deps = Seq(
-  "org.scalactic"                  %% "scalactic"                              % "3.0.0" % "test",
-  "org.scalamock"                  %% "scalamock-scalatest-support"            % "3.2.2" % "test",
-  "com.typesafe.akka"              %% "akka-actor"                             % "2.4.8",
-  "com.typesafe.akka"              %% "akka-testkit"                           % "2.4.8",
-  "com.typesafe.akka"              %% "akka-stream"                            % "2.4.8",
-  "com.typesafe.akka"              %% "akka-stream-testkit"                    % "2.4.8",
-  "com.typesafe.akka"              %% "akka-http-core"                         % "2.4.8",
-  "com.typesafe.akka"              %% "akka-http-testkit"                      % "2.4.8",
-  "com.typesafe.akka"              %% "akka-http-experimental"                 % "2.4.8",
-  "com.typesafe.akka"              %% "akka-http-spray-json-experimental"      % "2.4.8",
-  "com.typesafe.akka"              %% "akka-stream-kafka"                      % "0.11-M4",
-  "com.typesafe.akka"              %% "akka-slf4j"                             % "2.4.8",
-  "ch.qos.logback"                  % "logback-classic"                        % "1.1.7",
-  "net.logstash.logback"            % "logstash-logback-encoder"               % "4.7",
-  "org.apache.spark"               %% "spark-core"                             % "2.0.0" % "provided",
-  "org.apache.spark"               %% "spark-streaming"                        % "2.0.0" % "provided",
-  "org.apache.spark"               %% "spark-streaming-kafka-0-10"             % "2.0.0",
-  "org.apache.spark"               %% "spark-mllib"                            % "2.0.0",
-  "org.clojars.timewarrior"         % "ua-parser"                              % "1.3.0",
-  "net.virtual-void"               %% "json-lenses"                            % "0.6.1",
-  "com.maxmind.geoip2"              % "geoip2"                                 % "2.5.0",
-  "net.logstash.log4j"              % "jsonevent-layout"                       % "1.7"
-)
+import Dependencies._
 
 scalaVersion in ThisBuild := "2.11.8"
 
@@ -39,29 +11,42 @@ lazy val commonSettings = Seq(
 )
 
 lazy val root = (project in file("."))
-  .aggregate(core, api, serving, algo, elastic)
+  .aggregate(json, api, serving, algo, elastic)
 
 lazy val testkit = (project in file("blah-testkit"))
   .settings(commonSettings: _*)
-  .settings(
-    libraryDependencies ++= deps,
-    resolvers ++= res)
+  .settings(libraryDependencies ++= scalatest +: `spark-streaming-mlib`)
 
-lazy val core = (project in file("blah-core"))
+lazy val http = (project in file("blah-http"))
   .settings(commonSettings: _*)
-  .settings(
-    libraryDependencies ++= deps,
-    resolvers ++= res)
+  .settings(libraryDependencies ++= `akka-http`)
+
+lazy val json = (project in file("blah-json"))
+  .settings(commonSettings: _*)
+  .settings(libraryDependencies ++= Seq(`spray-json`))
   .dependsOn(testkit % "test->test")
 
 lazy val elastic = (project in file("blah-elastic"))
   .settings(commonSettings: _*)
-  .dependsOn(core % "compile->compile;test->test")
+  .settings(libraryDependencies ++= Seq(`json-lenses`))
+  .dependsOn(testkit % "test->test")
+  .dependsOn(json)
+  .dependsOn(http)
 
 lazy val api = (project in file("blah-api"))
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
   .settings(commonSettings: _*)
+  .settings(libraryDependencies ++=
+    `akka-actor` ++
+    `akka-stream` ++
+    `akka-stream-kafka` ++
+    `logback-logstash` ++
+    `akka-http` ++ Seq(
+      scalatest % "test",
+      scalactic % "test",
+      "org.apache.spark" %% "spark-core" % "2.0.0"
+    ))
   .settings(assemblyMergeStrategy in assembly := defaultMergeStrategy)
   .settings(
     packageName in Docker := "blah/api",
@@ -69,12 +54,23 @@ lazy val api = (project in file("blah-api"))
     dockerBaseImage := "blah/java",
     dockerExposedPorts := Seq(8000)
   )
-  .dependsOn(core % "compile->compile;test->test")
+  .dependsOn(json)
+  .dependsOn(http)
 
 lazy val serving = (project in file("blah-serving"))
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
   .settings(commonSettings: _*)
+  .settings(libraryDependencies ++=
+    `akka-actor` ++
+    `akka-stream` ++
+    `akka-stream-kafka` ++
+    `akka-http` ++
+    `logback-logstash` ++ Seq(
+      scalatest % "test",
+      scalactic % "test",
+      scalamock % "test"
+    ))
   .settings(assemblyMergeStrategy in assembly := defaultMergeStrategy)
   .settings(
     packageName in Docker := "blah/serving",
@@ -82,13 +78,23 @@ lazy val serving = (project in file("blah-serving"))
     dockerBaseImage := "blah/java",
     dockerExposedPorts := Seq(8001)
   )
-  .dependsOn(core % "compile->compile;test->test")
+  .dependsOn(json)
+  .dependsOn(http)
   .dependsOn(elastic)
 
 lazy val algo = (project in file("blah-algo"))
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
   .settings(commonSettings: _*)
+  .settings(libraryDependencies ++=
+    `spark-streaming-mlib` ++ Seq(
+      scalatest % "test",
+      scalactic % "test",
+      geoip2,
+      `ua-parser`,
+      `logstash-jsonevent`
+    ))
+  .settings(resolvers ++= Seq("clojars" at "https://clojars.org/repo/"))
   .settings(parallelExecution in Test := false)
   .settings(
     target in assembly := file("blah-algo/target/docker/stage/opt/docker/bin/"),
@@ -103,7 +109,8 @@ lazy val algo = (project in file("blah-algo"))
       "--conf", "spark.mesos.executor.docker.image=blah/spark-mesos",
       "/opt/docker/bin/algo-assembly-0.1.0.jar")
   )
-  .dependsOn(core % "compile->compile;test->test")
+  .dependsOn(testkit % "test->test")
+  .dependsOn(json)
   .dependsOn(elastic)
 
 val defaultMergeStrategy: String => sbtassembly.MergeStrategy = {

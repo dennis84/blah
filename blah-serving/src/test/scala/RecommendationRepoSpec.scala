@@ -8,7 +8,7 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.model._
 import spray.json._
-import blah.core.JsonDsl._
+import blah.json.JsonDsl._
 import blah.elastic._
 
 class RecommendationRepoSpec

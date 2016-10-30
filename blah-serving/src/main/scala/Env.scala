@@ -6,9 +6,9 @@ import akka.kafka._
 import akka.kafka.scaladsl._
 import org.apache.kafka.common.serialization.StringDeserializer
 import spray.json._
-import blah.core.HttpClient
+import blah.http.HttpClient
 import blah.elastic.{ElasticClient, ElasticUri, MappingUpdater}
-import blah.core.JsonDsl._
+import blah.json.JsonDsl._
 
 class Env(implicit system: ActorSystem, mat: Materializer) {
   private val config = system.settings.config

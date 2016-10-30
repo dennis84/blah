@@ -4,7 +4,7 @@ import scala.concurrent.duration._
 import org.scalatest._
 import akka.actor._
 import akka.stream.testkit.scaladsl._
-import akka.http.scaladsl.model.ws._
+import akka.http.scaladsl.model.ws.{Message => WsMessage, TextMessage}
 import akka.http.scaladsl.testkit._
 
 class WebsocketServiceSpec
@@ -21,8 +21,8 @@ class WebsocketServiceSpec
     val client = WSProbe()
 
     val (source, sink) = service.flow.runWith(
-      TestSource.probe[Message],
-      TestSink.probe[Message])
+      TestSource.probe[WsMessage],
+      TestSink.probe[WsMessage])
 
     source.sendNext(TextMessage("Ping"))
     sink.request(1)

@@ -2,7 +2,7 @@ package blah.elastic
 
 import org.scalatest._
 import spray.json._
-import blah.core.JsonDsl._
+import blah.json.JsonDsl._
 import blah.elastic.AggregationMerge._
 
 class AggregationMergeSpec extends FlatSpec with Matchers {

@@ -11,9 +11,9 @@ import org.apache.spark.sql.SparkSession
 import org.apache.hadoop.io.{LongWritable, BytesWritable}
 import org.apache.kafka.clients.producer.ProducerRecord
 import com.typesafe.config.Config
-import blah.core.FindOpt._
 import DatasetKafkaWriter._
 import DatasetElasticWriter._
+import FindOpt._
 
 class BatchJob[T <: Product : TypeTag](
   name: String,

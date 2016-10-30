@@ -2,7 +2,7 @@ package blah.elastic
 
 import akka.actor.ActorSystem
 import akka.stream.Materializer
-import blah.core.HttpClient
+import blah.http.HttpClient
 
 class ElasticClient(uri: ElasticUri)(
   implicit system: ActorSystem,

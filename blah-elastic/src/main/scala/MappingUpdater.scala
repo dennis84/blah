@@ -8,7 +8,7 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json._
 import spray.json.lenses.JsonLenses._
-import blah.core.JsonDsl._
+import blah.json.JsonDsl._
 
 class MappingUpdater(client: ElasticClient)(
   implicit system: ActorSystem,

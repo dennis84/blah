@@ -5,9 +5,8 @@ import org.scalatest._
 import org.apache.kafka.clients.producer.ProducerRecord
 import spray.json._
 import blah.testkit._
-import blah.core._
-import JsonProtocol._
 import DatasetKafkaWriter._
+import EventJsonProtocol._
 
 /**
  * Start kafka:

@@ -5,7 +5,6 @@ import scala.collection.JavaConversions._
 import scala.concurrent.ExecutionContext.Implicits.global
 import com.typesafe.config.ConfigFactory
 import org.apache.spark.SparkConf
-import blah.core._
 import blah.testkit._
 
 /**
