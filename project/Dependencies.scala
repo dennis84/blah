@@ -18,26 +18,26 @@ object Dependencies {
   val `ua-parser` = "org.clojars.timewarrior" % "ua-parser" % "1.3.0"
 
   val `akka-actor` = Seq(
-    "com.typesafe.akka" %% "akka-actor"   % "2.4.8",
-    "com.typesafe.akka" %% "akka-testkit" % "2.4.8",
-    "com.typesafe.akka" %% "akka-slf4j"   % "2.4.8"
-  )
+    "com.typesafe.akka" %% "akka-actor",
+    "com.typesafe.akka" %% "akka-testkit",
+    "com.typesafe.akka" %% "akka-slf4j"
+  ).map(_ % "2.4.8")
 
   val `akka-stream` = Seq(
-    "com.typesafe.akka" %% "akka-stream"         % "2.4.8",
-    "com.typesafe.akka" %% "akka-stream-testkit" % "2.4.8"
-  )
+    "com.typesafe.akka" %% "akka-stream",
+    "com.typesafe.akka" %% "akka-stream-testkit"
+  ).map(_ % "2.4.8")
   
   val `akka-stream-kafka` = Seq(
     "com.typesafe.akka" %% "akka-stream-kafka" % "0.11-M4"
   )
 
   val `akka-http` = Seq(
-    "com.typesafe.akka" %% "akka-http-core"                    % "2.4.8",
-    "com.typesafe.akka" %% "akka-http-testkit"                 % "2.4.8",
-    "com.typesafe.akka" %% "akka-http-experimental"            % "2.4.8",
-    "com.typesafe.akka" %% "akka-http-spray-json-experimental" % "2.4.8"
-  )
+    "com.typesafe.akka" %% "akka-http-core",
+    "com.typesafe.akka" %% "akka-http-testkit",
+    "com.typesafe.akka" %% "akka-http-experimental",
+    "com.typesafe.akka" %% "akka-http-spray-json-experimental"
+  ).map(_ % "2.4.8")
 
   val `logback-logstash` = Seq(
     "ch.qos.logback"       % "logback-classic"          % "1.1.7",
