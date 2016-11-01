@@ -33,10 +33,10 @@ create_jobs() {
 }
 
 build_apps() {
-  sbt api/docker:publishLocal
-  sbt serving/docker:publishLocal
-  sbt algo/assembly
-  sbt algo/docker:publishLocal
+  sbt blah-api/docker:publishLocal
+  sbt blah-serving/docker:publishLocal
+  sbt blah-algo/assembly
+  sbt blah-algo/docker:publishLocal
 }
 
 build_images() {
