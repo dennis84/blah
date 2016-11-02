@@ -7,6 +7,11 @@ volumes:
     driver: local
 
 services:
+  elasticsearch:
+    container_name: elasticsearch
+    image: blah/elasticsearch
+    network_mode: host
+
   zookeeper:
     container_name: zookeeper
     image: blah/zookeeper

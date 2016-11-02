@@ -26,8 +26,9 @@ class DatasetElasticWriter[T: ClassTag](ds: Dataset[T]) extends Serializable {
         case ((json, Some(id)), None) => Seq(
           update format (id, index, tpe),
           doc format json)
-        case ((json, None), _) => Seq(
+        case ((json, Some(id)), _) => Seq(
           create format (index, tpe), json)
+        case (_, _) => Nil
       }).mkString("\n") + "\n"
 
       val conn = new URL(s"$url/_bulk").openConnection()

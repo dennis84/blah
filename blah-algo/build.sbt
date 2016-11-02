@@ -31,5 +31,5 @@ dockerEntrypoint := Seq(
   "/opt/spark/bin/spark-submit",
   "--class", "blah.algo.Submit",
   "--conf", "spark.mesos.executor.docker.image=blah/spark-mesos",
-  "/opt/docker/bin/algo-assembly-0.1.0.jar"
+  "/opt/docker/bin/blah-algo-assembly-0.1.0.jar"
 )

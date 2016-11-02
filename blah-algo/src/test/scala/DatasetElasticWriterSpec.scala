@@ -53,15 +53,14 @@ class DatasetElasticWriterSpec
 
     import session.implicits._
     val input = session.sparkContext.parallelize(List(
-      Person(None, "foo", "bar"),
-      Person(None, "baz", "qux")
+      Person(Some("1"), "foo", "bar"),
+      Person(Some("2"), "baz", "qux")
     ))
 
     input.toDS.writeToElastic("test", "person")
     Thread.sleep(1000)
 
     val res = Await.result(search, 10.seconds)
-    println(res)
 
     res should contain theSameElementsAs List(
       ("firstname" -> "baz") ~ ("lastname" -> "qux"),

@@ -1,10 +1,9 @@
 network.host: 0.0.0.0
+discovery.zen.minimum_master_nodes: 1
+
 path:
   data: /usr/share/elasticsearch/data/data
   logs: /usr/share/elasticsearch/data/log
-  plugins: /usr/share/elasticsearch/data/plugins
-  work: /usr/share/elasticsearch/data/work
 
 script.engine.groovy.inline.update: on
 script.inline: on
-script.indexed: on
