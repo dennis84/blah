@@ -17,9 +17,23 @@ services:
     image: blah/zookeeper
     network_mode: host
 
+  namenode:
+    container_name: namenode
+    image: blah/hadoop-master
+    network_mode: host
+    volumes:
+      - hadoop_name:/data/dfs/name
+
+  datanode:
+    container_name: datanode
+    image: blah/hadoop-slave
+    network_mode: host
+    volumes:
+      - hadoop_data:/data/dfs/data
+
   mesos:
-    image: blah/mesos-master
     container_name: mesos
+    image: blah/mesos-master
     network_mode: host
     environment:
       MESOS_ZK: "zk://$BLAH_HOST:2181/mesos"

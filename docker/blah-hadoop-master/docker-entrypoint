@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sed -i s/0.0.0.0/$HOSTNAME/ $HADOOP_CONF_DIR/core-site.xml
+#sed -i s/0.0.0.0/$HOSTNAME/ $HADOOP_CONF_DIR/core-site.xml
 
 if [[ ! -f /data/hdfs/name/current/VERSION ]]; then
   hdfs namenode -format -nonInteractive

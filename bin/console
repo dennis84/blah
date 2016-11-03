@@ -5,8 +5,6 @@ create_apps() {
   create_brokers 1
   create_app autoscale
   create_app marathon-lb
-  create_app namenode
-  create_app datanode
   create_app api
   create_app serving
   create_app ui
