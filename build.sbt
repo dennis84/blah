@@ -16,8 +16,7 @@ lazy val root =
       `blah-elastic`,
       `blah-api`,
       `blah-serving`,
-      `blah-algo`,
-      `blah-tests`
+      `blah-algo`
     )
 
 lazy val `blah-testkit` = project
@@ -55,3 +54,5 @@ lazy val `blah-algo` = project
 
 lazy val `blah-tests` = project
   .settings(commonSettings: _*)
+  .dependsOn(`blah-testkit` % "test->test")
+  .dependsOn(`blah-http`)
