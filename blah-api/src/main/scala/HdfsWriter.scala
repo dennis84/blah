@@ -29,13 +29,14 @@ class HdfsWriter(
     case HdfsWriter.Write(e) =>
       log.debug("Write event")
       val value = new BytesWritable(e.toJson.compactPrint.getBytes)
+      val nextBytesWritten = bytesWritten + value.getLength
       writer.write(new LongWritable(0L), value)
-      if(bytesWritten >= config.batchSize) {
+      if(nextBytesWritten >= config.batchSize) {
         writer.close()
         timer.cancel()
         context become receive
       } else {
-        context become active(writer, timer, bytesWritten + value.getLength)
+        context become active(writer, timer, nextBytesWritten)
       }
 
     case HdfsWriter.Close =>

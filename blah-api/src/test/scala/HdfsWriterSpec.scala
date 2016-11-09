@@ -137,14 +137,14 @@ class HdfsWriterSpec
     var nb = 0
 
     while(reader.next(key, value)) (nb += 1)
-    nb should be (3)
+    nb should be (2)
 
     reader = new SequenceFile.Reader(dfsConf,
       SequenceFile.Reader.file(statuses(1).getPath))
     nb = 0
 
     while(reader.next(key, value)) (nb += 1)
-    nb should be (1)
+    nb should be (2)
   }
 
   it should "create tmp files until the writer is closed" in {
