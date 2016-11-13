@@ -1,9 +1,8 @@
-use std::io::{self};
 use std::sync::{Arc, Mutex};
 use std::collections::HashMap;
 use curl::easy::Easy;
-use futures::{Future, BoxFuture};
-use tokio_core::reactor::Handle;
+use futures::{self, Future, BoxFuture};
+use tokio_core::reactor::{Handle, Core};
 use tokio_curl::{Session, PerformError};
 use rustc_serialize::json::{self, Json};
 
@@ -38,6 +37,7 @@ struct TaskStatistic {
 }
 
 pub struct Service {
+    handle: Handle,
     host: String,
     max_mem_usage: f64,
     max_cpu_usage: f64,
@@ -46,21 +46,23 @@ pub struct Service {
 }
 
 impl Service {
-    pub fn new(host: String, max_mem_usage: f64,
-               max_cpu_usage: f64, multiplier: f64,
-               max_instances: i32) -> io::Result<Service> {
-        Ok(Service {
+    pub fn new(handle: Handle, host: String,
+               max_mem_usage: f64, max_cpu_usage: f64,
+               multiplier: f64, max_instances: i32)
+               -> Service {
+        Service {
+            handle: handle,
             host: host,
             max_mem_usage: max_mem_usage,
             max_cpu_usage: max_cpu_usage,
             multiplier: multiplier,
             max_instances: max_instances,
-        })
+        }
     }
 
-    pub fn get_apps(&mut self, h: Handle) -> Fut<Vec<String>> {
+    pub fn get_apps(&mut self) -> Fut<Vec<String>> {
         let url = format!("http://{}:8080/v2/apps", &self.host);
-        self.send_get(h, &url).map(|body| {
+        self.send_get(&url).map(|body| {
             let data = Json::from_str(&body).unwrap();
             let data = data.as_object().unwrap();
             let data = data.get("apps").unwrap();
@@ -77,14 +79,14 @@ impl Service {
         }).boxed()
     }
 
-    pub fn get_app(&mut self, h: Handle, app: &str) -> Fut<Option<App>> {
+    pub fn get_app(&mut self, app: &str) -> Fut<Option<App>> {
         let url = format!("http://{}:8080/v2/apps/{}", &self.host, &app);
         let app = app.to_string();
         let mut max_instances = self.max_instances.clone();
         let mut max_mem_usage = self.max_mem_usage.clone();
         let mut max_cpu_usage = self.max_cpu_usage.clone();
 
-        self.send_get(h, &url).map(move |body| {
+        self.send_get(&url).map(move |body| {
             let data = Json::from_str(&body).unwrap();
             let instances = data.find_path(&["app", "instances"]).unwrap();
             let instances = instances.as_i64().unwrap();
@@ -130,9 +132,9 @@ impl Service {
         }).boxed()
     }
 
-    pub fn get_slaves(&mut self, h: Handle) -> Fut<HashMap<String, String>> {
+    pub fn get_slaves(&mut self) -> Fut<HashMap<String, String>> {
         let url = format!("http://{}:5050/master/slaves", &self.host);
-        self.send_get(h, &url).map(|body| {
+        self.send_get(&url).map(|body| {
             let data = Json::from_str(&body).unwrap();
             let data = data.as_object().unwrap();
             let data = data.get("slaves").unwrap();
@@ -151,51 +153,58 @@ impl Service {
         }).boxed()
     }
 
-    // pub fn get_statistic(&self, app: &App,
-    //                      slaves: &HashMap<String, String>,
-    //                      prev: Option<&Statistic>)
-    //                      -> Fut<Statistic> {
-    //     let mut mems: Vec<f64> = Vec::new();
-    //     let mut cpus: Vec<f64> = Vec::new();
-    //     let mut timestamp: f64 = 0.0;
-    //     let mut cpu_usage: f64 = 0.0;
+    pub fn get_statistic(&mut self, app: &App,
+                         slaves: &HashMap<String, String>,
+                         prev: Option<Statistic>)
+                         -> Fut<Statistic> {
+        let mut futs = Vec::new();
 
-    //     for (id, slave_id) in &app.tasks {
-    //         let url = slaves.get::<String>(&slave_id).unwrap().to_string();
-    //         let task = try!(self.get_task_statistic(url, id));
-    //         let task = try!(task.ok_or(Error::Parse));
-    //         timestamp = task.timestamp;
-    //         cpus.push(task.cpus_user_time_secs + task.cpus_system_time_secs);
-    //         mems.push(100.0 * task.mem_rss_bytes as f64 /
-    //                   task.mem_limit_bytes as f64);
-    //     }
+        for (id, slave_id) in &app.tasks {
+            let url = slaves.get::<String>(&slave_id).unwrap().to_string();
+            futs.push(self.get_task_statistic(url, id));
+        }
 
-    //     let mem_usage = mems.iter()
-    //         .fold(0.0, |a, &b| a + b) / mems.len() as f64;
+        futures::collect(futs).map(move |tasks| {
+            let mut mems: Vec<f64> = Vec::new();
+            let mut cpus: Vec<f64> = Vec::new();
+            let mut timestamp: f64 = 0.0;
+            let mut cpu_usage: f64 = 0.0;
 
-    //     let cpu_time = cpus.iter()
-    //         .fold(0.0, |a, &b| a + b) / cpus.len() as f64;
+            for task in tasks {
+                let task = task.unwrap();
+                timestamp = task.timestamp;
+                cpus.push(task.cpus_user_time_secs + task.cpus_system_time_secs);
+                mems.push(100.0 * task.mem_rss_bytes as f64 /
+                          task.mem_limit_bytes as f64);
+            }
 
-    //     if prev.is_some() {
-    //         let prev = prev.unwrap();
-    //         let sampling_duration = timestamp - prev.timestamp;
-    //         let cpu_time_usage = cpu_time - prev.cpu_time;
-    //         cpu_usage = cpu_time_usage / sampling_duration * 100.0;
-    //     }
+            let mem_usage = mems.iter()
+                .fold(0.0, |a, &b| a + b) / mems.len() as f64;
 
-    //     Ok(Statistic {
-    //         timestamp: timestamp,
-    //         cpu_time: cpu_time,
-    //         mem_usage: mem_usage,
-    //         cpu_usage: cpu_usage,
-    //     })
-    // }
+            let cpu_time = cpus.iter()
+                .fold(0.0, |a, &b| a + b) / cpus.len() as f64;
 
-    fn get_task_statistic(&mut self, h: Handle, slave: String, id: &str)
+            if prev.is_some() {
+                let prev = prev.unwrap();
+                let sampling_duration = timestamp - prev.timestamp;
+                let cpu_time_usage = cpu_time - prev.cpu_time;
+                cpu_usage = cpu_time_usage / sampling_duration * 100.0;
+            }
+
+            Statistic {
+                timestamp: timestamp,
+                cpu_time: cpu_time,
+                mem_usage: mem_usage,
+                cpu_usage: cpu_usage,
+            }
+        }).boxed()
+    }
+
+    fn get_task_statistic(&mut self, slave: String, id: &str)
                           -> Fut<Option<TaskStatistic>> {
         let url = format!("http://{}/monitor/statistics", &slave);
         let id = id.to_string();
-        self.send_get(h, &url).map(move |body| {
+        self.send_get(&url).map(move |body| {
             let data = Json::from_str(&body).unwrap();
             let data = data.as_array().unwrap();
 
@@ -212,9 +221,8 @@ impl Service {
         }).boxed()
     }
 
-    fn send_get(&mut self, h: Handle, url: &str) -> Fut<String> {
-        let session = Session::new(h);
-
+    fn send_get(&mut self, url: &str) -> Fut<String> {
+        let session = Session::new(self.handle.clone());
         let response = Arc::new(Mutex::new(Vec::new()));
         let headers = Arc::new(Mutex::new(Vec::new()));
 
@@ -239,5 +247,28 @@ impl Service {
 			let response = String::from_utf8_lossy(&response);
             response.into_owned()
 		}).boxed()
+    }
+}
+
+#[test]
+fn test() {
+    let host = "172.17.42.1";
+    let mut evloop = Core::new().unwrap();
+    let mut service = Service::new(evloop.handle(),
+                                   host.to_string(),
+                                   80.0, 80.0, 1.5, 10);
+
+    let fut = service.get_slaves();
+    let slaves =  evloop.run(fut).unwrap();
+
+    let fut = service.get_apps();
+    let apps =  evloop.run(fut).unwrap();
+    for id in apps {
+        let fut = service.get_app(&id);
+        let app =  evloop.run(fut).unwrap().unwrap();
+
+        let fut = service.get_statistic(&app, &slaves, None);
+        let stat =  evloop.run(fut).unwrap();
+        println!("{:?}", stat);
     }
 }

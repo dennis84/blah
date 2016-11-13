@@ -4,8 +4,11 @@ version = "0.1.0"
 authors = ["Dennis Dietrich <d.dietrich84@gmail.com>"]
 
 [dependencies]
+log = "0.3"
+env_logger = "0.3"
 curl = "0.3.6"
 futures = "0.1"
 tokio-core = "0.1"
 tokio-curl = "0.1"
 rustc-serialize = "0.3"
+chrono = "0.2"
