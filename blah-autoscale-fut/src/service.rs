@@ -250,25 +250,25 @@ impl Service {
     }
 }
 
-#[test]
-fn test() {
-    let host = "172.17.42.1";
-    let mut evloop = Core::new().unwrap();
-    let mut service = Service::new(evloop.handle(),
-                                   host.to_string(),
-                                   80.0, 80.0, 1.5, 10);
+// #[test]
+// fn test() {
+//     let host = "172.17.42.1";
+//     let mut evloop = Core::new().unwrap();
+//     let mut service = Service::new(evloop.handle(),
+//                                    host.to_string(),
+//                                    80.0, 80.0, 1.5, 10);
 
-    let fut = service.get_slaves();
-    let slaves =  evloop.run(fut).unwrap();
+//     let fut = service.get_slaves();
+//     let slaves =  evloop.run(fut).unwrap();
 
-    let fut = service.get_apps();
-    let apps =  evloop.run(fut).unwrap();
-    for id in apps {
-        let fut = service.get_app(&id);
-        let app =  evloop.run(fut).unwrap().unwrap();
+//     let fut = service.get_apps();
+//     let apps =  evloop.run(fut).unwrap();
+//     for id in apps {
+//         let fut = service.get_app(&id);
+//         let app =  evloop.run(fut).unwrap().unwrap();
 
-        let fut = service.get_statistic(&app, &slaves, None);
-        let stat =  evloop.run(fut).unwrap();
-        println!("{:?}", stat);
-    }
-}
+//         let fut = service.get_statistic(&app, &slaves, None);
+//         let stat =  evloop.run(fut).unwrap();
+//         println!("{:?}", stat);
+//     }
+// }

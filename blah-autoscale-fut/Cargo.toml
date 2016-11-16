@@ -10,5 +10,7 @@ curl = "0.3.6"
 futures = "0.1"
 tokio-core = "0.1"
 tokio-curl = "0.1"
+tokio-service = { git = "https://github.com/tokio-rs/tokio-service", rev = "da47a93" }
 rustc-serialize = "0.3"
 chrono = "0.2"
+url = "1.2"

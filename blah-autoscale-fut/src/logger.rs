@@ -28,9 +28,9 @@ pub fn new_logger() {
     builder.init().unwrap();
 }
 
-#[test]
-fn test_log() {
-    new_logger();
-    error!("{}", r#"{"foo": 42}"#);
-    error!("bar");
-}
+// #[test]
+// fn test_log() {
+//     new_logger();
+//     error!("{}", r#"{"foo": 42}"#);
+//     error!("bar");
+// }
