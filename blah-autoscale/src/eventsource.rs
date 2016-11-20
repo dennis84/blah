@@ -1,24 +1,9 @@
-//! Usage
-//! -----
-//!
-//! ```
-//! mod eventsource;
-//! use eventsource::{connect};
-//!
-//! let client = connect("http://172.17.42.1:8080/v2/events", |event| {
-//!     println!("{:?}", event);
-//! }).unwrap();
-//! ```
-
-use std::io::prelude::*;
-use std::io::{self, BufWriter};
-use std::net::{SocketAddr, ToSocketAddrs};
-use std::borrow::Borrow;
-use mio::tcp::{TcpStream};
-use hyper::http::h1::parse_response;
-use hyper::buffer::BufReader;
-use mio::{Poll, PollOpt, Events, Ready, Token};
-use url::Url;
+use std::io;
+use std::thread;
+use std::sync::mpsc::channel;
+use curl::easy::{Easy, List};
+use tokio_core::reactor::Core;
+use tokio_curl::{Session};
 
 #[derive(Debug)]
 pub struct Event {
@@ -28,142 +13,109 @@ pub struct Event {
     pub retry: Option<u64>,
 }
 
-struct Connection<F> {
-    reader: BufReader<TcpStream>,
-    initialized: bool,
-    callback: F,
-}
+pub fn connect<F>(url: &str, fun: F) -> io::Result<()> 
+        where F: FnMut(Event) -> () {
+    let (tx, rx) = channel();
 
-impl<F> Connection<F>
-    where F: FnMut(Event) -> () {
-    fn handle_req(&mut self) {
-        if false == self.initialized {
-            parse_response(&mut self.reader).unwrap();
-            self.initialized = true;
-        }
+    let mut req = Easy::new();
+    try!(req.get(true));
+    try!(req.url(url));
 
-        let mut event = Event {
-            id: None,
-            event: None,
-            data: "".to_string(),
-            retry: None,
-        };
+    let mut list = List::new();
+    try!(list.append("Accept: text/event-stream"));
+    try!(req.http_headers(list));
 
-        let mut line = String::new();
-        while self.reader.read_line(&mut line).unwrap_or(0) > 0 {
-            self.parse_line(&line, &mut event);
-            line.clear();
-        }
+    thread::spawn(move || {
+        let mut evloop = Core::new().unwrap();
+        let handle = evloop.handle();
+        let session = Session::new(handle);
 
-        if ! event.data.is_empty() {
-            let fun = &mut self.callback;
-            fun(event);
-        }
-    }
+        let tx2 = tx.clone();
+        req.write_function(move |data| {
+            tx2.send(String::from_utf8_lossy(&data).into_owned()).unwrap();
+            Ok(data.len())
+        }).unwrap();
 
-    fn parse_line(&self, line: &str, event: &mut Event) {
-        let line = if line.ends_with("\r\n") {
-            &line[0..line.len()-2]
-        } else if line.ends_with('\n') {
-            &line[0..line.len()-1]
-        } else {
-            line
-        };
+        let future = session.perform(req);
+        evloop.run(future).unwrap();
+    });
 
-        let (field, value) = if let Some(pos) = line.find(':') {
-            let (f, v) = line.split_at(pos);
-            let v = if v.starts_with(": ") { &v[2..] } else { &v[1..] };
-            (f, v)
-        } else {
-            return;
-        };
-
-        match field {
-            "event" => {
-                event.event = Some(value.to_string());
-            }
-            "data" => {
-                event.data.push_str(value);
-                event.data.push('\n');
-            }
-            "id" => {
-                event.id = Some(value.to_string());
-            }
-            "retry" => {
-                event.retry = value.parse().ok();
-            }
-            _ => ()
-        }
-    }
-}
-
-pub fn connect<F,U>(url: U, fun: F) -> io::Result<()> 
-    where F: FnMut(Event) -> (),
-          U: Borrow<str> {
-    let url = try!(Url::parse(url.borrow()).or_else(|e| {
-        Err(io::Error::new(io::ErrorKind::Other, e))
-    }));
-    let addr = try!(parse_url(&url));
-    let stream = try!(TcpStream::connect(&addr));
-    let writer = try!(stream.try_clone());
-    let mut writer = BufWriter::new(writer);
-
-    try!(writer.write(&format!(
-        "GET {} HTTP/1.1\r\n", url.path()).into_bytes()[..]));
-    try!(writer.write(&format!(
-        "HOST: {}\r\n", addr).into_bytes()[..]));
-    try!(writer.write(b"accept: text/event-stream\r\n\r\n"));
-    try!(writer.flush());
-
-    const CLIENT: Token = Token(0);
-
-    let poll = try!(Poll::new());
-    try!(poll.register(&stream, CLIENT, Ready::readable(),
-                       PollOpt::edge()));
-
-    let mut events = Events::with_capacity(1024);
-    let mut conn = Connection {
-        reader: BufReader::new(stream),
-        initialized: false,
-        callback: fun,
-    };
+    let mut callback = fun;
 
     loop {
-        try!(poll.poll(&mut events, None));
-        for event in events.iter() {
-            match event.token() {
-                CLIENT => conn.handle_req(),
-                _ => unreachable!(),
-            }
+        match rx.recv() {
+            Err(e) => debug!("Error during recv: {}", e),
+            Ok(message) => callback(parse_message(&message))
         }
     }
 }
 
-fn parse_url(url: &Url) -> io::Result<SocketAddr> {
-    let host = url.host_str();
+fn parse_message(message: &str) -> Event {
+    let mut event = Event {
+        id: None,
+        event: None,
+        data: "".to_string(),
+        retry: None,
+    };
 
-    if host.is_none() {
-        return Err(io::Error::new(io::ErrorKind::Other, "Invalid URL"))
+    for line in message.split("\r\n") {
+        match line.find(":") {
+            Some(pos) => {
+                let (field, value) = line.split_at(pos);
+                let value = &value[2..];
+                match field {
+                    "event" => {
+                        event.event = Some(value.to_string());
+                    }
+                    "data" => {
+                        event.data.push_str(value);
+                    }
+                    "id" => {
+                        event.id = Some(value.to_string());
+                    }
+                    "retry" => {
+                        event.retry = value.parse().ok();
+                    }
+                    _ => ()
+                }
+            }
+            None => {}
+        }
     }
 
-    let port = url.port_or_known_default().unwrap_or(80);
-    let addrs = try!((&host.unwrap()[..], port).to_socket_addrs());
-    let addrs = addrs.collect::<Vec<SocketAddr>>();
-
-    match addrs.first() {
-        Some(_) => Ok(addrs[0]),
-        None => Err(io::Error::new(io::ErrorKind::Other, "Parse error")),
-    }
+    event
 }
 
 #[test]
-fn test_parse_url() {
-    let url = Url::parse("http://google.com").unwrap();
-    let url = parse_url(&url);
-    assert!(url.is_ok());
-    assert!(80 == url.unwrap().port());
-    let url = Url::parse("http://8.8.8.8:8000").unwrap();
-    let url = parse_url(&url);
-    assert!(url.is_ok());
-    assert!(8000 == url.unwrap().port());
+fn test_parse_message() {
+    let message = "\
+        event: foo\r\n\
+        data: bar\r\n\r\n\
+    ";
+    
+    let event = parse_message(message);
+    assert!(Some("foo".to_string()) == event.event);
+    assert!("bar" == event.data);
+
+    let message = "\
+        event: foo\r\n\
+        data: {\"a\": 0}\r\n\r\n\
+    ";
+    
+    let event = parse_message(message);
+    assert!(Some("foo".to_string()) == event.event);
+    assert!(r#"{"a": 0}"# == event.data);
+
+    let message = "";
+    let event = parse_message(message);
+    assert!(None == event.event);
+    assert!("" == event.data);
+}
+
+#[test]
+#[ignore]
+fn test_example() {
+    connect("http://172.17.42.1:8080/v2/events", |e| {
+        println!("{:?}", e);
+    });
 }

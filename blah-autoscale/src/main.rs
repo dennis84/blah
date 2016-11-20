@@ -2,29 +2,25 @@
 extern crate log;
 extern crate env_logger;
 extern crate getopts;
-extern crate hyper;
-extern crate url;
-extern crate mio;
+extern crate curl;
+extern crate futures;
+extern crate tokio_core;
+extern crate tokio_curl;
 extern crate rustc_serialize;
-extern crate httparse;
 extern crate chrono;
 
-mod error;
 mod service;
-mod eventsource;
-mod autoscale;
 mod logger;
 
 use std::env;
 use std::thread;
 use std::time::Duration;
+use std::collections::HashMap;
 use getopts::Options;
-use mio::*;
-use mio::channel::channel;
-use service::Service;
-use eventsource::connect;
-use autoscale::{Autoscale, AppInfo};
 use rustc_serialize::json;
+use futures::{Future};
+use tokio_core::reactor::Core;
+use service::{Service, Statistic};
 
 fn main() {
     logger::new_logger();
@@ -64,69 +60,70 @@ fn main() {
 
     let multiplier = 1.5;
 
-    let service = Service::new(host.clone(),
-                               max_mem_usage,
-                               max_cpu_usage,
-                               multiplier,
-                               max_instances);
+    let mut evloop = Core::new().unwrap();
+    let mut service = Service::new(evloop.handle(),
+                                   host.clone(),
+                                   max_mem_usage,
+                                   max_cpu_usage,
+                                   multiplier,
+                                   max_instances);
 
-    let mut autoscale = Autoscale::new(service);
-    let (timer_tx, timer_rx) = channel::<Message>();
-    let (marathon_tx, marathon_rx) = channel::<Message>();
+    let mut stats: HashMap<String, Statistic> = HashMap::new();
 
-    let poll = Poll::new().unwrap();
-
-    const TIMER: Token = Token(0);
-    const MARATHON: Token = Token(1);
-
-    poll.register(&timer_rx, TIMER, Ready::readable(),
-                  PollOpt::edge()).unwrap();
-    poll.register(&marathon_rx, MARATHON, Ready::readable(),
-                  PollOpt::edge()).unwrap();
-
-    thread::spawn(move || loop {
-        timer_tx.send(Message::Tick).unwrap();
-        thread::sleep(Duration::from_millis(10000));
-    });
-
-    thread::spawn(move || connect(format!("http://{}:8080/v2/events", host), |e| {
-        if e.event == Some("status_update_event".to_string()) {
-            marathon_tx.send(Message::Update).unwrap();
-        }
-    }));
-
-    let mut events = Events::with_capacity(1024);
     loop {
-        poll.poll(&mut events, None).unwrap();
-        for event in events.iter() {
-            match event.token() {
-                TIMER => match timer_rx.try_recv() {
-                    Err(e) => debug!("Error during recv: {}", e),
-                    Ok(_) => match autoscale.tick() {
-                        Err(e) => debug!("Error during tick: {}", e),
-                        Ok(apps) => {
-                            log_apps(&apps);
-                        }
-                    }
-                },
-                MARATHON => match marathon_rx.try_recv() {
-                    Err(e) => debug!("Error during recv: {}", e),
-                    Ok(_) => autoscale.update().unwrap(),
-                },
-                _ => unreachable!(),
+        let apps = {
+            let f = service.get_apps().and_then(|apps| {
+                futures::collect(apps.iter().map(|id| {
+                    service.get_app(id.as_ref())
+                }).collect::<Vec<_>>())
+            });
+            evloop.run(f).unwrap()
+        };
+
+        let slaves = {
+            let f = service.get_slaves();
+            evloop.run(f).unwrap()
+        };
+
+        for app in apps {
+            if app.is_none() {
+                continue;
             }
+
+            let app = app.unwrap();
+            let stat = {
+                let s = stats.get(&app.name);
+                let f = service.get_statistic(&app, &slaves, s);
+                evloop.run(f).unwrap()
+            };
+
+            if stat.cpu_usage > app.max_cpu_usage ||
+               stat.mem_usage > app.max_mem_usage {
+                info!("Scale {} application.", app.name);
+                let f = service.scale(&app);
+                evloop.run(f).unwrap();
+            }
+
+            info!("{}", json::encode(&AppInfo {
+                app: app.name.to_owned(),
+                instances: app.instances,
+                max_instances: app.max_instances,
+                cpu_usage: stat.cpu_usage,
+                mem_usage: stat.mem_usage,
+            }).unwrap());
+
+            stats.insert(app.name, stat);
         }
+
+        thread::sleep(Duration::from_millis(10000));
     }
 }
 
-#[derive(Debug)]
-enum Message {
-    Update,
-    Tick,
-}
-
-fn log_apps(apps: &Vec<AppInfo>) {
-    for app in apps.iter() {
-        info!("{}", json::encode(&app).unwrap());
-    }
+#[derive(Debug, RustcEncodable)]
+pub struct AppInfo {
+    pub app: String,
+    pub instances: i64,
+    pub max_instances: i32,
+    pub cpu_usage: f64,
+    pub mem_usage: f64,
 }
