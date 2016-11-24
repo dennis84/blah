@@ -30,9 +30,8 @@ pub fn connect<F>(url: &str, fun: F) -> io::Result<()>
         let handle = evloop.handle();
         let session = Session::new(handle);
 
-        let tx2 = tx.clone();
         req.write_function(move |data| {
-            tx2.send(String::from_utf8_lossy(&data).into_owned()).unwrap();
+            tx.send(String::from_utf8_lossy(&data).into_owned()).unwrap();
             Ok(data.len())
         }).unwrap();
 
@@ -117,5 +116,5 @@ fn test_parse_message() {
 fn test_example() {
     connect("http://172.17.42.1:8080/v2/events", |e| {
         println!("{:?}", e);
-    });
+    }).unwrap();
 }
