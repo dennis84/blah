@@ -1,7 +1,7 @@
 var h = require('snabbdom/h')
 
 function container(model, children) {
-  var theme = function(vnode) {
+  var theme = function() {
     var html = document.documentElement
     html.className = ''
     html.classList.add(model.theme)

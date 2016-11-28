@@ -8,7 +8,7 @@ function renderChart(app, vnode) {
   }, 0)
 }
 
-function render(model, options) {
+function render(model) {
   return h('div.autoscale.columns.is-multiline', model.apps.map(function(app) {
     return h('div.column.is-2', [
       h('div.app', {

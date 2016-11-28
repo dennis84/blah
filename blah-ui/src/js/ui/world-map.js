@@ -8,7 +8,7 @@ function render(model, update, ws, storage) {
   return container(model, [
     nav(model, update, ws, storage),
     h('h1.has-text-centered', 'World Map'),
-    (model.error) ? error.unknown() : component(WorldMap, {
+    (model.error) ? error.unknown() : component(window.WorldMap, {
       class: {'world-map': true}
     }, ws)
   ])

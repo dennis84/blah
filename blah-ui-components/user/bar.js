@@ -8,7 +8,7 @@ function chart(model, limit) {
 
   return [h('div.chart', {
     hook: {insert: function(vnode) {
-      Chart.bar(vnode.elm, data)
+      window.Chart.bar(vnode.elm, data)
     }}
   })]
 }

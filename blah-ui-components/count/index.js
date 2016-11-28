@@ -30,7 +30,7 @@ function Main(render, ctrlFn, node, ws, options) {
     }
   }
 
-  function onCount(data) {
+  function onCount() {
     update(ctrlFn, options)
   }
 

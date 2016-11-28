@@ -2,7 +2,7 @@ var h = require('snabbdom/h')
 var moment = require('moment')
 
 function chart(model) {
-  var data = Chart.timeframe(
+  var data = window.Chart.timeframe(
     model.groups,
     moment().subtract(1, 'day'),
     moment().add(1, 'hour')
@@ -11,10 +11,10 @@ function chart(model) {
   return h('div.chart', {
     hook: {
       insert: function(vnode) {
-        Chart.bar(vnode.elm, data)
+        window.Chart.bar(vnode.elm, data)
       },
       update: function(vnode) {
-        Chart.bar(vnode.elm, data)
+        window.Chart.bar(vnode.elm, data)
       }
     }
   })

@@ -1,7 +1,6 @@
 var h = require('snabbdom/h')
-var ctrl = require('./ctrl')
 
-function mkItems(xs, update) {
+function mkItems(xs) {
   if(undefined === xs || 0 == xs.length) return []
   return h('div.list.most-viewed', xs.map(function(item, index) {
     return h('div.list-item.level.is-bordered', [

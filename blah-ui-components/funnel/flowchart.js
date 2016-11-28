@@ -37,7 +37,7 @@ function mkGraph(xs) {
   return data
 }
 
-function flowchart(model, options) {
+function flowchart(model) {
   if(!model.items || 0 === model.items.length) {
     return h('div.is-empty')
   }

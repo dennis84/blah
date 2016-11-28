@@ -35,7 +35,7 @@ function render(model, update, ws, storage) {
           h('a.nav-item.dropdown-item', {props: {href: '#/jobs'}}, 'Chronos Jobs'),
           h('a.nav-item.dropdown-item', {props: {href: 'http://kibana.blah.local'}}, 'Kibana'),
           h('a.nav-item.dropdown-item', {
-            on: {click: function(node) {
+            on: {click: function() {
               update(ctrl.theme, storage)
             }}
           }, 'Toggle Theme')

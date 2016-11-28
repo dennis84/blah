@@ -31,7 +31,7 @@ function Funnel(node, ws, options) {
     }
   }
 
-  function onFunnel(data) {
+  function onFunnel() {
     update(ctrl.search, options)
   }
 

@@ -28,7 +28,7 @@ function render(model, update, options) {
           on: {
             input: debounce(function(e) {
               if(!e.target.value) return
-              var items = e.target.value.split(",")
+              var items = e.target.value.split(',')
               update(ctrl.find, {
                 baseUrl: options.baseUrl,
                 items: items

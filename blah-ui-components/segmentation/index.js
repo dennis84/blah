@@ -29,7 +29,7 @@ function Segmentation(node, ws, options, initial) {
     }
   }
 
-  function onCount(data) {
+  function onCount() {
     update(ctrl.grouped, xtend(options, state))
   }
 

@@ -8,7 +8,9 @@ test('daily', function(assert) {
   assert.equal(data.length, 24)
   assert.deepEqual(
     data.map(x => x.value),
-    Array.from(new Array(24), (x, i) => 0)
+    Array.from(new Array(24), function() {
+      return 0
+    })
   )
   assert.end()
 })

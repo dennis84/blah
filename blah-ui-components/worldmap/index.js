@@ -21,9 +21,8 @@ function WorldMap(node, ws) {
       }
     })
 
-    map.addPlugin('pins', function(layer, data, options) {
+    map.addPlugin('pins', function(layer, data) {
       var self = this
-      var svg = this.svg
       var bubbles = layer.selectAll('image.datamaps-pins')
         .data(data, JSON.stringify)
 
@@ -40,7 +39,7 @@ function WorldMap(node, ws) {
         })
         .each(fadeInOut)
 
-      function fadeInOut(d) {
+      function fadeInOut() {
         var circle = d3.select(this)
         circle.transition()
           .duration(300)
@@ -59,7 +58,7 @@ function WorldMap(node, ws) {
     window.addEventListener('resize', draw)
   }, 0)
 
-  function onUser(data) {
+  function onUser(d) {
     map.pins([{user: d.user, lat: d.lat, lng: d.lng}])
   }
 

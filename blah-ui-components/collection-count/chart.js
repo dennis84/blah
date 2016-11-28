@@ -68,12 +68,12 @@ function Chart(node, initial) {
     }
 
     areaSvg
-      .attr("d", area)
+      .attr('d', area)
       .transition()
       .duration(1000)
       .ease(d3.easeLinear)
-      .attr("transform", "translate(" + x(now - 60000) + ")")
-      .on("end", tick)
+      .attr('transform', 'translate(' + x(now - 60000) + ')')
+      .on('end', tick)
 
     xAxisSvg
       .transition()

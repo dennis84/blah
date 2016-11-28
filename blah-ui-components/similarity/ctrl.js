@@ -12,7 +12,7 @@ var xhr = require('xhr')
  * @return {Promise} The model wrapped in a promise
  */
 function find(model, options) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function(resolve) {
     xhr.post(options.baseUrl + '/similarity', {
       json: mkQuery(options)
     }, function(err, resp, body) {

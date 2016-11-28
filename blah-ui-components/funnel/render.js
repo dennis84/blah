@@ -23,7 +23,7 @@ function content(model, options) {
 
   return h('div.chart', {
     hook: {insert: function(vnode) {
-      Chart.bar(vnode.elm, data)
+      window.Chart.bar(vnode.elm, data)
     }}
   })
 }
@@ -38,14 +38,14 @@ function render(model, update, options) {
         h('li', {
           class: {'is-active': 'bar' === model.activeTab}
         }, [h('a', {
-          on: {click: function(e) {
+          on: {click: function() {
             update(ctrl.openTab, 'bar')
           }}
         }, 'Bar Chart')]),
         h('li', {
           class: {'is-active': 'flowchart' === model.activeTab}
         }, [h('a', {
-          on: {click: function(e) {
+          on: {click: function() {
             update(ctrl.openTab, 'flowchart')
           }}
         }, 'Flowchart')])

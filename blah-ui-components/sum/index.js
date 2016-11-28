@@ -31,7 +31,7 @@ function Sum(node, ws, options) {
     }
   }
 
-  function onCount(data) {
+  function onCount() {
     update(ctrl.sum, options)
   }
 

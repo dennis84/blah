@@ -7,7 +7,7 @@ function CollectionCount(node, ws, options) {
   widget.classList.add('widget-collection-count')
 
   if(options.class) {
-    for (name in options.class) {
+    for (var name in options.class) {
       if(true === options.class[name]) {
         widget.classList.add(name)
       }

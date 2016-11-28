@@ -1,6 +1,6 @@
 var h = require('snabbdom/h')
 
-function mkReferrers(xs, update) {
+function mkReferrers(xs) {
   if(undefined === xs || 0 == xs.length) return []
   return h('div.list.referrers', xs.map(function(referrer) {
     return h('div.list-item.level.is-bordered', [

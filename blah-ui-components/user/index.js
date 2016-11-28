@@ -30,7 +30,7 @@ function Main(render, ctrlFn, node, ws, options) {
     }
   }
 
-  function onUser(data) {
+  function onUser() {
     update(ctrlFn, options)
   }
 

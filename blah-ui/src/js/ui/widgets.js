@@ -6,7 +6,7 @@ var config = require('./../config')
  * Pie Chart: Browser Statistics Over a Year
  */
 function browserStats(update, ws) {
-  return component(Count.Pie, {}, ws, {
+  return component(window.Count.Pie, {}, ws, {
     baseUrl: config.SERVING_URL,
     collection: 'view',
     filterBy: [{
@@ -24,7 +24,7 @@ function browserStats(update, ws) {
  * Bar Chart: Page Views in the past 24 hours
  */
 function pageviews(ws) {
-  return component(Count.Bar, {}, ws, {
+  return component(window.Count.Bar, {}, ws, {
     baseUrl: config.SERVING_URL,
     collection: 'view',
     filterBy: [{
@@ -42,7 +42,7 @@ function pageviews(ws) {
  * Count: Number of Visitors Today
  */
 function visitorsToday(ws) {
-  return component(User.Count, {}, ws, {
+  return component(window.User.Count, {}, ws, {
     baseUrl: config.SERVING_URL,
     filterBy: [{
       prop: 'date.from',
@@ -57,7 +57,7 @@ function visitorsToday(ws) {
  * Bar Chart: Visitors by Country
  */
 function visitorsByCountry(ws) {
-  return component(User.Bar, {}, ws, {
+  return component(window.User.Bar, {}, ws, {
     baseUrl: config.SERVING_URL,
     groupBy: ['country'],
     title: 'Visitors by Country'
@@ -68,7 +68,7 @@ function visitorsByCountry(ws) {
  * Count: Unique Visitors
  */
 function uniqueVisitors(ws) {
-  return component(User.Count, {}, ws, {
+  return component(window.User.Count, {}, ws, {
     baseUrl: config.SERVING_URL,
     title: 'Unique Visitors'
   })
@@ -78,7 +78,7 @@ function uniqueVisitors(ws) {
  * Count one
  */
 function countOne(ws, item) {
-  return component(Count.Num, {}, ws, {
+  return component(window.Count.Num, {}, ws, {
     baseUrl: config.SERVING_URL,
     collection: 'view',
     filterBy: [{
@@ -94,7 +94,7 @@ function countOne(ws, item) {
  * Count: All Page Views
  */
 function countAll(ws) {
-  return component(Count.Num, {}, ws, {
+  return component(window.Count.Num, {}, ws, {
     baseUrl: config.SERVING_URL,
     collection: 'view',
     title: 'All'
@@ -105,7 +105,7 @@ function countAll(ws) {
  * Pie Chart: Platform Statistics
  */
 function platformStats(ws) {
-  return component(Count.Pie, {}, ws, {
+  return component(window.Count.Pie, {}, ws, {
     baseUrl: config.SERVING_URL,
     collection: 'view',
     filterBy: [{
@@ -126,7 +126,7 @@ function pageviewDiff(ws) {
   var to = moment().endOf('hour').calendar()
   var title = 'Difference between ' + from + ' and Today ' + to
 
-  return component(Count.Diff, {}, ws, {
+  return component(window.Count.Diff, {}, ws, {
     baseUrl: config.SERVING_URL,
     collection: 'view',
     percentage: true,
@@ -160,7 +160,7 @@ function pageviewDiff(ws) {
  * Pie Chart: Mobile Operating Statistics
  */
 function mobileOsStats(ws) {
-  return component(Count.Pie, {}, ws, {
+  return component(window.Count.Pie, {}, ws, {
     baseUrl: config.SERVING_URL,
     collection: 'view',
     filterBy: [{
@@ -181,7 +181,7 @@ function mobileOsStats(ws) {
  * Sum: Total Revenue
  */
 function totalRevenue(ws) {
-  return component(Sum, {}, ws, {
+  return component(window.Sum, {}, ws, {
     baseUrl: config.SERVING_URL,
     collection: 'buy',
     template: '$ {value}',
@@ -194,7 +194,7 @@ function totalRevenue(ws) {
  * Recommendations
  */
 function recommendationWidget(update) {
-  return component(Recommendation, {}, {
+  return component(window.Recommendation, {}, {
     baseUrl: config.SERVING_URL,
     update: update
   })
@@ -204,7 +204,7 @@ function recommendationWidget(update) {
  * Simiarities
  */
 function similarityWidget(update) {
-  return component(Similarity, {}, {
+  return component(window.Similarity, {}, {
     baseUrl: config.SERVING_URL,
     update: update
   })
@@ -214,7 +214,7 @@ function similarityWidget(update) {
  * Most viewed items
  */
 function mostViewed(ws) {
-  return component(MostViewed, {}, ws, {
+  return component(window.MostViewed, {}, ws, {
     baseUrl: config.SERVING_URL,
     title: 'Most Viewed Items',
     collection: 'view',
@@ -226,7 +226,7 @@ function mostViewed(ws) {
  * Referring Sites
  */
 function referringSites(ws) {
-  return component(Referrer, {}, ws, {
+  return component(window.Referrer, {}, ws, {
     baseUrl: config.SERVING_URL,
     title: 'Referring Sites',
     limit: 10
@@ -237,7 +237,7 @@ function referringSites(ws) {
  * Collection Count
  */
 function collectionCount(ws) {
-  return component(CollectionCount, {}, ws, {
+  return component(window.CollectionCount, {}, ws, {
     baseUrl: config.SERVING_URL,
     collection: 'view',
     title: 'Collection Count',

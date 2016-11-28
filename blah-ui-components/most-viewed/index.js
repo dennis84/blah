@@ -31,7 +31,7 @@ function MostViewed(node, ws, options) {
     }
   }
 
-  function onCount(data) {
+  function onCount() {
     update(ctrl.find, options)
   }
 

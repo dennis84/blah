@@ -6,7 +6,7 @@
  *
  * @return {Object} The global state
  */
-function error(model, obj) {
+function error(model) {
   model.error = 'unknown'
   return model
 }

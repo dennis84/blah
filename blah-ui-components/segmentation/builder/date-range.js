@@ -41,7 +41,7 @@ function render(model, update) {
     h('div.control-label', [h('label.label', 'From - To')]),
     h('div.control', [
       mkInput(from, fromIndex, update),
-      mkInput(to, fromIndex, update)
+      mkInput(to, toIndex, update)
     ])
   ])])
 }

@@ -10,7 +10,7 @@ function button(job, update, options) {
   if('running' === job.status) {
     return h('a.button.is-danger', {
       on: {
-        click: function(e) {
+        click: function() {
           update(ctrl.stop, job.name, options)
         }
       }
@@ -19,7 +19,7 @@ function button(job, update, options) {
 
   return h('a.button.is-primary', {
     on: {
-      click: function(e) {
+      click: function() {
         update(ctrl.run, job.name, options)
       }
     }

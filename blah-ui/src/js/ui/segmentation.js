@@ -10,7 +10,7 @@ function render(model, update, ws, storage) {
   return container(model, [
     nav(model, update, ws, storage),
     h('h1.has-text-centered', 'Segmentation'),
-    (model.error) ? error.unknown() : component(Segmentation, {}, ws, {
+    (model.error) ? error.unknown() : component(window.Segmentation, {}, ws, {
       baseUrl: config.SERVING_URL,
       collection: 'view',
       class: {'size-3of3': true, 'segmentation': true},

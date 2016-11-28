@@ -51,7 +51,7 @@ function render(node, data) {
 
   graph.selectAll('dot').data(data)
     .enter().append('circle')
-		  .attr('class', 'circle')
+      .attr('class', 'circle')
       .attr('r', 3.5)
       .attr('cx', function(d) {
         return x(d.key)
@@ -61,9 +61,9 @@ function render(node, data) {
       })
 
   graph.append('g')
-		.attr('class', 'x-axis')
-	  .attr('transform', 'translate(0,' + height + ')')
-	  .call(xAxis)
+    .attr('class', 'x-axis')
+    .attr('transform', 'translate(0,' + height + ')')
+    .call(xAxis)
     .selectAll('.tick text')
       .style('text-anchor', 'end')
       .attr('dx', '-10px')

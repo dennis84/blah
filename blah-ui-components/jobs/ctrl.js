@@ -10,7 +10,7 @@ var xhr = require('xhr')
  * @return {Promise} The model wrapped in a promise
  */
 function list(model, options) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function(resolve) {
     xhr.get(options.baseUrl + '/jobs', {}, function(err, resp, body) {
       var m = clone(model)
       m.jobs = JSON.parse(body)
@@ -28,8 +28,8 @@ function list(model, options) {
  * @return {Promise} The model wrapped in a promise
  */
 function run(model, name, options) {
-  return new Promise(function(resolve, reject) {
-    xhr.put(options.baseUrl + '/jobs/' + name, {}, function(err, resp, body) {
+  return new Promise(function(resolve) {
+    xhr.put(options.baseUrl + '/jobs/' + name, {}, function() {
       var m = clone(model)
       var index = findIndexByName(m.jobs, name)
       m.jobs[index].clicked = true
@@ -47,8 +47,8 @@ function run(model, name, options) {
  * @return {Promise} The model wrapped in a promise
  */
 function stop(model, name, options) {
-  return new Promise(function(resolve, reject) {
-    xhr.del(options.baseUrl + '/jobs/' + name, {}, function(err, resp, body) {
+  return new Promise(function(resolve) {
+    xhr.del(options.baseUrl + '/jobs/' + name, {}, function() {
       var m = clone(model)
       var index = findIndexByName(m.jobs, name)
       m.jobs[index].clicked = true

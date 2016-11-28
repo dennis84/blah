@@ -47,7 +47,7 @@ function mkFilterRow(filter, index, update) {
         }, 500)}
       }),
       h('a.button.is-link', {
-        on: {click: function(e) {
+        on: {click: function() {
           update(ctrl.removeFilter, index)
         }}
       }, [h('i.material-icons', 'clear')])

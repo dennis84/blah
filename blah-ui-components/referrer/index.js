@@ -31,7 +31,7 @@ function Referrer(node, ws, options) {
     }
   }
 
-  function onReferrer(data) {
+  function onReferrer() {
     update(ctrl.search, options)
   }
 

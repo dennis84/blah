@@ -22,9 +22,9 @@ function chart(model) {
   if(diff > 7) format = 'MMM DD'
   if(diff > 60) format = 'MMM YYYY'
 
-  var data = Chart.timeframe(model.groups, from, to, {format: format})
+  var data = window.Chart.timeframe(model.groups, from, to, {format: format})
   var updateChart = function(vnode) {
-    Chart.line(vnode.elm, data)
+    window.Chart.line(vnode.elm, data)
   }
 
   return h('div.chart', {

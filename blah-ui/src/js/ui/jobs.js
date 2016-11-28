@@ -9,7 +9,7 @@ function render(model, update, ws, storage) {
   return container(model, [
     nav(model, update, ws, storage),
     h('h1.has-text-centered', 'Jobs'),
-    (model.error) ? error.unknown() : component(Jobs, {}, {
+    (model.error) ? error.unknown() : component(window.Jobs, {}, {
       baseUrl: config.SERVING_URL
     })
   ])

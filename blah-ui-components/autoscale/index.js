@@ -7,7 +7,6 @@ var patch = snabbdom.init([
 ])
 var render = require('./render')
 var ctrl = require('./ctrl')
-var chart = require('./chart')
 
 function Autoscale(node, options) {
   var state = {apps: []}

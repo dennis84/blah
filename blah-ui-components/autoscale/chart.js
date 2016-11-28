@@ -3,7 +3,6 @@ var d3 = require('d3')
 function chart(node, data) {
   var width = node.clientWidth
   var height = width
-  var radius = width / 2
   var donutWidth = 3
 
   var cpuUsageColor = d3.scaleOrdinal()
@@ -48,11 +47,11 @@ function chart(node, data) {
     .append('path')
     .attr('d', cpuUsageArc)
 
-  svg.selectAll('.mem-cpu-usage')
-    .data(cpuUsagePie([data.mem_usage, 100 - data.mem_usage]))
+  svg.selectAll('.arc-mem-usage')
+    .data(memUsagePie([data.mem_usage, 100 - data.mem_usage]))
     .enter().append('g')
     .attr('class', function(d) {
-      return 'arc mem-cpu-usage arc-' + memUsageColor(d.data)
+      return 'arc arc-mem-usage arc-' + memUsageColor(d.data)
     })
     .append('path')
     .attr('d', memUsageArc)

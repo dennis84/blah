@@ -24,10 +24,10 @@ function chart(model) {
     h('div.chart', {
       hook: {
         insert: function(vnode) {
-          Chart.donut(vnode.elm, data)
+          window.Chart.donut(vnode.elm, data)
         },
         update: function(vnode) {
-          Chart.donut(vnode.elm, data)
+          window.Chart.donut(vnode.elm, data)
         }
       }
     })

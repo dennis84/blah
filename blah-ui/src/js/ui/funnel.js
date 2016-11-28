@@ -9,7 +9,7 @@ function render(model, update, ws, storage) {
   return container(model, [
     nav(model, update, ws, storage),
     h('h1.has-text-centered', 'Sign Up Funnel'),
-    (model.error) ? error.unknown() : component(Funnel, {}, ws, {
+    (model.error) ? error.unknown() : component(window.Funnel, {}, ws, {
       baseUrl: config.SERVING_URL,
       class: {'size-3of3': true, 'funnel': true},
       name: 'signup',
