@@ -4,8 +4,8 @@ import spray.json._
 import blah.json.JsonDsl._
 
 trait FilterDsl {
-  def filter(json: JsObject): JsObject =
-    ("query" -> ("filtered" -> ("filter" -> json)))
+  def filter(filter: JsObject): JsObject =
+    ("query" -> ("bool" -> ("filter" -> filter)))
 
   def gte(k: String, v: JsValue): JsObject =
     filter("range" -> (k -> ("gte" -> v)))

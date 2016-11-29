@@ -88,14 +88,14 @@ restart_app() {
   declare app="$1"
   case "$app" in
     serving|api)
-      sbt "$app/docker:publishLocal"
+      sbt "blah-$app/docker:publishLocal"
       destroy_app "$app"
       sleep 1
       create_app "$app"
       ;;
     algo)
-      sbt algo/assembly
-      sbt algo/docker:publishLocal
+      sbt blah-algo/assembly
+      sbt blah-algo/docker:publishLocal
       destroy_job count
       destroy_job user
       destroy_job recommendation
