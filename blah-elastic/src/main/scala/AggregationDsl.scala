@@ -6,7 +6,7 @@ import blah.json.JsonDsl._
 trait AggregationDsl {
   def terms(k: String): JsObject =
     ("aggs" -> (k -> ("terms" ->
-      ("field" -> k) ~
+      ("field" -> s"$k.keyword") ~
       ("size" -> java.lang.Integer.MAX_VALUE)
     )))
 

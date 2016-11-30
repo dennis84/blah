@@ -8,9 +8,8 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
 
   "The CountElasticQuery" should "convert an empty query object to json" in {
     val empty: JsObject =
-      ("query" -> ("filtered" ->
-        ("query" -> ("bool" -> ("must" -> List(
-          "term" -> ("collection" -> "view"))))))) ~
+      ("query" -> ("bool" ->
+        ("must" -> List("term" -> ("collection" -> "view"))))) ~
       ("aggs" -> ("count" -> ("sum" -> ("field" -> "count"))))
     CountElasticQuery(CountQuery("view", None, None)) should be (empty)
     CountElasticQuery(CountQuery("view", Some(Nil), None)) should be (empty)
@@ -27,18 +26,18 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
     )))
 
     val json: JsObject =
-      ("query" -> ("filtered" ->
+      ("query" -> ("bool" ->
         ("filter" -> ("range" -> ("date" ->
           ("gte" -> "2015-09-02") ~
           ("lte" -> "2015-09-04")
         ))) ~
-        ("query" -> ("bool" -> ("must" -> List(
+        ("must" -> List(
           ("term" -> ("collection" -> "view")),
           ("term" -> ("item" -> "home")),
           ("term" -> ("deviceFamily" -> "iPhone")),
           ("term" -> ("browserFamily" -> "Chrome")),
           ("term" -> ("browserMajor" -> "47"))
-        ))))
+        ))
       )) ~
       ("aggs" -> ("count" -> ("sum" -> ("field" -> "count"))))
 
@@ -51,10 +50,10 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
     )), Some(Nil))
 
     val json: JsObject =
-      ("query" -> ("filtered" -> ("query" -> ("bool" -> ("must" -> List(
+      ("query" -> ("bool" -> ("must" -> List(
         ("term" -> ("collection" -> "view")),
         ("term" -> ("item" -> "home"))
-      )))))) ~
+      )))) ~
       ("aggs" -> ("date" ->
         ("date_histogram" ->
           ("field" -> "date") ~
@@ -75,10 +74,10 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
     )))
 
     val json: JsObject =
-      ("query" -> ("filtered" -> ("query" -> ("bool" -> ("must" -> List(
+      ("query" -> ("bool" -> ("must" -> List(
         ("term" -> ("collection" -> "view")),
         ("term" -> ("item" -> "home"))
-      )))))) ~
+      )))) ~
       ("aggs" ->
         ("date" ->
           ("date_histogram" ->
@@ -87,11 +86,15 @@ class CountElasticQuerySpec extends FlatSpec with Matchers {
           ("aggs" ->
             ("count" -> ("sum" -> ("field" -> "count"))) ~
             ("browserFamily" ->
-              ("terms" -> ("field" -> "browserFamily") ~ ("size" -> 0)) ~
+              ("terms" ->
+                ("field" -> "browserFamily.keyword") ~
+                ("size" -> java.lang.Integer.MAX_VALUE)) ~
               ("aggs" ->
                 ("count" -> ("sum" -> ("field" -> "count"))) ~
                 ("osFamily" ->
-                  ("terms" -> ("field" -> "osFamily") ~ ("size" -> 0)) ~
+                  ("terms" ->
+                    ("field" -> "osFamily.keyword") ~
+                    ("size" -> java.lang.Integer.MAX_VALUE)) ~
                   ("aggs" -> ("count" -> ("sum" -> ("field" -> "count"))))
                 ))))))
 

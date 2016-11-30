@@ -15,7 +15,7 @@ class AggregationParserSpec extends FlatSpec with Matchers {
     ("date" -> ("buckets" -> List(
       ("key_as_string" -> "2015-09-04") ~
       ("doc_count" -> 3) ~
-      ("browserFamily" ->
+      ("browserFamily.keyword" ->
         ("doc_count_error_upper_bound" -> 0) ~
         ("sum_other_doc_count" -> 0) ~
         ("buckets" -> List(
@@ -27,7 +27,7 @@ class AggregationParserSpec extends FlatSpec with Matchers {
           ("count" -> ("value" -> 7))))),
       ("key_as_string" -> "2015-09-05") ~
       ("doc_count" -> 3) ~
-      ("browserFamily" ->
+      ("browserFamily.keyword" ->
         ("doc_count_error_upper_bound" -> 0) ~
         ("sum_other_doc_count" -> 0) ~
         ("buckets" -> List(

@@ -21,7 +21,8 @@ object AggregationParser {
     val value = extractKey(data)
     val count = extractCount(data)
     val maybeBuckets = data.fields.toList collectFirst {
-      case (k, v: JsObject) if v.fields.contains("buckets") => parse(k -> v)
+      case (k, v: JsObject) if v.fields.contains("buckets") =>
+        parse(k.replace(".keyword", "") -> v)
     }
 
     maybeBuckets map { xs =>

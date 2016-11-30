@@ -8,9 +8,8 @@ class SumElasticQuerySpec extends FlatSpec with Matchers {
 
   "The SumElasticQuery" should "convert an empty query object to json" in {
     val empty: JsObject =
-      ("query" -> ("filtered" ->
-        ("query" -> ("bool" -> ("must" -> List(
-          "term" -> ("collection" -> "buy"))))))) ~
+      ("query" -> ("bool" ->
+        ("must" -> List("term" -> ("collection" -> "buy"))))) ~
       ("aggs" -> ("sum" -> ("sum" -> ("script" -> "doc['price'].value * doc['count'].value"))))
     SumElasticQuery(SumQuery("buy", "price", None)) should be (empty)
   }
@@ -22,14 +21,12 @@ class SumElasticQuerySpec extends FlatSpec with Matchers {
     )))
 
     val json: JsObject =
-      ("query" -> ("filtered" ->
+      ("query" -> ("bool" ->
         ("filter" -> ("range" -> ("date" ->
           ("gte" -> "2016") ~
           ("lte" -> "2017")
         ))) ~
-        ("query" -> ("bool" -> ("must" -> List(
-          ("term" -> ("collection" -> "buy"))
-        ))))
+        ("must" -> List("term" -> ("collection" -> "buy")))
       )) ~
       ("aggs" -> ("sum" -> ("sum" -> ("script" -> "doc['price'].value * doc['count'].value"))))
     SumElasticQuery(query) should be (json)

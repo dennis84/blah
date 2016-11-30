@@ -20,27 +20,33 @@ class CountRepo(client: ElasticClient)(
 ) extends SprayJsonSupport with CountJsonFormat {
   import system.dispatcher
 
-  def count(q: CountQuery): Future[Count] = client request HttpRequest(
-    method = HttpMethods.POST,
-    uri = "/blah/count/_search?size=0",
-    entity = HttpEntity(
-      ContentTypes.`application/json`,
-      CountElasticQuery(q).compactPrint)
-  ) flatMap (resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
-    val sum = 'aggregations / 'count / 'value
-    Count(Try(json.extract[Long](sum)) getOrElse 0)
+  def count(q: CountQuery): Future[Count] = {
+    log.info("HALLO " + CountElasticQuery(q).compactPrint)
+    client request HttpRequest(
+      method = HttpMethods.POST,
+      uri = "/blah/count/_search?size=0",
+      entity = HttpEntity(
+        ContentTypes.`application/json`,
+        CountElasticQuery(q).compactPrint)
+    ) flatMap (resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
+      val sum = 'aggregations / 'count / 'value
+      Count(Try(json.extract[Long](sum)) getOrElse 0)
+    }
   }
 
-  def search(q: CountQuery): Future[List[Count]] = client request HttpRequest(
-    method = HttpMethods.POST,
-    uri = "/blah/count/_search?size=0",
-    entity = HttpEntity(
-      ContentTypes.`application/json`,
-      CountElasticQuery(q).compactPrint)
-  ) flatMap (resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
-    Try(json.extract[JsValue]('aggregations)) match {
-      case Success(aggs) => AggregationParser.parseTo[Count](aggs)
-      case Failure(_) => Nil
+  def search(q: CountQuery): Future[List[Count]] = {
+    log.info("HALLO " + CountElasticQuery(q).compactPrint)
+    client request HttpRequest(
+      method = HttpMethods.POST,
+      uri = "/blah/count/_search?size=0",
+      entity = HttpEntity(
+        ContentTypes.`application/json`,
+        CountElasticQuery(q).compactPrint)
+    ) flatMap (resp => Unmarshal(resp.entity).to[JsValue]) map { json =>
+      Try(json.extract[JsValue]('aggregations)) match {
+        case Success(aggs) => AggregationParser.parseTo[Count](aggs)
+        case Failure(_) => Nil
+      }
     }
   }
 }

@@ -17,7 +17,7 @@ object UserElasticQuery {
 
   private def groupBy(xs: List[String]): JsObject =
     (xs.collect {
-      case "country" => a.terms("country.keyword")
+      case "country" => a.terms("country")
     } :\ JsObject()) (_ mergeAggregation _)
 
   def apply(query: UserQuery): JsValue = (query match {

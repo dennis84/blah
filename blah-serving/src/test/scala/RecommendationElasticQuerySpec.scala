@@ -8,9 +8,9 @@ class RecommendationElasticQuerySpec extends FlatSpec with Matchers {
 
   "The RecommendationElasticQuery" should "to json" in {
     val expected: JsObject =
-      ("query" -> ("filtered" -> ("query" -> ("bool" -> ("must" -> List(
-        ("term" -> ("user" -> "dennis"))
-      ))))))
+      ("query" -> ("bool" ->
+        ("must" -> List("term" -> ("user" -> "dennis"))
+      )))
 
     val q = RecommendationElasticQuery(RecommendationQuery(
       user = "dennis"
@@ -19,10 +19,10 @@ class RecommendationElasticQuerySpec extends FlatSpec with Matchers {
 
   it should "to json with collection" in {
     val expected: JsObject =
-      ("query" -> ("filtered" -> ("query" -> ("bool" -> ("must" -> List(
+      ("query" -> ("bool" -> ("must" -> List(
         ("term" -> ("user" -> "dennis")),
         ("term" -> ("collection" -> "buy"))
-      ))))))
+      ))))
 
     val q = RecommendationElasticQuery(RecommendationQuery(
       user = "dennis",

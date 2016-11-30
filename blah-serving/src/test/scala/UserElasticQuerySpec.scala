@@ -16,8 +16,8 @@ class UserElasticQuerySpec extends FlatSpec with Matchers {
     val query = UserQuery(None, Option(List("country")))
     val json: JsObject =
       ("aggs" -> ("country" -> ("terms" -> 
-        ("field" -> "country") ~
-        ("size" -> 0)
+        ("field" -> "country.keyword") ~
+        ("size" -> java.lang.Integer.MAX_VALUE)
       )))
 
     UserElasticQuery(query) should be (json)
@@ -29,7 +29,7 @@ class UserElasticQuerySpec extends FlatSpec with Matchers {
     )), Some(Nil))
 
     val json: JsObject =
-      ("query" -> ("filtered" -> ("filter" ->
+      ("query" -> ("bool" -> ("filter" ->
         ("range" -> ("date" -> ("gte" -> "2016-01-01"))))))
 
     UserElasticQuery(query) should be (json)
@@ -41,11 +41,11 @@ class UserElasticQuerySpec extends FlatSpec with Matchers {
     )), Option(List("country")))
 
     val json: JsObject =
-      ("query" -> ("filtered" -> ("filter" ->
+      ("query" -> ("bool" -> ("filter" ->
         ("range" -> ("date" -> ("gte" -> "2016-01-01")))))) ~
       ("aggs" -> ("country" -> ("terms" -> 
-        ("field" -> "country") ~
-        ("size" -> 0)
+        ("field" -> "country.keyword") ~
+        ("size" -> java.lang.Integer.MAX_VALUE)
       )))
 
     UserElasticQuery(query) should be (json)

@@ -9,8 +9,8 @@ object MostViewedElasticQuery {
     q.term("collection", query.collection) merge
     ("aggs" -> ("item" ->
       ("terms" ->
-        ("field" -> "item") ~
-        ("size" -> query.limit.getOrElse(0)) ~
+        ("field" -> "item.keyword") ~
+        ("size" -> query.limit.getOrElse(java.lang.Integer.MAX_VALUE)) ~
         ("order" -> ("count" -> "desc"))) ~
       ("aggs" -> ("count" -> ("sum" -> ("field" -> "count"))))
     ))

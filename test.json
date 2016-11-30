@@ -1,0 +1,12 @@
+{
+  "query":{
+    "bool":{
+      "must":[{"term":{"collection":"view"}}],
+      "filter":{
+        "range":{
+          "date":{"gte":"2015-11-30T06:13:01.624Z"}
+        }
+      }
+    }
+  },
+  "aggs":{"date":{"date_histogram":{"field":"date","interval":"year"},"aggs":{"count":{"sum":{"field":"count"}},"browserFamily.keyword":{"terms":{"field":"browserFamily.keyword","size":2147483647},"aggs":{"count":{"sum":{"field":"count"}}}}}}}}

@@ -33,11 +33,11 @@ object CountElasticQuery {
       case "date.month" => a.dateHistogram("date", "month")
       case "date.year"  => a.dateHistogram("date", "year")
     } getOrElse a.dateHistogram("date", "day")) :: xs.collect {
-      case "user_agent.browser.family" => a.terms("browserFamily.keyword")
-      case "user_agent.browser.major"  => a.terms("browserMajor.keyword")
-      case "user_agent.os.family"      => a.terms("osFamily.keyword")
-      case "user_agent.device.family"  => a.terms("deviceFamily.keyword")
-      case "user_agent.platform"       => a.terms("platform.keyword")
+      case "user_agent.browser.family" => a.terms("browserFamily")
+      case "user_agent.browser.major"  => a.terms("browserMajor")
+      case "user_agent.os.family"      => a.terms("osFamily")
+      case "user_agent.device.family"  => a.terms("deviceFamily")
+      case "user_agent.platform"       => a.terms("platform")
     } map (_ mergeAggregation a.sum("count", "count"))) :\ JsObject()) {
       _ mergeAggregation _
     }
