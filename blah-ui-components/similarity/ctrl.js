@@ -26,7 +26,7 @@ function find(model, options) {
 
 function mkQuery(options) {
   var query = {}
-  query.user = options.user
+  query.items = options.items || []
   if(options.collection) query.collection = options.collection
   if(options.limit) query.limit = options.limit
   return query

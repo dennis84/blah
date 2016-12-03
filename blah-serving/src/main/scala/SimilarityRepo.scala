@@ -19,7 +19,8 @@ class SimilarityRepo(client: ElasticClient)(
 ) extends SprayJsonSupport with SimilarityJsonFormat {
   import system.dispatcher
 
-  def find(q: SimilarityQuery): Future[List[SimilarityItem]] =
+  def find(q: SimilarityQuery): Future[List[SimilarityItem]] = {
+    log.info("HALLO " + SimilarityElasticQuery(q).compactPrint)
     client request HttpRequest(
       method = HttpMethods.POST,
       uri = "/blah/similarity/_search?size=50",
@@ -35,4 +36,5 @@ class SimilarityRepo(client: ElasticClient)(
           .toList
       } getOrElse Nil
     }
+  }
 }

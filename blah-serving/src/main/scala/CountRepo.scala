@@ -20,8 +20,7 @@ class CountRepo(client: ElasticClient)(
 ) extends SprayJsonSupport with CountJsonFormat {
   import system.dispatcher
 
-  def count(q: CountQuery): Future[Count] = {
-    log.info("HALLO " + CountElasticQuery(q).compactPrint)
+  def count(q: CountQuery): Future[Count] =
     client request HttpRequest(
       method = HttpMethods.POST,
       uri = "/blah/count/_search?size=0",
@@ -32,10 +31,8 @@ class CountRepo(client: ElasticClient)(
       val sum = 'aggregations / 'count / 'value
       Count(Try(json.extract[Long](sum)) getOrElse 0)
     }
-  }
 
-  def search(q: CountQuery): Future[List[Count]] = {
-    log.info("HALLO " + CountElasticQuery(q).compactPrint)
+  def search(q: CountQuery): Future[List[Count]] =
     client request HttpRequest(
       method = HttpMethods.POST,
       uri = "/blah/count/_search?size=0",
@@ -48,5 +45,4 @@ class CountRepo(client: ElasticClient)(
         case Failure(_) => Nil
       }
     }
-  }
 }
