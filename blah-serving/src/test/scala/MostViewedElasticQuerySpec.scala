@@ -13,7 +13,7 @@ class MostViewedElasticQuerySpec extends FlatSpec with Matchers {
         ("must" -> List("term" -> ("collection" -> "view"))))) ~
       ("aggs" -> ("item" ->
         ("terms" ->
-          ("field" -> "item") ~
+          ("field" -> "item.keyword") ~
           ("size" -> 10) ~
           ("order" -> ("count" -> "desc"))) ~
         ("aggs" -> ("count" -> ("sum" -> ("field" -> "count"))))

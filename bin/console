@@ -270,6 +270,7 @@ main() {
       echo "  samples [nb] [collection]   Create some sample data"
       echo "  fixtures                    Load fixtures"
       echo "  env                         Set env vars"
+      echo "  test                        Run tests"
       exit 1
   esac
 }

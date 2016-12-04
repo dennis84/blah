@@ -42,6 +42,7 @@ lazy val `blah-api` = project
 
 lazy val `blah-serving` = project
   .settings(commonSettings: _*)
+  .dependsOn(`blah-testkit` % "test->test")
   .dependsOn(`blah-json`)
   .dependsOn(`blah-http`)
   .dependsOn(`blah-elastic`)

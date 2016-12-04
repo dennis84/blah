@@ -7,9 +7,11 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.model._
 import blah.elastic.MappingUpdater
+import blah.testkit._
 
 class CheckElasticMappingSpec extends FlatSpec with Matchers {
   "The elastic configuration" should "be valid" in {
+    assume(isReachable("localhost", 9200))
     implicit val system = ActorSystem("test")
     implicit val ec = system.dispatcher
     implicit val mat = ActorMaterializer()
