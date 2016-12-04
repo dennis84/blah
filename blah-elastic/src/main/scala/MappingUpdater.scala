@@ -38,13 +38,15 @@ class MappingUpdater(client: ElasticClient)(
         ContentTypes.`application/json`,
         ("actions" -> actions).compactPrint))
 
-  private def shouldUpdate(curr: JsObject, data: JsObject) =
-    data.fields.get("mappings")
+  private def shouldUpdate(curr: JsObject, data: JsObject) = {
+    val hasMappingChanged = data.fields.get("mappings")
       .map(curr.extract[JsObject]('mappings) != _)
-      .getOrElse(false) ||
-    data.fields.get("settings")
+      .getOrElse(false)
+    val hasSettingsChanged = data.fields.get("settings")
       .map(curr.extract[JsObject]('settings / 'index) notContains _.asJsObject)
       .getOrElse(false)
+    hasMappingChanged || hasSettingsChanged
+  }
 
   def update(index: String, data: JsObject): Future[Result] =
     getIndex(index) flatMap {

@@ -43,15 +43,15 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
     ("mappings" ->
       ("count" ->
         ("properties" ->
-          ("collection" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("item" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("collection" -> ("type" -> "text")) ~
+          ("item" -> ("type" -> "text")) ~
           ("date" -> ("type" -> "date") ~ ("format" -> "dateOptionalTime")) ~
-          ("browserFamily" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("browserMajor" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("osFamily" -> ("type" -> "string") ~ ("analyzer" -> "lowercase_keyword")) ~
-          ("osMajor" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("deviceFamily" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("platform" -> ("type" -> "string") ~ ("analyzer" -> "lowercase_keyword")) ~
+          ("browserFamily" -> ("type" -> "text")) ~
+          ("browserMajor" -> ("type" -> "text")) ~
+          ("osFamily" -> ("type" -> "text") ~ ("analyzer" -> "lowercase_keyword")) ~
+          ("osMajor" -> ("type" -> "text")) ~
+          ("deviceFamily" -> ("type" -> "text")) ~
+          ("platform" -> ("type" -> "text") ~ ("analyzer" -> "lowercase_keyword")) ~
           ("isMobile" -> ("type" -> "boolean")) ~
           ("isTablet" -> ("type" -> "boolean")) ~
           ("isMobileDevice" -> ("type" -> "boolean")) ~
@@ -59,60 +59,59 @@ class Env(implicit system: ActorSystem, mat: Materializer) {
           ("count" -> ("type" -> "integer")))) ~
       ("recommendation" ->
         ("properties" ->
-          ("user" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("collection" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("user" -> ("type" -> "text")) ~
+          ("collection" -> ("type" -> "text")) ~
           ("items" ->
             ("type" -> "nested") ~
             ("properties" ->
-              ("item" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+              ("item" -> ("type" -> "text")) ~
               ("score" -> ("type" -> "double")))))) ~
       ("similarity" ->
         ("properties" ->
-          ("item" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("collection" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("item" -> ("type" -> "text")) ~
+          ("collection" -> ("type" -> "text")) ~
           ("similarities" ->
             ("type" -> "nested") ~
             ("properties" ->
-              ("item" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+              ("item" -> ("type" -> "text")) ~
               ("score" -> ("type" -> "double")))))) ~
       ("user" ->
         ("properties" ->
-          ("user" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("email" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("firstname" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("lastname" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("ip" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("user" -> ("type" -> "text")) ~
+          ("email" -> ("type" -> "text")) ~
+          ("firstname" -> ("type" -> "text")) ~
+          ("lastname" -> ("type" -> "text")) ~
+          ("ip" -> ("type" -> "text")) ~
           ("lng" -> ("type" -> "double")) ~
           ("lat" -> ("type" -> "double")) ~
-          ("country" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("countryCode" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("city" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("zipCode" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("country" -> ("type" -> "text")) ~
+          ("countryCode" -> ("type" -> "text")) ~
+          ("city" -> ("type" -> "text")) ~
+          ("zipCode" -> ("type" -> "text")) ~
           ("date" -> ("type" -> "date") ~ ("format" -> "dateOptionalTime")) ~
           ("events" ->
             ("type" -> "nested") ~
             ("properties" ->
-              ("collection" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-              ("item" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-              ("title" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+              ("collection" -> ("type" -> "text")) ~
+              ("item" -> ("type" -> "text")) ~
+              ("title" -> ("type" -> "text")) ~
               ("date" -> ("type" -> "date") ~ ("format" -> "dateOptionalTime")) ~
-              ("ip" -> ("type" -> "string") ~ ("index" -> "not_analyzed"))
+              ("ip" -> ("type" -> "text"))
             )) ~
           ("nbEvents" -> ("type" -> "integer")))) ~
       ("funnel" ->
         ("properties" ->
-          ("name" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("item" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
-          ("parent" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("name" -> ("type" -> "text")) ~
+          ("item" -> ("type" -> "text")) ~
+          ("parent" -> ("type" -> "text")) ~
           ("count" -> ("type" -> "integer")))) ~
       ("collection_count" ->
-        ("_ttl" -> ("enabled" -> true) ~ ("default" -> "1m")) ~
         ("properties" ->
-          ("name" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("name" -> ("type" -> "text")) ~
           ("date" -> ("type" -> "date") ~ ("format" -> "dateOptionalTime")) ~
           ("count" -> ("type" -> "integer")))) ~
       ("referrer" ->
         ("properties" ->
-          ("referrer" -> ("type" -> "string") ~ ("index" -> "not_analyzed")) ~
+          ("referrer" -> ("type" -> "text")) ~
           ("count" -> ("type" -> "integer")))))
 }

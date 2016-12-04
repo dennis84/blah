@@ -28,7 +28,7 @@ class MappingUpdaterSpec
     ("mappings" ->
       ("foo" ->
         ("properties" ->
-          ("a" -> ("type" -> "string"))
+          ("a" -> ("type" -> "text"))
         )))
 
   val indexV2: JsObject =
@@ -41,8 +41,8 @@ class MappingUpdaterSpec
     ("mappings" ->
       ("foo" ->
         ("properties" ->
-          ("a" -> ("type" -> "string")) ~
-          ("b" -> ("type" -> "string"))
+          ("a" -> ("type" -> "text")) ~
+          ("b" -> ("type" -> "text"))
         )))
 
   val indexV3: JsObject =
@@ -55,26 +55,26 @@ class MappingUpdaterSpec
     ("mappings" ->
       ("foo" ->
         ("properties" ->
-          ("a" -> ("type" -> "string")) ~
-          ("b" -> ("type" -> "string")) ~
-          ("c" -> ("type" -> "string"))
+          ("a" -> ("type" -> "text")) ~
+          ("b" -> ("type" -> "text")) ~
+          ("c" -> ("type" -> "text"))
         )))
 
   val indexV4: JsObject =
     ("mappings" ->
       ("foo" ->
         ("properties" ->
-          ("a" -> ("type" -> "string")))) ~
+          ("a" -> ("type" -> "text")))) ~
       ("bar" ->
         ("properties" ->
-          ("a" -> ("type" -> "string") ~ ("index" -> "not_analyzed")))))
+          ("a" -> ("type" -> "text")))))
 
   implicit val system = ActorSystem()
   implicit val mat = ActorMaterializer()
   import system.dispatcher
 
   "The MappingUpdater" should "create the initial index" in {
-    assume(isReachable("localhost", 9000))
+    assume(isReachable("localhost", 9200))
     val client = new ElasticClient(ElasticUri("localhost:9200"))
     val updater = new MappingUpdater(client)
     val resp = Await.result(updater.update("test", indexV1), 10.seconds)
@@ -82,7 +82,7 @@ class MappingUpdaterSpec
   }
 
   it should "update to v2" in {
-    assume(isReachable("localhost", 9000))
+    assume(isReachable("localhost", 9200))
     val client = new ElasticClient(ElasticUri("localhost:9200"))
     val updater = new MappingUpdater(client)
     val resp = Await.result(updater.update("test", indexV2), 10.seconds)
@@ -90,7 +90,7 @@ class MappingUpdaterSpec
   }
 
   it should "skip, because nothing has changed" in {
-    assume(isReachable("localhost", 9000))
+    assume(isReachable("localhost", 9200))
     val client = new ElasticClient(ElasticUri("localhost:9200"))
     val updater = new MappingUpdater(client)
     val resp = Await.result(updater.update("test", indexV2), 10.seconds)
@@ -98,7 +98,7 @@ class MappingUpdaterSpec
   }
 
   it should "update to v3" in {
-    assume(isReachable("localhost", 9000))
+    assume(isReachable("localhost", 9200))
     val client = new ElasticClient(ElasticUri("localhost:9200"))
     val updater = new MappingUpdater(client)
     val resp = Await.result(updater.update("test", indexV3), 10.seconds)
@@ -106,7 +106,7 @@ class MappingUpdaterSpec
   }
 
   it should "fail with v4" in {
-    assume(isReachable("localhost", 9000))
+    assume(isReachable("localhost", 9200))
     val client = new ElasticClient(ElasticUri("localhost:9200"))
     val updater = new MappingUpdater(client)
     val fut = updater.update("test", indexV4)
@@ -117,7 +117,7 @@ class MappingUpdaterSpec
     }
   }
 
-  override def beforeAll() = if(isReachable("localhost", 9000)) {
+  override def beforeAll() = if(isReachable("localhost", 9200)) {
     val client = new ElasticClient(ElasticUri("localhost:9200"))
     val deleteFut = for {
       _ <- client request HttpRequest(HttpMethods.DELETE, "/test")
