@@ -7,7 +7,9 @@ test('daily', function(assert) {
   var data = timeframe([], moment().subtract(24, 'hour'), moment())
   assert.equal(data.length, 24)
   assert.deepEqual(
-    data.map(x => x.value),
+    data.map(function(x) {
+      return x.value
+    }),
     Array.from(new Array(24), function() {
       return 0
     })
