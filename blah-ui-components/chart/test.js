@@ -10,7 +10,7 @@ test('daily', function(assert) {
     data.map(function(x) {
       return x.value
     }),
-    Array.from(new Array(24), function() {
+    Array.apply(null, new Array(24)).map(function() {
       return 0
     })
   )
