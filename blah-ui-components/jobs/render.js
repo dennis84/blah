@@ -27,7 +27,10 @@ function button(job, update, options) {
 }
 
 function jobs(xs, update, options) {
-  if(undefined === xs || 0 == xs.length) return []
+  if(undefined === xs || 0 == xs.length) {
+    return h('div.is-empty')
+  }
+
   return h('div.people-list', xs.map(function(job) {
     var lastSuccess = job.lastSuccess
     if(lastSuccess) lastSuccess = moment(lastSuccess).fromNow()
