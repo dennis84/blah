@@ -5,13 +5,12 @@ var patch = snabbdom.init([
   require('snabbdom/modules/style'),
   require('snabbdom/modules/eventlisteners'),
 ])
-var xtend = require('xtend')
 var ctrl = require('./ctrl')
 var render = require('./render')
 
-function Segmentation(node, ws, options, initial) {
+function Segmentation(node, ws, initial) {
   var state = initial
-  var vnode = render(state, update, options)
+  var vnode = render(state, update)
 
   function update(fn) {
     var args = [].slice.call(arguments, 1)
@@ -20,21 +19,21 @@ function Segmentation(node, ws, options, initial) {
     if(res instanceof Promise) {
       res.then(function(m) {
         state = m
-        vnode = patch(vnode, render(m, update, options))
+        vnode = patch(vnode, render(m, update))
       })
     } else {
       state = res
-      vnode = patch(vnode, render(res, update, options))
-      update(ctrl.grouped, xtend(options, state))
+      vnode = patch(vnode, render(res, update))
+      update(ctrl.grouped, state)
     }
   }
 
   function onCount() {
-    update(ctrl.grouped, xtend(options, state))
+    update(ctrl.grouped, state)
   }
 
   patch(node, vnode)
-  update(ctrl.grouped, xtend(options, state))
+  update(ctrl.grouped, state)
   ws.on('count', onCount)
 
   this.destroy = function() {

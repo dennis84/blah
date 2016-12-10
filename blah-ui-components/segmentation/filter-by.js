@@ -11,14 +11,14 @@ function mkOption(filter, key, value, name) {
   }, name)
 }
 
-function mkFilterRow(filter, index, update) {
+function mkFilterRow(segment, filter, index, update) {
   var label = index > 2 ? 'And' : 'Filter by'
   return h('div.filter-row', [h('div.control.is-grouped.is-horizontal', [
     h('div.control-label', [h('label.label', label)]),
     h('div.control', [
       h('select.select', {
         on: {change: function(e) {
-          update(ctrl.updateFilter, index, {prop: e.target.value})
+          update(ctrl.updateSegmentFilter, segment, index, {prop: e.target.value})
         }}
       }, [
         mkOption(filter, 'prop', '', ''),
@@ -31,7 +31,7 @@ function mkFilterRow(filter, index, update) {
       ]),
       h('select.select', {
         on: {change: function(e) {
-          update(ctrl.updateFilter, index, {operator: e.target.value})
+          update(ctrl.updateSegmentFilter, segment, index, {operator: e.target.value})
         }}
       }, [
         mkOption(filter, 'operator', '', ''),
@@ -43,31 +43,26 @@ function mkFilterRow(filter, index, update) {
       h('input.input', {
         props: {value: filter.value},
         on: {input: debounce(function(e) {
-          update(ctrl.updateFilter, index, {value: e.target.value})
+          update(ctrl.updateSegmentFilter, segment, index, {value: e.target.value})
         }, 500)}
       }),
       h('a.button.is-link', {
         on: {click: function() {
-          update(ctrl.removeFilter, index)
+          update(ctrl.removeSegmentFilter, segment, index)
         }}
       }, [h('i.material-icons', 'clear')])
     ])
   ])])
 }
 
-function render(model, update) {
-  var filters = model.filterBy || []
+function render(segment, update) {
+  var filters = segment.filterBy || []
   var nextIndex = filters.length
-  filters = filters.map(function(filter, index) {
-    return {value: filter, index: index}
-  }).filter(function(x) {
-    return 0 !== x.value.prop.indexOf('date.')
-  })
 
-  return h('div', filters.map(function(x) {
-    return mkFilterRow(x.value, x.index, update)
+  return h('div', filters.map(function(filter, index) {
+    return mkFilterRow(segment, filter, index, update)
   }).concat([
-    mkFilterRow({
+    mkFilterRow(segment, {
       prop: '',
       operator: '',
       value: ''

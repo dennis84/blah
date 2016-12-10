@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Segmentation</title>
+    <style>
+      .chart { height: 400px; width: 600px }
+    </style>
+  </head>
+
+  <body>
+    <div id="segmentation"></div>
+
+    <script src="node_modules/moment/min/moment.min.js"></script>
+    <script src="node_modules/xhr-mock/bundle.js"></script>
+
+    <script>
+      XhrMock.setup()
+      XhrMock.post('http://localhost:3000/count', function(req, res) {
+        return res.status(200).body(JSON.stringify([{
+          count: 10,
+          date: moment().subtract(1, 'hour').toISOString(),
+          browserFamily: 'Chrome'
+        }]))
+      })
+    </script>
+
+    <script src="../chart/chart.min.js"></script>
+    <script src="segmentation.min.js"></script>
+
+    <script>
+      var ws = {on: function() {}}
+      var elem = document.getElementById('segmentation')
+      var comp = new Segmentation(elem, ws, {
+        baseUrl: 'http://localhost:3000',
+        collection: 'view',
+        title: 'Example',
+        groups: ['date.year', 'date.month', 'date.day', 'date.hour'],
+        groupBy: ['date.hour'],
+        from: moment().subtract(1, 'day').toISOString(),
+        to: moment().add(1, 'hour').toISOString(),
+        segments: []
+      })
+    </script>
+  </body>
+</html>

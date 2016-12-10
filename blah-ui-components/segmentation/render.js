@@ -1,28 +1,22 @@
 var h = require('snabbdom/h')
-var moment = require('moment')
-var form = require('./builder/form')
-var dateRange = require('./builder/date-range')
-var filterBy = require('./builder/filter-by')
-var groupBy = require('./builder/group-by')
+var dateRange = require('./date-range')
+var filterBy = require('./filter-by')
+var groupBy = require('./group-by')
+var ctrl = require('./ctrl')
 
 function chart(model) {
-  var from = model.filterBy.find(function(x) {
-    return 'date.from' === x.prop
-  })
+  if(0 === model.segments.length) return h('div.is-empty')
 
-  var to = model.filterBy.find(function(x) {
-    return 'date.to' === x.prop
-  })
-
-  from = from ? moment(from.value) : moment().subtract(1, 'day')
-  to = to ? moment(to.value).endOf('day') : moment().add(1, 'hour')
+  var fst = model.segments[0]
+  var from = moment(model.from)
+  var to = moment(model.to)
   var diff = to.diff(from, 'days')
   var format = 'ddd h:mm a'
   if(diff > 2) format = 'ddd M'
   if(diff > 7) format = 'MMM DD'
   if(diff > 60) format = 'MMM YYYY'
 
-  var data = window.Chart.timeframe(model.groups, from, to, {format: format})
+  var data = window.Chart.timeframe(fst.data, from, to, {format: format})
   var updateChart = function(vnode) {
     window.Chart.line(vnode.elm, data)
   }
@@ -35,13 +29,29 @@ function chart(model) {
   })
 }
 
-function render(model, update, options) {
+function render(model, update) {
   return h('div', [
-    form(model, update, dateRange, filterBy, groupBy(options)),
+    dateRange(model, update),
+    groupBy(model, update),
+    h('div', model.segments.map(function(segment) {
+      return h('div.segment', [
+        filterBy(segment, update),
+        h('button.button', {
+          on: {click: function() {
+            update(ctrl.removeSegment)
+          }}
+        }, 'Remove segment')
+      ])
+    })),
+    h('button.button', {
+      on: {click: function() {
+        update(ctrl.addSegment)
+      }}
+    }, 'Add segment'),
     h('div.widget.widget-line', {
-      class: options.class
+      class: model.class
     }, [
-      h('h3', options.title),
+      h('h3', model.title),
       chart(model)
     ])
   ])
