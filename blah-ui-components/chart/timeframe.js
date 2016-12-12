@@ -1,10 +1,11 @@
 var xtend = require('xtend')
 var moment = require('moment')
 
-function findCount(date, data) {
+function findCount(date, data, options) {
   if(!data) return 0
   for(var i in data) {
-    if(moment(data[i].date).isSame(date)) return data[i].count
+    var dataDate = moment(data[i].date).startOf(options.step)
+    if(dataDate.isSame(date)) return data[i].count
   }
 }
 
@@ -32,7 +33,7 @@ function timeframe(data, from, to, options) {
   for(var d = moment(from); d.diff(to) < 0; d.add(1, options.step)) {
     out.push({
       key: d.format(options.format),
-      value: findCount(d, data) || 0
+      value: findCount(d, data, options) || 0
     })
   }
 
