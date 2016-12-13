@@ -38,6 +38,11 @@ function render(node, data) {
       return c.id
     }))
 
+  var color = d3.scaleOrdinal()
+    .range(Array.apply(null, {length: 26}).map(function(x, i) {
+      return String.fromCharCode(97 + i)
+    }))
+
   var xAxis = d3.axisBottom(x)
     .ticks(24)
 
@@ -69,17 +74,6 @@ function render(node, data) {
     .append('g')
       .attr('transform', 'translate(' + margin[3] + ',' + margin[0] + ')')
 
-  // graph.selectAll('dot').data(data)
-  //   .enter().append('circle')
-  //     .attr('class', 'circle')
-  //     .attr('r', 3.5)
-  //     .attr('cx', function(d) {
-  //       return x(d.key)
-  //     })
-  //     .attr('cy', function(d) {
-  //       return y(d.value)
-  //     })
-
   graph.append('g')
     .attr('class', 'x-axis')
     .attr('transform', 'translate(0,' + height + ')')
@@ -95,19 +89,43 @@ function render(node, data) {
     .attr('transform', 'translate(0,0)')
     .call(yAxis)
 
-  var segment = graph.selectAll(".segment")
+  var segment = graph.selectAll('.segment')
     .data(segments)
-    .enter().append("g")
-      .attr("class", "segment");
+    .enter().append('g')
+      .attr('class', function(d) {
+        return 'segment segment-' + color(d.id)
+      })
 
-  // segment.append('path')
-  //   .datum(data)
-  //   .attr('class', 'area')
-  //   .attr('d', area)
+  segment.selectAll('dot')
+    .data(function(d){
+      return d.values
+    })
+    .enter().append('circle')
+      .attr('class', 'circle')
+      .attr('r', 3.5)
+      .attr('cx', function(d) {
+        return x(d.key)
+      })
+      .attr('cy', function(d) {
+        return y(d.value)
+      })
 
   segment.append('path')
-    .attr("d", function(d) { return line(d.values); })
-    .style("stroke", function(d) { return z(d.id); })
+    .attr('d', function(d) {
+      return area(d.values)
+    })
+    .style('stroke', function(d) {
+      return z(d.id)
+    })
+    .attr('class', 'area')
+
+  segment.append('path')
+    .attr('d', function(d) {
+      return line(d.values)
+    })
+    .style('stroke', function(d) {
+      return z(d.id)
+    })
     .attr('class', 'line')
 }
 
