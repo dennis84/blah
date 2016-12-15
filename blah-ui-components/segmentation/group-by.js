@@ -5,7 +5,6 @@ function render(model, update) {
   return h('div.group-row', [h('div.control.is-horizontal', [
     h('div.control-label', [h('label.label', 'Group by')]),
     h('div.control', [h('select.select', {
-      props: {multiple: true},
       on: {change: function(e) {
         var selected = []
         for(var i in e.target.options) {

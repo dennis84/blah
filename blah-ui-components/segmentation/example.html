@@ -51,7 +51,9 @@
         groupBy: ['date.hour'],
         from: moment().subtract(1, 'day').toISOString(),
         to: moment().add(1, 'hour').toISOString(),
-        segments: []
+        segments: [
+          {filterBy:[]}
+        ]
       })
     </script>
   </body>

@@ -14,17 +14,12 @@ function render(model, update, ws, storage) {
       baseUrl: config.SERVING_URL,
       collection: 'view',
       class: {'size-3of3': true, 'segmentation': true},
-      groups: ['date.year', 'date.month', 'date.day', 'date.hour']
-    }, {
+      groups: ['date.year', 'date.month', 'date.day', 'date.hour'],
       groupBy: ['date.hour'],
-      filterBy: [{
-        prop: 'date.from',
-        operator: 'gte',
-        value: moment().subtract(1, 'day').format()
-      }, {
-        prop: 'date.to',
-        operator: 'lte',
-        value: moment().add(1, 'hour').format()
+      from: moment().subtract(1, 'day').toISOString(),
+      to: moment().add(2, 'hour').toISOString(),
+      segments: [{
+        filterBy: []
       }]
     })
   ])

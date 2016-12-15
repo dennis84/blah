@@ -106,15 +106,31 @@ function grouped(model) {
 function mkQuery(model, segment) {
   var query = {}
   if(segment.filterBy) {
-    query.filterBy = segment.filterBy
+    query.filterBy = clone(segment.filterBy)
   }
 
   if(model.groupBy && model.groupBy.length > 0) {
-    query.groupBy = model.groupBy
+    query.groupBy = clone(model.groupBy)
   }
 
   if(model.collection) {
     query.collection = model.collection
+  }
+
+  if(model.from) {
+    query.filterBy.push({
+      prop: 'date.from',
+      operator: 'gte',
+      value: model.from
+    })
+  }
+
+  if(model.to) {
+    query.filterBy.push({
+      prop: 'date.to',
+      operator: 'lte',
+      value: model.to
+    })
   }
 
   return query

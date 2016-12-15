@@ -12,7 +12,7 @@ function mkOption(filter, key, value, name) {
 }
 
 function mkFilterRow(segment, filter, index, update) {
-  var label = index > 2 ? 'And' : 'Filter by'
+  var label = index > 0 ? 'And' : 'Filter by'
   return h('div.filter-row', [h('div.control.is-grouped.is-horizontal', [
     h('div.control-label', [h('label.label', label)]),
     h('div.control', [
