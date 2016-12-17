@@ -33,24 +33,41 @@ function chart(model) {
 }
 
 function render(model, update) {
-  return h('div', [
-    dateRange(model, update),
-    groupBy(model, update),
-    h('div', model.segments.map(function(segment) {
-      return h('div.segment', [
-        filterBy(segment, update),
-        h('button.button', {
-          on: {click: function() {
-            update(ctrl.removeSegment)
-          }}
-        }, 'Remove segment')
+  return h('div.segmentation', [
+    h('div.card.is-fullwidth', [
+      h('div.card-content', [
+        h('div.content', [
+          dateRange(model, update),
+          groupBy(model, update)
+        ])
+      ]),
+    ]),
+    h('div.segments', model.segments.map(function(seg) {
+      return h('div.card.is-fullwidth.segment', [
+        seg.filterBy.length ? filterBy(seg, update) : h('span'),
+        h('footer.card-footer', [
+          h('a.card-footer-item', {
+            on: {click: function() {
+              update(ctrl.addSegmentFilter, seg)
+            }}
+          }, 'Add filter'),
+          h('a.card-footer-item', {
+            on: {click: function() {
+              update(ctrl.removeSegment)
+            }}
+          }, 'Remove segment')
+        ])
       ])
     })),
-    h('button.button', {
-      on: {click: function() {
-        update(ctrl.addSegment)
-      }}
-    }, 'Add segment'),
+    h('div.card.is-fullwidth', [
+      h('footer.card-footer', [
+        h('a.card-footer-item', {
+          on: {click: function() {
+            update(ctrl.addSegment)
+          }}
+        }, 'Add segment')
+      ])
+    ]),
     h('div.widget.widget-line', {
       class: model.class
     }, [

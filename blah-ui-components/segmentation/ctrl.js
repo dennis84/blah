@@ -34,7 +34,7 @@ function updateGroupBy(model, groups) {
  */
 function addSegment(model) {
   var m = clone(model)
-  var emptySegment = {filterBy: []}
+  var emptySegment = {filterBy: [{prop: '', operator: '', value: ''}]}
   m.segments.push(emptySegment)
   return m
 }
@@ -46,6 +46,23 @@ function removeSegment(model, segment) {
   var m = clone(model)
   var index = model.segments.indexOf(segment)
   m.segments.splice(index, 1)
+  return m
+}
+
+/**
+ * Add a new segment filter.
+ */
+function addSegmentFilter(model, segment) {
+  var m = clone(model)
+  var index = model.segments.indexOf(segment)
+
+  segment.filterBy.push({
+    prop: '',
+    operator: '',
+    value: ''
+  })
+
+  m.segments[index] = segment
   return m
 }
 
@@ -142,6 +159,7 @@ module.exports = {
   updateGroupBy: updateGroupBy,
   addSegment: addSegment,
   removeSegment: removeSegment,
+  addSegmentFilter: addSegmentFilter,
   updateSegmentFilter: updateSegmentFilter,
   removeSegmentFilter: removeSegmentFilter,
   grouped: grouped

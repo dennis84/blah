@@ -2,18 +2,18 @@
   "name": "blah-ui",
   "description": "...",
   "dependencies": {
-    "bulma": "^0.1.2",
-    "clone": "^1.0.2",
+    "bulma": "^0.2.3",
+    "clone": "^2.1.0",
     "debounce": "^1.0.0",
     "masonry-layout": "^4.1.1",
-    "moment": "^2.15.0",
-    "snabbdom": "^0.5.3",
+    "moment": "^2.17.1",
+    "snabbdom": "^0.5.4",
     "xtend": "^4.0.1"
   },
   "devDependencies": {
-    "browserify": "~13.1.0",
-    "tape": "~4.6.0",
-    "zuul": "~3.11.0"
+    "browserify": "~13.1.1",
+    "tape": "~4.6.3",
+    "zuul": "~3.11.1"
   },
   "scripts": {
     "build-css": "stylus -u nib src/css/index.styl -o assets/css",

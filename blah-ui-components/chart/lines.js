@@ -33,7 +33,7 @@ function render(node, data) {
     ])
     .range([height, 0])
 
-  var z = d3.scaleOrdinal(d3.schemeCategory10)
+  var z = d3.scaleOrdinal()
     .domain(segments.map(function(c) {
       return c.id
     }))

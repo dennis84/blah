@@ -15,29 +15,33 @@ function formatDate(d) {
 }
 
 function render(model, update) {
-  return h('div.filter-row', [h('div.control.is-grouped.is-horizontal', [
+  return h('div.control.is-horizontal', [
     h('div.control-label', [h('label.label', 'From - To')]),
-    h('div.control', [
-      h('input.input', {
-        hook: {insert: createPickaday},
-        props: {value: formatDate(model.from)},
-        on: {change: function(e) {
-          if(e.currentTarget.picker) {
-            update(ctrl.updateFrom, moment(e.currentTarget.value).toISOString())
-          }
-        }}
-      }),
-      h('input.input', {
-        hook: {insert: createPickaday},
-        props: {value: formatDate(model.to)},
-        on: {change: function(e) {
-          if(e.currentTarget.picker) {
-            update(ctrl.updateTo, moment(e.currentTarget.value).toISOString())
-          }
-        }}
-      })
+    h('div.control.is-grouped', [
+      h('p.control.is-expanded', [
+        h('input.input', {
+          hook: {insert: createPickaday},
+          props: {value: formatDate(model.from)},
+          on: {change: function(e) {
+            if(e.currentTarget.picker) {
+              update(ctrl.updateFrom, moment(e.currentTarget.value).toISOString())
+            }
+          }}
+        })
+      ]),
+      h('p.control.is-expanded', [
+        h('input.input', {
+          hook: {insert: createPickaday},
+          props: {value: formatDate(model.to)},
+          on: {change: function(e) {
+            if(e.currentTarget.picker) {
+              update(ctrl.updateTo, moment(e.currentTarget.value).toISOString())
+            }
+          }}
+        })
+      ])
     ])
-  ])])
+  ])
 }
 
 module.exports = render

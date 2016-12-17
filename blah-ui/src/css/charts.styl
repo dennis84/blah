@@ -37,7 +37,7 @@
   font-size 10px
   text-anchor middle
   fill base3
-
+  
 colorize(letter, color)
   .arc-{letter}
     fill color
@@ -46,6 +46,15 @@ colorize(letter, color)
     font-weight 500
     background color
     color base3
+
+  .segment-{letter}
+    .line
+      stroke color
+      stroke-width 3
+      fill none
+    .area
+      fill color
+      opacity 0.5
 
 colorize('a', deepOrange)
 colorize('b', red)
