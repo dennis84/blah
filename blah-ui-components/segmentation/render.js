@@ -1,6 +1,7 @@
 var h = require('snabbdom/h')
 var moment = require('moment')
-var dateRange = require('./date-range')
+var dateFilterAbs = require('./date-filter-abs')
+var dateFilterQuick = require('./date-filter-quick')
 var filterBy = require('./filter-by')
 var groupBy = require('./group-by')
 var ctrl = require('./ctrl')
@@ -12,8 +13,7 @@ function chart(model) {
   var to = moment(model.to)
   var diff = to.diff(from, 'days')
   var format = 'ddd h:mm a'
-  if(diff > 2) format = 'ddd M'
-  if(diff > 7) format = 'MMM DD'
+  if(diff > 2) format = 'ddd DD'
   if(diff > 60) format = 'MMM YYYY'
 
   var data = model.segments.map(function(segment) {
@@ -33,14 +33,31 @@ function chart(model) {
 }
 
 function render(model, update) {
+  var dateFilters = []
+  if('absolute' === model.dateFilterMode) {
+    dateFilters.push(dateFilterAbs(model, update))
+    dateFilters.push(groupBy(model, update))
+  } else {
+    dateFilters.push(dateFilterQuick(model, update))
+  }
+
   return h('div.segmentation', [
     h('div.card.is-fullwidth', [
       h('div.card-content', [
-        h('div.content', [
-          dateRange(model, update),
-          groupBy(model, update)
-        ])
+        h('div.content', dateFilters)
       ]),
+      h('footer.card-footer', [
+        h('a.card-footer-item', {
+          on: {click: function() {
+            update(ctrl.setDateFilterMode, 'quick')
+          }}
+        }, 'Quick'),
+        h('a.card-footer-item', {
+          on: {click: function() {
+            update(ctrl.setDateFilterMode, 'absolute')
+          }}
+        }, 'Absolute'),
+      ])
     ]),
     h('div.segments', model.segments.map(function(seg) {
       return h('div.card.is-fullwidth.segment', [

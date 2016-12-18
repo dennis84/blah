@@ -3,6 +3,15 @@ var xhr = require('xhr')
 var xtend = require('xtend')
 
 /**
+ * Sets the date filter mode.
+ */
+function setDateFilterMode(model, mode) {
+  var m = clone(model)
+  m.dateFilterMode = mode
+  return m
+}
+
+/**
  * Updates the `from` property.
  */
 function updateFrom(model, value) {
@@ -154,6 +163,7 @@ function mkQuery(model, segment) {
 }
 
 module.exports = {
+  setDateFilterMode: setDateFilterMode,
   updateFrom: updateFrom,
   updateTo: updateTo,
   updateGroupBy: updateGroupBy,
