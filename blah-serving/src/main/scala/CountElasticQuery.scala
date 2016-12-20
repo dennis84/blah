@@ -13,7 +13,7 @@ object CountElasticQuery {
     case Filter("item", "ne", value)                      => q.notTerm("item", value)
     case Filter("user_agent.device.family", "eq", value)  => q.term("deviceFamily", value)
     case Filter("user_agent.device.family", "ne", value)  => q.notTerm("deviceFamily", value)
-    case Filter("user_agent.browser.family", "eq", value) => q.term("browserFamily", value)
+    case Filter("user_agent.browser.family", "eq", value) => q.`match`("browserFamily", value)
     case Filter("user_agent.browser.family", "ne", value) => q.notTerm("browserFamily", value)
     case Filter("user_agent.browser.major", "eq", value)  => q.term("browserMajor", value)
     case Filter("user_agent.browser.major", "ne", value)  => q.notTerm("browserMajor", value)
