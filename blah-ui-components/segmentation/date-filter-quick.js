@@ -9,9 +9,9 @@ function createInput(update, label, options) {
         props :{type: 'radio', name: 'timepicker-quick'},
         on: {change: function() {
           var now = moment().add(2, 'hour').startOf('hour').toISOString()
+          update(ctrl.updateGroupBy, options.groupBy)
           update(ctrl.updateFrom, options.from.toISOString())
           update(ctrl.updateTo, now)
-          update(ctrl.updateGroupBy, options.groupBy)
         }}
       }),
       h('span', label)

@@ -15,9 +15,15 @@ function chart(model) {
   var format = 'ddd h:mm a'
   if(diff > 2) format = 'ddd DD'
   if(diff > 60) format = 'MMM YYYY'
+  var step = model.groupBy.find(function(x) {
+    return 0 === x.indexOf('date.')
+  }).split('.')[1]
 
   var data = model.segments.map(function(segment) {
-    return window.Chart.timeframe(segment.data, from, to, {format: format})
+    return window.Chart.timeframe(segment.data, from, to, {
+      format: format,
+      step: step
+    })
   })
 
   var updateChart = function(vnode) {
