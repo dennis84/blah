@@ -20,7 +20,9 @@ class CollectionCountAlgo extends Algo[CollectionCount] {
       .filter("date is not null")
       .map { case Row(date: String, name: String) =>
         val d = ZonedDateTime.parse(date)
-          .truncatedTo(ChronoUnit.SECONDS).toString
+          .plusSeconds(1)
+          .truncatedTo(ChronoUnit.SECONDS)
+          .toString
         val uuid = UUID.nameUUIDFromBytes(ByteBuffer
           .allocate(Integer.SIZE / 8)
           .putInt((d + name).hashCode)

@@ -28,7 +28,7 @@ class CountAlgo extends Algo[Count] {
         val date = ZonedDateTime.parse(event.date)
         val doc = Count(
           collection = event.collection,
-          date = date.truncatedTo(ChronoUnit.HOURS).toString,
+          date = date.plusHours(1).truncatedTo(ChronoUnit.HOURS).toString,
           item = event.item,
           price = event.price,
           browserFamily = ua.map(_.browser.family),
