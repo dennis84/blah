@@ -96,20 +96,6 @@ function render(node, data) {
         return 'segment segment-' + color(d.id)
       })
 
-  segment.selectAll('dot')
-    .data(function(d){
-      return d.values
-    })
-    .enter().append('circle')
-      .attr('class', 'circle')
-      .attr('r', 3.5)
-      .attr('cx', function(d) {
-        return x(d.key)
-      })
-      .attr('cy', function(d) {
-        return y(d.value)
-      })
-
   segment.append('path')
     .attr('d', function(d) {
       return area(d.values)
@@ -127,6 +113,38 @@ function render(node, data) {
       return z(d.id)
     })
     .attr('class', 'line')
+
+  var tooltip = d3.select(node)
+    .append('div')
+    .attr('class', 'tooltip box')
+    .style('visibility', 'hidden')
+
+  segment.selectAll('dot')
+    .data(function(d) {
+      return d.values
+    })
+    .enter()
+      .append('circle')
+      .attr('class', 'circle')
+      .attr('r', 3.5)
+      .attr('cx', function(d) {
+        return x(d.key)
+      })
+      .attr('cy', function(d) {
+        return y(d.value)
+      })
+      .on('mouseover', function(d) {
+        tooltip
+          .style('visibility', 'visible')
+          .style('top', y(d.value) - 30 + 'px')
+          .style('left',x(d.key) + 'px')
+          .html(d.key + ': <b>' + d.value + '</b>')
+        d3.select(this).attr('r', 6)
+      })
+      .on('mouseout', function() {
+        tooltip.style('visibility', 'hidden')
+        d3.select(this).attr('r', 3.5)
+      })
 }
 
 module.exports = init(render)
