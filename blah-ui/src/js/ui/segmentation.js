@@ -17,7 +17,7 @@ function render(model, update, ws, storage) {
       groups: ['date.year', 'date.month', 'date.day', 'date.hour'],
       groupBy: ['date.hour'],
       from: moment().subtract(1, 'day').toISOString(),
-      to: moment().add(2, 'hour').toISOString(),
+      to: moment().add(1, 'hour').toISOString(),
       segments: []
     })
   ])

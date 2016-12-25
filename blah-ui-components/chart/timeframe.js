@@ -30,7 +30,7 @@ function timeframe(data, from, to, options) {
   to = to.startOf(options.step)
   var out = []
 
-  for(var d = moment(from); d.diff(to) < 0; d.add(1, options.step)) {
+  for(var d = moment(from); d.diff(to) <= 0; d.add(1, options.step)) {
     out.push({
       key: d.format(options.format),
       value: findCount(d, data, options) || 0
