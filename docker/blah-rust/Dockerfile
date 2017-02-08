@@ -1,8 +1,8 @@
 FROM ubuntu:14.04
 
 RUN apt-get update
-RUN apt-get install -y curl build-essential
+RUN apt-get install -y curl build-essential libssl-dev pkg-config
 
-RUN curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- --disable-sudo
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 
-RUN apt-get install -y libssl-dev
+ENV PATH "$PATH:/root/.cargo/bin"

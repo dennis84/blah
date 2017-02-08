@@ -18,7 +18,7 @@ use std::time::Duration;
 use std::collections::HashMap;
 use getopts::Options;
 use rustc_serialize::json;
-use futures::{Future};
+use futures::Future;
 use tokio_core::reactor::Core;
 use service::{Service, Statistic};
 

@@ -1,7 +1,7 @@
 use std::env;
 use log::{LogRecord, LogLevelFilter};
 use env_logger::LogBuilder;
-use rustc_serialize::json::{encode};
+use rustc_serialize::json::encode;
 use chrono::Local;
 
 pub fn new_logger() {
@@ -25,7 +25,7 @@ pub fn new_logger() {
         builder.parse(&env::var("RUST_LOG").unwrap());
     }
 
-    builder.init().unwrap();
+    drop(builder.init());
 }
 
 #[test]
