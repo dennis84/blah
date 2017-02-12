@@ -11,6 +11,8 @@ libraryDependencies ++= Seq(
   Dependencies.akkaHttpTestkit % "test",
   Dependencies.akkaHttpSprayJson,
   Dependencies.akkaStreamKafka,
+  Dependencies.sprayJson,
+  Dependencies.jsonLenses,
   Dependencies.logbackClassic,
   Dependencies.logstashLogbackEncoder
 )

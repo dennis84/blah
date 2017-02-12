@@ -5,11 +5,11 @@
   "mem": "1024",
   "container": {
     "type": "DOCKER",
-    "image": "blah/algo:0.1.0",
+    "image": "blah/funnel-algo:0.1.0",
     "network": "BRIDGE"
   },
   "shell": false,
-  "command": "funnel --name signup --steps landingpage,signup,dashboard",
+  "command": "batch --name signup --steps landingpage,signup,dashboard",
   "environmentVariables": [
     {"name": "KAFKA_URL", "value": "$BLAH_HOST:31000"},
     {"name": "ZOOKEEPER_URL", "value": "$BLAH_HOST:2181"},

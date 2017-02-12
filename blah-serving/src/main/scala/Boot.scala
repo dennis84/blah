@@ -8,8 +8,6 @@ import akka.stream.scaladsl.Source
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.kafka.scaladsl._
-import blah.http.CorsSupport
-import blah.elastic.MappingUpdater
 
 object Boot extends App
   with CorsSupport

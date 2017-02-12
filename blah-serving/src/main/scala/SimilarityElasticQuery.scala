@@ -1,16 +1,15 @@
 package blah.serving
 
 import spray.json._
-import blah.json.JsonDsl._
-import blah.elastic.{QueryDsl => q}
+import JsonDsl._
 
 object SimilarityElasticQuery {
   def apply(query: SimilarityQuery): JsValue =
     query.collection map { coll =>
-      q.term("collection", coll) merge
-      q.terms("item", query.items)
+      QueryDsl.term("collection", coll) merge
+      QueryDsl.terms("item", query.items)
     } getOrElse {
-      q.terms("item", query.items)
+      QueryDsl.terms("item", query.items)
     } ~
     ("aggs" -> ("sims" ->
       ("nested" -> ("path", "similarities")) ~

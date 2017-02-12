@@ -10,8 +10,7 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.model._
 import spray.json._
-import blah.http.HttpClient
-import blah.json.JsonDsl._
+import JsonDsl._
 
 class JobRepoSpec
   extends FlatSpec

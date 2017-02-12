@@ -1,16 +1,16 @@
 {
-  "id": "collection-count-streaming",
+  "id": "collection-streaming",
   "cpus": 0.5,
   "mem": 1024.0,
   "instances": 1,
   "container": {
     "type": "DOCKER",
     "docker": {
-      "image": "blah/algo:0.1.0",
+      "image": "blah/collection-algo:0.1.0",
       "network": "BRIDGE"
     }
   },
-  "args": ["collection-count-streaming"],
+  "args": ["streaming"],
   "env": {
     "KAFKA_URL": "$BLAH_HOST:31000",
     "ZOOKEEPER_URL": "$BLAH_HOST:2181",

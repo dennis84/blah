@@ -1,13 +1,11 @@
 package blah.serving
 
 import spray.json._
-import blah.json.JsonDsl._
-import blah.elastic.{QueryDsl => q}
+import JsonDsl._
 
 object MostViewedElasticQuery {
   def apply(query: MostViewedQuery): JsValue =
-    q.term("collection", query.collection) merge
-    ("aggs" -> ("item" ->
+    QueryDsl.term("collection", query.collection) merge ("aggs" -> ("item" ->
       ("terms" ->
         ("field" -> "item.keyword") ~
         ("size" -> query.limit.getOrElse(java.lang.Integer.MAX_VALUE)) ~

@@ -6,11 +6,11 @@
   "container": {
     "type": "DOCKER",
     "docker": {
-      "image": "blah/algo:0.1.0",
+      "image": "blah/count-algo:0.1.0",
       "network": "BRIDGE"
     }
   },
-  "args": ["count-streaming"],
+  "args": ["streaming"],
   "env": {
     "KAFKA_URL": "$BLAH_HOST:31000",
     "ZOOKEEPER_URL": "$BLAH_HOST:2181",

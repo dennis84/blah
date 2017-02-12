@@ -2,7 +2,7 @@ package blah.serving
 
 import org.scalatest._
 import spray.json._
-import blah.json.JsonDsl._
+import JsonDsl._
 
 class RecommendationElasticQuerySpec extends FlatSpec with Matchers {
 

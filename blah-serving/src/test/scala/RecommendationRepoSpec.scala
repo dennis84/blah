@@ -8,8 +8,7 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.model._
 import spray.json._
-import blah.json.JsonDsl._
-import blah.elastic._
+import JsonDsl._
 
 class RecommendationRepoSpec
   extends FlatSpec

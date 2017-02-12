@@ -1,15 +1,12 @@
 package blah.serving
 
 import spray.json._
-import blah.json.JsonDsl._
-import blah.elastic.{QueryDsl => q}
-import blah.elastic.{FilterDsl => f}
-import blah.elastic.{AggregationDsl => a}
+import JsonDsl._
 
 object SumElasticQuery {
   private def filterBy(xs: List[Filter]) = xs collect {
-    case Filter("date.from", "gte", value) => f.gte("date", value)
-    case Filter("date.to", "lte", value)   => f.lte("date", value)
+    case Filter("date.from", "gte", value) => FilterDsl.gte("date", value)
+    case Filter("date.to", "lte", value)   => FilterDsl.lte("date", value)
   } reduceOption (_ merge _) getOrElse JsObject()
 
   private def sum(prop: String) =
@@ -18,7 +15,7 @@ object SumElasticQuery {
     )))
 
   def apply(query: SumQuery): JsValue =
-    q.term("collection", query.collection) merge (query match {
+    QueryDsl.term("collection", query.collection) merge (query match {
       case SumQuery(_, prop, Some(filters)) =>
         filterBy(filters) merge sum(prop)
       case SumQuery(_, prop, _) => sum(prop)
