@@ -1,4 +1,4 @@
-var h = require('snabbdom/h')
+var h = require('snabbdom/h').default
 
 function unknown() {
   return h('div.has-text-centered', [

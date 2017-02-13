@@ -2,33 +2,34 @@ package blah.count
 
 import java.util.UUID
 import java.nio.ByteBuffer
-import java.time.ZonedDateTime
+import java.time.{ZonedDateTime, ZoneId}
 import java.time.temporal.ChronoUnit
+import java.time.format.DateTimeFormatter
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
 
 object CountAlgo {
-  def train(rdd: RDD[String], ctx: SparkSession, args: Array[String]) = {
+  def train(ctx: SparkSession, args: Array[String]) = {
     import ctx.implicits._
-    val reader = ctx.read.schema(CountSchema())
-    reader.json(rdd).createOrReplaceTempView("count")
     ctx.sql("""|SELECT
                |  date,
                |  collection,
                |  props.item,
                |  props.userAgent,
                |  props.price
-               |FROM count""".stripMargin)
+               |FROM events""".stripMargin)
       .filter("date is not null")
       .as[CountEvent]
       .map { event =>
         val ua = event.userAgent.map(UserAgent(_))
         val uac = ua.map(UserAgentClassifier.classify)
-        val date = ZonedDateTime.parse(event.date)
+        val date = event.date.toInstant.atZone(ZoneId.of("UTC"))
         val doc = Count(
           collection = event.collection,
-          date = date.plusHours(1).truncatedTo(ChronoUnit.HOURS).toString,
+          date = date.plusHours(1)
+                     .truncatedTo(ChronoUnit.HOURS)
+                     .format(DateTimeFormatter.ISO_INSTANT),
           item = event.item,
           price = event.price,
           browserFamily = ua.map(_.browser.family),

@@ -1,0 +1,12 @@
+{
+  "mappings": {
+    "funnel": {
+      "properties": {
+        "name": {"type": "keyword"},
+        "item": {"type": "keyword"},
+        "parent": {"type": "keyword"},
+        "count": {"type": "integer"}
+      }
+    }
+  }
+}

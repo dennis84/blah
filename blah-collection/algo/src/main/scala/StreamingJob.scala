@@ -2,10 +2,7 @@ package blah.collection
 
 import java.util.Properties
 import scala.concurrent.ExecutionContext
-import scala.reflect.ClassTag
-import scala.reflect.runtime.universe.TypeTag
-import scala.util.{Success, Failure}
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming.kafka010._
@@ -31,7 +28,7 @@ object StreamingJob {
       "bootstrap.servers" -> config.getString("consumer.broker.list"),
       "key.deserializer" -> classOf[StringDeserializer],
       "value.deserializer" -> classOf[StringDeserializer],
-      "group.id" -> "trainings")
+      "group.id" -> "blah-collection-algo-0")
     val stream = KafkaUtils.createDirectStream[String, String](ssc,
       LocationStrategies.PreferConsistent,
       ConsumerStrategies.Subscribe[String, String](Set("events"), kafkaParams))
@@ -40,9 +37,12 @@ object StreamingJob {
     stream.foreachRDD(rdd => if(!rdd.isEmpty) {
       val sparkSession = SparkSessionSingleton
         .getInstance(rdd.sparkContext.getConf)
-      val output = CollectionCountAlgo.train(rdd, sparkSession, args)
 
-      output.writeToElastic("blah", "collection")
+      val reader = sparkSession.read.schema(CollectionCountSchema())
+      reader.json(rdd).createOrReplaceTempView("events")
+
+      val output = CollectionCountAlgo.train(sparkSession, args)
+      output.writeToElastic("collection", "count")
 
       val props = new Properties
       props.put("bootstrap.servers", config.getString("producer.broker.list"))

@@ -1,0 +1,25 @@
+<!doctype html>
+
+<div id="similarity"></div>
+
+<script src="../node_modules/xhr-mock/bundle.js"></script>
+
+<script>
+XhrMock.setup()
+XhrMock.post('http://localhost:8080/similarities', function(req, res) {
+  return res.status(200).body(JSON.stringify([
+    {item: 'foo', score: 0.9},
+    {item: 'bar', score: 0.8},
+    {item: 'baz', score: 0.7}
+  ]))
+})
+</script>
+
+<script src="../dist/index.js"></script>
+
+<script>
+var elem = document.getElementById('similarity')
+var comp = new Similarity(elem, {
+  baseUrl: 'http://localhost:8080'
+})
+</script>

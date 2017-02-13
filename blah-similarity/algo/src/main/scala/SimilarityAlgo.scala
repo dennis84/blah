@@ -2,14 +2,13 @@ package blah.similarity
 
 import java.util.UUID
 import java.nio.ByteBuffer
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.mllib.linalg.{Vectors, SparseVector}
 import org.apache.spark.mllib.linalg.distributed._
 import FindOpt._
 
 object SimilarityAlgo {
-  def train(rdd: RDD[String], ctx: SparkSession, args: Array[String]) = {
+  def train(ctx: SparkSession, args: Array[String]) = {
     import ctx.implicits._
 
     val collection = args opt "collection"
@@ -17,13 +16,11 @@ object SimilarityAlgo {
       s"""WHERE collection = "$coll""""
     } getOrElse ""
 
-    val reader = ctx.read.schema(SimilaritySchema())
-    reader.json(rdd).createOrReplaceTempView("similarity")
     val events = ctx.sql(s"""|SELECT
                              |  collection,
                              |  props.user AS user,
                              |  props.item AS item
-                             |FROM similarity $where""".stripMargin)
+                             |FROM events $where""".stripMargin)
       .filter("user is not null and item is not null")
       .as[SimilarityEvent]
     require(events.count > 0, "view events cannot be empty")

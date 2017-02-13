@@ -1,0 +1,19 @@
+[package]
+name = "blah-events"
+version = "0.1.0"
+authors = ["Dennis Dietrich <d.dietrich84@gmail.com>"]
+
+[dependencies]
+log = "0.3"
+env_logger = "0.4"
+getopts = "0.2"
+serde = "0.9"
+serde_derive = "0.9"
+serde_json = "0.9"
+futures = "0.1"
+rdkafka = "0.7"
+logstash-format = { git = "https://github.com/dennis84/logstash-format.git" }
+minihttp = { git = "https://github.com/dennis84/minihttp.git" }
+tokio-core = "0.1"
+tokio-service = "0.1"
+tokio-proto = "0.1"

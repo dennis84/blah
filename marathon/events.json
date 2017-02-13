@@ -1,0 +1,32 @@
+{
+  "id": "events",
+  "cpus": 0.1,
+  "mem": 128.0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "blah/events",
+      "network": "BRIDGE",
+      "portMappings": [
+        {"containerPort": 8080, "hostPort": 0, "servicePort": 8011, "protocol": "tcp"}
+      ]
+    }
+  },
+  "env": {
+    "KAFKA_URL": "$BLAH_HOST:9092"
+  },
+  "labels":{
+    "AUTOSCALE_MAX_INSTANCES": "10",
+    "AUTOSCALE_MEM_PERCENT": "80",
+    "AUTOSCALE_CPU_PERCENT": "80",
+    "HAPROXY_GROUP": "external",
+    "HAPROXY_0_VHOST": "events.blah.local",
+    "HAPROXY_0_BACKEND_HTTP_HEALTHCHECK_OPTIONS": "  option  httpchk GET {healthCheckPath} HTTP/1.1\\r\\nHost:\\ events.blah.local\n  timeout check {healthCheckTimeoutSeconds}s\n"
+  },
+  "healthChecks": [{
+    "protocol": "HTTP",
+    "path": "/",
+    "intervalSeconds": 10
+  }]
+}

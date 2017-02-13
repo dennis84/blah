@@ -1,6 +1,20 @@
 [package]
-name = "most-count"
+name = "blah-count"
 version = "0.1.0"
 authors = ["Dennis Dietrich <d.dietrich84@gmail.com>"]
 
 [dependencies]
+log = "0.3"
+env_logger = "0.4"
+getopts = "0.2"
+serde = "0.9"
+serde_derive = "0.9"
+serde_json = "0.9"
+futures = "0.1"
+tokio-core = "0.1"
+hyper = { git = "https://github.com/hyperium/hyper.git" }
+unicase = "1.4"
+mime = "0.2"
+flate2 = "0.2"
+logstash-format = { git = "https://github.com/dennis84/logstash-format.git" }
+serde-merge = { git = "https://github.com/dennis84/serde-merge.git" }

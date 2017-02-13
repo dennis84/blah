@@ -9,7 +9,7 @@ import org.apache.spark.mllib.linalg.distributed._
 import FindOpt._
 
 object RecommendationAlgo {
-  def train(rdd: RDD[String], ctx: SparkSession, args: Array[String]) = {
+  def train(ctx: SparkSession, args: Array[String]) = {
     import ctx.implicits._
 
     var collection = args opt "collection"
@@ -17,13 +17,11 @@ object RecommendationAlgo {
       s"""WHERE collection = "$coll""""
     } getOrElse ""
 
-    val reader = ctx.read.schema(RecommendationSchema())
-    reader.json(rdd).createOrReplaceTempView("recommendation")
     val events = ctx.sql(s"""|SELECT
                              |  collection,
                              |  props.user AS user,
                              |  props.item AS item
-                             |FROM recommendation $where""".stripMargin)
+                             |FROM events $where""".stripMargin)
       .filter("user is not null and item is not null")
       .as[RecommendationEvent]
     require(events.count > 0, "view events cannot be empty")

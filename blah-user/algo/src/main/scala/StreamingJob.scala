@@ -2,10 +2,7 @@ package blah.user
 
 import java.util.Properties
 import scala.concurrent.ExecutionContext
-import scala.reflect.ClassTag
-import scala.reflect.runtime.universe.TypeTag
-import scala.util.{Success, Failure}
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming.kafka010._
@@ -49,11 +46,14 @@ object StreamingJob {
       .map(_.value)
 
     stream.foreachRDD(rdd => if(!rdd.isEmpty) {
-      val sparkSession = SparkSessionSingleton
+      val spark = SparkSessionSingleton
         .getInstance(rdd.sparkContext.getConf)
-      val output = UserAlgo.train(rdd, sparkSession, args)
 
-      output.writeToElastic("blah", "user")
+      val reader = spark.read.schema(UserSchema())
+      reader.json(rdd).createOrReplaceTempView("events")
+
+      val output = UserAlgo.train(spark, args)
+      output.writeToElastic("user", "user")
 
       val props = new Properties
       props.put("bootstrap.servers", config.getString("producer.broker.list"))

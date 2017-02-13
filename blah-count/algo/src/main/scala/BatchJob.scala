@@ -2,13 +2,9 @@ package blah.count
 
 import java.util.Properties
 import scala.concurrent.ExecutionContext
-import scala.reflect.ClassTag
-import scala.reflect.runtime.universe.TypeTag
-import scala.util.{Success, Failure}
-import akka.util.ByteString
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
-import org.apache.hadoop.io.{LongWritable, BytesWritable}
+import org.apache.spark.sql.functions._
 import org.apache.kafka.clients.producer.ProducerRecord
 import com.typesafe.config.Config
 import DatasetKafkaWriter._
@@ -21,15 +17,29 @@ object BatchJob {
     sparkConf: SparkConf,
     args: Array[String]
   )(implicit ec: ExecutionContext) {
-    val path = (args opt "path").getOrElse("*/*/*")
-    val hadoopUrl = s"${config getString "hadoop.url"}/events/$path/*.jsonl"
-    val sc = new SparkContext(sparkConf)
-    val sparkSession = SparkSession.builder.config(sparkConf).getOrCreate()
-    val rdd = sc.sequenceFile[LongWritable, BytesWritable](hadoopUrl)
-      .map(x => ByteString(x._2.copyBytes).utf8String)
-    val output = CountAlgo.train(rdd, sparkSession, args shift "path")
+    val spark = SparkSession.builder.config(sparkConf).getOrCreate()
 
-    output.writeToElastic("blah", "count")
+    val jdbcDf = spark.read
+      .format("jdbc")
+      .option("url", config.getString("postgres.url"))
+      .option("dbtable", "events")
+      .option("user", config.getString("postgres.user"))
+      .option("password", config.getString("postgres.password"))
+      .load()
+
+    jdbcDf.createOrReplaceTempView("events")
+
+    import spark.implicits._
+    val eventsDf = spark.sql("SELECT date, collection, props as p FROM events")
+      .withColumn("props", from_json($"p", CountPropsSchema()))
+      .drop("p")
+      .toDF
+
+    val df = spark.createDataFrame(eventsDf.rdd, CountSchema())
+    df.createOrReplaceTempView("events")
+
+    val output = CountAlgo.train(spark, args)
+    output.writeToElastic("count", "count")
 
     val props = new Properties
     props.put("bootstrap.servers", config.getString("producer.broker.list"))
@@ -39,6 +49,6 @@ object BatchJob {
     output.toJSON.writeToKafka(props, x =>
       new ProducerRecord[String, String]("trainings", s"count@$x"))
 
-    sc.stop
+    spark.stop
   }
 }

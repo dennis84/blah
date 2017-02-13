@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Sum</title>
+  </head>
+
+  <body>
+    <div id="sum"></div>
+    <script src="../../node_modules/xhr-mock/bundle.js"></script>
+
+    <script>
+      XhrMock.setup()
+      XhrMock.post('http://localhost:8080/sum', function(req, res) {
+        return res.status(200).body('{"sum": 42.0}')
+      })
+    </script>
+
+    <script src="../../dist/sum.js"></script>
+
+    <script>
+      var events = {on: function() {}}
+      var elem = document.getElementById('sum')
+      var comp = new Sum(elem, events, {
+        baseUrl: 'http://localhost:8080',
+        title: 'Example'
+      })
+    </script>
+  </body>
+</html>

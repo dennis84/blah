@@ -1,0 +1,22 @@
+{
+  "mappings": {
+    "count": {
+      "properties": {
+        "collection": {"type": "keyword"},
+        "item": {"type": "keyword"},
+        "date": {"type": "date", "format": "dateOptionalTime"},
+        "browserFamily": {"type": "keyword"},
+        "browserMajor": {"type": "keyword"},
+        "osFamily": {"type": "keyword"},
+        "osMajor": {"type": "keyword"},
+        "deviceFamily": {"type": "keyword"},
+        "platform": {"type": "keyword"},
+        "isMobile": {"type": "boolean"},
+        "isTablet": {"type": "boolean"},
+        "isMobileDevice": {"type": "boolean"},
+        "isComputer": {"type": "boolean"},
+        "count": {"type": "integer"}
+      }
+    }
+  }
+}

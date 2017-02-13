@@ -1,4 +1,4 @@
-var h = require('snabbdom/h')
+var h = require('snabbdom/h').default
 var ctrl = require('../ctrl')
 
 function toggle(sel, e) {
@@ -11,7 +11,7 @@ function toggle(sel, e) {
   })
 }
 
-function render(model, update, ws, storage) {
+function render(model, update, storage) {
   return h('nav.level.nav', [
     h('span.nav-toggle', {
       on: {click: toggle.bind(null, '.nav-menu')}

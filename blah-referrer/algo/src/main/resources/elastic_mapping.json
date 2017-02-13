@@ -1,0 +1,10 @@
+{
+  "mappings": {
+    "referrer": {
+      "properties": {
+        "referrer": {"type": "keyword"},
+        "count": {"type": "integer"}
+      }
+    }
+  }
+}

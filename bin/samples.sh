@@ -81,5 +81,5 @@ rand_referrer() {
 
 create_event() {
   curl -s -o /dev/null -H 'Content-Type: application/json' \
-    -X POST "http://api.blah.local/events/$1" -d "$2"
+    -X POST "http://data.blah.local/events/$1" -d "$2"
 }

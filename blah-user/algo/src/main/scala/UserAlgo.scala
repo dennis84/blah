@@ -1,14 +1,13 @@
 package blah.user
 
-import java.time.ZonedDateTime
-import org.apache.spark.rdd.RDD
+import java.sql.Timestamp
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import org.apache.spark.sql.SparkSession
 
 object UserAlgo {
-  def train(rdd: RDD[String], ctx: SparkSession, args: Array[String]) = {
+  def train(ctx: SparkSession, args: Array[String]) = {
     import ctx.implicits._
-    val reader = ctx.read.schema(UserSchema())
-    reader.json(rdd).createOrReplaceTempView("user")
     ctx.sql("""|SELECT
                |  date,
                |  collection,
@@ -19,13 +18,13 @@ object UserAlgo {
                |  props.item,
                |  props.title,
                |  props.ip
-               |FROM user""".stripMargin)
+               |FROM events""".stripMargin)
       .filter("user is not null")
       .as[UserEvent]
       .groupByKey(_.user)
       .mapGroups { case(user, events) =>
-        val ord = Ordering[Long].on[String](x =>
-          ZonedDateTime.parse(x).toInstant.toEpochMilli).reverse
+        val ord = Ordering[Long]
+          .on[Timestamp](x => x.toInstant.toEpochMilli).reverse
         val sorted = events.toList.sortBy(_.date)(ord)
 
         def mergeEvents(xs: List[UserEvent], u: UserEvent): UserEvent = {
@@ -49,7 +48,9 @@ object UserAlgo {
         User(
           id = user,
           user = user,
-          date = event.date.toString,
+          date = event.date.toInstant
+            .atZone(ZoneId.of("UTC"))
+            .format(DateTimeFormatter.ISO_INSTANT),
           email = event.email,
           firstname = event.firstname,
           lastname = event.lastname,

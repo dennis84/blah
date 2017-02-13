@@ -1,0 +1,31 @@
+{
+  "mappings": {
+    "user": {
+      "properties": {
+        "user": {"type": "keyword"},
+        "email": {"type": "keyword"},
+        "firstname": {"type": "text"},
+        "lastname": {"type": "text"},
+        "ip": {"type": "keyword"},
+        "lng": {"type": "double"},
+        "lat": {"type": "double"},
+        "country": {"type": "keyword"},
+        "countryCode": {"type": "keyword"},
+        "city": {"type": "text"},
+        "zipCode": {"type": "keyword"},
+        "date": {"type": "date", "format": "dateOptionalTime"},
+        "events": {
+          "type": "nested",
+          "properties": {
+            "collection": {"type": "keyword"},
+            "item": {"type": "keyword"},
+            "title": {"type": "text"},
+            "date": {"type": "date", "format": "dateOptionalTime"},
+            "ip": {"type": "keyword"}
+          }
+        },
+        "nbEvents": {"type": "integer"}
+      }
+    }
+  }
+}

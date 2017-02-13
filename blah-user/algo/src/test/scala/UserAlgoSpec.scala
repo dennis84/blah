@@ -21,7 +21,10 @@ class UserAlgoSpec extends FlatSpec with Matchers with SparkTest {
       }""")
     ))
 
-    val output = UserAlgo.train(input, session, Array.empty[String])
+    val reader = session.read.schema(UserSchema())
+    reader.json(input).createOrReplaceTempView("events")
+
+    val output = UserAlgo.train(session, Array.empty[String])
     val users = output.collect.toList
     users.length should be (1)
     val events = users(0).events
@@ -60,7 +63,10 @@ class UserAlgoSpec extends FlatSpec with Matchers with SparkTest {
       }""")
     ))
 
-    val output = UserAlgo.train(input, session, Array.empty[String])
+    val reader = session.read.schema(UserSchema())
+    reader.json(input).createOrReplaceTempView("events")
+
+    val output = UserAlgo.train(session, Array.empty[String])
     val users = output.collect.toList
 
     users.length should be (1)

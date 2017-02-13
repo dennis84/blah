@@ -1,6 +1,8 @@
 package blah.funnel
 
+import scala.io.Source
 import scala.concurrent.ExecutionContext.Implicits.global
+import java.net.{URL, HttpURLConnection}
 import org.apache.spark.SparkConf
 import com.typesafe.config.ConfigFactory
 
@@ -12,17 +14,33 @@ object Main {
     val sparkConf = new SparkConf()
       .setMaster(config.getString("spark.master"))
       .setAppName("funnel")
-    sparkConf.set("elastic.url", config.getString("elasticsearch.url"))
+    val elastiUrl = config.getString("elasticsearch.url")
+    sparkConf.set("elastic.url", elastiUrl)
+
+    val input = getClass.getResourceAsStream("/elastic_mapping.json")
+    val data = Source.fromInputStream(input).mkString
+
+    val conn = new URL(s"$elastiUrl/funnel").openConnection()
+      .asInstanceOf[HttpURLConnection]
+    conn.setRequestMethod("PUT")
+    conn.setDoOutput(true)
+    conn.getOutputStream.write(data.getBytes("UTF-8"))
+    conn.getOutputStream.flush()
+    conn.disconnect()
+
+    if(conn.getResponseCode >= 400) {
+      val body = Source.fromInputStream(conn.getErrorStream).mkString
+      if(!body.contains("index_already_exists_exception")) {
+        println("Error: Put mapping request failed: " + body)
+        sys exit 1
+      }
+    }
 
     arguments.lift(0) match {
       case Some("batch") =>
         BatchJob.run(config, sparkConf, arguments drop 1)
       case _ =>
-        println(s"""|Error: No such command: ${arguments.mkString(" ")}
-                    |Usage: java -jar algo.jar COMMAND [OPTION]
-                    |Commands:
-                    |  batch
-                    |""".stripMargin)
+        println("Error: No such command: " + arguments.mkString(" "))
         sys exit 1
     }
   }

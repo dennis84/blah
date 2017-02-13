@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Count</title>
+    <style>
+      .chart {
+        width: 500px;
+        height: 300px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="num"></div>
+    <div id="bar"></div>
+    <div id="line"></div>
+    <div id="pie"></div>
+
+    <script src="../../node_modules/xhr-mock/bundle.js"></script>
+
+    <script>
+      XhrMock.setup()
+      XhrMock.post('http://localhost:8080/count', function(req, res) {
+        return res.status(200).body(JSON.stringify({count: 10}))
+      })
+
+      XhrMock.post('http://localhost:8081/count', function(req, res) {
+        return res.status(200).body(JSON.stringify([
+          {date: '2017-03-20T08:00:00Z', count: 10},
+          {date: '2017-03-20T09:00:00Z', count: 12},
+          {date: '2017-03-20T10:00:00Z', count: 18},
+          {date: '2017-03-20T11:00:00Z', count: 32},
+          {date: '2017-03-20T12:00:00Z', count: 29}
+        ]))
+      })
+
+      XhrMock.post('http://localhost:8082/count', function(req, res) {
+        return res.status(200).body(JSON.stringify([
+          {date: '2017-03-20T08:00:00Z', count: 10, browserFamily: 'Chrome'},
+          {date: '2017-03-20T09:00:00Z', count: 12, browserFamily: 'Firefox'},
+          {date: '2017-03-20T10:00:00Z', count: 18, browserFamily: 'Safari'}
+        ]))
+      })
+    </script>
+
+    <script src="../../dist/count.js"></script>
+
+    <script>
+      var events = {on: function() {}}
+      var elem = document.getElementById('num')
+      var comp = new Count.Num(elem, events, {
+        baseUrl: 'http://localhost:8080',
+        title: 'Count'
+      })
+
+      var elem = document.getElementById('bar')
+      var comp = new Count.Bar(elem, events, {
+        baseUrl: 'http://localhost:8081',
+        title: 'Bar',
+        filterBy: [{
+          prop: 'date.from',
+          operator: 'gte',
+          value: '2017-03-20T06:00:00Z'
+        }],
+        groupBy: ['date.hour']
+      })
+
+      var elem = document.getElementById('line')
+      var comp = new Count.Line(elem, events, {
+        baseUrl: 'http://localhost:8081',
+        title: 'Line',
+        filterBy: [{
+          prop: 'date.from',
+          operator: 'gte',
+          value: '2017-03-20T06:00:00Z'
+        }],
+        groupBy: ['date.hour']
+      })
+
+      var elem = document.getElementById('pie')
+      var comp = new Count.Pie(elem, events, {
+        baseUrl: 'http://localhost:8082',
+        title: 'Pie',
+        filterBy: [{
+          prop: 'date.from',
+          operator: 'gte',
+          value: '2017-03-20T06:00:00Z'
+        }],
+        groupBy: ['user_agent.browser.family']
+      })
+    </script>
+  </body>
+</html>

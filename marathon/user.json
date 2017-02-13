@@ -1,0 +1,32 @@
+{
+  "id": "user",
+  "cpus": 0.1,
+  "mem": 128.0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "blah/user",
+      "network": "BRIDGE",
+      "portMappings": [
+        {"containerPort": 8080, "hostPort": 0, "servicePort": 8009, "protocol": "tcp"}
+      ]
+    }
+  },
+  "env": {
+    "ELASTICSEARCH_URL": "http://$BLAH_HOST:9200"
+  },
+  "labels":{
+    "AUTOSCALE_MAX_INSTANCES": "10",
+    "AUTOSCALE_MEM_PERCENT": "80",
+    "AUTOSCALE_CPU_PERCENT": "80",
+    "HAPROXY_GROUP": "external",
+    "HAPROXY_0_VHOST": "user.blah.local",
+    "HAPROXY_0_BACKEND_HTTP_HEALTHCHECK_OPTIONS": "  option  httpchk GET {healthCheckPath} HTTP/1.1\\r\\nHost:\\ user.blah.local\n  timeout check {healthCheckTimeoutSeconds}s\n"
+  },
+  "healthChecks": [{
+    "protocol": "HTTP",
+    "path": "/",
+    "intervalSeconds": 10
+  }]
+}

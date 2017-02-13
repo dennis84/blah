@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "d3": "4.7",
+    "datamaps": "0.5",
+    "clone": "2.1",
+    "debounce": "1.0",
+    "moment": "2.18",
+    "snabbdom": "0.6",
+    "xhr": "2.4"
+  },
+  "devDependencies": {
+    "xhr-mock": "1.7"
+  },
+  "scripts": {
+    "build": "npm run build-user && npm run build-people && npm run build-worldmap",
+    "build-user": "mkdir -p dist && browserify assets/user/index.js --standalone User | uglifyjs > dist/user.js",
+    "build-people": "mkdir -p dist && browserify assets/people/index.js --standalone People | uglifyjs > dist/people.js",
+    "build-worldmap": "mkdir -p dist && browserify assets/worldmap/index.js --standalone WorldMap | uglifyjs > dist/worldmap.js",
+    "build-xhr-mock": "browserify node_modules/xhr-mock/index.js --standalone XhrMock -o node_modules/xhr-mock/bundle.js"
+  }
+}

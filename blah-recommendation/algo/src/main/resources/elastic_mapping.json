@@ -1,0 +1,17 @@
+{
+  "mappings": {
+    "recommendation": {
+      "properties": {
+        "user": {"type": "keyword"},
+        "collection": {"type": "keyword"},
+        "items": {
+          "type": "nested",
+          "properties": {
+            "item": {"type": "keyword"},
+            "score": {"type": "double"}
+          }
+        }
+      }
+    }
+  }
+}

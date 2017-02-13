@@ -1,4 +1,4 @@
-var h = require('snabbdom/h')
+var h = require('snabbdom/h').default
 var nav = require('./nav')
 var error = require('./error')
 var container = require('./container')
@@ -6,12 +6,12 @@ var component = require('./component')
 var config = require('./../config')
 var moment = require('moment')
 
-function render(model, update, ws, storage) {
+function render(model, update, events, storage) {
   return container(model, [
-    nav(model, update, ws, storage),
+    nav(model, update, storage),
     h('h1.has-text-centered', 'Segmentation'),
-    (model.error) ? error.unknown() : component(window.Segmentation, {}, ws, {
-      baseUrl: config.SERVING_URL,
+    (model.error) ? error.unknown() : component(window.Segmentation, {}, events, {
+      baseUrl: config.COUNT_URL,
       collection: 'view',
       class: {'size-3of3': true, 'segmentation': true},
       groups: ['date.year', 'date.month', 'date.day', 'date.hour'],

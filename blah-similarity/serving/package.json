@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "clone": "2.1",
+    "debounce": "1.0",
+    "snabbdom": "0.6",
+    "xhr": "2.4"
+  },
+  "devDependencies": {
+    "xhr-mock": "1.7"
+  },
+  "scripts": {
+    "build": "mkdir -p dist && browserify assets/index.js --standalone Similarity | uglifyjs > dist/index.js",
+    "build-xhr-mock": "browserify node_modules/xhr-mock/index.js --standalone XhrMock -o node_modules/xhr-mock/bundle.js"
+  }
+}

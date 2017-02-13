@@ -1,8 +1,8 @@
 target/
+dist/
 project/project/
 project/target/
 node_modules
 blah-ui/assets/css
 blah-ui/assets/js
-blah-ui-components/*/*.min.*
 !.gitkeep

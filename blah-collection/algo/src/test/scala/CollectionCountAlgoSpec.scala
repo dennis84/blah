@@ -14,7 +14,10 @@ class CollectionCountAlgoSpec extends FlatSpec with Matchers with SparkTest {
       s"""{"id": "4", "collection": "bar", "date": "$now", "props": {}}"""
     ))
 
-    val output = CollectionCountAlgo.train(input, session, Array.empty[String])
+    val reader = session.read.schema(CollectionCountSchema())
+    reader.json(input).createOrReplaceTempView("events")
+
+    val output = CollectionCountAlgo.train(session, Array.empty[String])
     val docs = output.collect.toList
     docs.length should be (3)
   }

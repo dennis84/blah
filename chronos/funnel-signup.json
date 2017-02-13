@@ -1,19 +1,18 @@
 {
-  "schedule": "R/2015-11-26T00:00:00Z/PT100000H",
+  "schedule": "R/3000-01-01T00:00:00Z/PT100000H",
   "name": "funnel-signup",
   "cpus": "0.5",
   "mem": "1024",
   "container": {
     "type": "DOCKER",
-    "image": "blah/funnel-algo:0.1.0",
+    "image": "blah/funnel-algo",
     "network": "BRIDGE"
   },
   "shell": false,
   "command": "batch --name signup --steps landingpage,signup,dashboard",
   "environmentVariables": [
-    {"name": "KAFKA_URL", "value": "$BLAH_HOST:31000"},
-    {"name": "ZOOKEEPER_URL", "value": "$BLAH_HOST:2181"},
-    {"name": "HADOOP_URL", "value": "hdfs://$BLAH_HOST:8020"},
+    {"name": "KAFKA_URL", "value": "$BLAH_HOST:9092"},
+    {"name": "POSTGRES_URL", "value": "jdbc:postgresql://$BLAH_HOST:5432/postgres"},
     {"name": "ELASTICSEARCH_URL", "value": "http://$BLAH_HOST:9200"},
     {"name": "SPARK_MASTER", "value": "mesos://zk://$BLAH_HOST:2181/mesos"}
   ]

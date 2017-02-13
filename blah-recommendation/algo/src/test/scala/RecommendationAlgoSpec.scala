@@ -16,7 +16,10 @@ class RecommendationAlgoSpec extends FlatSpec with Matchers with SparkTest {
       event("7", "view", """{"item": "page4", "user": "user2"}""")
     ))
 
-    val output = RecommendationAlgo.train(input, session, Array.empty[String])
+    val reader = session.read.schema(RecommendationSchema())
+    reader.json(input).createOrReplaceTempView("events")
+
+    val output = RecommendationAlgo.train(session, Array.empty[String])
     val docs = output.collect.toList
 
     val user1 = docs.find(_.user == "user1").get
@@ -38,7 +41,10 @@ class RecommendationAlgoSpec extends FlatSpec with Matchers with SparkTest {
       event("4", "view", """{"item": "page1", "user": "user2"}""")
     ))
 
-    val output = RecommendationAlgo.train(input, session, Array("--collection", "buy"))
+    val reader = session.read.schema(RecommendationSchema())
+    reader.json(input).createOrReplaceTempView("events")
+
+    val output = RecommendationAlgo.train(session, Array("--collection", "buy"))
     val docs = output.collect.toList
 
     val user1 = docs.find(_.user == "user1").get
@@ -55,8 +61,11 @@ class RecommendationAlgoSpec extends FlatSpec with Matchers with SparkTest {
       event("2", "foo", """{"x": "baz"}""")
     ))
 
+    val reader = session.read.schema(RecommendationSchema())
+    reader.json(input).createOrReplaceTempView("events")
+
     val thrown = intercept[IllegalArgumentException] {
-      RecommendationAlgo.train(input, session, Array.empty[String])
+      RecommendationAlgo.train(session, Array.empty[String])
     }
 
     thrown.getMessage should be

@@ -1,29 +1,30 @@
-#[macro_use]
-extern crate log;
+#[macro_use] extern crate log;
+#[macro_use] extern crate serde_json;
+#[macro_use] extern crate serde_derive;
 extern crate env_logger;
 extern crate getopts;
 extern crate curl;
 extern crate futures;
 extern crate tokio_core;
 extern crate tokio_curl;
-extern crate rustc_serialize;
-extern crate chrono;
+extern crate logstash_format;
 
 mod service;
-mod logger;
 
 use std::env;
 use std::thread;
 use std::time::Duration;
 use std::collections::HashMap;
 use getopts::Options;
-use rustc_serialize::json;
 use futures::Future;
 use tokio_core::reactor::Core;
 use service::{Service, Statistic};
 
 fn main() {
-    logger::new_logger();
+    logstash_format::new_builder(json!({
+        "app": "autoscale",
+    })).init().unwrap();
+
     let args: Vec<String> = env::args().collect();
 
     let mut opts = Options::new();
@@ -32,12 +33,7 @@ fn main() {
     opts.optopt("", "mem-percent", "Set maximum memory usage", "80");
     opts.optopt("", "max", "Set maximum instances", "10");
 
-    let matches = opts.parse(&args[1..]).unwrap_or_else(|_| {
-        let brief = format!("Usage: autoscale [options]");
-        error!("{}", opts.usage(&brief));
-        ::std::process::exit(1);
-    });
-
+    let matches = opts.parse(&args[1..]).unwrap();
     let host = matches.opt_str("host").unwrap();
 
     let max_mem_usage = matches
@@ -55,7 +51,7 @@ fn main() {
     let max_instances = matches
         .opt_str("max")
         .unwrap_or("1".to_string())
-        .parse::<i32>()
+        .parse::<i64>()
         .unwrap();
 
     let multiplier = 1.5;
@@ -104,7 +100,7 @@ fn main() {
                 evloop.run(f).unwrap();
             }
 
-            info!("{}", json::encode(&AppInfo {
+            info!("{}", serde_json::to_string(&AppInfo {
                 app: app.name.to_owned(),
                 instances: app.instances,
                 max_instances: app.max_instances,
@@ -119,11 +115,11 @@ fn main() {
     }
 }
 
-#[derive(Debug, RustcEncodable)]
+#[derive(Debug, Serialize)]
 pub struct AppInfo {
     pub app: String,
     pub instances: i64,
-    pub max_instances: i32,
+    pub max_instances: i64,
     pub cpu_usage: f64,
     pub mem_usage: f64,
 }

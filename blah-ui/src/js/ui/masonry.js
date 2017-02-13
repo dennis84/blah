@@ -1,4 +1,4 @@
-var h = require('snabbdom/h')
+var h = require('snabbdom/h').default
 var Masonry = require('masonry-layout')
 var debounce = require('debounce')
 

@@ -6,15 +6,14 @@
   "container": {
     "type": "DOCKER",
     "docker": {
-      "image": "blah/count-algo:0.1.0",
+      "image": "blah/count-algo",
       "network": "BRIDGE"
     }
   },
   "args": ["streaming"],
   "env": {
-    "KAFKA_URL": "$BLAH_HOST:31000",
+    "KAFKA_URL": "$BLAH_HOST:9092",
     "ZOOKEEPER_URL": "$BLAH_HOST:2181",
-    "HADOOP_URL": "hdfs://$BLAH_HOST:8020",
     "ELASTICSEARCH_URL": "http://$BLAH_HOST:9200",
     "SPARK_MASTER": "mesos://zk://$BLAH_HOST:2181/mesos"
   }

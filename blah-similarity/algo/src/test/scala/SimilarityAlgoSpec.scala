@@ -13,7 +13,10 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkTest {
       event("4", "view", """{"item": "item3", "user": "user3"}""")
     ))
 
-    val output = SimilarityAlgo.train(input, session, Array.empty[String])
+    val reader = session.read.schema(SimilaritySchema())
+    reader.json(input).createOrReplaceTempView("events")
+
+    val output = SimilarityAlgo.train(session, Array.empty[String])
     val docs = output.collect.toList
 
     docs.length should be (3)
@@ -35,13 +38,16 @@ class SimilarityAlgoSpec extends FlatSpec with Matchers with SparkTest {
       event("5", "bar", """{"item": "item5", "user": "user1"}""")
     ))
 
-    SimilarityAlgo.train(input, session, Array.empty[String])
+    val reader = session.read.schema(SimilaritySchema())
+    reader.json(input).createOrReplaceTempView("events")
+
+    SimilarityAlgo.train(session, Array.empty[String])
       .collect.toList.length should be (5)
 
-    SimilarityAlgo.train(input, session, Array("--collection", "foo"))
+    SimilarityAlgo.train(session, Array("--collection", "foo"))
       .collect.toList.length should be (2)
 
-    SimilarityAlgo.train(input, session, Array("--collection", "bar"))
+    SimilarityAlgo.train(session, Array("--collection", "bar"))
       .collect.toList.length should be (3)
   }
 

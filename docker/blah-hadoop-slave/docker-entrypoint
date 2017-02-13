@@ -1,9 +1,0 @@
-#!/bin/bash
-
-$HADOOP_CONF_DIR/hadoop-env.sh
-
-service ssh start
-
-hdfs datanode
-
-while true; do sleep 1000; done

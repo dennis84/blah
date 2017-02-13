@@ -1,13 +1,13 @@
 var snabbdom = require('snabbdom')
 var patch = snabbdom.init([
-  require('snabbdom/modules/class'),
-  require('snabbdom/modules/props'),
-  require('snabbdom/modules/style'),
-  require('snabbdom/modules/eventlisteners')
+  require('snabbdom/modules/class').default,
+  require('snabbdom/modules/props').default,
+  require('snabbdom/modules/style').default,
+  require('snabbdom/modules/eventlisteners').default
 ])
 var xtend = require('xtend')
 var config = require('./config')
-var listen = require('./websocket')
+var listen = require('./events')
 var Storage = require('./storage')
 var ctrl = require('./ctrl')
 var pageviews = require('./ui/pageviews')
@@ -18,9 +18,8 @@ var funnel = require('./ui/funnel')
 var segmentation = require('./ui/segmentation')
 var worldMap = require('./ui/world-map')
 var jobs = require('./ui/jobs')
-var autoscale = require('./ui/autoscale')
 
-var ws = listen(config.SERVING_WS_URL)
+var events = listen(config.EVENTS_URL)
 var storage = new Storage(window.localStorage)
 
 var state = xtend({
@@ -28,7 +27,7 @@ var state = xtend({
   theme: 'light'
 }, storage.get('settings'))
 
-var vnode = render(state, update, ws, storage)
+var vnode = render(state, update, events, storage)
 
 function update(fn) {
   var args = [].slice.call(arguments, 1)
@@ -36,7 +35,7 @@ function update(fn) {
     state = fn.apply(null, [state].concat(args))
   }
 
-  vnode = patch(vnode, render(state, update, ws, storage))
+  vnode = patch(vnode, render(state, update, events, storage))
 }
 
 function render() {
@@ -48,7 +47,6 @@ function render() {
   else if('#/segmentation' === state.path) return segmentation.apply(null, arguments)
   else if('#/world-map' === state.path) return worldMap.apply(null, arguments)
   else if('#/jobs' === state.path) return jobs.apply(null, arguments)
-  else if('#/autoscale' === state.path) return autoscale.apply(null, arguments)
   else return pageviews.apply(null, arguments)
 }
 
@@ -57,7 +55,7 @@ window.addEventListener('hashchange', function() {
 
   destroy(vnode)
   state = ctrl.path(state, location.hash)
-  vnode = patch(container, render(state, update, ws, storage))
+  vnode = patch(container, render(state, update, events, storage))
 
   document.body.innerHTML = ''
   document.body.appendChild(vnode.elm)

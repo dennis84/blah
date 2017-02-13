@@ -1,4 +1,4 @@
-var h = require('snabbdom/h')
+var h = require('snabbdom/h').default
 
 function container(model, children) {
   var theme = function() {

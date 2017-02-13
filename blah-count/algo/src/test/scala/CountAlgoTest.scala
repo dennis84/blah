@@ -14,7 +14,10 @@ class CountAlgoTest extends FlatSpec with Matchers with SparkTest {
       s"""{"id": "4", "collection": "view", "date": "${now.plusHours(2)}", "props": {"item": "page1"}}"""
     ))
 
-    val output = CountAlgo.train(input, session, Array.empty[String])
+    val reader = session.read.schema(CountSchema())
+    reader.json(input).createOrReplaceTempView("events")
+
+    val output = CountAlgo.train(session, Array.empty[String])
     val docs = output.collect.toList
     docs.length should be (3)
   }
@@ -26,7 +29,10 @@ class CountAlgoTest extends FlatSpec with Matchers with SparkTest {
       s"""{"id": "2", "collection": "buy", "date": "$now", "props": {"item": "bar", "price": "10.0"}}"""
     ))
 
-    val output = CountAlgo.train(input, session, Array.empty[String])
+    val reader = session.read.schema(CountSchema())
+    reader.json(input).createOrReplaceTempView("events")
+
+    val output = CountAlgo.train(session, Array.empty[String])
     val docs = output.collect.toList
     docs.length should be (0)
   }

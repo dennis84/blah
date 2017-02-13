@@ -1,0 +1,17 @@
+{
+  "mappings": {
+    "similarity": {
+      "properties": {
+        "item": {"type": "keyword"},
+        "collection": {"type": "keyword"},
+        "similarities": {
+          "type": "nested",
+          "properties": {
+            "item": {"type": "keyword"},
+            "score": {"type": "double"}
+          }
+        }
+      }
+    }
+  }
+}

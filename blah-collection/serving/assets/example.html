@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Collection</title>
+    <style>
+      .chart {
+        width: 500px;
+        height: 300px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="collection"></div>
+
+    <script src="../node_modules/xhr-mock/bundle.js"></script>
+
+    <script>
+      XhrMock.setup()
+      XhrMock.post('http://localhost:8080/collections', function(req, res) {
+        var date = new Date
+        return res.status(200).body(JSON.stringify([{
+          date: date.toISOString(),
+          count: 10
+        }]))
+      })
+    </script>
+
+    <script src="../dist/index.js"></script>
+
+    <script>
+      var events = {
+        on: function(key, fn) {
+          setInterval(function() {
+            var date = new Date
+            fn({
+              name: 'view',
+              date: date.toISOString(),
+              count: Math.floor(Math.random() * 10)
+            })
+          }, 1000)
+        }
+      }
+
+      var elem = document.getElementById('collection')
+      var comp = new CollectionCount(elem, events, {
+        baseUrl: 'http://localhost:8080',
+        collection: 'view',
+        title: 'Example'
+      })
+    </script>
+  </body>
+</html>

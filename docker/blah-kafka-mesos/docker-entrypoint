@@ -1,6 +1,0 @@
-#!/bin/bash
-
-set -e
-
-JAR="kafka-mesos-0.9.5.1.jar"
-java -jar "$JAR" "$@"

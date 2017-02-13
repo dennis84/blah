@@ -1,9 +1,10 @@
 package blah.user
 
+import java.sql.Timestamp
 import org.apache.spark.sql.Row
 
 case class UserEvent(
-  date: String,
+  date: Timestamp,
   collection: String,
   user: String,
   email: Option[String] = None,

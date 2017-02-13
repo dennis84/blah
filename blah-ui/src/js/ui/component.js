@@ -1,4 +1,4 @@
-var h = require('snabbdom/h')
+var h = require('snabbdom/h').default
 var xtend = require('xtend')
 
 function component(Fn, attrs) {

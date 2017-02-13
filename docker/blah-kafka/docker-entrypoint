@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+if [[ ! -z "$ZOOKEEPER_CONNECT" ]]; then
+  echo "zookeeper.connect=$ZOOKEEPER_CONNECT" >> /opt/kafka/config/server.properties
+fi
+
+if [[ ! -z "$ADVERTISED_HOST_NAME" ]]; then
+  echo "advertised.host.name=$ADVERTISED_HOST_NAME" >> /opt/kafka/config/server.properties
+fi
+
+/opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties

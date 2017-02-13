@@ -1,12 +1,11 @@
 version: '2'
 
-volumes:
-  hadoop_name:
-    driver: local
-  hadoop_data:
-    driver: local
-
 services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    network_mode: host
+
   elasticsearch:
     container_name: elasticsearch
     image: blah/elasticsearch
@@ -17,19 +16,13 @@ services:
     image: blah/zookeeper
     network_mode: host
 
-  namenode:
-    container_name: namenode
-    image: blah/hadoop-master
+  kafka:
+    container_name: kafka
+    image: blah/kafka
     network_mode: host
-    volumes:
-      - hadoop_name:/data/dfs/name
-
-  datanode:
-    container_name: datanode
-    image: blah/hadoop-slave
-    network_mode: host
-    volumes:
-      - hadoop_data:/data/dfs/data
+    environment:
+      ZOOKEEPER_CONNECT: "$BLAH_HOST:2181"
+      ADVERTISED_HOST_NAME: "$BLAH_HOST"
 
   mesos:
     container_name: mesos
@@ -97,15 +90,11 @@ services:
       MARATHON_MASTER: "zk://$BLAH_HOST:2181/mesos"
       MARATHON_ZK: "zk://$BLAH_HOST:2181/marathon"
 
-  kafka:
-    network_mode: host
-    image: blah/kafka-mesos
-    container_name: kafka
-    command: scheduler --master=zk://$BLAH_HOST:2181/mesos --zk=$BLAH_HOST:2181 --api=http://$BLAH_HOST:7000
-
   chronos:
     image: mesosphere/chronos
     container_name: chronos
     network_mode: host
-    entrypoint: /usr/bin/chronos
-    command: "--master zk://$BLAH_HOST:2181/mesos --http_port 8081"
+    command: "--zk_hosts $BLAH_HOST:2181 --master zk://$BLAH_HOST:2181/mesos"
+    environment:
+      PORT0: 8081
+      PORT1: 8082 

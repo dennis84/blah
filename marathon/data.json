@@ -1,0 +1,33 @@
+{
+  "id": "data",
+  "cpus": 0.1,
+  "mem": 128.0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "blah/data",
+      "network": "BRIDGE",
+      "portMappings": [
+        {"containerPort": 8080, "hostPort": 0, "servicePort": 8000, "protocol": "tcp"}
+      ]
+    }
+  },
+  "env": {
+    "KAFKA_URL": "$BLAH_HOST:9092",
+    "DATABASE_URL": "postgres://postgres@$BLAH_HOST"
+  },
+  "labels":{
+    "AUTOSCALE_MAX_INSTANCES": "10",
+    "AUTOSCALE_MEM_PERCENT": "80",
+    "AUTOSCALE_CPU_PERCENT": "80",
+    "HAPROXY_GROUP": "external",
+    "HAPROXY_0_VHOST": "data.blah.local",
+    "HAPROXY_0_BACKEND_HTTP_HEALTHCHECK_OPTIONS": "  option  httpchk GET {healthCheckPath} HTTP/1.1\\r\\nHost:\\ data.blah.local\n  timeout check {healthCheckTimeoutSeconds}s\n"
+  },
+  "healthChecks": [{
+    "protocol": "HTTP",
+    "path": "/",
+    "intervalSeconds": 10
+  }]
+}

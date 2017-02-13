@@ -8,5 +8,3 @@ WORKDIR /app
 RUN cargo build --release
 
 ENTRYPOINT ["target/release/blah-autoscale"]
-
-EXPOSE 8003

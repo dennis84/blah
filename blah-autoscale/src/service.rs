@@ -1,11 +1,15 @@
 use std::io::Read;
 use std::sync::{Arc, Mutex};
 use std::collections::HashMap;
-use curl::easy::{Easy, List};
+
 use futures::{self, Future, BoxFuture};
+
+use curl::easy::{Easy, List};
+
 use tokio_core::reactor::{Handle, Core};
 use tokio_curl::{Session, PerformError};
-use rustc_serialize::json::{self, Json};
+
+use serde_json::{self, from_value, from_str, Value};
 
 pub type Fut<T> = BoxFuture<T, PerformError>;
 
@@ -14,7 +18,7 @@ pub struct App {
     pub name: String,
     pub max_mem_usage: f64,
     pub max_cpu_usage: f64,
-    pub max_instances: i32,
+    pub max_instances: i64,
     pub instances: i64,
     pub tasks: HashMap<String, String>,
 }
@@ -27,7 +31,7 @@ pub struct Statistic {
     pub mem_usage: f64,
 }
 
-#[derive(Debug, RustcDecodable)]
+#[derive(Debug, Deserialize)]
 struct TaskStatistic {
     cpus_limit: f64,
     cpus_system_time_secs: f64,
@@ -43,13 +47,13 @@ pub struct Service {
     max_mem_usage: f64,
     max_cpu_usage: f64,
     multiplier: f64,
-    max_instances: i32,
+    max_instances: i64,
 }
 
 impl Service {
     pub fn new(handle: Handle, host: String,
                max_mem_usage: f64, max_cpu_usage: f64,
-               multiplier: f64, max_instances: i32)
+               multiplier: f64, max_instances: i64)
                -> Service {
         Service {
             handle: handle,
@@ -64,15 +68,12 @@ impl Service {
     pub fn get_apps(&mut self) -> Fut<Vec<String>> {
         let url = format!("http://{}:8080/v2/apps", &self.host);
         self.send_get(&url).map(|body| {
-            let data = Json::from_str(&body).unwrap();
-            let data = data.as_object().unwrap();
-            let data = data.get("apps").unwrap();
-            let data = data.as_array().unwrap();
+            let data = from_str::<Value>(&body).unwrap();
+            let data = data["apps"].as_array().unwrap();
             let mut apps = Vec::new();
 
             for x in data.iter() {
-                let id = x.find("id").unwrap();
-                let id = id.as_string().unwrap();
+                let id = x["id"].as_str().unwrap();
                 apps.push(id[1..].to_string());
             }
 
@@ -88,38 +89,37 @@ impl Service {
         let mut max_cpu_usage = self.max_cpu_usage.clone();
 
         self.send_get(&url).map(move |body| {
-            let data = Json::from_str(&body).unwrap();
-            let instances = data.find_path(&["app", "instances"]).unwrap();
+            let data = from_str::<Value>(&body).unwrap();
+            let instances = data.pointer("/app/instances").unwrap();
             let instances = instances.as_i64().unwrap();
 
-            let labels = data.find_path(&["app", "labels"]).unwrap();
+            let labels = data.pointer("/app/labels").unwrap();
             let labels = labels.as_object().unwrap();
 
             for (label, value) in labels {
                 match (label.as_ref(), value) {
-                    ("AUTOSCALE_MAX_INSTANCES", &Json::String(ref v)) => {
-                        max_instances = v.parse::<i32>().unwrap();
+                    ("AUTOSCALE_MAX_INSTANCES", v) => {
+                        max_instances = from_value(v.clone()).unwrap();
                     }
-                    ("AUTOSCALE_MEM_PERCENT", &Json::String(ref v)) => {
-                        max_mem_usage = v.parse::<f64>().unwrap();
+                    ("AUTOSCALE_MEM_PERCENT", v) => {
+                        max_mem_usage = from_value(v.clone()).unwrap();
                     }
-                    ("AUTOSCALE_CPU_PERCENT", &Json::String(ref v)) => {
-                        max_cpu_usage = v.parse::<f64>().unwrap();
+                    ("AUTOSCALE_CPU_PERCENT", v) => {
+                        max_cpu_usage = from_value(v.clone()).unwrap();
                     }
                     _ => {}
                 }
             }
 
-            let xs = data.find_path(&["app", "tasks"]).unwrap();
+            let xs = data.pointer("/app/tasks").unwrap();
             let xs = xs.as_array().unwrap();
             let mut tasks = HashMap::new();
 
             for x in xs.iter() {
-                let id = x.find("id").unwrap();
-                let id = id.as_string().unwrap();
-                let slave_id = x.find("slaveId").unwrap();
-                let slave_id = slave_id.as_string().unwrap();
-                tasks.insert(id.to_string(), slave_id.to_string());
+                let id = x["id"].as_str().unwrap();
+                let slave_id = x["slaveId"].as_str().unwrap();
+                tasks.insert(id.clone().to_string(),
+                             slave_id.clone().to_string());
             }
 
             Some(App {
@@ -136,18 +136,14 @@ impl Service {
     pub fn get_slaves(&mut self) -> Fut<HashMap<String, String>> {
         let url = format!("http://{}:5050/master/slaves", &self.host);
         self.send_get(&url).map(|body| {
-            let data = Json::from_str(&body).unwrap();
-            let data = data.as_object().unwrap();
-            let data = data.get("slaves").unwrap();
-            let data = data.as_array().unwrap();
+            let data = from_str::<Value>(&body).unwrap();
+            let data = data["slaves"].as_array().unwrap();
             let mut slaves = HashMap::new();
 
             for slave in data.iter() {
-                let id = slave.find("id").unwrap();
-                let id = id.as_string().unwrap();
-                let pid = slave.find("pid").unwrap();
-                let pid = pid.as_string().unwrap();
-                slaves.insert(id.to_string(), pid.to_string());
+                let id = slave["id"].as_str().unwrap();
+                let pid = slave["pid"].as_str().unwrap();
+                slaves.insert(id.clone().to_string(), pid.clone().to_string());
             }
 
             slaves
@@ -206,7 +202,7 @@ impl Service {
     }
 
     pub fn scale(&mut self, app: &App) -> Fut<()> {
-        let instances = (app.instances as f64 * self.multiplier).ceil() as i32;
+        let instances = (app.instances as f64 * self.multiplier).ceil() as i64;
         if instances > app.max_instances {
             info!("Cannot scale {}, reached maximum instances of: {}",
                   app.name, app.max_instances);
@@ -241,18 +237,13 @@ impl Service {
         let url = format!("http://{}/monitor/statistics", &slave);
         let id = id.to_string();
         self.send_get(&url).map(move |body| {
-            let data = Json::from_str(&body).unwrap();
+            let data = from_str::<Value>(&body).unwrap();
             let data = data.as_array().unwrap();
 
-            let statistic = data.iter().find(|x| {
-                let executor_id = x.find("executor_id").unwrap();
-                let executor_id = executor_id.as_string().unwrap();
-                id == executor_id.to_string()
-            });
-
-            statistic.map(|x| {
-                let s = x.find("statistics").unwrap();
-                json::decode(&s.to_string()).unwrap()
+            data.iter().find(|x| {
+                x["executor_id"].as_str().unwrap() == id
+            }).map(|x| {
+                from_value(x["statistics"].clone()).unwrap()
             })
         }).boxed()
     }
