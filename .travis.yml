@@ -8,7 +8,7 @@ script:
 before_script:
   - "npm install -g npm@next"
   - "npm install -g browserify"
-  - "curl https://sh.rustup.rs -sSf | sh -s -- -"
+  - "curl https://sh.rustup.rs -sSf | sh -s -- -y"
   - "export PATH=$PATH:~/.cargo/bin/"
 env:
   global:
