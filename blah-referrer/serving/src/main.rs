@@ -147,7 +147,7 @@ impl Service for ReferrerService {
         match (req.method(), req.path()) {
             (&Method::Options, _)         => Self::preflight(),
             (&Method::Post, "/referrers") => self.list(req),
-            (&Method::Get, "/js/index.js") => Self::js(),
+            (&Method::Get, "/referrer.js") => Self::js(),
             (&Method::Get, "/")           => Self::health(),
             _                             => Self::not_found(),
         }

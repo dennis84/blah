@@ -60,7 +60,7 @@ impl Service for DataService {
             Ok::<_, hyper::Error>(bytes)
         }).and_then(move |bytes| {
             match (method, uri.path()) {
-                (Method::Post, p) if p.starts_with("/events/") => {
+                (Method::Post, p) if p.starts_with("/data/") => {
                     let collection = p.split("/").nth(2).unwrap();
                     match from_slice::<Value>(&bytes) {
                         Ok(props) => {

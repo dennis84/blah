@@ -1,7 +1,8 @@
 var events = require('events')
 
 function listen(url) {
-  var source = new EventSource(url + "/events")
+  url = url || ''
+  var source = new EventSource(url + '/events')
   var emitter = new events.EventEmitter
   emitter.setMaxListeners(0)
 

@@ -164,7 +164,6 @@ pull_images() {
 }
 
 create_sample_data() {
-  ! is_open "data.blah.local" 80 && exit 1
   declare nb=${1:-1}
   for i in $(eval echo "{1..$nb}"); do
     echo -ne "Processing $i/$nb\r"

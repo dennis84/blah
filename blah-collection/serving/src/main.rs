@@ -147,7 +147,7 @@ impl Service for CollectionService {
         match (req.method(), req.path()) {
             (&Method::Options, _)           => Self::preflight(),
             (&Method::Post, "/collections") => self.collections(req),
-            (&Method::Get, "/js/index.js")  => Self::js(),
+            (&Method::Get, "/collection.js")  => Self::js(),
             (&Method::Get, "/")             => Self::health(),
             _                               => Self::not_found(),
         }

@@ -23,7 +23,7 @@
     "AUTOSCALE_CPU_PERCENT": "80",
     "HAPROXY_GROUP": "external",
     "HAPROXY_0_VHOST": "count.blah.local",
-    "HAPROXY_0_BACKEND_HTTP_HEALTHCHECK_OPTIONS": "  option  httpchk GET {healthCheckPath} HTTP/1.1\\r\\nHost:\\ count.blah.local\n  timeout check {healthCheckTimeoutSeconds}s\n"
+    "HAPROXY_0_HTTP_FRONTEND_ACL": "  acl path_count path_beg /count\n  use_backend {backend} if path_count\n  acl path_sum path_beg /sum\n  use_backend {backend} if path_sum\n  acl path_most_viewed path_beg /most-viewed\n  use_backend {backend} if path_most_viewed\n  acl path_segmentation path_beg /segmentation\n  use_backend {backend} if path_segmentation\n"
   },
   "healthChecks": [{
     "protocol": "HTTP",

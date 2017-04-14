@@ -21,9 +21,9 @@
     "AUTOSCALE_MAX_INSTANCES": "10",
     "AUTOSCALE_MEM_PERCENT": "80",
     "AUTOSCALE_CPU_PERCENT": "80",
-    "HAPROXY_GROUP": "external",
+    "HAPROXY_0_GROUP": "external",
     "HAPROXY_0_VHOST": "data.blah.local",
-    "HAPROXY_0_BACKEND_HTTP_HEALTHCHECK_OPTIONS": "  option  httpchk GET {healthCheckPath} HTTP/1.1\\r\\nHost:\\ data.blah.local\n  timeout check {healthCheckTimeoutSeconds}s\n"
+    "HAPROXY_0_HTTP_FRONTEND_ACL": "  acl path_{backend} path_beg /data\n  use_backend {backend} if path_{backend}\n"
   },
   "healthChecks": [{
     "protocol": "HTTP",

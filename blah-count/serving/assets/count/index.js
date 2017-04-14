@@ -8,6 +8,7 @@ var patch = snabbdom.init([
 var ctrl = require('./ctrl')
 
 function Main(render, ctrlFn, node, events, options) {
+  options.baseUrl = options.baseUrl || ''
   var state = {}
   var vnode = render(state, update, options)
 

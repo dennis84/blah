@@ -6,7 +6,6 @@ var patch = snabbdom.init([
   require('snabbdom/modules/eventlisteners').default
 ])
 var xtend = require('xtend')
-var config = require('./config')
 var listen = require('./events')
 var Storage = require('./storage')
 var ctrl = require('./ctrl')
@@ -19,7 +18,7 @@ var segmentation = require('./ui/segmentation')
 var worldMap = require('./ui/world-map')
 var jobs = require('./ui/jobs')
 
-var events = listen(config.EVENTS_URL)
+var events = listen()
 var storage = new Storage(window.localStorage)
 
 var state = xtend({

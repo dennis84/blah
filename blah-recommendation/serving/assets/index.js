@@ -9,6 +9,7 @@ var ctrl = require('./ctrl')
 var render = require('./render')
 
 function Recommendation(node, options) {
+  options.baseUrl = options.baseUrl || ''
   var state = {}
   var vnode = render(state, update, options)
 

@@ -17,9 +17,7 @@
     "ELASTICSEARCH_URL": "http://$BLAH_HOST:9200"
   },
   "labels":{
-    "HAPROXY_GROUP": "external",
-    "HAPROXY_0_VHOST": "kibana.blah.local",
-    "HAPROXY_0_BACKEND_HTTP_HEALTHCHECK_OPTIONS": "  option  httpchk GET {healthCheckPath} HTTP/1.1\\r\\nHost:\\ kibana.blah.local\n  timeout check {healthCheckTimeoutSeconds}s\n"
+    "HAPROXY_GROUP": "external"
   },
   "healthChecks": [{
     "protocol": "HTTP",

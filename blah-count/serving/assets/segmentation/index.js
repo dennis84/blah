@@ -9,6 +9,7 @@ var ctrl = require('./ctrl')
 var render = require('./render')
 
 function Segmentation(node, events, initial) {
+  initial.baseUrl = initial.baseUrl || ''
   var state = initial
   var vnode = render(state, update)
 

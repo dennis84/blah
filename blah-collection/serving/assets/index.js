@@ -2,6 +2,7 @@ var xhr = require('xhr')
 var RealtimeChart = require('./chart')
 
 function CollectionCount(node, events, options) {
+  options.baseUrl = options.baseUrl || ''
   var widget = document.createElement('div')
   widget.classList.add('widget')
   widget.classList.add('widget-collection-count')

@@ -1,13 +1,11 @@
 var moment = require('moment')
 var component = require('./component')
-var config = require('./../config')
 
 /**
  * Pie Chart: Browser Statistics Over a Year
  */
 function browserStats(update, events) {
   return component(window.Count.Pie, {}, events, {
-    baseUrl: config.COUNT_URL,
     collection: 'view',
     filterBy: [{
       prop: 'date.from',
@@ -25,7 +23,6 @@ function browserStats(update, events) {
  */
 function pageviews(events) {
   return component(window.Count.Bar, {}, events, {
-    baseUrl: config.COUNT_URL,
     collection: 'view',
     filterBy: [{
       prop: 'date.from',
@@ -43,7 +40,6 @@ function pageviews(events) {
  */
 function visitorsToday(events) {
   return component(window.User.Count, {}, events, {
-    baseUrl: config.USER_URL,
     filterBy: [{
       prop: 'date.from',
       operator: 'gte',
@@ -58,7 +54,6 @@ function visitorsToday(events) {
  */
 function visitorsByCountry(events) {
   return component(window.User.Bar, {}, events, {
-    baseUrl: config.USER_URL,
     groupBy: ['country'],
     title: 'Visitors by Country'
   })
@@ -69,7 +64,6 @@ function visitorsByCountry(events) {
  */
 function uniqueVisitors(events) {
   return component(window.User.Count, {}, events, {
-    baseUrl: config.USER_URL,
     title: 'Unique Visitors'
   })
 }
@@ -79,7 +73,6 @@ function uniqueVisitors(events) {
  */
 function countOne(events, item) {
   return component(window.Count.Num, {}, events, {
-    baseUrl: config.COUNT_URL,
     collection: 'view',
     filterBy: [{
       prop: 'item',
@@ -95,7 +88,6 @@ function countOne(events, item) {
  */
 function countAll(events) {
   return component(window.Count.Num, {}, events, {
-    baseUrl: config.COUNT_URL,
     collection: 'view',
     title: 'All'
   })
@@ -106,7 +98,6 @@ function countAll(events) {
  */
 function platformStats(events) {
   return component(window.Count.Pie, {}, events, {
-    baseUrl: config.COUNT_URL,
     collection: 'view',
     filterBy: [{
       prop: 'date.from',
@@ -127,7 +118,6 @@ function pageviewDiff(events) {
   var title = 'Difference between ' + from + ' and Today ' + to
 
   return component(window.Count.Diff, {}, events, {
-    baseUrl: config.COUNT_URL,
     collection: 'view',
     percentage: true,
     from: {
@@ -161,7 +151,6 @@ function pageviewDiff(events) {
  */
 function mobileOsStats(events) {
   return component(window.Count.Pie, {}, events, {
-    baseUrl: config.COUNT_URL,
     collection: 'view',
     filterBy: [{
       prop: 'date.from',
@@ -182,7 +171,6 @@ function mobileOsStats(events) {
  */
 function totalRevenue(events) {
   return component(window.Sum, {}, events, {
-    baseUrl: config.COUNT_URL,
     collection: 'buy',
     template: '$ {value}',
     prop: 'price',
@@ -195,7 +183,6 @@ function totalRevenue(events) {
  */
 function recommendationWidget(update) {
   return component(window.Recommendation, {}, {
-    baseUrl: config.RECOMMENDATION_URL,
     update: update
   })
 }
@@ -205,7 +192,6 @@ function recommendationWidget(update) {
  */
 function similarityWidget(update) {
   return component(window.Similarity, {}, {
-    baseUrl: config.SIMILARITY_URL,
     update: update
   })
 }
@@ -215,7 +201,6 @@ function similarityWidget(update) {
  */
 function mostViewed(events) {
   return component(window.MostViewed, {}, events, {
-    baseUrl: config.COUNT_URL,
     title: 'Most Viewed Items',
     collection: 'view',
     limit: 10
@@ -227,7 +212,6 @@ function mostViewed(events) {
  */
 function referringSites(events) {
   return component(window.Referrer, {}, events, {
-    baseUrl: config.REFERRER_URL,
     title: 'Referring Sites',
     limit: 10
   })
@@ -238,7 +222,6 @@ function referringSites(events) {
  */
 function collectionCount(events) {
   return component(window.CollectionCount, {}, events, {
-    baseUrl: config.COLLECTION_URL,
     collection: 'view',
     title: 'Collection Count',
     class: {'size-2of3': true}

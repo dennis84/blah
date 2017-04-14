@@ -144,7 +144,7 @@ impl Service for RecommendationService {
         match (req.method(), req.path()) {
             (&Method::Options, _)               => Self::preflight(),
             (&Method::Post, "/recommendations") => self.list(req),
-            (&Method::Get, "/js/index.js")      => Self::js(),
+            (&Method::Get, "/recommendation.js")      => Self::js(),
             (&Method::Get, "/")                 => Self::health(),
             _                                   => Self::not_found(),
         }

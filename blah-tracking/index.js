@@ -1,5 +1,4 @@
 var xhr = require('xhr')
-var API_URL = 'http://api.blah.local'
 
 /**
  * Tracking API.
@@ -20,7 +19,7 @@ var API_URL = 'http://api.blah.local'
 function track(collection, params) {
   return new Promise(function(resolve, reject) {
     xhr({
-      uri: API_URL + '/events/' + collection,
+      uri: '/data/' + collection,
       method: 'POST',
       json: params,
       timeout: 10000,

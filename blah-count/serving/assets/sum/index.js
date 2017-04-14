@@ -9,6 +9,7 @@ var ctrl = require('./ctrl')
 var render = require('./render')
 
 function Sum(node, events, options) {
+  options.baseUrl = options.baseUrl || ''
   var state = {sum: 0}
   var vnode = render(state, update, options)
 
