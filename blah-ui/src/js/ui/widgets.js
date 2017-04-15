@@ -19,7 +19,7 @@ function browserStats(update, events) {
 }
 
 /**
- * Bar Chart: Page Views in the past 24 hours
+ * Bar Chart: Page Views in the last 24 hours
  */
 function pageviews(events) {
   return component(window.Count.Bar, {}, events, {
@@ -30,7 +30,7 @@ function pageviews(events) {
       value: moment().subtract(1, 'day')
     }],
     groupBy: ['date.hour'],
-    title: 'Page Views in the past 24 hours',
+    title: 'Page Views in the last 24 hours',
     class: {'size-2of3': true}
   })
 }

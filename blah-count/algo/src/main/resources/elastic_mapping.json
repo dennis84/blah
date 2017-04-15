@@ -1,16 +1,27 @@
 {
+  "settings": {
+    "analysis": {
+      "normalizer": {
+        "standard": {
+          "type": "custom",
+          "char_filter": [],
+          "filter": ["lowercase", "asciifolding"]
+        }
+      }
+    }
+  },
   "mappings": {
     "count": {
       "properties": {
-        "collection": {"type": "keyword"},
-        "item": {"type": "keyword"},
+        "collection": {"type": "keyword", "normalizer": "standard"},
+        "item": {"type": "keyword", "normalizer": "standard"},
         "date": {"type": "date", "format": "dateOptionalTime"},
-        "browserFamily": {"type": "keyword"},
-        "browserMajor": {"type": "keyword"},
-        "osFamily": {"type": "keyword"},
-        "osMajor": {"type": "keyword"},
-        "deviceFamily": {"type": "keyword"},
-        "platform": {"type": "keyword"},
+        "browserFamily": {"type": "keyword", "normalizer": "standard"},
+        "browserMajor": {"type": "keyword", "normalizer": "standard"},
+        "osFamily": {"type": "keyword", "normalizer": "standard"},
+        "osMajor": {"type": "keyword", "normalizer": "standard"},
+        "deviceFamily": {"type": "keyword", "normalizer": "standard"},
+        "platform": {"type": "keyword", "normalizer": "standard"},
         "isMobile": {"type": "boolean"},
         "isTablet": {"type": "boolean"},
         "isMobileDevice": {"type": "boolean"},

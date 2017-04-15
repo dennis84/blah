@@ -16,13 +16,13 @@ scalacOptions := Seq(
 )
 
 libraryDependencies ++= Seq(
-  "com.typesafe"            %  "config"           % "1.3.1",
-  "org.apache.spark"        %% "spark-core"       % "2.1.0" % "provided",
-  "org.apache.spark"        %% "spark-sql"        % "2.1.0" % "provided",
-  "org.apache.kafka"        %% "kafka"            % "0.10.2.0",
-  "net.logstash.log4j"      %  "jsonevent-layout" % "1.7",
-  "org.scalatest"           %% "scalatest"        % "3.0.0" % "test",
-  "org.postgresql"          %  "postgresql"       % "9.4.1212"
+  "com.typesafe"       %  "config"           % "1.3.1",
+  "org.apache.spark"   %% "spark-core"       % "2.1.0" % "provided",
+  "org.apache.spark"   %% "spark-sql"        % "2.1.0" % "provided",
+  "org.apache.kafka"   %% "kafka"            % "0.10.2.0",
+  "net.logstash.log4j" %  "jsonevent-layout" % "1.7",
+  "org.scalatest"      %% "scalatest"        % "3.0.0" % "test",
+  "org.postgresql"     %  "postgresql"       % "9.4.1212"
 )
 
 parallelExecution in Test := false

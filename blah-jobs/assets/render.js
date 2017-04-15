@@ -37,7 +37,7 @@ function jobs(xs, update, options) {
     return h('div.card.is-fullwidth', [
       h('header.card-header', [
         h('p.card-header-title', job.name),
-        h('i', 'Last success: ' + (lastSuccess || '-')),
+        h('p.last-success', h('i', 'Last success: ' + (lastSuccess || '-'))),
         button(job, update, options)
       ])
     ])

@@ -14,7 +14,7 @@ var xhr = require('xhr')
  */
 function count(model, options) {
   return new Promise(function(resolve) {
-    xhr.post(options.baseUrl + '/count', {
+    xhr.post(options.baseUrl + '/user-count', {
       json: mkQuery(options)
     }, function(err, resp, body) {
       var m = clone(model)
@@ -37,7 +37,7 @@ function count(model, options) {
  */
 function grouped(model, options) {
   return new Promise(function(resolve) {
-    xhr.post(options.baseUrl + '/count', {
+    xhr.post(options.baseUrl + '/user-count', {
       json: mkQuery(options)
     }, function(err, resp, body) {
       var m = clone(model)

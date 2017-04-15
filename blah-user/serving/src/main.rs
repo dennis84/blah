@@ -178,7 +178,7 @@ impl Service for UserService {
         match (req.method(), req.path()) {
             (&Method::Options, _)          => Self::preflight(),
             (&Method::Post, "/users")      => self.list(req),
-            (&Method::Post, "/count")      => self.count(req),
+            (&Method::Post, "/user-count") => self.count(req),
             (&Method::Get, "/user.js")     => Self::assets("user.js"),
             (&Method::Get, "/people.js")   => Self::assets("people.js"),
             (&Method::Get, "/worldmap.js") => Self::assets("worldmap.js"),

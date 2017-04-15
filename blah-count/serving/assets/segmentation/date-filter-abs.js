@@ -15,21 +15,25 @@ function formatDate(d) {
 }
 
 function render(model, update) {
-  return h('div.control.is-horizontal', [
-    h('div.control-label', [h('label.label', 'From - To')]),
-    h('div.control.is-grouped', [
-      h('p.control.is-expanded', [
-        h('input.input', {
-          hook: {insert: createPickaday},
-          props: {value: formatDate(model.from)},
-          on: {change: function(e) {
-            if(e.currentTarget.picker) {
-              update(ctrl.updateFrom, moment(e.currentTarget.value).toISOString())
-            }
-          }}
-        })
+  return h('div.field.is-horizontal', [
+    h('div.field-label.is-normal', [
+      h('label.label', 'From - To')
+    ]),
+    h('div.field-body', [
+      h('div.field.is-grouped', [
+        h('p.control.is-expanded', [
+          h('input.input', {
+            hook: {insert: createPickaday},
+            props: {value: formatDate(model.from)},
+            on: {change: function(e) {
+              if(e.currentTarget.picker) {
+                update(ctrl.updateFrom, moment(e.currentTarget.value).toISOString())
+              }
+            }}
+          })
+        ])
       ]),
-      h('p.control.is-expanded', [
+      h('div.field.is-grouped', [
         h('input.input', {
           hook: {insert: createPickaday},
           props: {value: formatDate(model.to)},

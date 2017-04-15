@@ -2,10 +2,10 @@ var h = require('snabbdom/h').default
 var ctrl = require('./ctrl')
 
 function render(model, update) {
-  return h('div.control.is-horizontal', [
-    h('div.control-label', [h('label.label', 'Group by')]),
-    h('p.control', [
-      h('div.select.is-fullwidth', [
+  return h('div.field.is-horizontal', [
+    h('div.field-label', [h('label.label', 'Group by')]),
+    h('div.field-body', [
+      h('div.field', h('div.control', h('div.select.is-fullwidth', [
         h('select', {
           on: {change: function(e) {
             var selected = []
@@ -24,7 +24,7 @@ function render(model, update) {
             }
           }, group)
         }))
-      ])
+      ])))
     ])
   ])
 }

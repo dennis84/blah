@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use futures::{future, Future, Stream};
 
-use hyper::{self, Client, Url, Post, Put, Delete, StatusCode};
+use hyper::{self, Client, Url, Put, Delete, StatusCode};
 use hyper::client::{HttpConnector, Request};
 
 use serde_json::from_slice;
@@ -111,7 +111,7 @@ impl JobRepo {
                 "{}/v1/scheduler/job/{}",
                 self.chronos_url,
                 name)).unwrap();
-        let mut req = Request::new(Put, url);
+        let req = Request::new(Put, url);
         Box::new(self.client.request(req).map(move |resp| {
             let message = match resp.status() {
                 &StatusCode::NoContent => "Job has started successfully.",
