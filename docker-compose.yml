@@ -98,3 +98,25 @@ services:
     environment:
       PORT0: 8081
       PORT1: 8082 
+
+  marathon_lb:
+    image: mesosphere/marathon-lb
+    container_name: marathon_lb
+    network_mode: host
+    command: "sse -m http://$BLAH_HOST:8080 --group external"
+    environment:
+      PORTS: "80,9090"
+
+  logstash:
+    image: blah/logstash
+    container_name: logstash
+    network_mode: host
+    environment:
+      ELASTICSEARCH_URL: "$BLAH_HOST:9200"
+
+  kibana:
+    image: blah/kibana
+    container_name: kibana
+    network_mode: host
+    environment:
+      ELASTICSEARCH_URL: "http://$BLAH_HOST:9200"

@@ -2,7 +2,6 @@
 
 create_apps() {
   ! is_open "$BLAH_HOST" 7000 8080 && exit 1
-  create_app marathon-lb
   create_app autoscale
   create_app data
   create_app events
@@ -15,8 +14,6 @@ create_apps() {
   create_app user
   create_app jobs
   create_app ui
-  create_app kibana
-  create_app logstash
 }
 
 create_streaming_apps() {
