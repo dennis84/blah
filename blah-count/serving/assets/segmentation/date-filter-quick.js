@@ -1,6 +1,12 @@
 var h = require('snabbdom/h').default
-var moment = require('moment')
 var ctrl = require('./ctrl')
+var addHours = require('date-fns/add_hours')
+var subHours = require('date-fns/sub_hours')
+var subDays = require('date-fns/sub_days')
+var subMonths = require('date-fns/sub_months')
+var startOfHour = require('date-fns/start_of_hour')
+var startOfDay = require('date-fns/start_of_day')
+var startOfMonth = require('date-fns/start_of_month')
 
 function createInput(update, label, options) {
   return h('p.control', [
@@ -8,7 +14,7 @@ function createInput(update, label, options) {
       h('input', {
         props :{type: 'radio', name: 'timepicker-quick'},
         on: {change: function() {
-          var now = moment().add(1, 'hour').startOf('hour').toISOString()
+          var now = startOfHour(addHours(Date.now(), 1)).toISOString()
           update(ctrl.updateGroupBy, options.groupBy)
           update(ctrl.updateFrom, options.from.toISOString())
           update(ctrl.updateTo, now)
@@ -23,37 +29,37 @@ function render(model, update) {
   return h('div.columns', [
     h('div.column', [
       createInput(update, 'Last 4 hours', {
-        from: moment().startOf('hour').subtract(4, 'hours'),
+        from: startOfHour(subHours(Date.now(), 4)),
         groupBy: ['date.hour']
       }),
       createInput(update, 'Last 12 hours', {
-        from: moment().startOf('hour').subtract(12, 'hours'),
+        from: startOfHour(subHours(Date.now(), 12)),
         groupBy: ['date.hour']
       }),
       createInput(update, 'Last 24 hours', {
-        from: moment().startOf('hour').subtract(24, 'hours'),
+        from: startOfHour(subHours(Date.now(), 24)),
         groupBy: ['date.hour']
       }),
       createInput(update, 'Last 7 days', {
-        from: moment().startOf('day').subtract(7, 'days'),
+        from: startOfDay(subDays(Date.now(), 7)),
         groupBy: ['date.day']
       })
     ]),
     h('div.column', [
       createInput(update, 'Last 30 days', {
-        from: moment().startOf('day').subtract(30, 'days'),
+        from: startOfDay(subDays(Date.now(), 30)),
         groupBy: ['date.day']
       }),
       createInput(update, 'Last 60 days', {
-        from: moment().startOf('day').subtract(60, 'days'),
+        from: startOfDay(subDays(Date.now(), 60)),
         groupBy: ['date.day']
       }),
       createInput(update, 'Last 6 months', {
-        from: moment().startOf('month').subtract(6, 'months'),
+        from: startOfMonth(subMonths(Date.now(), 6)),
         groupBy: ['date.month']
       }),
       createInput(update, 'Last 1 year', {
-        from: moment().startOf('month').subtract(1, 'year'),
+        from: startOfMonth(subMonths(Date.now(), 12)),
         groupBy: ['date.month']
       })
     ])

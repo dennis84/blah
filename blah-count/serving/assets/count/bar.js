@@ -1,13 +1,14 @@
 var h = require('snabbdom/h').default
-var moment = require('moment')
-var timeframe = require('../chart/timeframe')
+var util = require('../chart/util')
 var bar = require('../chart/bar')
+var subDays = require('date-fns/sub_days')
+var addHours = require('date-fns/add_hours')
 
 function chart(model) {
-  var data = timeframe(
+  var data = util.timeframe(
     model.groups,
-    moment().subtract(1, 'day'),
-    moment().add(1, 'hour')
+    subDays(Date.now(), 1),
+    addHours(Date.now(), 1)
   )
 
   return h('div.chart', {

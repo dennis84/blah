@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "d3": "4.7",
     "clone": "2.1",
+    "d3": "4.8",
+    "date-fns": "^1.28.3",
     "debounce": "1.0",
-    "moment": "2.18",
     "pikaday": "1.5",
     "snabbdom": "0.6",
     "tape": "4.6",
@@ -12,15 +12,15 @@
   },
   "scripts": {
     "build": "npm run build-count && npm run build-most-viewed && npm run build-sum && npm run build-segmentation",
-    "build-count": "mkdir -p dist && browserify assets/count/index.js --standalone Count | uglifyjs > dist/count.js",
-    "build-most-viewed": "mkdir -p dist && browserify assets/most-viewed/index.js --standalone MostViewed | uglifyjs > dist/most-viewed.js",
-    "build-sum": "mkdir -p dist && browserify assets/sum/index.js --standalone Sum | uglifyjs > dist/sum.js",
+    "build-count": "mkdir -p dist && browserify assets/count/index.js --standalone Count | uglifyjs --compress --mangle > dist/count.js",
+    "build-most-viewed": "mkdir -p dist && browserify assets/most-viewed/index.js --standalone MostViewed | uglifyjs --compress --mangle > dist/most-viewed.js",
+    "build-sum": "mkdir -p dist && browserify assets/sum/index.js --standalone Sum | uglifyjs --compress --mangle > dist/sum.js",
     "build-segmentation": "npm run build-segmentation-js && npm run build-segmentation-css",
-    "build-segmentation-js": "mkdir -p dist && browserify assets/segmentation/index.js --standalone Segmentation | uglifyjs > dist/segmentation.js",
+    "build-segmentation-js": "mkdir -p dist && browserify assets/segmentation/index.js --standalone Segmentation | uglifyjs --compress --mangle > dist/segmentation.js",
     "build-segmentation-css": "mkdir -p dist && cleancss -o dist/segmentation.css node_modules/pikaday/css/pikaday.css",
     "build-xhr-mock": "browserify node_modules/xhr-mock/index.js --standalone XhrMock -o node_modules/xhr-mock/bundle.js"
   },
   "devDependencies": {
-    "xhr-mock": "1.7"
+    "xhr-mock": "1.8"
   }
 }

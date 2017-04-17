@@ -1,15 +1,15 @@
 {
   "dependencies": {
     "clone": "2.1",
-    "moment": "2.18",
+    "date-fns": "^1.28.3",
     "snabbdom": "0.6",
     "xhr": "2.4"
   },
   "devDependencies": {
-    "xhr-mock": "1.7"
+    "xhr-mock": "1.8"
   },
   "scripts": {
-    "build": "mkdir -p dist && browserify assets/index.js --standalone Jobs | uglifyjs > dist/index.js",
+    "build": "mkdir -p dist && browserify assets/index.js --standalone Jobs | uglifyjs --compress --mangle > dist/index.js",
     "build-xhr-mock": "browserify node_modules/xhr-mock/index.js --standalone XhrMock -o node_modules/xhr-mock/bundle.js"
   }
 }

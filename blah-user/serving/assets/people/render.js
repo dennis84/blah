@@ -1,6 +1,6 @@
 var h = require('snabbdom/h').default
-var moment = require('moment')
 var debounce = require('debounce')
+var distanceInWordsToNow = require('date-fns/distance_in_words_to_now')
 var ctrl = require('./ctrl')
 
 function views(xs, update) {
@@ -35,7 +35,7 @@ function views(xs, update) {
             h('div.level-left', [
               h('div.level-item', [h('span.tag', {
                 class: classAttrs
-              }, moment(evt.date).calendar())]),
+              }, distanceInWordsToNow(evt.date))]),
               evt.item ? h('div.level-item', [h('span.tag', evt.item)]) : '',
               h('div.level-item', evt.title)
             ])

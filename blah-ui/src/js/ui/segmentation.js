@@ -3,7 +3,8 @@ var nav = require('./nav')
 var error = require('./error')
 var container = require('./container')
 var component = require('./component')
-var moment = require('moment')
+var subDays = require('date-fns/sub_days')
+var addHours = require('date-fns/add_hours')
 
 function render(model, update, events, storage) {
   return container(model, [
@@ -14,8 +15,8 @@ function render(model, update, events, storage) {
       class: {'size-3of3': true, 'segmentation': true},
       groups: ['date.year', 'date.month', 'date.day', 'date.hour'],
       groupBy: ['date.hour'],
-      from: moment().subtract(1, 'day').toISOString(),
-      to: moment().add(1, 'hour').toISOString(),
+      from: subDays(Date.now(), 1).toISOString(),
+      to: addHours(Date.now(), 1).toISOString(),
       segments: []
     })
   ])

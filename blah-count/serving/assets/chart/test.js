@@ -1,10 +1,12 @@
 var test = require('tape')
-var moment = require('moment')
-var timeframe = require('./timeframe')
+var util = require('./util')
+var subHours = require('date-fns/sub_hours')
+var subDays = require('date-fns/sub_days')
+var startOfHour = require('date-fns/start_of_hour')
 
 test('daily', function(assert) {
   assert.plan(2)
-  var data = timeframe([], moment().subtract(24, 'hour'), moment())
+  var data = util.timeframe([], subHours(Date.now(), 24), Date.now())
   assert.equal(data.length, 24)
   assert.deepEqual(
     data.map(function(x) {
@@ -19,7 +21,7 @@ test('daily', function(assert) {
 
 test('weekly', function(assert) {
   assert.plan(1)
-  var data = timeframe([], moment().subtract(7, 'day'), moment(), {
+  var data = util.timeframe([], subDays(Date.now(), 7), Date.now(), {
     step: 'day'
   })
 
@@ -29,9 +31,9 @@ test('weekly', function(assert) {
 
 test('monthly', function(assert) {
   assert.plan(1)
-  var data = timeframe([],
-    moment('2016-03-01'),
-    moment('2016-04-01'),
+  var data = util.timeframe([],
+    new Date('2016-03-01'),
+    new Date('2016-04-01'),
     {step: 'day'}
   )
 
@@ -41,9 +43,9 @@ test('monthly', function(assert) {
 
 test('yearly', function(assert) {
   assert.plan(1)
-  var data = timeframe([],
-    moment('2016-01-01'),
-    moment('2017-01-01'),
+  var data = util.timeframe([],
+    new Date('2016-01-01'),
+    new Date('2017-01-01'),
     {step: 'month'}
   )
 
@@ -53,10 +55,11 @@ test('yearly', function(assert) {
 
 test('set count', function(assert) {
   assert.plan(2)
-  var data = timeframe([
-    {date: moment().subtract(24, 'hour').startOf('hour').format(), count: 42},
-    {date: moment().subtract(23, 'hour').startOf('hour').format(), count: 43}
-  ], moment().subtract(24, 'hour'), moment())
+  var data = util.timeframe([
+    {date: startOfHour(subHours(Date.now(), 24)).toISOString(), count: 42},
+    {date: startOfHour(subHours(Date.now(), 23)), count: 43}
+  ], subHours(Date.now(), 24), Date.now())
+
   assert.equal(data[0].value, 42)
   assert.equal(data[1].value, 43)
   assert.end()

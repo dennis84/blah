@@ -1,7 +1,7 @@
 var h = require('snabbdom/h').default
-var moment = require('moment')
 var Pikaday = require('pikaday')
 var ctrl = require('./ctrl')
+var format = require('date-fns/format')
 
 function createPickaday(vnode) {
   vnode.elm.picker = new Pikaday({
@@ -11,7 +11,7 @@ function createPickaday(vnode) {
 }
 
 function formatDate(d) {
-  return d ? moment(d).format('MMM Do, YYYY') : ''
+  return d ? format(d, 'MMM Do, YYYY') : ''
 }
 
 function render(model, update) {
@@ -27,7 +27,8 @@ function render(model, update) {
             props: {value: formatDate(model.from)},
             on: {change: function(e) {
               if(e.currentTarget.picker) {
-                update(ctrl.updateFrom, moment(e.currentTarget.value).toISOString())
+                var date = new Date(e.currentTarget.value)
+                update(ctrl.updateFrom, date.toISOString())
               }
             }}
           })
@@ -39,7 +40,8 @@ function render(model, update) {
           props: {value: formatDate(model.to)},
           on: {change: function(e) {
             if(e.currentTarget.picker) {
-              update(ctrl.updateTo, moment(e.currentTarget.value).toISOString())
+              var date = new Date(e.currentTarget.value)
+              update(ctrl.updateTo, date.toISOString())
             }
           }}
         })

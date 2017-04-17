@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>People</title>
+  </head>
+
+  <body>
+    <div id="people"></div>
+
+    <script src="../../node_modules/xhr-mock/bundle.js"></script>
+
+    <script>
+      XhrMock.setup()
+      XhrMock.post('http://localhost:8080/users', function(req, res) {
+        return res.status(200).body(JSON.stringify([{
+          user: 'foo',
+          date: (new Date).toISOString(),
+          email: 'foo@example.com',
+          events: [{
+            date: (new Date).toISOString(),
+            collection: 'view',
+            item: 'foo',
+            title: 'Foo'
+          }, {
+            date: '2017-01-01',
+            collection: 'view',
+            item: 'foo',
+            title: 'Foo'
+          }]
+        }]))
+      })
+    </script>
+
+    <script src="../../dist/people.js"></script>
+
+    <script>
+      var events = {on: function() {}}
+      var elem = document.getElementById('people')
+      var comp = new People(elem, {
+        baseUrl: 'http://localhost:8080'
+      })
+    </script>
+  </body>
+</html>

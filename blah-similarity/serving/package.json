@@ -9,7 +9,7 @@
     "xhr-mock": "1.7"
   },
   "scripts": {
-    "build": "mkdir -p dist && browserify assets/index.js --standalone Similarity | uglifyjs > dist/index.js",
+    "build": "mkdir -p dist && browserify assets/index.js --standalone Similarity | uglifyjs --compress --mangle > dist/index.js",
     "build-xhr-mock": "browserify node_modules/xhr-mock/index.js --standalone XhrMock -o node_modules/xhr-mock/bundle.js"
   }
 }

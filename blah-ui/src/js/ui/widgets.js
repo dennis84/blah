@@ -1,4 +1,7 @@
-var moment = require('moment')
+var subYears = require('date-fns/sub_years')
+var subDays = require('date-fns/sub_days')
+var endOfHour = require('date-fns/end_of_hour')
+var startOfDay = require('date-fns/start_of_day')
 var component = require('./component')
 
 /**
@@ -10,7 +13,7 @@ function browserStats(update, events) {
     filterBy: [{
       prop: 'date.from',
       operator: 'gte',
-      value: moment().subtract(1, 'year')
+      value: subYears(Date.now(), 1).toISOString()
     }],
     groupBy: ['date.year', 'user_agent.browser.family'],
     title: 'Browser Statistics Over a Year',
@@ -27,7 +30,7 @@ function pageviews(events) {
     filterBy: [{
       prop: 'date.from',
       operator: 'gte',
-      value: moment().subtract(1, 'day')
+      value: subDays(Date.now(), 1).toISOString()
     }],
     groupBy: ['date.hour'],
     title: 'Page Views in the last 24 hours',
@@ -43,7 +46,7 @@ function visitorsToday(events) {
     filterBy: [{
       prop: 'date.from',
       operator: 'gte',
-      value: moment().subtract(1, 'day')
+      value: subDays(Date.now(), 1).toISOString()
     }],
     title: 'Number of Visitors Today'
   })
@@ -102,7 +105,7 @@ function platformStats(events) {
     filterBy: [{
       prop: 'date.from',
       operator: 'gte',
-      value: moment().subtract(1, 'year')
+      value: subYears(Date.now(), 1).toISOString()
     }],
     groupBy: ['date.year', 'user_agent.platform'],
     title: 'Platform Statistics'
@@ -113,8 +116,8 @@ function platformStats(events) {
  * Count Diff: Page View Difference Between Yesterday and Today
  */
 function pageviewDiff(events) {
-  var from = moment().subtract(1, 'days').endOf('hour').calendar()
-  var to = moment().endOf('hour').calendar()
+  var from = endOfHour(subDays(Date.now(), 1))
+  var to = endOfHour(Date.now())
   var title = 'Difference between ' + from + ' and Today ' + to
 
   return component(window.Count.Diff, {}, events, {
@@ -124,22 +127,22 @@ function pageviewDiff(events) {
       filterBy: [{
         prop: 'date.from',
         operator: 'gte',
-        value: moment().subtract(1, 'day').startOf('day')
+        value: startOfDay(subDays(Date.now(), 1)).toISOString()
       }, {
         prop: 'date.to',
         operator: 'lte',
-        value: moment().subtract(1, 'day').endOf('hour')
+        value: endOfHour(subDays(Date.now(), 1)).toISOString()
       }]
     },
     to: {
       filterBy: [{
         prop: 'date.from',
         operator: 'gte',
-        value: moment().startOf('day')
+        value: startOfDay(Date.now()).toISOString()
       }, {
         prop: 'date.to',
         operator: 'lte',
-        value: moment().endOf('hour')
+        value: endOfHour(Date.now()).toISOString()
       }]
     },
     title: title
@@ -155,7 +158,7 @@ function mobileOsStats(events) {
     filterBy: [{
       prop: 'date.from',
       operator: 'gte',
-      value: moment().subtract(1, 'year')
+      value: subYears(Date.now(), 1).toISOString()
     }, {
       prop: 'user_agent.platform',
       operator: 'eq',

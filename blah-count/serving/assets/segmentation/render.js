@@ -1,19 +1,15 @@
 var h = require('snabbdom/h').default
-var moment = require('moment')
 var dateFilterAbs = require('./date-filter-abs')
 var dateFilterQuick = require('./date-filter-quick')
 var filterBy = require('./filter-by')
 var groupBy = require('./group-by')
 var ctrl = require('./ctrl')
-var timeframe = require('../chart/timeframe')
+var util = require('../chart/util')
 var lines = require('../chart/lines')
 
 function chart(model) {
   if(0 === model.segments.length) return h('div.is-empty')
-
-  var from = moment(model.from)
-  var to = moment(model.to)
-  var diff = to.diff(from, 'days')
+  var diff = util.dateDiff(model.to, model.from, 'day')
   var format = 'ddd h:mm a'
   if(diff > 2) format = 'ddd DD'
   if(diff > 60) format = 'MMM YYYY'
@@ -22,7 +18,7 @@ function chart(model) {
   }).split('.')[1]
 
   var data = model.segments.map(function(segment) {
-    return timeframe(segment.data, from, to, {
+    return util.timeframe(segment.data, model.from, model.to, {
       format: format,
       step: step
     })

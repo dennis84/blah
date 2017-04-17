@@ -1,5 +1,5 @@
 var h = require('snabbdom/h').default
-var moment = require('moment')
+var distanceInWordsToNow = require('date-fns/distance_in_words_to_now')
 var ctrl = require('./ctrl')
 
 function button(job, update, options) {
@@ -33,7 +33,7 @@ function jobs(xs, update, options) {
 
   return h('div.people-list', xs.map(function(job) {
     var lastSuccess = job.lastSuccess
-    if(lastSuccess) lastSuccess = moment(lastSuccess).fromNow()
+    if(lastSuccess) lastSuccess = distanceInWordsToNow(lastSuccess)
     return h('div.card.is-fullwidth', [
       h('header.card-header', [
         h('p.card-header-title', job.name),

@@ -22,18 +22,17 @@
   <body>
     <div id="segmentation"></div>
 
-    <script src="../../node_modules/moment/min/moment.min.js"></script>
     <script src="../../node_modules/xhr-mock/bundle.js"></script>
 
     <script>
       var browserFamilyResponse = JSON.stringify([{
         count: 10,
-        date: moment().subtract(1, 'hour').toISOString(),
+        date: new Date('2017-04-01T11:00:00Z').toISOString(),
         browserFamily: 'Chrome'
       }])
       var platformResponse = JSON.stringify([{
         count: 20,
-        date: moment().subtract(2, 'hour').toISOString(),
+        date: new Date('2017-04-01T10:00:00Z').toISOString(),
         platform: 'Mobile'
       }])
       XhrMock.setup()
@@ -55,8 +54,8 @@
         title: 'Example',
         groups: ['date.year', 'date.month', 'date.day', 'date.hour'],
         groupBy: ['date.hour'],
-        from: moment().subtract(1, 'day').toISOString(),
-        to: moment().add(1, 'hour').toISOString(),
+        from: new Date('2017-04-01T00:00:00Z'),
+        to: new Date('2017-04-01T12:00:00Z'),
         segments: [
           {filterBy:[]}
         ]
