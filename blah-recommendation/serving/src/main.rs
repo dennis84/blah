@@ -142,11 +142,11 @@ impl Service for RecommendationService {
 
     fn call(&self, req: Self::Request) -> Self::Future {
         match (req.method(), req.path()) {
-            (&Method::Options, _)               => Self::preflight(),
-            (&Method::Post, "/recommendations") => self.list(req),
-            (&Method::Get, "/recommendation.js")      => Self::js(),
-            (&Method::Get, "/")                 => Self::health(),
-            _                                   => Self::not_found(),
+            (&Method::Options, _)                   => Self::preflight(),
+            (&Method::Post, "/recommendations")     => self.list(req),
+            (&Method::Get, "/js/recommendation.js") => Self::js(),
+            (&Method::Get, "/")                     => Self::health(),
+            _                                       => Self::not_found(),
         }
     }
 }

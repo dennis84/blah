@@ -145,7 +145,7 @@ impl Service for JobsService {
                 let name = path.split("/").nth(2).unwrap();
                 self.stop(name)
             },
-            (&Method::Get, "/jobs.js") => Self::js(),
+            (&Method::Get, "/js/jobs.js") => Self::js(),
             (&Method::Get, "/") => Self::health(),
             _ => Self::not_found(),
         }

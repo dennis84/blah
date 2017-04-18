@@ -22,7 +22,7 @@
     "AUTOSCALE_CPU_PERCENT": "80",
     "HAPROXY_GROUP": "external",
     "HAPROXY_0_VHOST": "user.blah.local",
-    "HAPROXY_0_HTTP_FRONTEND_ACL": "  acl path_user path_beg /user\n  use_backend {backend} if path_user\n  acl path_user_count path_beg /user-count\n  use_backend {backend} if path_user_count\n  acl path_people path_beg /people\n  use_backend {backend} if path_people\n  acl path_worldmap path_beg /worldmap\n  use_backend {backend} if path_worldmap\n"
+    "HAPROXY_0_HTTP_FRONTEND_ACL": "  acl path_{backend} path_beg /user /user-count /people /js/user.js /js/people.js /js/worldmap.js\n  use_backend {backend} if path_{backend}\n"
   },
   "healthChecks": [{
     "protocol": "HTTP",

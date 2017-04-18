@@ -145,11 +145,11 @@ impl Service for CollectionService {
 
     fn call(&self, req: Self::Request) -> Self::Future {
         match (req.method(), req.path()) {
-            (&Method::Options, _)           => Self::preflight(),
-            (&Method::Post, "/collections") => self.collections(req),
-            (&Method::Get, "/collection.js")  => Self::js(),
-            (&Method::Get, "/")             => Self::health(),
-            _                               => Self::not_found(),
+            (&Method::Options, _)               => Self::preflight(),
+            (&Method::Post, "/collections")     => self.collections(req),
+            (&Method::Get, "/js/collection.js") => Self::js(),
+            (&Method::Get, "/")                 => Self::health(),
+            _                                   => Self::not_found(),
         }
     }
 }

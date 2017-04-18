@@ -22,7 +22,7 @@
     "AUTOSCALE_CPU_PERCENT": "80",
     "HAPROXY_GROUP": "external",
     "HAPROXY_0_VHOST": "similarity.blah.local",
-    "HAPROXY_0_HTTP_FRONTEND_ACL": "  acl path_similarity path_beg /similarity\n  use_backend {backend} if path_similarity\n  acl path_similarities path_beg /similarities\n  use_backend {backend} if path_similarities\n"
+    "HAPROXY_0_HTTP_FRONTEND_ACL": "  acl path_{backend} path_beg /similarities /js/similarity.js\n  use_backend {backend} if path_{backend}\n"
   },
   "healthChecks": [{
     "protocol": "HTTP",

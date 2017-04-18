@@ -145,11 +145,11 @@ impl Service for ReferrerService {
 
     fn call(&self, req: Self::Request) -> Self::Future {
         match (req.method(), req.path()) {
-            (&Method::Options, _)         => Self::preflight(),
-            (&Method::Post, "/referrers") => self.list(req),
-            (&Method::Get, "/referrer.js") => Self::js(),
-            (&Method::Get, "/")           => Self::health(),
-            _                             => Self::not_found(),
+            (&Method::Options, _)             => Self::preflight(),
+            (&Method::Post, "/referrers")     => self.list(req),
+            (&Method::Get, "/js/referrer.js") => Self::js(),
+            (&Method::Get, "/")               => Self::health(),
+            _                                 => Self::not_found(),
         }
     }
 }
