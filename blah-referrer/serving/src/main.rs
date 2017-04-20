@@ -81,23 +81,6 @@ impl ReferrerService {
         Box::new(future::ok(resp))
     }
 
-    fn preflight() -> FutureResponse {
-        let resp = Response::new()
-            .with_header(header::AccessControlAllowOrigin::Any)
-            .with_header(header::AccessControlAllowCredentials)
-            .with_header(header::AccessControlAllowMethods(vec![
-                Method::Options,
-                Method::Get,
-                Method::Post,
-                Method::Put,
-                Method::Delete,
-            ]))
-            .with_header(header::AccessControlAllowHeaders(vec![
-                UniCase("content-type".to_string()),
-            ]));
-        Box::new(future::ok(resp))
-    }
-
     fn health() -> FutureResponse {
         let resp = Self::new_response(Message {
             message: "Healthy".to_string(),
@@ -145,7 +128,6 @@ impl Service for ReferrerService {
 
     fn call(&self, req: Self::Request) -> Self::Future {
         match (req.method(), req.path()) {
-            (&Method::Options, _)             => Self::preflight(),
             (&Method::Post, "/referrers")     => self.list(req),
             (&Method::Get, "/js/referrer.js") => Self::js(),
             (&Method::Get, "/")               => Self::health(),

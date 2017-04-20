@@ -136,23 +136,6 @@ impl CountService {
         Box::new(future::ok(resp))
     }
 
-    fn preflight() -> FutureResponse {
-        let resp = Response::new()
-            .with_header(header::AccessControlAllowOrigin::Any)
-            .with_header(header::AccessControlAllowCredentials)
-            .with_header(header::AccessControlAllowMethods(vec![
-                Method::Options,
-                Method::Get,
-                Method::Post,
-                Method::Put,
-                Method::Delete,
-            ]))
-            .with_header(header::AccessControlAllowHeaders(vec![
-                UniCase("content-type".to_string()),
-            ]));
-        Box::new(future::ok(resp))
-    }
-
     fn health() -> FutureResponse {
         let resp = Self::new_response(Message {
             message: "Healthy".to_string(),
@@ -200,7 +183,6 @@ impl Service for CountService {
 
     fn call(&self, req: Self::Request) -> Self::Future {
         match (req.method(), req.path()) {
-            (&Method::Options, _)                   => Self::preflight(),
             (&Method::Post, "/count")               => self.count(req),
             (&Method::Post, "/sum")                 => self.sum(req),
             (&Method::Post, "/most-viewed")         => self.get_most_viewed(req),
