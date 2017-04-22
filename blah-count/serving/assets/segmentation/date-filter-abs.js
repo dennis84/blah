@@ -16,13 +16,13 @@ function formatDate(d) {
 
 function render(model, update) {
   return h('div.field.is-horizontal', [
-    h('div.field-label.is-normal', [
+    h('div.field-label.is-medium', [
       h('label.label', 'From - To')
     ]),
     h('div.field-body', [
       h('div.field.is-grouped', [
         h('p.control.is-expanded', [
-          h('input.input', {
+          h('input.input.is-medium', {
             hook: {insert: createPickaday},
             props: {value: formatDate(model.from)},
             on: {change: function(e) {
@@ -35,7 +35,7 @@ function render(model, update) {
         ])
       ]),
       h('div.field.is-grouped', [
-        h('input.input', {
+        h('input.input.is-medium', {
           hook: {insert: createPickaday},
           props: {value: formatDate(model.to)},
           on: {change: function(e) {

@@ -3,9 +3,9 @@ var ctrl = require('./ctrl')
 
 function render(model, update) {
   return h('div.field.is-horizontal', [
-    h('div.field-label', [h('label.label', 'Group by')]),
+    h('div.field-label.is-medium', [h('label.label', 'Group by')]),
     h('div.field-body', [
-      h('div.field', h('div.control', h('div.select.is-fullwidth', [
+      h('div.field', h('div.control', h('div.select.is-fullwidth.is-medium', [
         h('select', {
           on: {change: function(e) {
             var selected = []

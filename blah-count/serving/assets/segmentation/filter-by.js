@@ -14,13 +14,13 @@ function mkOption(filter, key, value, name) {
 function mkFilterRow(segment, filter, index, update) {
   var isFirst = index === 0
   return h('div.field.is-horizontal', [
-    h('div.field-label.is-normal', [
+    h('div.field-label.is-medium', [
       h('label.label', isFirst ? 'Filter by' : 'And')
     ]),
     h('div.field-body', [
       h('div.field.is-grouped', [
         h('p.control.is-expanded', [
-          h('div.select.is-fullwidth', [
+          h('div.select.is-fullwidth.is-medium', [
             h('select', {
               on: {change: function(e) {
                 update(ctrl.updateSegmentFilter, segment, index, {prop: e.target.value})
@@ -39,7 +39,7 @@ function mkFilterRow(segment, filter, index, update) {
       ]),
       h('div.field.is-grouped', [
         h('p.control.is-expanded', [
-          h('div.select.is-fullwidth', [
+          h('div.select.is-fullwidth.is-medium', [
             h('select.select', {
               on: {change: function(e) {
                 update(ctrl.updateSegmentFilter, segment, index, {operator: e.target.value})
@@ -56,7 +56,7 @@ function mkFilterRow(segment, filter, index, update) {
       ]),
       h('div.field.is-grouped', [
         h('p.control.is-expanded', [
-          h('input.input', {
+          h('input.input.is-medium', {
             props: {value: filter.value},
             on: {input: debounce(function(e) {
               update(ctrl.updateSegmentFilter, segment, index, {value: e.target.value})
@@ -64,9 +64,9 @@ function mkFilterRow(segment, filter, index, update) {
           })
         ])
       ]),
-      h('div.field.is-grouped', [
+      h('div.field.is-grouped.is-narrow', [
         h('p.control.is-expanded', [
-          h('a.button.is-link', {
+          h('a.button.is-link.is-medium', {
             on: {click: function() {
               update(ctrl.removeSegmentFilter, segment, index)
             }}

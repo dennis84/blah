@@ -19,23 +19,25 @@ function render(model, update, options) {
   return h('div.widget.is-borderless.widget-similarity', [
     h('div.is-bordered', [
       h('h3', 'Similarity'),
-      h('div.control', [
-        h('input.input', {
-          props: {
-            placeholder: 'Enter item',
-            value: options.item,
-          },
-          on: {
-            input: debounce(function(e) {
-              if(!e.target.value) return
-              var items = e.target.value.split(',')
-              update(ctrl.find, {
-                baseUrl: options.baseUrl,
-                items: items
-              })
-            }, 500)
-          }
-        })
+      h('div.field', [
+        h('p.control', [
+          h('input.input.is-medium', {
+            props: {
+              placeholder: 'Enter item',
+              value: options.item,
+            },
+            on: {
+              input: debounce(function(e) {
+                if(!e.target.value) return
+                var items = e.target.value.split(',')
+                update(ctrl.find, {
+                  baseUrl: options.baseUrl,
+                  items: items
+                })
+              }, 500)
+            }
+          })
+        ])
       ])
     ].concat(mkSimilarities(model.similarities)))
   ])

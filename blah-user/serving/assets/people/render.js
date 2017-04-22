@@ -48,28 +48,30 @@ function views(xs, update) {
 
 function render(model, update, options) {
   return h('div.explore', [
-    h('div.control', [
-      h('input.input.is-large', {
-        props: {
-          placeholder: 'Search users ...',
-        },
-        on: {
-          input: debounce(function(e) {
-            if(!e.target.value) {
-              e.target.classList.remove('dirty')
-              return
-            }
+    h('div.field', [
+      h('p.control', [
+        h('input.input.is-large', {
+          props: {
+            placeholder: 'Search users ...',
+          },
+          on: {
+            input: debounce(function(e) {
+              if(!e.target.value) {
+                e.target.classList.remove('dirty')
+                return
+              }
 
-            e.target.classList.add('dirty')
-            update(ctrl.search, {
-              baseUrl: options.baseUrl,
-              filterBy: [
-                {prop: 'user', operator: 'contains', value: e.target.value}
-              ]
-            })
-          }, 500)
-        }
-      })
+              e.target.classList.add('dirty')
+              update(ctrl.search, {
+                baseUrl: options.baseUrl,
+                filterBy: [
+                  {prop: 'user', operator: 'contains', value: e.target.value}
+                ]
+              })
+            }, 500)
+          }
+        })
+      ])
     ])
   ].concat(views(model.users, update)))
 }

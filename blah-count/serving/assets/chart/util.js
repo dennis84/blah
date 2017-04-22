@@ -68,7 +68,7 @@ function timeframe(data, start, end, options) {
   var out = []
   var count = dateDiff(end, start, options.step)
 
-  for(var i = 0; i < count; i ++) {
+  for(var i = 1; i <= count; i ++) {
     var d = add(start, i, options.step)
     out.push({
       key: format(d, options.format),

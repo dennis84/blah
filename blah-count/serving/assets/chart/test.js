@@ -56,8 +56,8 @@ test('yearly', function(assert) {
 test('set count', function(assert) {
   assert.plan(2)
   var data = util.timeframe([
-    {date: startOfHour(subHours(Date.now(), 24)).toISOString(), count: 42},
-    {date: startOfHour(subHours(Date.now(), 23)), count: 43}
+    {date: startOfHour(subHours(Date.now(), 23)).toISOString(), count: 42},
+    {date: startOfHour(subHours(Date.now(), 22)), count: 43}
   ], subHours(Date.now(), 24), Date.now())
 
   assert.equal(data[0].value, 42)

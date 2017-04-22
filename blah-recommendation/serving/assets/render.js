@@ -19,22 +19,24 @@ function render(model, update, options) {
   return h('div.widget.is-borderless.widget-recommendation', [
     h('div.is-bordered', [
       h('h3', 'Recommendations'),
-      h('div.control', [
-        h('input.input', {
-          props: {
-            placeholder: 'Enter username',
-            value: options.user
-          },
-          on: {
-            input: debounce(function(e) {
-              if(!e.target.value) return
-              update(ctrl.find, {
-                baseUrl: options.baseUrl,
-                user: e.target.value
-              })
-            }, 500)
-          }
-        })
+      h('div.field', [
+        h('p.control', [
+          h('input.input.is-medium', {
+            props: {
+              placeholder: 'Enter username',
+              value: options.user
+            },
+            on: {
+              input: debounce(function(e) {
+                if(!e.target.value) return
+                update(ctrl.find, {
+                  baseUrl: options.baseUrl,
+                  user: e.target.value
+                })
+              }, 500)
+            }
+          })
+        ])
       ])
     ]),
   ].concat(mkItems(model.items)))
