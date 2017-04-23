@@ -4,11 +4,11 @@ var ctrl = require('./ctrl')
 
 function button(job, update, options) {
   if('queued' === job.status || job.clicked) {
-    return h('a.button.is-loading', 'Loa')
+    return h('a.button.is-loading.is-medium', 'Loa')
   }
 
   if(-1 !== job.status.indexOf('running')) {
-    return h('a.button.is-danger', {
+    return h('a.button.is-danger.is-medium', {
       on: {
         click: function() {
           update(ctrl.stop, job.name, options)
@@ -17,7 +17,7 @@ function button(job, update, options) {
     }, 'Stop')
   }
 
-  return h('a.button.is-primary', {
+  return h('a.button.is-primary.is-medium', {
     on: {
       click: function() {
         update(ctrl.run, job.name, options)
@@ -31,7 +31,7 @@ function jobs(xs, update, options) {
     return h('div.is-empty')
   }
 
-  return h('div.people-list', xs.map(function(job) {
+  return h('div.job-list', xs.map(function(job) {
     var lastSuccess = job.lastSuccess
     if(lastSuccess) lastSuccess = distanceInWordsToNow(lastSuccess)
     return h('div.card.is-fullwidth', [

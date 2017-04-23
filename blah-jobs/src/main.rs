@@ -9,6 +9,7 @@ extern crate tokio_core;
 extern crate hyper;
 extern crate unicase;
 extern crate flate2;
+extern crate getopts;
 
 mod chronos;
 
@@ -27,6 +28,8 @@ use unicase::UniCase;
 
 use flate2::Compression;
 use flate2::write::GzEncoder;
+
+use getopts::Options;
 
 use chronos::{JobRepo};
 
@@ -139,9 +142,17 @@ fn main() {
         "app": "jobs",
     })).init().unwrap();
 
+    let args: Vec<String> = env::args().collect();
+
+    let mut opts = Options::new();
+    opts.optopt("p", "port", "Set http port", "8080");
+
+    let matches = opts.parse(&args[1..]).unwrap();
+    let port = matches.opt_str("port").unwrap_or("8080".to_string());
+
     let mut core = Core::new().unwrap();
     let handle = core.handle();
-    let addr = "0.0.0.0:8080".parse().unwrap();
+    let addr = format!("0.0.0.0:{}", port).parse().unwrap();
     let listener = TcpListener::bind(&addr, &core.handle()).unwrap();
 
     let client = Client::new(&handle.clone());

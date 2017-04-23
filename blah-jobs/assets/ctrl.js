@@ -13,7 +13,10 @@ function list(model, options) {
   return new Promise(function(resolve) {
     xhr.get(options.baseUrl + '/jobs', {}, function(err, resp, body) {
       var m = clone(model)
-      m.jobs = JSON.parse(body)
+      m.jobs = JSON.parse(body).sort(function(a, b) {
+        return a.name.localeCompare(b.name)
+      })
+
       resolve(m)
     })
   })

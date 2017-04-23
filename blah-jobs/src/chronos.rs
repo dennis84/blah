@@ -1,8 +1,9 @@
 use std::collections::HashMap;
+use std::str::{FromStr};
 
 use futures::{future, Future, Stream};
 
-use hyper::{self, Client, Url, Put, Delete, StatusCode};
+use hyper::{self, Client, Uri, Put, Delete, StatusCode};
 use hyper::client::{HttpConnector, Request};
 
 use serde_json::from_slice;
@@ -48,10 +49,10 @@ impl Clone for JobRepo {
 
 impl JobRepo {
     pub fn list(&self) -> Fut<Vec<Job>> {
-        let jobs_url = Url::parse(&format!(
+        let jobs_url = Uri::from_str(&format!(
                 "{}/v1/scheduler/jobs",
                 self.chronos_url)).unwrap();
-        let csv_url = Url::parse(&format!(
+        let csv_url = Uri::from_str(&format!(
                 "{}/v1/scheduler/graph/csv",
                 self.chronos_url)).unwrap();
 
@@ -107,14 +108,14 @@ impl JobRepo {
     }
 
     pub fn run(&self, name: &str) -> Fut<Message> {
-        let url = Url::parse(&format!(
+        let url = Uri::from_str(&format!(
                 "{}/v1/scheduler/job/{}",
                 self.chronos_url,
                 name)).unwrap();
         let req = Request::new(Put, url);
         Box::new(self.client.request(req).map(move |resp| {
             let message = match resp.status() {
-                &StatusCode::NoContent => "Job has started successfully.",
+                StatusCode::NoContent => "Job has started successfully.",
                 _                      => "Job could not be started.",
             };
 
@@ -126,14 +127,14 @@ impl JobRepo {
     }
 
     pub fn stop(&self, name: &str) -> Fut<Message> {
-        let url = Url::parse(&format!(
+        let url = Uri::from_str(&format!(
                 "{}/v1/scheduler/task/kill/{}",
                 self.chronos_url,
                 name)).unwrap();
         let req = Request::new(Delete, url);
         Box::new(self.client.request(req).map(move |resp| {
             let message = match resp.status() {
-                &StatusCode::NoContent => "Job was successfully stopped.",
+                StatusCode::NoContent => "Job was successfully stopped.",
                 _                      => "Job could not be stopped.",
             };
 
