@@ -2,36 +2,37 @@
 
 create_apps() {
   ! is_open "$BLAH_HOST" 7000 8080 && exit 1
-  create_app autoscale
-  create_app data
-  create_app events
-  create_app count
-  create_app collection
-  create_app funnel
-  create_app referrer
-  create_app recommendation
-  create_app similarity
-  create_app user
-  create_app jobs
-  create_app ui
+  create_app blah-autoscale/marathon.json
+  create_app blah-data/marathon.json
+  create_app blah-events/marathon.json
+  create_app blah-count/serving/marathon.json
+  create_app blah-collection/serving/marathon.json
+  create_app blah-funnel/serving/marathon.json
+  create_app blah-referrer/serving/marathon.json
+  create_app blah-recommendation/serving/marathon.json
+  create_app blah-similarity/serving/marathon.json
+  create_app blah-user/serving/marathon.json
+  create_app blah-jobs/marathon.json
+  create_app blah-ui/marathon.json
 }
 
 create_streaming_apps() {
   ! is_open "$BLAH_HOST" 8080 && exit 1
-  create_app "count-streaming"
-  create_app "user-streaming"
+  create_app blah-count/algo/marathon.json
+  create_app blah-user/algo/marathon.json
+  create_app blah-collection/algo/marathon.json
 }
 
 create_jobs() {
   ! is_open "$BLAH_HOST" 8081 && exit 1
-  create_job count
-  create_job user
-  create_job recommendation
-  create_job similarity
-  create_job funnel-items
-  create_job funnel-signup
-  create_job referrer
-  create_job collection
+  create_job blah-count/algo/chronos.json
+  create_job blah-user/algo/chronos.json
+  create_job blah-recommendation/algo/chronos.json
+  create_job blah-similarity/algo/chronos.json
+  create_job blah-funnel/algo/chronos-items.json
+  create_job blah-funnel/algo/chronos-signup.json
+  create_job blah-referrer/algo/chronos.json
+  create_job blah-collection/algo/chronos.json
 }
 
 build_apps() {
@@ -271,12 +272,12 @@ main() {
       echo "  build-all                         Build all"
       echo "  pull-images                       Pre-pull docker-compose images"
       echo "  create-apps                       Create apps in marathon"
-      echo "  create-app                        Create a single app"
+      echo "  create-app [marathon_file]        Create a single app"
       echo "  create-streaming-apps             Create streaming apps in marathon"
       echo "  create-jobs                       Create all chronos jobs"
-      echo "  create-job NAME                   Create a single chronos job"
+      echo "  create-job [marathon_file]        Create a single chronos job"
       echo "  create-all                        Create apps, streaming apps and jobs"
-      echo "  run-job NAME                      Run a chronos job"
+      echo "  run-job [name]                    Run a chronos job"
       echo "  samples [nb] [collection]         Create some sample data"
       echo "  fixtures                          Load fixtures"
       echo "  env                               Set env vars"
