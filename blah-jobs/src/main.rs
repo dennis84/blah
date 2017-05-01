@@ -8,14 +8,12 @@ extern crate futures;
 extern crate tokio_core;
 extern crate hyper;
 extern crate unicase;
-extern crate flate2;
 extern crate getopts;
+extern crate hyper_static;
 
 mod chronos;
 
 use std::env;
-use std::fs::File;
-use std::io::{Read, Write};
 
 use futures::{future, Future, Stream};
 use tokio_core::reactor::Core;
@@ -25,9 +23,6 @@ use hyper::{header, StatusCode, Client, Method};
 use hyper::server::{Http, Service, Request, Response};
 
 use unicase::UniCase;
-
-use flate2::Compression;
-use flate2::write::GzEncoder;
 
 use getopts::Options;
 
@@ -67,24 +62,6 @@ impl JobsService {
         }))
     }
 
-    fn js() -> FutureResponse {
-        let mut file = File::open("dist/index.js").unwrap();
-        let mut body = Vec::new();
-        file.read_to_end(&mut body).unwrap();
-
-        let mut encoder = GzEncoder::new(Vec::new(), Compression::Best);
-        encoder.write_all(body.as_slice()).unwrap();
-        let compressed_bytes = encoder.finish().unwrap();
-
-        let resp = Response::new()
-            .with_header(header::ContentType(mime!(Application/Javascript)))
-            .with_header(header::ContentEncoding(vec![
-                header::Encoding::Gzip
-            ]))
-            .with_body(compressed_bytes);
-        Box::new(future::ok(resp))
-    }
-
     fn health() -> FutureResponse {
         let resp = Self::new_response(Message {
             message: "Healthy".to_string(),
@@ -122,15 +99,17 @@ impl Service for JobsService {
     fn call(&self, req: Self::Request) -> Self::Future {
         match (req.method(), req.path()) {
             (&Method::Get, "/jobs") => self.list(),
-            (&Method::Put, path) if path.starts_with("/jobs/") => {
-                let name = path.split("/").nth(2).unwrap();
+            (&Method::Put, _) if req.path().starts_with("/jobs/") => {
+                let name = req.path().split("/").nth(2).unwrap();
                 self.run(name)
             },
-            (&Method::Delete, path) if path.starts_with("/jobs/") => {
-                let name = path.split("/").nth(2).unwrap();
+            (&Method::Delete, _) if req.path().starts_with("/jobs/") => {
+                let name = req.path().split("/").nth(2).unwrap();
                 self.stop(name)
             },
-            (&Method::Get, "/js/jobs.js") => Self::js(),
+            (&Method::Get, _) if req.path().starts_with("/js") => {
+                Box::new(hyper_static::from_dir("dist", req))
+            },
             (&Method::Get, "/") => Self::health(),
             _ => Self::not_found(),
         }

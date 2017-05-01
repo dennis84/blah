@@ -5,6 +5,6 @@
     "xhr": "^2.2.2"
   },
   "scripts": {
-    "build": "mkdir -p dist && browserify assets/index.js --standalone Referrer | uglifyjs --compress --mangle > dist/index.js"
+    "build": "mkdir -p dist/js && browserify assets/index.js --standalone Referrer | uglifyjs --compress --mangle > dist/js/referrer.js"
   }
 }

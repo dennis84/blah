@@ -8,13 +8,11 @@ extern crate futures;
 extern crate tokio_core;
 extern crate hyper;
 extern crate unicase;
-extern crate flate2;
+extern crate hyper_static;
 
 mod repo;
 
 use std::env;
-use std::fs::File;
-use std::io::{Read, Write};
 
 use futures::{future, Future, BoxFuture, Stream};
 use tokio_core::reactor::Core;
@@ -24,9 +22,6 @@ use hyper::{header, StatusCode, Client, Method};
 use hyper::server::{Http, Service, Request, Response};
 
 use unicase::UniCase;
-
-use flate2::Compression;
-use flate2::write::GzEncoder;
 
 use repo::{RecommendationQuery, RecommendationRepo};
 
@@ -58,24 +53,6 @@ impl RecommendationService {
                     Box::new(future::ok(resp))
                 },
             }))
-    }
-
-    fn js() -> FutureResponse {
-        let mut file = File::open("dist/index.js").unwrap();
-        let mut body = Vec::new();
-        file.read_to_end(&mut body).unwrap();
-
-        let mut encoder = GzEncoder::new(Vec::new(), Compression::Best);
-        encoder.write_all(body.as_slice()).unwrap();
-        let compressed_bytes = encoder.finish().unwrap();
-
-        let resp = Response::new()
-            .with_header(header::ContentType(mime!(Application/Javascript)))
-            .with_header(header::ContentEncoding(vec![
-                header::Encoding::Gzip
-            ]))
-            .with_body(compressed_bytes);
-        Box::new(future::ok(resp))
     }
 
     fn health() -> FutureResponse {
@@ -125,10 +102,12 @@ impl Service for RecommendationService {
 
     fn call(&self, req: Self::Request) -> Self::Future {
         match (req.method(), req.path()) {
-            (&Method::Post, "/recommendations")     => self.list(req),
-            (&Method::Get, "/js/recommendation.js") => Self::js(),
-            (&Method::Get, "/")                     => Self::health(),
-            _                                       => Self::not_found(),
+            (&Method::Post, "/recommendations") => self.list(req),
+            (&Method::Get, _) if req.path().starts_with("/js") => {
+                Box::new(hyper_static::from_dir("dist", req))
+            },
+            (&Method::Get, "/") => Self::health(),
+            _ => Self::not_found(),
         }
     }
 }

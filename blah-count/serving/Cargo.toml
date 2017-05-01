@@ -15,6 +15,6 @@ tokio-core = "0.1"
 hyper = { git = "https://github.com/hyperium/hyper.git" }
 unicase = "1.4"
 mime = "0.2"
-flate2 = "0.2"
 logstash-format = { git = "https://github.com/dennis84/logstash-format.git" }
 serde-merge = { git = "https://github.com/dennis84/serde-merge.git" }
+hyper-static = { git = "https://github.com/dennis84/hyper-static.git" }

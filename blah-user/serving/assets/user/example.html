@@ -19,11 +19,11 @@
 
     <script>
       XhrMock.setup()
-      XhrMock.post('http://localhost:8080/count', function(req, res) {
+      XhrMock.post('http://localhost:8080/user-count', function(req, res) {
         return res.status(200).body(JSON.stringify({count: 10}))
       })
 
-      XhrMock.post('http://localhost:8081/count', function(req, res) {
+      XhrMock.post('http://localhost:8081/user-count', function(req, res) {
         return res.status(200).body(JSON.stringify([{
           count: 10,
           country: 'Germany'
@@ -34,7 +34,7 @@
       })
     </script>
 
-    <script src="../../dist/user.js"></script>
+    <script src="../../dist/js/user.js"></script>
 
     <script>
       var events = {on: function() {}}

@@ -79,7 +79,20 @@ function timeframe(data, start, end, options) {
   return out
 }
 
+function getDateProps(filterBy) {
+  var result = {}
+  for(var i in filterBy) {
+    var filter = filterBy[i]
+    if(0 === filter.prop.indexOf('date.')) {
+      result[filter.prop.substring(5)] = new Date(filter.value)
+    }
+  }
+
+  return result
+}
+
 module.exports = {
   timeframe: timeframe,
-  dateDiff: dateDiff
+  dateDiff: dateDiff,
+  getDateProps: getDateProps
 }

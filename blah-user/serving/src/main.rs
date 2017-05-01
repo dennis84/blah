@@ -10,14 +10,12 @@ extern crate futures;
 extern crate tokio_core;
 extern crate hyper;
 extern crate unicase;
-extern crate flate2;
+extern crate hyper_static;
 
 mod repo;
 mod util;
 
 use std::env;
-use std::fs::File;
-use std::io::{Read, Write};
 
 use futures::{future, Future, BoxFuture, Stream};
 use tokio_core::reactor::Core;
@@ -29,9 +27,6 @@ use hyper::server::{Http, Service, Request, Response};
 use unicase::UniCase;
 
 use getopts::Options;
-
-use flate2::Compression;
-use flate2::write::GzEncoder;
 
 use repo::{UserRepo, UserQuery};
 
@@ -88,30 +83,6 @@ impl UserService {
             }))
     }
 
-    fn assets(file: &str) -> FutureResponse {
-        let content_type = match file {
-            x if x.ends_with(".css") => header::ContentType(mime!(Text/Css)),
-            _ => header::ContentType(mime!(Application/Javascript)),
-        };
-
-        let mut file = File::open(format!("dist/{}", file)).unwrap();
-        let mut body = Vec::new();
-        file.read_to_end(&mut body).unwrap();
-
-        let mut encoder = GzEncoder::new(Vec::new(), Compression::Best);
-        encoder.write_all(body.as_slice()).unwrap();
-        let compressed_bytes = encoder.finish().unwrap();
-
-        let resp = Response::new()
-            .with_header(content_type)
-            .with_header(header::ContentEncoding(vec![
-                header::Encoding::Gzip
-            ]))
-            .with_body(compressed_bytes);
-
-        Box::new(future::ok(resp))
-    }
-
     fn health() -> FutureResponse {
         let resp = Self::new_response(Message {
             message: "Healthy".to_string(),
@@ -159,13 +130,14 @@ impl Service for UserService {
 
     fn call(&self, req: Self::Request) -> Self::Future {
         match (req.method(), req.path()) {
-            (&Method::Post, "/users")         => self.list(req),
-            (&Method::Post, "/user-count")    => self.count(req),
-            (&Method::Get, "/js/user.js")     => Self::assets("user.js"),
-            (&Method::Get, "/js/people.js")   => Self::assets("people.js"),
-            (&Method::Get, "/js/worldmap.js") => Self::assets("worldmap.js"),
-            (&Method::Get, "/")               => Self::health(),
-            _                                 => Self::not_found(),
+            (&Method::Post, "/users") => self.list(req),
+            (&Method::Post, "/user-count") => self.count(req),
+            (&Method::Get, _) if req.path().starts_with("/js") ||
+                                 req.path().starts_with("/css") => {
+                Box::new(hyper_static::from_dir("dist", req))
+            },
+            (&Method::Get, "/") => Self::health(),
+            _ => Self::not_found(),
         }
     }
 }

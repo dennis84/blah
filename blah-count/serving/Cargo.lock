@@ -3,10 +3,10 @@ name = "blah-count"
 version = "0.1.0"
 dependencies = [
  "env_logger 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "flate2 0.2.17 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "getopts 0.2.14 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper 0.11.0-a.0 (git+https://github.com/hyperium/hyper.git)",
+ "hyper-static 0.1.0",
  "log 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "logstash-format 0.1.0 (git+https://github.com/dennis84/logstash-format.git)",
  "mime 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -125,6 +125,16 @@ dependencies = [
  "tokio-service 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "unicase 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "url 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "hyper-static"
+version = "0.1.0"
+dependencies = [
+ "flate2 0.2.17 (registry+https://github.com/rust-lang/crates.io-index)",
+ "futures 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)",
+ "hyper 0.11.0-a.0 (git+https://github.com/hyperium/hyper.git)",
+ "mime 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

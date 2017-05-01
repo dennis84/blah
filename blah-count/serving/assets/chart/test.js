@@ -64,3 +64,20 @@ test('set count', function(assert) {
   assert.equal(data[1].value, 43)
   assert.end()
 })
+
+test('find start and end date in filterBy', function(assert) {
+  var filterBy = [{
+    'prop': 'date.from',
+    'operator': 'gte',
+    'value': '2017-01-01T00:00:00Z'
+  }, {
+    'prop': 'date.to',
+    'operator': 'lte',
+    'value': '2017-01-02T00:00:00Z'
+  }]
+
+  var result = util.getDateProps(filterBy)
+  assert.equal(result.from.toISOString(), '2017-01-01T00:00:00.000Z')
+  assert.equal(result.to.toISOString(), '2017-01-02T00:00:00.000Z')
+  assert.end()
+})

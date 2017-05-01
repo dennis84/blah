@@ -9,8 +9,8 @@ extern crate futures;
 extern crate tokio_core;
 extern crate hyper;
 extern crate unicase;
-extern crate flate2;
 extern crate serde_merge;
+extern crate hyper_static;
 
 mod count;
 mod sum;
@@ -18,8 +18,6 @@ mod most_viewed;
 mod util;
 
 use std::env;
-use std::fs::File;
-use std::io::{Read, Write};
 
 use futures::{future, Future, BoxFuture, Stream};
 use tokio_core::reactor::Core;
@@ -31,9 +29,6 @@ use hyper::server::{Http, Service, Request, Response};
 use unicase::UniCase;
 
 use getopts::Options;
-
-use flate2::Compression;
-use flate2::write::GzEncoder;
 
 use most_viewed::{MostViewedRepo, MostViewedQuery};
 use sum::{SumRepo, SumQuery};
@@ -112,30 +107,6 @@ impl CountService {
             }))
     }
 
-    fn assets(file: &str) -> FutureResponse {
-        let content_type = match file {
-            x if x.ends_with(".css") => header::ContentType(mime!(Text/Css)),
-            _ => header::ContentType(mime!(Application/Javascript)),
-        };
-
-        let mut file = File::open(format!("dist/{}", file)).unwrap();
-        let mut body = Vec::new();
-        file.read_to_end(&mut body).unwrap();
-
-        let mut encoder = GzEncoder::new(Vec::new(), Compression::Best);
-        encoder.write_all(body.as_slice()).unwrap();
-        let compressed_bytes = encoder.finish().unwrap();
-
-        let resp = Response::new()
-            .with_header(content_type)
-            .with_header(header::ContentEncoding(vec![
-                header::Encoding::Gzip
-            ]))
-            .with_body(compressed_bytes);
-
-        Box::new(future::ok(resp))
-    }
-
     fn health() -> FutureResponse {
         let resp = Self::new_response(Message {
             message: "Healthy".to_string(),
@@ -183,16 +154,14 @@ impl Service for CountService {
 
     fn call(&self, req: Self::Request) -> Self::Future {
         match (req.method(), req.path()) {
-            (&Method::Post, "/count")               => self.count(req),
-            (&Method::Post, "/sum")                 => self.sum(req),
-            (&Method::Post, "/most-viewed")         => self.get_most_viewed(req),
-            (&Method::Get, "/js/count.js")          => Self::assets("count.js"),
-            (&Method::Get, "/js/most-viewed.js")    => Self::assets("most-viewed.js"),
-            (&Method::Get, "/js/sum.js")            => Self::assets("sum.js"),
-            (&Method::Get, "/js/segmentation.js")   => Self::assets("segmentation.js"),
-            (&Method::Get, "/css/segmentation.css") => Self::assets("segmentation.css"),
-            (&Method::Get, "/")                     => Self::health(),
-            _                                       => Self::not_found(),
+            (&Method::Post, "/count") => self.count(req),
+            (&Method::Post, "/sum") => self.sum(req),
+            (&Method::Post, "/most-viewed") => self.get_most_viewed(req),
+            (&Method::Get, _) if req.path().starts_with("/js") ||
+                                 req.path().starts_with("/css")
+                => Box::new(hyper_static::from_dir("dist", req)),
+            (&Method::Get, "/") => Self::health(),
+            _ => Self::not_found(),
         }
     }
 }

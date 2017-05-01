@@ -4,11 +4,12 @@ var bar = require('../chart/bar')
 var subDays = require('date-fns/sub_days')
 var addHours = require('date-fns/add_hours')
 
-function chart(model) {
+function chart(model, options) {
+  var dateProps = util.getDateProps(options.filterBy)
   var data = util.timeframe(
     model.groups,
-    subDays(Date.now(), 1),
-    addHours(Date.now(), 1)
+    dateProps.from ? dateProps.from : subDays(Date.now(), 1),
+    dateProps.to ? dateProps.to : addHours(Date.now(), 1)
   )
 
   return h('div.chart', {
@@ -28,7 +29,7 @@ function render(model, update, options) {
     class: options.class
   }, [
     h('h3', options.title),
-    chart(model)
+    chart(model, options)
   ])
 }
 
