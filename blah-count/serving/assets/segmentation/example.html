@@ -1,65 +1,49 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Segmentation</title>
-    <style>
-      .chart { height: 400px; width: 600px }
-      .line { fill: none; stroke-width: 2px }
-      .area { stroke: none; opacity: 0.2 }
-      .chart { position: relative }
-      .tooltip {
-        position: absolute;
-        pointer-events: none;
-        width: 120px;
-        background: #eee;
-        padding: 5px;
-        font-size: 12px;
-      }
-    </style>
-  </head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.css">
+<link rel="stylesheet" href="../../dist/css/count.css">
+<style>html {background: #fafafa}</style>
 
-  <body>
-    <div id="segmentation"></div>
+<div class="container" style="width: 990px; margin-top: 100px">
+  <div id="segmentation"></div>
+</div>
 
-    <script src="../../node_modules/xhr-mock/bundle.js"></script>
+<script src="../../node_modules/xhr-mock/bundle.js"></script>
 
-    <script>
-      var browserFamilyResponse = JSON.stringify([{
-        count: 10,
-        date: new Date('2017-04-01T11:00:00Z').toISOString(),
-        browserFamily: 'Chrome'
-      }])
-      var platformResponse = JSON.stringify([{
-        count: 20,
-        date: new Date('2017-04-01T10:00:00Z').toISOString(),
-        platform: 'Mobile'
-      }])
-      XhrMock.setup()
-      XhrMock.post('http://localhost:8080/count', function(req, res) {
-        var body = req.body().indexOf('user_agent.browser.family') > -1 ?
-          browserFamilyResponse : platformResponse
-        return res.status(200).body(body)
-      })
-    </script>
+<script>
+var browserFamilyResponse = JSON.stringify([{
+  count: 10,
+  date: new Date('2017-04-01T11:00:00Z').toISOString(),
+  browserFamily: 'Chrome'
+}])
 
-    <script src="../../dist/js/segmentation.js"></script>
+var platformResponse = JSON.stringify([{
+  count: 20,
+  date: new Date('2017-04-01T10:00:00Z').toISOString(),
+  platform: 'Mobile'
+}])
 
-    <script>
-      var events = {on: function() {}}
-      var elem = document.getElementById('segmentation')
-      var comp = new Segmentation(elem, events, {
-        baseUrl: 'http://localhost:8080',
-        collection: 'view',
-        title: 'Example',
-        groups: ['date.year', 'date.month', 'date.day', 'date.hour'],
-        groupBy: ['date.hour'],
-        from: new Date('2017-04-01T00:00:00Z'),
-        to: new Date('2017-04-01T12:00:00Z'),
-        segments: [
-          {filterBy:[]}
-        ]
-      })
-    </script>
-  </body>
-</html>
+XhrMock.setup()
+XhrMock.post('http://localhost:8080/count', function(req, res) {
+  var body = req.body().indexOf('user_agent.browser.family') > -1 ?
+    browserFamilyResponse : platformResponse
+  return res.status(200).body(body)
+})
+</script>
+
+<script src="../../dist/js/segmentation.js"></script>
+
+<script>
+var events = {on: function() {}}
+var elem = document.getElementById('segmentation')
+var comp = new Segmentation(elem, events, {
+  baseUrl: 'http://localhost:8080',
+  collection: 'view',
+  groups: ['date.year', 'date.month', 'date.day', 'date.hour'],
+  groupBy: ['date.hour'],
+  from: new Date('2017-04-01T00:00:00Z'),
+  to: new Date('2017-04-01T12:00:00Z'),
+  segments: [
+    {filterBy:[]}
+  ]
+})
+</script>

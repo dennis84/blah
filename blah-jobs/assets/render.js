@@ -8,7 +8,7 @@ function button(job, update, options) {
   }
 
   if(-1 !== job.status.indexOf('running')) {
-    return h('a.button.is-danger.is-medium', {
+    return h('a.button.is-dark.is-medium', {
       on: {
         click: function() {
           update(ctrl.stop, job.name, options)
@@ -17,7 +17,7 @@ function button(job, update, options) {
     }, 'Stop')
   }
 
-  return h('a.button.is-primary.is-medium', {
+  return h('a.button.is-danger.is-medium', {
     on: {
       click: function() {
         update(ctrl.run, job.name, options)
@@ -26,27 +26,21 @@ function button(job, update, options) {
   }, 'Run')
 }
 
-function jobs(xs, update, options) {
-  if(undefined === xs || 0 == xs.length) {
-    return h('div.is-empty')
-  }
-
-  return h('div.job-list', xs.map(function(job) {
-    var lastSuccess = job.lastSuccess
-    if(lastSuccess) lastSuccess = distanceInWordsToNow(lastSuccess)
-    return h('div.card.is-fullwidth', [
-      h('header.card-header', [
-        h('p.card-header-title', job.name),
-        h('p.last-success', h('i', 'Last success: ' + (lastSuccess || '-'))),
-        button(job, update, options)
-      ])
-    ])
-  }))
-}
-
 function render(model, update, options) {
+  var jobs = model.jobs || []
   return h('div.jobs', [
-    jobs(model.jobs, update, options)
+    h('h1.title.is-1.has-text-centered', 'Run your Chronos Jobs'),
+    h('div', jobs.map(function(job) {
+      var lastSuccess = job.lastSuccess
+      if(lastSuccess) lastSuccess = distanceInWordsToNow(lastSuccess)
+      return h('div.card.is-fullwidth', [
+        h('header.card-header', [
+          h('p.card-header-title', job.name),
+          h('p.last-success', h('i', 'Last success: ' + (lastSuccess || '-'))),
+          button(job, update, options)
+        ])
+      ])
+    }))
   ])
 }
 

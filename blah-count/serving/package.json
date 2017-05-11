@@ -11,13 +11,12 @@
     "xtend": "4.0"
   },
   "scripts": {
-    "build": "npm run build-count && npm run build-most-viewed && npm run build-sum && npm run build-segmentation",
+    "build": "npm run build-count && npm run build-most-viewed && npm run build-sum && npm run build-segmentation && npm run build-css",
+    "build-css": "stylus assets/index.styl --include-css -o dist/css/count.css",
     "build-count": "mkdir -p dist/js && browserify assets/count/index.js --standalone Count | uglifyjs --compress --mangle > dist/js/count.js",
     "build-most-viewed": "mkdir -p dist/js && browserify assets/most-viewed/index.js --standalone MostViewed | uglifyjs --compress --mangle > dist/js/most-viewed.js",
     "build-sum": "mkdir -p dist/js && browserify assets/sum/index.js --standalone Sum | uglifyjs --compress --mangle > dist/js/sum.js",
-    "build-segmentation": "npm run build-segmentation-js && npm run build-segmentation-css",
-    "build-segmentation-js": "mkdir -p dist/js && browserify assets/segmentation/index.js --standalone Segmentation | uglifyjs --compress --mangle > dist/js/segmentation.js",
-    "build-segmentation-css": "mkdir -p dist/css && cleancss -o dist/css/segmentation.css node_modules/pikaday/css/pikaday.css",
+    "build-segmentation": "mkdir -p dist/js && browserify assets/segmentation/index.js --standalone Segmentation | uglifyjs --compress --mangle > dist/js/segmentation.js",
     "build-xhr-mock": "browserify node_modules/xhr-mock/index.js --standalone XhrMock -o node_modules/xhr-mock/bundle.js"
   },
   "devDependencies": {

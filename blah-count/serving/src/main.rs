@@ -158,8 +158,9 @@ impl Service for CountService {
             (&Method::Post, "/sum") => self.sum(req),
             (&Method::Post, "/most-viewed") => self.get_most_viewed(req),
             (&Method::Get, _) if req.path().starts_with("/js") ||
-                                 req.path().starts_with("/css")
-                => Box::new(hyper_static::from_dir("dist", req)),
+                                 req.path().starts_with("/css") => {
+                Box::new(hyper_static::from_dir("dist", req))
+            },
             (&Method::Get, "/") => Self::health(),
             _ => Self::not_found(),
         }

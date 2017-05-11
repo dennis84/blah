@@ -1,59 +1,41 @@
-.button.is-link
-  background transparent
-  text-decoration none
-
-.field
-  .input,
-  .textarea,
-  .select select
-    box-shadow none
-    font-weight 300
-
-.material-icons.is-small
-  font-size 14px
-.material-icons.is-large
-  font-size 62px
-
 .dropdown
   .dropdown-menu
     position absolute
     display none
     min-width 200px
     margin-top 10px
-    background base3
+    background white
   .dropdown-item
     display block
     padding 10px
 
-@media screen and (max-width: tablet - 1px)
-  .nav .dropdown .dropdown-toggle
-    display none
-  .nav .dropdown .dropdown-menu
-    position relative
-    display block
-    margin-top 0
-    background base2
-
 .nav
-  background none
-  .nav-menu
-    background base2
+  background grey-background
   .nav-item
+    background grey-background
     text-transform uppercase
     border 0
   .nav-item:hover
-    background-color hsl(0, 0%, 96%)
+    background-color darken(grey-background, 2%)
   .divider
-    border-bottom 1px solid base1
+    border-bottom 1px solid darken(grey-background, 5%)
   .dropdown-menu
-    background base3
     padding-right 0
+  .dropdown-item
+    background none
 
-.list
-  .list-item
-    padding 10px
-    margin 0
-
-.card-header
-  .button
-    margin 5px
+  @media screen and (max-width: tablet - 1px)
+    .nav-menu
+      position absolute
+      display none
+      left 0
+      right 0
+      top 100%
+      box-shadow 20px 0 0 grey-background, -20px 0 0 grey-background
+    .dropdown .dropdown-toggle
+      display none
+    .dropdown .dropdown-menu
+      position relative
+      display block
+      margin-top 0
+      background grey-background

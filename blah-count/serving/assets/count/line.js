@@ -25,7 +25,7 @@ function chart(model, options) {
 }
 
 function render(model, update, options) {
-  return h('div.widget.widget-line', {
+  return h('div.count-line.box.widget', {
     class: options.class
   }, [
     h('h3', options.title),

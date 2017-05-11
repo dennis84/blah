@@ -7,13 +7,13 @@ function content(model, options) {
     String(model.sum.toFixed(2))
 
   return [h('div', [
-    h('div.widget-value', value),
-    h('div.widget-title', options.title)
+    h('div.value', value),
+    h('div.title', options.title)
   ])]
 }
 
 function render(model, update, options) {
-  return h('div.widget.widget-sum.is-centered-hv', {
+  return h('div.count-sum.box.widget', {
     class: options.class
   }, content(model, options))
 }

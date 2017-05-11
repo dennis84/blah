@@ -4,7 +4,13 @@
     "snabbdom": "^0.5.1",
     "xhr": "^2.2.2"
   },
+  "devDependencies": {
+    "xhr-mock": "1.7"
+  },
   "scripts": {
-    "build": "mkdir -p dist/js && browserify assets/index.js --standalone Referrer | uglifyjs --compress --mangle > dist/js/referrer.js"
+    "build": "npm run build-js && npm run build-css",
+    "build-js": "mkdir -p dist/js && browserify assets/index.js --standalone Referrer | uglifyjs --compress --mangle > dist/js/referrer.js",
+    "build-css": "mkdir -p dist/css && stylus assets/index.styl -o dist/css/referrer.css",
+    "build-xhr-mock": "browserify node_modules/xhr-mock/index.js --standalone XhrMock -o node_modules/xhr-mock/bundle.js"
   }
 }

@@ -7,7 +7,9 @@
     "xhr-mock": "1.7"
   },
   "scripts": {
-    "build": "mkdir -p dist/js && browserify assets/index.js --standalone CollectionCount | uglifyjs --compress --mangle > dist/js/collection.js",
+    "build": "npm run build-js && npm run build-css",
+    "build-js": "mkdir -p dist/js && browserify assets/index.js --standalone CollectionCount | uglifyjs --compress --mangle > dist/js/collection.js",
+    "build-css": "mkdir -p dist/css && stylus assets/index.styl -o dist/css/collection.css",
     "build-xhr-mock": "browserify node_modules/xhr-mock/index.js --standalone XhrMock -o node_modules/xhr-mock/bundle.js"
   }
 }

@@ -23,7 +23,7 @@
     "AUTOSCALE_CPU_PERCENT": "80",
     "HAPROXY_GROUP": "external",
     "HAPROXY_0_VHOST": "count.blah.local",
-    "HAPROXY_0_HTTP_FRONTEND_ACL": "  acl path_{backend} path_beg /count /js/count.js /sum /js/sum.js /most-viewed /js/most-viewed.js /segmentation /js/segmentation.js /css/segmentation.css \n  use_backend {backend} if path_{backend}\n"
+    "HAPROXY_0_HTTP_FRONTEND_ACL": "  acl path_{backend} path_beg /count /js/count.js /sum /js/sum.js /most-viewed /js/most-viewed.js /segmentation /js/segmentation.js /css/count.css \n  use_backend {backend} if path_{backend}\n"
   },
   "healthChecks": [{
     "protocol": "HTTP",

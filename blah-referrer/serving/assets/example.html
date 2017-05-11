@@ -1,30 +1,31 @@
 <!doctype html>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.css">
-<link rel="stylesheet" href="../dist/css/recommendation.css">
+<link rel="stylesheet" href="../dist/css/referrer.css">
 <style>html {background: #fafafa}</style>
 
 <div class="container" style="width: 320px; margin-top: 100px">
-  <div id="reco"></div>
+  <div id="referrer"></div>
 </div>
 
 <script src="../node_modules/xhr-mock/bundle.js"></script>
 
 <script>
 XhrMock.setup()
-XhrMock.post('http://localhost:8080/recommendations', function(req, res) {
+XhrMock.post('http://localhost:8080/referrers', function(req, res) {
   return res.status(200).body(JSON.stringify([
-    {item: 'foo', score: 0.9},
-    {item: 'bar', score: 0.8},
-    {item: 'baz', score: 0.7}
+    {url: 'foo.com', count: 9},
+    {url: 'bar.com', count: 8},
+    {url: 'baz.com', count: 7}
   ]))
 })
 </script>
 
-<script src="../dist/js/recommendation.js"></script>
+<script src="../dist/js/referrer.js"></script>
 
 <script>
-var elem = document.getElementById('reco')
-var comp = new Recommendation(elem, {
+var events = {on: function() {}}
+var elem = document.getElementById("referrer")
+var comp = new Referrer(elem, events, {
   baseUrl: 'http://localhost:8080'
 })
 </script>

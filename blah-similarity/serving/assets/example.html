@@ -1,6 +1,7 @@
 <!doctype html>
-
-<div id="similarity"></div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.css">
+<link rel="stylesheet" href="../dist/css/similarity.css">
+<style>html {background: #fafafa}</style>
 
 <script src="../node_modules/xhr-mock/bundle.js"></script>
 
@@ -16,6 +17,10 @@ XhrMock.post('http://localhost:8080/similarities', function(req, res) {
 </script>
 
 <script src="../dist/js/similarity.js"></script>
+
+<div class="container" style="width: 320px; margin-top: 100px">
+  <div id="similarity"></div>
+</div>
 
 <script>
 var elem = document.getElementById('similarity')

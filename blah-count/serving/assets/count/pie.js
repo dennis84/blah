@@ -17,9 +17,9 @@ function chart(model) {
   })
 
   return [
-    h('div.has-text-centered', data.map(function(d,i) {
+    h('div.has-text-centered', data.map(function(d, i) {
       var classAttrs = {}
-      classAttrs['is-colored-' + String.fromCharCode(i + 97)] = true
+      classAttrs['is-color-' + (i + 1)] = true
       return h('span.tag', {class: classAttrs}, d.key)
     })),
     h('div.chart', {
@@ -36,7 +36,7 @@ function chart(model) {
 }
 
 function render(model, update, options) {
-  return h('div.widget.widget-pie', {
+  return h('div.count-pie.box.widget', {
     class: options.class
   }, [
     h('h3', options.title)

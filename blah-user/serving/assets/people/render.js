@@ -4,8 +4,8 @@ var distanceInWordsToNow = require('date-fns/distance_in_words_to_now')
 var ctrl = require('./ctrl')
 
 function views(xs, update) {
-  if(undefined === xs || 0 == xs.length) return []
-  return [h('div.people-list', xs.map(function(user) {
+  var collections = []
+  return h('div.list', xs.map(function(user) {
     return h('div.card.is-fullwidth', [
       h('header.card-header', [
         h('p.card-header-title', user.user),
@@ -29,8 +29,13 @@ function views(xs, update) {
           ])
         ]),
         h('div.list', user.events.map(function(evt) {
+          var color = collections.indexOf(evt.collection) + 1
+          if(color === 0) {
+            color = collections.push(evt.collection)
+          }
+
           var classAttrs = {}
-          classAttrs['is-collection-' + evt.collection] = true
+          classAttrs['is-color-' + color] = true
           return h('div.level.list-item', [
             h('div.level-left', [
               h('div.level-item', [h('span.tag', {
@@ -43,11 +48,12 @@ function views(xs, update) {
         }))
       ]) : ''
     ])
-  }))]
+  }))
 }
 
 function render(model, update, options) {
-  return h('div.explore', [
+  return h('div.people', [
+    h('h1.title.is-1.has-text-centered', 'Explore People'),
     h('div.field', [
       h('p.control', [
         h('input.input.is-large', {
@@ -72,8 +78,9 @@ function render(model, update, options) {
           }
         })
       ])
-    ])
-  ].concat(views(model.users, update)))
+    ]),
+    views(model.users || [], update)
+  ])
 }
 
 module.exports = render

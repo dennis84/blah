@@ -1,39 +1,36 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Jobs</title>
-  </head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.css">
+<link rel="stylesheet" href="../dist/css/jobs.css">
+<style>html {background: #fafafa}</style>
 
-  <body>
-    <div id="jobs"></div>
+<div class="container" style="width: 650px; margin-top: 100px">
+  <div id="jobs"></div>
+</div>
 
-    <script src="../node_modules/xhr-mock/bundle.js"></script>
+<script src="../node_modules/xhr-mock/bundle.js"></script>
 
-    <script>
-      XhrMock.setup()
-      XhrMock.get('http://localhost:8080/jobs', function(req, res) {
-        return res.status(200).body(JSON.stringify([{
-          name: 'foo',
-          status: 'idle',
-          repeat: false,
-          lastSuccess: ''
-        }, {
-          name: 'bar',
-          status: 'idle',
-          repeat: false,
-          lastSuccess: (new Date).toISOString()
-        }]))
-      })
-    </script>
+<script>
+  XhrMock.setup()
+  XhrMock.get('http://localhost:8080/jobs', function(req, res) {
+    return res.status(200).body(JSON.stringify([{
+      name: 'foo',
+      status: 'idle',
+      repeat: false,
+      lastSuccess: ''
+    }, {
+      name: 'bar',
+      status: 'idle',
+      repeat: false,
+      lastSuccess: (new Date).toISOString()
+    }]))
+  })
+</script>
 
-    <script src="../dist/js/jobs.js"></script>
+<script src="../dist/js/jobs.js"></script>
 
-    <script>
-      var elem = document.getElementById('jobs')
-      var comp = new Jobs(elem, {
-        baseUrl: 'http://localhost:8080'
-      })
-    </script>
-  </body>
-</html>
+<script>
+  var elem = document.getElementById('jobs')
+  var comp = new Jobs(elem, {
+    baseUrl: 'http://localhost:8080'
+  })
+</script>

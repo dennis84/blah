@@ -1,45 +1,47 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>People</title>
-  </head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.css">
+<link rel="stylesheet" href="../../dist/css/user.css">
+<style>html {background: #fafafa}</style>
 
-  <body>
-    <div id="people"></div>
+<div class="container" style="width: 990px; margin-top: 100px">
+  <div id="people"></div>
+</div>
 
-    <script src="../../node_modules/xhr-mock/bundle.js"></script>
+<script src="../../node_modules/xhr-mock/bundle.js"></script>
 
-    <script>
-      XhrMock.setup()
-      XhrMock.post('http://localhost:8080/users', function(req, res) {
-        return res.status(200).body(JSON.stringify([{
-          user: 'foo',
-          date: (new Date).toISOString(),
-          email: 'foo@example.com',
-          events: [{
-            date: (new Date).toISOString(),
-            collection: 'view',
-            item: 'foo',
-            title: 'Foo'
-          }, {
-            date: '2017-01-01',
-            collection: 'view',
-            item: 'foo',
-            title: 'Foo'
-          }]
-        }]))
-      })
-    </script>
+<script>
+XhrMock.setup()
+XhrMock.post('http://localhost:8080/users', function(req, res) {
+  return res.status(200).body(JSON.stringify([{
+    user: 'foo',
+    date: (new Date).toISOString(),
+    email: 'foo@example.com',
+    events: [{
+      date: (new Date).toISOString(),
+      collection: 'foo',
+      item: 'foo',
+      title: 'Foo'
+    }, {
+      date: '2017-01-01',
+      collection: 'bar',
+      item: 'bar',
+      title: 'Bar'
+    }, {
+      date: '2017-01-01',
+      collection: 'baz',
+      item: 'baz',
+      title: 'Baz'
+    }]
+  }]))
+})
+</script>
 
-    <script src="../../dist/js/people.js"></script>
+<script src="../../dist/js/people.js"></script>
 
-    <script>
-      var events = {on: function() {}}
-      var elem = document.getElementById('people')
-      var comp = new People(elem, {
-        baseUrl: 'http://localhost:8080'
-      })
-    </script>
-  </body>
-</html>
+<script>
+var events = {on: function() {}}
+var elem = document.getElementById('people')
+var comp = new People(elem, {
+  baseUrl: 'http://localhost:8080'
+})
+</script>

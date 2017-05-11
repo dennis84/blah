@@ -1,0 +1,98 @@
+.user-count
+  padding 10px
+  border-radius 0
+  display flex
+  justify-content center
+  align-items center
+
+  .value
+    font-size 64px
+    font-weight 200
+
+  .title
+    font-size 16px
+    text-align center
+    margin 0
+    padding 0
+
+.user-bar
+  padding 10px
+  border-radius 0
+
+  h3
+    padding 10px
+    padding-bottom 20px
+    font-weight 200
+    font-size 32px
+    text-align center
+
+  .chart
+    width 100%
+    height 320px
+
+  .y-axis .tick line
+    fill none
+    stroke hsl(0, 0%, 86%)
+    stroke-width 1
+
+  .x-axis .tick line,
+  .x-axis .domain,
+  .y-axis .domain
+    fill none
+    stroke hsl(0, 0%, 29%)
+    stroke-width 1
+
+  .x-axis .tick text,
+  .y-axis .tick text
+    font-size 10px
+    fill hsl(0, 0%, 29%)
+
+  .bar
+    fill hsl(348, 100%, 61%)
+
+.people
+  .title.is-1
+    font-weight 100
+    font-size 48px
+    margin-top 100px
+    margin-bottom 100px
+
+  .list
+    margin-top 50px
+    .card-content
+      padding 10px
+      .media
+        margin-bottom 20px
+        .subtitle
+          margin-bottom 2px
+    .list-item
+      padding 5px 0
+      margin 0
+
+  colors = hsl(348, 100%, 61%),
+           hsl(14, 100%, 53%),
+           hsl(48, 100%, 67%),
+           hsl(141, 71%, 48%),
+           hsl(171, 100%, 41%),
+           hsl(217, 71%, 53%),
+           hsl(271, 100%, 71%)
+
+  for color, i in colors
+    .is-color-{i + 1}
+      background color
+      color: #fff
+
+.world-map 
+  .title.is-1
+    font-weight 100
+    font-size 48px
+    margin-top 100px
+    margin-bottom 100px
+
+  path, path:hover
+    stroke hsl(0, 0%, 98%) !important
+    fill hsl(0, 0%, 93%) !important
+
+  circle
+    stroke none !important
+    fill hsl(348, 100%, 61%)

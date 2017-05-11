@@ -10,7 +10,7 @@ var render = require('./render')
 
 function Funnel(node, events, options) {
   options.baseUrl = options.baseUrl || ''
-  var state = {}
+  var state = {activeTab: 'bar'}
   var vnode = render(state, update, options)
 
   function doUpdate(data) {

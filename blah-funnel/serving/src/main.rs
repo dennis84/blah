@@ -106,8 +106,10 @@ impl Service for FunnelService {
     fn call(&self, req: Self::Request) -> Self::Future {
         match (req.method(), req.path()) {
             (&Method::Post, "/funnels") => self.list(req),
-            (&Method::Get, _) if req.path().starts_with("/js")
-                => Box::new(hyper_static::from_dir("dist", req)),
+            (&Method::Get, _) if req.path().starts_with("/js") ||
+                                 req.path().starts_with("/css") => {
+                Box::new(hyper_static::from_dir("dist", req))
+            },
             (&Method::Get, "/") => Self::health(),
             _ => Self::not_found(),
         }

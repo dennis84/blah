@@ -22,7 +22,7 @@
     "AUTOSCALE_CPU_PERCENT": "80",
     "HAPROXY_GROUP": "external",
     "HAPROXY_0_VHOST": "jobs.blah.local",
-    "HAPROXY_0_HTTP_FRONTEND_ACL": "  acl path_{backend} path_beg /jobs /js/jobs.js\n  use_backend {backend} if path_{backend}\n"
+    "HAPROXY_0_HTTP_FRONTEND_ACL": "  acl path_{backend} path_beg /jobs /js/jobs.js /css/jobs.css\n  use_backend {backend} if path_{backend}\n"
   },
   "healthChecks": [{
     "protocol": "HTTP",

@@ -2,23 +2,11 @@ var h = require('snabbdom/h').default
 var debounce = require('debounce')
 var ctrl = require('./ctrl')
 
-function mkItems(xs) {
-  if(undefined === xs || 0 == xs.length) return []
-  return [h('div.list', xs.map(function(item) {
-    return h('div.list-item.level.is-bordered', [
-      h('div.level-left', [h('span', item.item)]),
-      h('div.level-right', [
-        h('span.is-pulled-right.tag.is-danger',
-          String(parseFloat(item.score).toFixed(2)))
-      ])
-    ])
-  }))]
-}
-
 function render(model, update, options) {
-  return h('div.widget.is-borderless.widget-recommendation', [
-    h('div.is-bordered', [
-      h('h3', 'Recommendations'),
+  var items = model.items || []
+  return h('div.recommendation.widget', [
+    h('div.box', [
+      h('h3.title', 'Find Recommended Items by User'),
       h('div.field', [
         h('p.control', [
           h('input.input.is-medium', {
@@ -39,7 +27,15 @@ function render(model, update, options) {
         ])
       ])
     ]),
-  ].concat(mkItems(model.items)))
+  ].concat(items.map(function(item) {
+    return h('div.box.level', [
+      h('div.level-left', h('span', item.item)),
+      h('div.level-right', [
+        h('span.is-pulled-right.tag.is-danger',
+          String(parseFloat(item.score).toFixed(2)))
+      ])
+    ])
+  })))
 }
 
 module.exports = render

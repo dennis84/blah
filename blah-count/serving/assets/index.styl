@@ -1,0 +1,151 @@
+.count-num
+  border-radius 0
+  display flex
+  justify-content center
+  align-items center
+
+  .value
+    font-size 64px
+    font-weight 200
+
+  .title
+    font-size 16px
+    text-align center
+    margin 0
+    padding 0
+
+.count-bar,
+.count-line
+  width 650px
+
+.count-bar,
+.count-line,
+.count-pie
+  border-radius 0
+
+.count-bar,
+.count-line,
+.count-pie,
+.segmentation
+  h3
+    padding 10px
+    padding-bottom 20px
+    font-weight 200
+    font-size 32px
+    text-align center
+
+  .chart
+    width 100%
+    height 320px
+
+  .y-axis .tick line
+    fill none
+    stroke hsl(0, 0%, 86%)
+    stroke-width 1
+
+  .x-axis .tick line,
+  .x-axis .domain,
+  .y-axis .domain
+    fill none
+    stroke hsl(0, 0%, 29%)
+    stroke-width 1
+
+  .x-axis .tick text,
+  .y-axis .tick text
+    font-size 10px
+    fill hsl(0, 0%, 29%)
+
+  .bar
+    fill hsl(348, 100%, 61%)
+
+  .line
+    stroke hsl(348, 100%, 61%)
+    stroke-width 3
+    fill none
+
+  .area
+    fill hsl(348, 100%, 61%)
+    opacity 0.2
+
+  .circle
+    fill hsl(348, 100%, 61%)
+
+  .arc text 
+    fill #fff
+    font-size 12px
+
+  .tag
+    margin 2px
+
+  colors = hsl(348, 100%, 61%),
+           hsl(14, 100%, 53%),
+           hsl(48, 100%, 67%),
+           hsl(141, 71%, 48%),
+           hsl(171, 100%, 41%),
+           hsl(217, 71%, 53%),
+           hsl(271, 100%, 71%)
+
+  for color, i in colors
+    .arc-{i + 1} path
+      fill color
+
+    .is-color-{i + 1}
+      font-weight 500
+      background color
+      color #fff
+
+    .segment-{i + 1}
+      .line
+        stroke color
+      .area
+        fill color
+      .circle
+        fill color
+
+.count-sum
+  border-radius 0
+  display flex
+  justify-content center
+  align-items center
+
+  .value
+    font-size 48px
+    font-weight 800
+
+  .title
+    font-size 16px
+    text-align center
+    margin 0
+    padding 0
+
+.most-viewed
+  .title
+    padding 10px
+    padding-bottom 20px
+    font-weight 200
+    font-size 32px
+    text-align center
+
+  .box
+    padding 10px
+    border-radius 0
+    margin-bottom 0
+
+@require "../node_modules/pikaday/css/pikaday.css"
+
+.segmentation
+  .title.is-1
+    font-weight 100
+    font-size 48px
+    margin-top 100px
+    margin-bottom 100px
+  .chart
+    position relative
+    height 500px
+  .card
+    margin-bottom 10px
+  .count-line
+    width 100%
+  .box
+    border-radius 0
+    padding 10px

@@ -107,7 +107,8 @@ impl Service for JobsService {
                 let name = req.path().split("/").nth(2).unwrap();
                 self.stop(name)
             },
-            (&Method::Get, _) if req.path().starts_with("/js") => {
+            (&Method::Get, _) if req.path().starts_with("/js") ||
+                                 req.path().starts_with("/css") => {
                 Box::new(hyper_static::from_dir("dist", req))
             },
             (&Method::Get, "/") => Self::health(),

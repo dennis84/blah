@@ -15,10 +15,9 @@ function render(node, data, options) {
     return a + b
   }) 
 
-  var color = scale.scaleOrdinal()
-    .range(Array.apply(null, {length: 26}).map(function(x,i) {
-      return String.fromCharCode(97 + i)
-    }))
+  var color = scale.scaleLinear()
+    .domain([1, data.length])
+    .range([1, data.length])
 
   var arc = shape.arc()
     .outerRadius(radius)
@@ -39,8 +38,8 @@ function render(node, data, options) {
 
   var g = svg.selectAll('.arc').data(pie(data))
     .enter().append('g')
-      .attr('class', function(d) {
-        return 'arc arc-' + color(d.data.key)
+      .attr('class', function(d, i) {
+        return 'arc arc-' + color(i + 1)
       })
 
   g.append('path')

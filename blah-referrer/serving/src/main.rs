@@ -106,7 +106,8 @@ impl Service for ReferrerService {
     fn call(&self, req: Self::Request) -> Self::Future {
         match (req.method(), req.path()) {
             (&Method::Post, "/referrers") => self.list(req),
-            (&Method::Get, _) if req.path().starts_with("/js") => {
+            (&Method::Get, _) if req.path().starts_with("/js") ||
+                                 req.path().starts_with("/css") => {
                 Box::new(hyper_static::from_dir("dist", req))
             },
             (&Method::Get, "/") => Self::health(),

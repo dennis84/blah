@@ -1,56 +1,50 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>User</title>
-    <style>
-      .chart {
-        width: 500px;
-        height: 300px;
-      }
-    </style>
-  </head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.css">
+<link rel="stylesheet" href="../../dist/css/user.css">
+<style>html {background: #fafafa}</style>
 
-  <body>
-    <div id="count"></div>
-    <div id="bar"></div>
+<div class="container" style="width: 320px; margin-top: 100px">
+  <div id="count"></div>
+</div>
 
-    <script src="../../node_modules/xhr-mock/bundle.js"></script>
+<div class="container" style="width: 650px; margin-top: 10px">
+  <div id="bar"></div>
+</div>
 
-    <script>
-      XhrMock.setup()
-      XhrMock.post('http://localhost:8080/user-count', function(req, res) {
-        return res.status(200).body(JSON.stringify({count: 10}))
-      })
+<script src="../../node_modules/xhr-mock/bundle.js"></script>
 
-      XhrMock.post('http://localhost:8081/user-count', function(req, res) {
-        return res.status(200).body(JSON.stringify([{
-          count: 10,
-          country: 'Germany'
-        }, {
-          count: 2,
-          country: 'United States'
-        }]))
-      })
-    </script>
+<script>
+XhrMock.setup()
+XhrMock.post('http://localhost:8080/user-count', function(req, res) {
+  return res.status(200).body(JSON.stringify({count: 10}))
+})
 
-    <script src="../../dist/js/user.js"></script>
+XhrMock.post('http://localhost:8081/user-count', function(req, res) {
+  return res.status(200).body(JSON.stringify([{
+    count: 10,
+    country: 'Germany'
+  }, {
+    count: 2,
+    country: 'United States'
+  }]))
+})
+</script>
 
-    <script>
-      var events = {on: function() {}}
-      var elem = document.getElementById('count')
-      var comp = new User.Count(elem, events, {
-        baseUrl: 'http://localhost:8080',
-        title: 'Count'
-      })
+<script src="../../dist/js/user.js"></script>
 
-      var elem2 = document.getElementById('bar')
-      var comp = new User.Bar(elem2, events, {
-        baseUrl: 'http://localhost:8081',
-        title: 'Bar Chart',
-        groupBy: ['country'],
-        class: {'example': true}
-      })
-    </script>
-  </body>
-</html>
+<script>
+var events = {on: function() {}}
+var elem = document.getElementById('count')
+var comp = new User.Count(elem, events, {
+  baseUrl: 'http://localhost:8080',
+  title: 'Count'
+})
+
+var elem2 = document.getElementById('bar')
+var comp = new User.Bar(elem2, events, {
+  baseUrl: 'http://localhost:8081',
+  title: 'Bar Chart',
+  groupBy: ['country'],
+  class: {'example': true}
+})
+</script>

@@ -42,10 +42,9 @@ function render(node, data) {
       return c.id
     }))
 
-  var color = scale.scaleOrdinal()
-    .range(Array.apply(null, {length: 26}).map(function(x, i) {
-      return String.fromCharCode(97 + i)
-    }))
+  var color = scale.scaleLinear()
+    .domain([1, data.length])
+    .range([1, data.length])
 
   var xAxis = axis.axisBottom(x)
     .ticks(24)
@@ -96,8 +95,8 @@ function render(node, data) {
   var segment = graph.selectAll('.segment')
     .data(segments)
     .enter().append('g')
-      .attr('class', function(d) {
-        return 'segment segment-' + color(d.id)
+      .attr('class', function(d, i) {
+        return 'segment segment-' + color(i + 1)
       })
 
   segment.append('path')

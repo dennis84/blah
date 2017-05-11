@@ -24,13 +24,11 @@ function Chart(node, initial) {
     .domain([0, maxY])
     .range([height, 0])
 
-  var area = shape.area()
-    .curve(shape.curveMonotoneX)
+  var line = shape.line()
     .x(function(d) {
       return x(d.key)
     })
-    .y0(height)
-    .y1(function(d) {
+    .y(function(d) {
       return y(d.value)
     })
 
@@ -49,20 +47,20 @@ function Chart(node, initial) {
     .append('g')
       .attr('transform', 'translate(' + margin[3] + ',' + margin[0] + ')')
 
-  var xAxisSvg = svg.append('g')
-    .attr('class', 'x-axis')
-    .attr('transform', 'translate(0,' + height + ')')
-    .call(xAxis)
-
   var yAxisSvg = svg.append('g')
     .attr('class', 'y-axis')
     .attr('transform', 'translate(0,0)')
     .call(yAxis)
 
-  var areaSvg = svg.append('path')
+  var xAxisSvg = svg.append('g')
+    .attr('class', 'x-axis')
+    .attr('transform', 'translate(0,' + height + ')')
+    .call(xAxis)
+
+  var lineSvg = svg.append('path')
     .datum(data)
-    .attr('class', 'area')
-    .attr('d', area)
+    .attr('class', 'line')
+    .attr('d', line)
 
   function tick() {
     now = Date.now()
@@ -74,8 +72,8 @@ function Chart(node, initial) {
       hasNewData = false
     }
 
-    areaSvg
-      .attr('d', area)
+    lineSvg
+      .attr('d', line)
       .transition()
       .duration(1000)
       .ease(ease.easeLinear)
@@ -83,9 +81,6 @@ function Chart(node, initial) {
       .on('end', tick)
 
     xAxisSvg
-      .transition()
-      .duration(1000)
-      .ease(ease.easeLinear)
       .call(xAxis)
 
     yAxisSvg

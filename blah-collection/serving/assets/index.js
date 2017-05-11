@@ -4,8 +4,7 @@ var RealtimeChart = require('./chart')
 function CollectionCount(node, events, options) {
   options.baseUrl = options.baseUrl || ''
   var widget = document.createElement('div')
-  widget.classList.add('widget')
-  widget.classList.add('widget-collection-count')
+  widget.classList.add('widget', 'collection', 'box')
 
   if(options.class) {
     for (var name in options.class) {
@@ -16,6 +15,7 @@ function CollectionCount(node, events, options) {
   }
 
   var h3 = document.createElement('h3')
+  h3.classList.add('title')
   h3.appendChild(document.createTextNode(options.title))
 
   var chartElem = document.createElement('div')

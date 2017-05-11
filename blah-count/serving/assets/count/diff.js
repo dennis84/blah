@@ -18,7 +18,7 @@ function diff(value, percentage) {
     value = plusMinus + Math.abs(value)
   }
 
-  return h('div.widget-value', value)
+  return h('div.value', value)
 }
 
 function content(model, options) {
@@ -26,13 +26,13 @@ function content(model, options) {
     class: {'has-progress-bar': options.progressBar}
   }, (undefined === model.diff || !Number.isFinite(model.diff)) ? [noData()] : [
     diff(model.diff, options.percentage),
-    h('div.widget-title', options.title),
+    h('div.title', options.title),
     (options.percentage && options.progressBar) ? progressBar(model.diff) : ''
   ])
 }
 
 function render(model, update, options) {
-  return h('div.widget.widget-diff.is-centered-hv', {
+  return h('div.count-diff.widget', {
     class: options.class
   }, [content(model, options)])
 }

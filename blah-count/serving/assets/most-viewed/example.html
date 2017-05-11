@@ -4,25 +4,28 @@
 <style>html {background: #fafafa}</style>
 
 <div class="container" style="width: 320px; margin-top: 100px">
-  <div id="sum"></div>
+  <div id="most-viewed"></div>
 </div>
 
 <script src="../../node_modules/xhr-mock/bundle.js"></script>
 
 <script>
 XhrMock.setup()
-XhrMock.post('http://localhost:8080/sum', function(req, res) {
-  return res.status(200).body('{"sum": 42.0}')
+XhrMock.post('http://localhost:8080/most-viewed', function(req, res) {
+  return res.status(200).body(JSON.stringify([
+    {item: 'foo', count: 8},
+    {item: 'bar', count: 6},
+    {item: 'baz', count: 4}
+  ]))
 })
 </script>
 
-<script src="../../dist/js/sum.js"></script>
+<script src="../../dist/js/most-viewed.js"></script>
 
 <script>
 var events = {on: function() {}}
-var elem = document.getElementById('sum')
-var comp = new Sum(elem, events, {
-  baseUrl: 'http://localhost:8080',
-  title: 'Example'
+var elem = document.getElementById('most-viewed')
+var comp = new MostViewed(elem, events, {
+  baseUrl: 'http://localhost:8080'
 })
 </script>

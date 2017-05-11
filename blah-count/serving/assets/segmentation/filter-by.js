@@ -66,7 +66,7 @@ function mkFilterRow(segment, filter, index, update) {
       ]),
       h('div.field.is-grouped.is-narrow', [
         h('p.control.is-expanded', [
-          h('a.button.is-link.is-medium', {
+          h('a.button.is-danger.is-outlined.is-medium', {
             on: {click: function() {
               update(ctrl.removeSegmentFilter, segment, index)
             }}

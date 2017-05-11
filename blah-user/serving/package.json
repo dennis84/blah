@@ -12,7 +12,8 @@
     "xhr-mock": "1.8"
   },
   "scripts": {
-    "build": "npm run build-user && npm run build-people && npm run build-worldmap",
+    "build": "npm run build-css && npm run build-user && npm run build-people && npm run build-worldmap",
+    "build-css": "mkdir -p dist/css && stylus assets/index.styl -o dist/css/user.css",
     "build-user": "mkdir -p dist/js && browserify assets/user/index.js --standalone User | uglifyjs --compress --mangle > dist/js/user.js",
     "build-people": "mkdir -p dist/js && browserify assets/people/index.js --standalone People | uglifyjs --compress --mangle > dist/js/people.js",
     "build-worldmap": "mkdir -p dist/js && browserify assets/worldmap/index.js --standalone WorldMap | uglifyjs --compress --mangle > dist/js/worldmap.js",

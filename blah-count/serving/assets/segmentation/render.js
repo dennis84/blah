@@ -46,6 +46,7 @@ function render(model, update) {
   }
 
   return h('div.segmentation', [
+    h('h1.title.is-1.has-text-centered', 'Segmentation'),
     h('div.card.is-fullwidth', [
       h('div.card-content', [
         h('div.content', dateFilters)
@@ -89,12 +90,9 @@ function render(model, update) {
         }, 'Add segment')
       ])
     ]),
-    h('div.widget.widget-line', {
+    h('div.box', {
       class: model.class
-    }, [
-      h('h3', model.title),
-      chart(model)
-    ])
+    }, chart(model))
   ])
 }
 

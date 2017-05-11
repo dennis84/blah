@@ -9,10 +9,8 @@ var addHours = require('date-fns/add_hours')
 function render(model, update, events, storage) {
   return container(model, [
     nav(model, update, storage),
-    h('h1.has-text-centered', 'Segmentation'),
     (model.error) ? error.unknown() : component(window.Segmentation, {}, events, {
       collection: 'view',
-      class: {'size-3of3': true, 'segmentation': true},
       groups: ['date.year', 'date.month', 'date.day', 'date.hour'],
       groupBy: ['date.hour'],
       from: subDays(Date.now(), 1).toISOString(),

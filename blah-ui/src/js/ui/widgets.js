@@ -34,7 +34,7 @@ function pageviews(events) {
     }],
     groupBy: ['date.hour'],
     title: 'Page Views in the last 24 hours',
-    class: {'size-2of3': true}
+    class: {'is-2': true}
   })
 }
 
@@ -215,7 +215,6 @@ function mostViewed(events) {
  */
 function referringSites(events) {
   return component(window.Referrer, {}, events, {
-    title: 'Referring Sites',
     limit: 10
   })
 }
@@ -226,8 +225,8 @@ function referringSites(events) {
 function collectionCount(events) {
   return component(window.CollectionCount, {}, events, {
     collection: 'view',
-    title: 'Collection Count',
-    class: {'size-2of3': true}
+    title: 'Number of "view" Events',
+    class: {'is-2': true}
   })
 }
 

@@ -2,16 +2,25 @@ var d3 = require('d3')
 var Datamap = require('datamaps')
 
 function WorldMap(node, events) {
+  var h1 = document.createElement('h1')
+  h1.classList.add('title', 'is-1', 'has-text-centered')
+  h1.appendChild(document.createTextNode('World Map'))
+  node.appendChild(h1)
+
+  var container = document.createElement('div')
+  node.appendChild(container)
+
+  node.classList.add('world-map')
   var map = null
 
   setTimeout(function draw() {
     var ratio = 750 / 500
-    var width = node.offsetWidth
+    var width = container.offsetWidth
     var height = width / ratio
-    node.innerHTML = ''
+    container.innerHTML = ''
 
     map = new Datamap({
-      element: node,
+      element: container,
       projection: 'mercator',
       width: width,
       height: height,

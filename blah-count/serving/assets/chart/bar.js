@@ -37,6 +37,10 @@ function render(node, data) {
       .attr('transform', 'translate(' + margin[3] + ',' + margin[0] + ')')
 
   svg.append('g')
+    .attr('class', 'y-axis')
+    .call(yAxis)
+
+  svg.append('g')
     .attr('class', 'x-axis')
     .attr('transform', 'translate(0,' + height + ')')
     .call(xAxis)
@@ -45,10 +49,6 @@ function render(node, data) {
       .attr('dx', '-10px')
       .attr('dy', '-6px')
       .attr('transform', 'rotate(-90)')
-
-  svg.append('g')
-    .attr('class', 'y-axis')
-    .call(yAxis)
 
   svg.selectAll('.bar').data(data)
     .enter().append('rect')

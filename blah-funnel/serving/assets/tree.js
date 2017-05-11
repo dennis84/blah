@@ -1,4 +1,3 @@
-var h = require('snabbdom/h').default
 var hierarchy = require('d3-hierarchy')
 var selection = require('d3-selection')
 
@@ -52,12 +51,12 @@ function chart(node, data) {
     })
 
   node.append('circle')
-    .attr('r', 10)
+    .attr('r', 12)
 
   node.append('text')
     .attr('dy', '.35em')
     .attr('y', function(d) {
-      return d.children ? -20 : 20
+      return d.children ? -25 : 25
     })
     .style('text-anchor', 'middle')
     .text(function(d) {
@@ -65,18 +64,4 @@ function chart(node, data) {
     })
 }
 
-function flowchart(model) {
-  if(!model.items || 0 === model.items.length) {
-    return h('div.is-empty')
-  }
-
-  return h('div.flowchart', {
-    hook: {
-      insert: function(vnode) {
-        chart(vnode.elm, model.items)
-      }
-    }
-  })
-}
-
-module.exports = flowchart
+module.exports = chart

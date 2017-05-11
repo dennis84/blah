@@ -1,25 +1,21 @@
 var h = require('snabbdom/h')
 
-function mkReferrers(xs) {
-  if(undefined === xs || 0 == xs.length) return []
-  return h('div.list.referrers', xs.map(function(referrer) {
-    return h('div.list-item.level.is-bordered', [
+function render(model) {
+  var referrers = model.referrers || []
+  return h('div.referrer.widget', [
+    h('div.box', [
+      h('h3.title', 'Referring Sites')
+    ]),
+  ].concat(referrers.map(function(referrer) {
+    return h('div.box.level', [
       h('div.level-left', [
         h('span', referrer.url)
       ]),
       h('div.level-right', [
-        h('span.tag.is-primary', String(referrer.count))
+        h('span.tag.is-danger', String(referrer.count))
       ])
     ])
-  }))
-}
-
-function render(model, update, options) {
-  return h('div.widget.is-borderless.widget-referrer-list', {
-    class: options.class
-  }, [
-    h('div.is-bordered', [h('h3', options.title)]),
-  ].concat(mkReferrers(model.referrers, update)))
+  })))
 }
 
 module.exports = render

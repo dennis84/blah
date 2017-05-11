@@ -1,78 +1,58 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Funnel</title>
-    <style>
-      .chart,
-      .flowchart {
-        width: 500px;
-        height: 300px;
-      }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.css">
+<link rel="stylesheet" href="../dist/css/funnel.css">
+<style>html {background: #fafafa}</style>
 
-      .node circle {
-        fill: #fff;
-        stroke: steelblue;
-        stroke-width: 3px;
-      }
+<div class="container" style="width: 650px; margin-top: 100px">
+  <div id="funnel"></div>
+</div>
 
-      .node text {
-        font: 12px sans-serif;
-      }
+<script src="../node_modules/xhr-mock/bundle.js"></script>
 
-      .node--internal text {
-        text-shadow: 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff;
-      }
+<script>
+XhrMock.setup()
+XhrMock.post('http://localhost:8080/funnels', function(req, res) {
+  return res.status(200).body(JSON.stringify([{
+    name: 'signup',
+    item: 'landingpage',
+    count: 12
+  }, {
+    name: 'signup',
+    item: 'pricing',
+    parent: 'landingpage',
+    count: 2
+  }, {
+    name: 'signup',
+    item: 'signup',
+    parent: 'landingpage',
+    count: 8
+  }, {
+    name: 'signup',
+    item: 'dashboard',
+    parent: 'signup',
+    count: 5
+  }, {
+    name: 'signup',
+    item: 'terms',
+    parent: 'signup',
+    count: 2
+  }, {
+    name: 'signup',
+    item: 'pricing',
+    parent: 'signup',
+    count: 1
+  }]))
+})
+</script>
 
-      .link {
-        fill: none;
-        stroke: #ccc;
-        stroke-width: 2px;
-      }
-    </style>
-  </head>
+<script src="../dist/js/funnel.js"></script>
 
-  <body>
-    <div id="funnel"></div>
-
-    <script src="../node_modules/xhr-mock/bundle.js"></script>
-
-    <script>
-      XhrMock.setup()
-      XhrMock.post('http://localhost:8080/funnels', function(req, res) {
-        return res.status(200).body(JSON.stringify([{
-          name: 'signup',
-          item: 'landingpage',
-          count: 10
-        }, {
-          name: 'signup',
-          item: 'signup',
-          parent: 'landingpage',
-          count: 8
-        }, {
-          name: 'signup',
-          item: 'dashboard',
-          parent: 'signup',
-          count: 5
-        }, {
-          name: 'signup',
-          item: 'terms',
-          parent: 'signup',
-          count: 2
-        }]))
-      })
-    </script>
-
-    <script src="../dist/js/funnel.js"></script>
-
-    <script>
-      var events = {on: function() {}}
-      var elem = document.getElementById('funnel')
-      var comp = new Funnel(elem, events, {
-        baseUrl: 'http://localhost:8080',
-        name: 'signup',
-        steps: ['landingpage', 'signup', 'dashboard']
-      })
-    </script>
-  </body>
-</html>
+<script>
+var events = {on: function() {}}
+var elem = document.getElementById('funnel')
+var comp = new Funnel(elem, events, {
+  baseUrl: 'http://localhost:8080',
+  name: 'signup',
+  steps: ['landingpage', 'signup', 'dashboard']
+})
+</script>

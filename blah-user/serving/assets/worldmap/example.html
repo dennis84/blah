@@ -1,0 +1,17 @@
+<!doctype html>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.css">
+<link rel="stylesheet" href="../../dist/css/user.css">
+
+<div class="container" style="width: 900px; margin-top: 50px;">
+  <div id="worldmap"></div>
+</div>
+
+<script src="../../node_modules/xhr-mock/bundle.js"></script>
+
+<script src="../../dist/js/worldmap.js"></script>
+
+<script>
+var events = {on: function() {}}
+var elem = document.getElementById('worldmap')
+var comp = new WorldMap(elem, events)
+</script>
