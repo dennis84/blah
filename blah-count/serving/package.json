@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "npm run build-count && npm run build-most-viewed && npm run build-sum && npm run build-segmentation && npm run build-css",
-    "build-css": "stylus assets/index.styl --include-css -o dist/css/count.css",
+    "build-css": "mkdir -p dist/css && stylus assets/index.styl --include-css -o dist/css/count.css",
     "build-count": "mkdir -p dist/js && browserify assets/count/index.js --standalone Count | uglifyjs --compress --mangle > dist/js/count.js",
     "build-most-viewed": "mkdir -p dist/js && browserify assets/most-viewed/index.js --standalone MostViewed | uglifyjs --compress --mangle > dist/js/most-viewed.js",
     "build-sum": "mkdir -p dist/js && browserify assets/sum/index.js --standalone Sum | uglifyjs --compress --mangle > dist/js/sum.js",

@@ -113,43 +113,6 @@ function platformStats(events) {
 }
 
 /**
- * Count Diff: Page View Difference Between Yesterday and Today
- */
-function pageviewDiff(events) {
-  var from = endOfHour(subDays(Date.now(), 1))
-  var to = endOfHour(Date.now())
-  var title = 'Difference between ' + from + ' and Today ' + to
-
-  return component(window.Count.Diff, {}, events, {
-    collection: 'view',
-    percentage: true,
-    from: {
-      filterBy: [{
-        prop: 'date.from',
-        operator: 'gte',
-        value: startOfDay(subDays(Date.now(), 1)).toISOString()
-      }, {
-        prop: 'date.to',
-        operator: 'lte',
-        value: endOfHour(subDays(Date.now(), 1)).toISOString()
-      }]
-    },
-    to: {
-      filterBy: [{
-        prop: 'date.from',
-        operator: 'gte',
-        value: startOfDay(Date.now()).toISOString()
-      }, {
-        prop: 'date.to',
-        operator: 'lte',
-        value: endOfHour(Date.now()).toISOString()
-      }]
-    },
-    title: title
-  })
-}
-
-/**
  * Pie Chart: Mobile Operating Statistics
  */
 function mobileOsStats(events) {
@@ -239,7 +202,6 @@ module.exports = {
   countAll: countAll,
   countOne: countOne,
   platformStats: platformStats,
-  pageviewDiff: pageviewDiff,
   mobileOsStats: mobileOsStats,
   totalRevenue: totalRevenue,
   recommendationWidget: recommendationWidget,

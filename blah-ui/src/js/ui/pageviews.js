@@ -18,7 +18,6 @@ function render(model, update, events, storage) {
       widgets.countAll(events),
       widgets.countOne(events, 'item-1'),
       widgets.platformStats(events),
-      widgets.pageviewDiff(events),
       widgets.mobileOsStats(events)
     ])
   ])

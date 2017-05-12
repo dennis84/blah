@@ -49,5 +49,4 @@ module.exports = {
   Bar: Main.bind(null, require('./bar'), ctrl.grouped),
   Line: Main.bind(null, require('./line'), ctrl.grouped),
   Pie: Main.bind(null, require('./pie'), ctrl.grouped),
-  Diff: Main.bind(null, require('./diff'), ctrl.countDiff)
 }
