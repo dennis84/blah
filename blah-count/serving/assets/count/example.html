@@ -1,4 +1,5 @@
 <!doctype html>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.css">
 <link rel="stylesheet" href="../../dist/css/count.css">
 <style>html {background: #fafafa}</style>
@@ -22,9 +23,10 @@
 <script src="../../node_modules/xhr-mock/bundle.js"></script>
 
 <script>
+var counter = 0
 XhrMock.setup()
 XhrMock.post('http://localhost:8080/count', function(req, res) {
-  return res.status(200).body(JSON.stringify({count: 10}))
+  return res.status(200).body(JSON.stringify({count: 8 + counter++}))
 })
 
 XhrMock.post('http://localhost:8081/count', function(req, res) {
@@ -53,7 +55,24 @@ var events = {on: function() {}}
 var elem = document.getElementById('num')
 var comp = new Count.Num(elem, events, {
   baseUrl: 'http://localhost:8080',
-  title: 'Count'
+  title: 'Count',
+  filterBy: [{
+    prop: 'date.from',
+    operator: 'gte',
+    value: '2017-03-20T06:00:00Z'
+  }],
+  prevs: [{
+    title: 'Previous Day',
+    filterBy: [{
+      prop: 'date.from',
+      operator: 'gte',
+      value: '2017-03-19T06:00:00Z'
+    }, {
+      prop: 'date.from',
+      operator: 'lte',
+      value: '2017-03-20T06:00:00Z'
+    }]
+  }]
 })
 
 var elem = document.getElementById('bar')

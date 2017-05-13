@@ -1,80 +1,42 @@
 var clone = require('clone')
 var xhr = require('xhr')
 
-/**
- * Fetch views from serving layer.
- *
- * `options.filterBy` An array of filters.
- * `options.groupBy` Group by properties e.g. `user_agent.browser.family`
- *
- * @param {Object} The widget state
- * @param {Object} Query options
- *
- * @return {Promise} The model wrapped in a promise
- */
 function count(model, options) {
-  return post(options.baseUrl + '/count', mkQuery(options))
+  var promises = []
+
+  function prevRequest(prev) {
+    return post(options.baseUrl + '/count', mkQuery(prev))
+      .then(function(data) {
+        return {title: prev.title, count: data.count}
+      })
+  }
+
+  if(options.prevs) {
+    for(var i in options.prevs) {
+      var prev = options.prevs[i]
+      promises.push(prevRequest(prev))
+    }
+  }
+
+  promises.push(post(options.baseUrl + '/count', mkQuery(options))
     .then(function(data) {
+      return data.count
+    }))
+
+  return Promise.all(promises)
+    .then(function(values) {
       var m = clone(model)
-      m.count = data.count
+      m.prevs = []
+      m.count = values.pop()
+      for(var i in values) {
+        var value = values[i]
+        m.prevs.push({title: value.title, count: value.count})
+      }
+
       return m
     })
 }
 
-/**
- * Sends two count requests and returns a diff.
- *
- * `options.from`
- * `options.to`
- *
- * @param {Object} The widget state
- * @param {Object} Query options
- *
- * @return {Promise} The model wrapped in a promise
- */
-function countDiff(model, options) {
-  var fromQuery = mkQuery(options.from)
-  var toQuery = mkQuery(options.to)
-  fromQuery.collection = options.collection
-  toQuery.collection = options.collection
-
-  var from = post(options.baseUrl + '/count', fromQuery)
-    .then(function(data) {
-      return data.count
-    })
-
-  var to = post(options.baseUrl + '/count', toQuery)
-    .then(function(data) {
-      return data.count
-    })
-
-  return Promise.all([from, to]).then(function(values) {
-    var a = values[0]
-    var b = values[1]
-    var m = clone(model)
-    m.from = a
-    m.to = b
-    if(true === options.percentage) {
-      m.diff = b / a * 100
-    } else {
-      m.diff = a - b
-    }
-
-    return m
-  })
-}
-
-/**
- * Fetch grouped views from serving layer.
- *
- * `options.filterBy` An array of filters.
- * `options.groupBy` An array of groups.
- *
- * @param {Object} The widget state
- * @param {Object} Query options
- *
- * @return {Promise} The model wrapped in a promise
- */
 function grouped(model, options) {
   return post(options.baseUrl + '/count', mkQuery(options))
     .then(function(data) {
@@ -114,6 +76,5 @@ function mkQuery(options) {
 
 module.exports = {
   count: count,
-  countDiff: countDiff,
   grouped: grouped
 }
