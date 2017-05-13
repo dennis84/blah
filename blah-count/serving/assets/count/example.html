@@ -41,9 +41,9 @@ XhrMock.post('http://localhost:8081/count', function(req, res) {
 
 XhrMock.post('http://localhost:8082/count', function(req, res) {
   return res.status(200).body(JSON.stringify([
-    {date: '2017-03-20T08:00:00Z', count: 10, browserFamily: 'Chrome'},
-    {date: '2017-03-20T09:00:00Z', count: 12, browserFamily: 'Firefox'},
-    {date: '2017-03-20T10:00:00Z', count: 18, browserFamily: 'Safari'}
+    {date: '2017-03-20T08:00:00Z', count: 40, browserFamily: 'Chrome'},
+    {date: '2017-03-20T09:00:00Z', count: 30, browserFamily: 'Firefox'},
+    {date: '2017-03-20T10:00:00Z', count: 15, browserFamily: 'Safari'}
   ]))
 })
 </script>
