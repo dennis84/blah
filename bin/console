@@ -121,12 +121,6 @@ build_apps() {
   docker build -t blah/jobs .
   popd > /dev/null
 
-  pushd "$project_root/blah-ui" > /dev/null
-  npm install
-  npm run build
-  docker build -t blah/ui .
-  popd > /dev/null
-  
   pushd "$project_root/blah-events" > /dev/null
   docker build -t blah/events .
   popd > /dev/null
@@ -138,27 +132,26 @@ build_apps() {
   pushd "$project_root/blah-autoscale" > /dev/null
   docker build -t blah/autoscale .
   popd > /dev/null
+
+  pushd "$project_root/blah-ui" > /dev/null
+  npm install
+  npm run build
+  docker build --pull -t blah/ui .
+  popd > /dev/null
+  
 }
 
 build_images() {
-  docker build -t blah/elasticsearch docker/blah-elasticsearch/
-  docker build -t blah/kafka docker/blah-kafka/
-  docker build -t blah/spark-mesos docker/blah-spark-mesos/
-  docker build -t blah/zookeeper docker/blah-zookeeper/
-  docker build -t blah/java docker/blah-java/
-  docker build -t blah/mesos-master docker/blah-mesos-master
-  docker build -t blah/mesos-slave docker/blah-mesos-slave
-  docker build -t blah/rust docker/blah-rust/
-  docker build -t blah/kibana docker/blah-kibana/
+  docker build --pull -t blah/elasticsearch docker/blah-elasticsearch/
+  docker build --pull -t blah/kafka docker/blah-kafka/
+  docker build --pull -t blah/spark-mesos docker/blah-spark-mesos/
+  docker build --pull -t blah/zookeeper docker/blah-zookeeper/
+  docker build --pull -t blah/java docker/blah-java/
+  docker build --pull -t blah/mesos-master docker/blah-mesos-master
+  docker build --pull -t blah/mesos-slave docker/blah-mesos-slave
+  docker build --pull -t blah/rust docker/blah-rust/
+  docker build --pull -t blah/kibana docker/blah-kibana/
   docker build -t blah/logstash docker/blah-logstash/
-}
-
-pull_images() {
-  docker pull mesosphere/mesos-master:1.0.1-2.0.93.ubuntu1404
-  docker pull mesosphere/mesos-slave:1.0.1-2.0.93.ubuntu1404
-  docker pull mesosphere/marathon:latest-dev
-  docker pull mesosphere/chronos
-  docker pull mesosphere/marathon-lb
 }
 
 create_sample_data() {
@@ -224,10 +217,6 @@ main() {
     build-all)
       build_images
       build_apps
-      pull_images
-      ;;
-    pull-images)
-      pull_images
       ;;
     create-apps)
       create_apps
@@ -270,7 +259,6 @@ main() {
       echo "  build-apps                        Build application docker images"
       echo "  build-images                      Build docker images"
       echo "  build-all                         Build all"
-      echo "  pull-images                       Pre-pull docker-compose images"
       echo "  create-apps                       Create apps in marathon"
       echo "  create-app [marathon_file]        Create a single app"
       echo "  create-streaming-apps             Create streaming apps in marathon"

@@ -1,1 +1,1 @@
-FROM mesosphere/mesos-master:1.1.0-rc3
+FROM mesosphere/mesos-master:1.3.0-rc1

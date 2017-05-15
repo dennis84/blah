@@ -1,8 +1,6 @@
-FROM ubuntu:14.04
+FROM alpine:edge
 
-RUN apt-get update
-RUN apt-get install -y curl build-essential libssl-dev pkg-config
+RUN echo http:"//dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories 
 
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-
-ENV PATH "$PATH:/root/.cargo/bin"
+RUN apk upgrade --update && \
+    apk add --update bash cargo

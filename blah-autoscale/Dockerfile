@@ -1,5 +1,7 @@
 FROM blah/rust
 
+RUN apk add --update openssl-dev make perl
+
 RUN mkdir /app
 ADD . /app
 
