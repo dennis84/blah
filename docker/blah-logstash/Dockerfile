@@ -3,15 +3,15 @@ FROM blah/java
 RUN apk upgrade --update && \
     apk add --update bash wget
 
-RUN wget https://download.elastic.co/logstash/logstash/logstash-2.4.0.tar.gz
+RUN wget https://artifacts.elastic.co/downloads/logstash/logstash-5.4.0.tar.gz
 
-RUN tar -xvzf logstash-2.4.0.tar.gz
+RUN tar -xvzf logstash-5.4.0.tar.gz
 
 RUN mkdir /opt
 
-RUN mv logstash-2.4.0 /opt/logstash
+RUN mv logstash-5.4.0 /opt/logstash
 
-RUN rm logstash-2.4.0.tar.gz
+RUN rm logstash-5.4.0.tar.gz
 
 ADD logstash.conf /logstash.conf
 
@@ -21,4 +21,4 @@ EXPOSE 5044
 
 ADD docker-entrypoint /docker-entrypoint
 
-ENTRYPOINT ["/docker-entrypoint", "-v", "-f", "/logstash.conf"]
+ENTRYPOINT ["/docker-entrypoint", "-f", "/logstash.conf"]

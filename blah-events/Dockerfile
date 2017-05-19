@@ -1,6 +1,6 @@
 FROM blah/rust
 
-RUN apt-get install -y python
+RUN apk add --update openssl-dev python g++ make
 
 RUN mkdir /app
 ADD . /app
