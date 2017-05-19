@@ -20,3 +20,5 @@ ADD filebeat.yml /filebeat.yml
 ADD docker-entrypoint /docker-entrypoint
 
 ENTRYPOINT ["/docker-entrypoint"]
+
+EXPOSE 5051

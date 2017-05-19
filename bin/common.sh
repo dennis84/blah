@@ -22,3 +22,12 @@ print_setenv() {
     *)      echo "export $1=$2;"; ;;
   esac
 }
+
+find_docker_ip() {
+  unamestr="$(uname)"
+  if [[ "$unamestr" == 'Darwin' ]]; then
+    ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1
+  else
+    ip addr show docker0 | grep 'inet ' | cut -d/ -f1 | awk '{print $2}'
+  fi
+}
