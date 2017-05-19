@@ -1,15 +1,14 @@
 var h = require('snabbdom/h').default
 var nav = require('./nav')
-var error = require('./error')
 var container = require('./container')
 var widgets = require('./widgets')
 var masonry = require('./masonry')
 
-function render(model, update, events, storage) {
+function render(model, update, events) {
   return container(model, [
-    nav(model, update, storage),
+    nav(model, update),
     h('h1.has-text-centered', 'User Stats'),
-    (model.error) ? error.unknown() : masonry({
+    masonry({
       class: {'widgets': true},
       itemSelector: '.widget'
     }, [

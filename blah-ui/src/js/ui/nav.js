@@ -1,24 +1,27 @@
 var h = require('snabbdom/h').default
 var ctrl = require('../ctrl')
 
-function toggle(sel, e) {
-  var elem = e.currentTarget
-  var display = elem.classList.contains('is-active') ? 'none' : 'block'
-  elem.classList.toggle('is-active')
-  var menus = elem.parentNode.querySelectorAll(sel);
-  [].forEach.call(menus, function(menu) {
-    menu.style.display = display
-  })
-}
+// function toggle(sel, e) {
+//   var elem = e.currentTarget
+//   var display = elem.classList.contains('is-active') ? 'none' : 'block'
+//   elem.classList.toggle('is-active')
+//   var menus = elem.parentNode.querySelectorAll(sel);
+//   [].forEach.call(menus, function(menu) {
+//     menu.style.display = display
+//   })
+// }
 
-function render(model, update, storage) {
+function render(model, update) {
   return h('nav.level.nav', [
     h('span.nav-toggle', {
-      on: {click: toggle.bind(null, '.nav-menu')}
+      class: {'is-active': model.isNavVisble},
+      on: {click: [update, ctrl.toggleNav]}
     }, [
       h('span'), h('span'), h('span')
     ]),
-    h('div.level-left.nav-menu', [
+    h('div.level-left.nav-menu', {
+      class: {'is-active': model.isNavVisble}
+    }, [
       h('a.nav-item', {props: {href: '#/pageviews'}}, 'Pageviews'),
       h('a.nav-item', {props: {href: '#/user'}}, 'User Stats'),
       h('a.nav-item', {props: {href: '#/misc'}}, 'Misc'),
@@ -29,15 +32,12 @@ function render(model, update, storage) {
       h('div.divider'),
       h('div.dropdown.control', [
         h('a.dropdown-toggle.nav-item', {
-          on: {click: toggle.bind(null, '.dropdown-menu')}
+          on: {click: [update, ctrl.toggleDropdown]}
         }, [h('i.material-icons', 'settings')]),
-        h('div.nav-menu.dropdown-menu', [
+        h('div.nav-menu.dropdown-menu', {
+          class: {'is-active': model.isDropdownVisble}
+        }, [
           h('a.nav-item.dropdown-item', {props: {href: '#/jobs'}}, 'Chronos Jobs'),
-          h('a.nav-item.dropdown-item', {
-            on: {click: function() {
-              update(ctrl.theme, storage)
-            }}
-          }, 'Toggle Theme')
         ])
       ])
     ])

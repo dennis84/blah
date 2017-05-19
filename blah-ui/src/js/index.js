@@ -5,9 +5,7 @@ var patch = snabbdom.init([
   require('snabbdom/modules/style').default,
   require('snabbdom/modules/eventlisteners').default
 ])
-var xtend = require('xtend')
 var listen = require('./events')
-var Storage = require('./storage')
 var ctrl = require('./ctrl')
 var pageviews = require('./ui/pageviews')
 var user = require('./ui/user')
@@ -19,14 +17,15 @@ var worldMap = require('./ui/world-map')
 var jobs = require('./ui/jobs')
 
 var events = listen()
-var storage = new Storage(window.localStorage)
+console.log('sdsd')
 
-var state = xtend({
+var state = {
   path: location.hash,
-  theme: 'light'
-}, storage.get('settings'))
+  isNavVisble: false,
+  isDropdownVisble: false,
+}
 
-var vnode = render(state, update, events, storage)
+var vnode = render(state, update, events)
 
 function update(fn) {
   var args = [].slice.call(arguments, 1)
@@ -34,7 +33,7 @@ function update(fn) {
     state = fn.apply(null, [state].concat(args))
   }
 
-  vnode = patch(vnode, render(state, update, events, storage))
+  vnode = patch(vnode, render(state, update, events))
 }
 
 function render() {
@@ -54,7 +53,7 @@ window.addEventListener('hashchange', function() {
 
   destroy(vnode)
   state = ctrl.path(state, location.hash)
-  vnode = patch(container, render(state, update, events, storage))
+  vnode = patch(container, render(state, update, events))
 
   document.body.innerHTML = ''
   document.body.appendChild(vnode.elm)

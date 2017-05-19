@@ -1,7 +1,5 @@
 var subYears = require('date-fns/sub_years')
 var subDays = require('date-fns/sub_days')
-var endOfHour = require('date-fns/end_of_hour')
-var startOfDay = require('date-fns/start_of_day')
 var component = require('./component')
 
 /**

@@ -5,6 +5,8 @@
     min-width 200px
     margin-top 10px
     background white
+  .dropdown-menu.is-active
+    display block
   .dropdown-item
     display block
     padding 10px
@@ -31,7 +33,8 @@
       left 0
       right 0
       top 100%
-      box-shadow 20px 0 0 grey-background, -20px 0 0 grey-background
+      &.is-active
+        display block
     .dropdown .dropdown-toggle
       display none
     .dropdown .dropdown-menu
