@@ -1,16 +1,6 @@
 var h = require('snabbdom/h').default
 var ctrl = require('../ctrl')
 
-// function toggle(sel, e) {
-//   var elem = e.currentTarget
-//   var display = elem.classList.contains('is-active') ? 'none' : 'block'
-//   elem.classList.toggle('is-active')
-//   var menus = elem.parentNode.querySelectorAll(sel);
-//   [].forEach.call(menus, function(menu) {
-//     menu.style.display = display
-//   })
-// }
-
 function render(model, update) {
   return h('nav.level.nav', [
     h('span.nav-toggle', {

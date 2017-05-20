@@ -12,7 +12,7 @@ function render(model, update, events) {
       class: {'widgets': true},
       itemSelector: '.widget'
     }, [
-      widgets.browserStats(update, events),
+      widgets.browserStats(events),
       widgets.pageviews(events),
       widgets.countAll(events),
       widgets.countOne(events, 'item-1'),

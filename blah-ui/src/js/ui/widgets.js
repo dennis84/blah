@@ -1,11 +1,9 @@
 var subYears = require('date-fns/sub_years')
 var subDays = require('date-fns/sub_days')
 var component = require('./component')
+var ctrl = require('../ctrl')
 
-/**
- * Pie Chart: Browser Statistics Over a Year
- */
-function browserStats(update, events) {
+function browserStats(events) {
   return component(window.Count.Pie, {}, events, {
     collection: 'view',
     filterBy: [{
@@ -15,13 +13,9 @@ function browserStats(update, events) {
     }],
     groupBy: ['date.year', 'user_agent.browser.family'],
     title: 'Browser Statistics Over a Year',
-    update: update
   })
 }
 
-/**
- * Bar Chart: Page Views in the last 24 hours
- */
 function pageviews(events) {
   return component(window.Count.Bar, {}, events, {
     collection: 'view',
@@ -36,9 +30,6 @@ function pageviews(events) {
   })
 }
 
-/**
- * Count: Number of Visitors Today
- */
 function visitorsToday(events) {
   return component(window.User.Count, {}, events, {
     filterBy: [{
@@ -50,9 +41,6 @@ function visitorsToday(events) {
   })
 }
 
-/**
- * Bar Chart: Visitors by Country
- */
 function visitorsByCountry(events) {
   return component(window.User.Bar, {}, events, {
     groupBy: ['country'],
@@ -60,18 +48,12 @@ function visitorsByCountry(events) {
   })
 }
 
-/**
- * Count: Unique Visitors
- */
 function uniqueVisitors(events) {
   return component(window.User.Count, {}, events, {
     title: 'Unique Visitors'
   })
 }
 
-/**
- * Count one
- */
 function countOne(events, item) {
   return component(window.Count.Num, {}, events, {
     collection: 'view',
@@ -84,9 +66,6 @@ function countOne(events, item) {
   })
 }
 
-/**
- * Count: All Page Views
- */
 function countAll(events) {
   return component(window.Count.Num, {}, events, {
     collection: 'view',
@@ -94,9 +73,6 @@ function countAll(events) {
   })
 }
 
-/**
- * Pie Chart: Platform Statistics
- */
 function platformStats(events) {
   return component(window.Count.Pie, {}, events, {
     collection: 'view',
@@ -110,9 +86,6 @@ function platformStats(events) {
   })
 }
 
-/**
- * Pie Chart: Mobile Operating Statistics
- */
 function mobileOsStats(events) {
   return component(window.Count.Pie, {}, events, {
     collection: 'view',
@@ -130,9 +103,6 @@ function mobileOsStats(events) {
   })
 }
 
-/**
- * Sum: Total Revenue
- */
 function totalRevenue(events) {
   return component(window.Sum, {}, events, {
     collection: 'buy',
@@ -142,27 +112,22 @@ function totalRevenue(events) {
   })
 }
 
-/**
- * Recommendations
- */
 function recommendationWidget(update) {
   return component(window.Recommendation, {}, {
-    update: update
+    on: {update: function() {
+      update(ctrl.noop)
+    }}
   })
 }
 
-/**
- * Simiarities
- */
 function similarityWidget(update) {
   return component(window.Similarity, {}, {
-    update: update
+    on: {update: function() {
+      update(ctrl.noop)
+    }}
   })
 }
 
-/**
- * Most viewed items
- */
 function mostViewed(events) {
   return component(window.MostViewed, {}, events, {
     title: 'Most Viewed Items',
@@ -171,18 +136,12 @@ function mostViewed(events) {
   })
 }
 
-/**
- * Referring Sites
- */
 function referringSites(events) {
   return component(window.Referrer, {}, events, {
     limit: 10
   })
 }
 
-/**
- * Collection Count
- */
 function collectionCount(events) {
   return component(window.CollectionCount, {}, events, {
     collection: 'view',

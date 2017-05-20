@@ -3,6 +3,7 @@
 #[macro_use] extern crate serde_derive;
 #[macro_use] extern crate mime;
 extern crate serde;
+extern crate getopts;
 extern crate logstash_format;
 extern crate futures;
 extern crate tokio_core;
@@ -22,6 +23,8 @@ use hyper::{header, StatusCode, Client, Method};
 use hyper::server::{Http, Service, Request, Response};
 
 use unicase::UniCase;
+
+use getopts::Options;
 
 use repo::{RecommendationQuery, RecommendationRepo};
 
@@ -118,9 +121,17 @@ fn main() {
         "app": "reco",
     })).init().unwrap();
 
+    let args: Vec<String> = env::args().collect();
+
+    let mut opts = Options::new();
+    opts.optopt("p", "port", "Set http port", "8080");
+
+    let matches = opts.parse(&args[1..]).unwrap();
+    let port = matches.opt_str("port").unwrap_or("8080".to_string());
+
     let mut core = Core::new().unwrap();
     let handle = core.handle();
-    let addr = "0.0.0.0:8080".parse().unwrap();
+    let addr = format!("0.0.0.0:{}", port).parse().unwrap();
     let listener = TcpListener::bind(&addr, &core.handle()).unwrap();
 
     let client = Client::new(&handle.clone());

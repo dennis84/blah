@@ -3,8 +3,14 @@ var clone = require('clone')
 var donut = require('../chart/donut')
 
 function chart(model) {
-  if(!model.groups || 0 === model.groups.length) return []
-  var data = model.groups.map(function(x) {
+  var groups = model.groups
+  var isEmpty = false
+  if(!groups || !groups.length) {
+    groups = [{count: 100}]
+    isEmpty = true
+  }
+
+  var data = groups.map(function(x) {
     var y = clone(x)
     delete y['count']
     delete y['date']
@@ -20,9 +26,11 @@ function chart(model) {
     h('div.has-text-centered', data.map(function(d, i) {
       var classAttrs = {}
       classAttrs['is-color-' + (i + 1)] = true
+      classAttrs['is-empty'] = isEmpty
       return h('span.tag', {class: classAttrs}, d.key)
     })),
     h('div.chart', {
+      class: {'is-empty': isEmpty},
       hook: {
         insert: function(vnode) {
           donut(vnode.elm, data)

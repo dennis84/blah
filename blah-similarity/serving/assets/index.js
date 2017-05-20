@@ -16,8 +16,8 @@ function Similarity(node, options) {
   function doUpdate(data) {
     state = data
     vnode = patch(vnode, render(data, update, options))
-    if(typeof options.update === 'function') {
-      options.update()
+    if(options.on && options.on.update) {
+      options.on.update()
     }
   }
 

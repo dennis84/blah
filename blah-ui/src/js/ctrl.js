@@ -13,8 +13,13 @@ function toggleDropdown(model) {
   return model
 }
 
+function noop(model) {
+  return model
+}
+
 module.exports = {
   path: path,
   toggleNav: toggleNav,
   toggleDropdown: toggleDropdown,
+  noop: noop,
 }

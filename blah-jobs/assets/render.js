@@ -8,7 +8,7 @@ function button(job, update, options) {
   }
 
   if(-1 !== job.status.indexOf('running')) {
-    return h('a.button.is-dark.is-medium', {
+    return h('a.button.is-medium', {
       on: {
         click: function() {
           update(ctrl.stop, job.name, options)

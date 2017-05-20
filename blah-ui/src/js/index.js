@@ -5,6 +5,7 @@ var patch = snabbdom.init([
   require('snabbdom/modules/style').default,
   require('snabbdom/modules/eventlisteners').default
 ])
+
 var listen = require('./events')
 var ctrl = require('./ctrl')
 var pageviews = require('./ui/pageviews')
@@ -15,9 +16,7 @@ var funnel = require('./ui/funnel')
 var segmentation = require('./ui/segmentation')
 var worldMap = require('./ui/world-map')
 var jobs = require('./ui/jobs')
-
 var events = listen()
-console.log('sdsd')
 
 var state = {
   path: location.hash,
@@ -26,26 +25,26 @@ var state = {
 }
 
 var vnode = render(state, update, events)
+var node = document.getElementById('container')
+patch(node, vnode)
 
 function update(fn) {
   var args = [].slice.call(arguments, 1)
-  if(typeof fn === 'function') {
-    state = fn.apply(null, [state].concat(args))
-  }
-
+  state = fn.apply(null, [state].concat(args))
   vnode = patch(vnode, render(state, update, events))
 }
 
 function render() {
-  if('#/pageviews' === state.path) return pageviews.apply(null, arguments)
-  else if('#/user' === state.path) return user.apply(null, arguments)
-  else if('#/misc' === state.path) return misc.apply(null, arguments)
-  else if('#/people' === state.path) return people.apply(null, arguments)
-  else if('#/funnel' === state.path) return funnel.apply(null, arguments)
-  else if('#/segmentation' === state.path) return segmentation.apply(null, arguments)
-  else if('#/world-map' === state.path) return worldMap.apply(null, arguments)
-  else if('#/jobs' === state.path) return jobs.apply(null, arguments)
-  else return pageviews.apply(null, arguments)
+  var fn = pageviews
+  if('#/pageviews' === state.path) fn = pageviews
+  else if('#/user' === state.path) fn = user
+  else if('#/misc' === state.path) fn = misc
+  else if('#/people' === state.path) fn = people
+  else if('#/funnel' === state.path) fn = funnel
+  else if('#/segmentation' === state.path) fn = segmentation
+  else if('#/world-map' === state.path) fn = worldMap
+  else if('#/jobs' === state.path) fn = jobs
+  return fn.apply(null, arguments)
 }
 
 window.addEventListener('hashchange', function() {
@@ -68,5 +67,3 @@ function destroy(node) {
     destroy(node.children[i])
   }
 }
-
-patch(document.getElementById('container'), vnode)

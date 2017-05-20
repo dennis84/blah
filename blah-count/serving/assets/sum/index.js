@@ -16,9 +16,6 @@ function Sum(node, events, options) {
   function doUpdate(data) {
     state = data
     vnode = patch(vnode, render(data, update, options))
-    if(typeof options.update === 'function') {
-      options.update()
-    }
   }
 
   function update(fn) {
