@@ -1,0 +1,19 @@
+{
+  "id": "collection-streaming",
+  "cpus": 0.1,
+  "mem": 128.0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "blah/collection-processing",
+      "network": "BRIDGE"
+    }
+  },
+  "args": ["streaming"],
+  "env": {
+    "KAFKA_URL": "$BLAH_HOST:9092",
+    "ELASTICSEARCH_URL": "http://$BLAH_HOST:9200",
+    "STREAMING_BATCH_INTERVAL": "5"
+  }
+}

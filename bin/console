@@ -155,11 +155,11 @@ build_images() {
 }
 
 create_sample_data() {
-  declare nb=${1:-1}
+  declare nb="${1:-1}" collection="${2:-"view"}"
   for i in $(eval echo "{1..$nb}"); do
     echo -ne "Processing $i/$nb\r"
     local user="$(rand_user)"
-    create_event "view" "$(printf '{
+    create_event "$collection" "$(printf '{
       "item":"%s",
       "title": "%s",
       "user": "%s",

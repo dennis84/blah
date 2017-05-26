@@ -1,0 +1,24 @@
+[package]
+name = "blah-collection-processing"
+version = "0.1.0"
+authors = ["Dennis Dietrich <dennis.dietrich@rewe-digital.com>"]
+
+[dependencies]
+log = "0.3"
+env_logger = "0.4"
+futures = "0.1"
+curl = "0.4"
+tokio-core = "0.1"
+rdkafka = "0.10"
+serde = "1.0"
+serde_json = "1.0"
+serde_derive = "1.0"
+tokio-curl = "0.1"
+tokio-timer = "0.1"
+postgres = { version = "0.14", features = ["with-chrono"] }
+r2d2 = "0.7.1"
+r2d2_postgres = "0.12.0"
+fallible-iterator = "0.1.3"
+chrono = { version = "0.3", features = ["serde"] }
+uuid = { version = "0.5", features = ["v5"] }
+logstash-format = { git = "https://github.com/dennis84/logstash-format.git" }

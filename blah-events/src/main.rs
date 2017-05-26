@@ -137,7 +137,6 @@ fn main() {
             })
             .for_each(|message| match message.payload_view::<str>() {
                 Some(Ok(s)) => {
-                    println!("{}", s);
                     let data = format!("data: {}\n\n", s);
                     let mut conns = connections.lock().unwrap();
 

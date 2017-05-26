@@ -1,0 +1,18 @@
+{
+  "schedule": "R/3000-01-01T00:00:00Z/PT100000H",
+  "name": "collection",
+  "cpus": "0.1",
+  "mem": "128",
+  "container": {
+    "type": "DOCKER",
+    "image": "blah/collection-processing",
+    "network": "BRIDGE"
+  },
+  "shell": false,
+  "command": "batch",
+  "environmentVariables": [
+    {"name": "KAFKA_URL", "value": "$BLAH_HOST:9092"},
+    {"name": "POSTGRES_URL", "value": "jdbc:postgresql://$BLAH_HOST:5432/postgres"},
+    {"name": "ELASTICSEARCH_URL", "value": "http://$BLAH_HOST:9200"}
+  ]
+}
