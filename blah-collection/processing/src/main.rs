@@ -24,7 +24,7 @@ use std::env;
 use chrono::{DateTime, UTC};
 
 use rdkafka::producer::FutureProducer;
-use rdkafka::config::ClientConfig;
+use rdkafka::config::{ClientConfig, TopicConfig};
 use rdkafka::client::EmptyContext;
 
 pub struct Application {
@@ -70,6 +70,9 @@ fn main() {
 
     let producer = ClientConfig::new()
         .set("bootstrap.servers", &kafka_url)
+        .set_default_topic_config(TopicConfig::new()
+            .set("produce.offset.report", "true")
+            .finalize())
         .create::<FutureProducer<_>>()
         .expect("Producer creation error");
 

@@ -101,7 +101,7 @@ pub fn start(app: &::Application) {
             let mut elastic_data = Vec::new();
 
             for (key, value) in map.iter_mut() {
-                kafka_data.push(serde_json::to_string(&value).unwrap());
+                kafka_data.push(serde_json::to_value(&value).unwrap());
                 elastic_data.push(serde_json::to_string(&json!({
                     "update": {
                         "_id": key.to_string(),

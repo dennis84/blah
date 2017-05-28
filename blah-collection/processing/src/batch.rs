@@ -99,10 +99,9 @@ pub fn start(app: &::Application) {
         Ok(())
     });
 
-    let kafka_handle = core.handle();
-    kafka_handle.spawn(kafka_fut);
+    let fut = elastic_fut.and_then(|_| kafka_fut);
 
-    match core.run(elastic_fut) {
+    match core.run(fut) {
         Ok(_) => info!("Batch process has been finished successfully."),
         Err(e) => error!("Batch process failed: {}", e),
     }

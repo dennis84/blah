@@ -12,7 +12,7 @@
   "command": "batch",
   "environmentVariables": [
     {"name": "KAFKA_URL", "value": "$BLAH_HOST:9092"},
-    {"name": "POSTGRES_URL", "value": "jdbc:postgresql://$BLAH_HOST:5432/postgres"},
+    {"name": "POSTGRES_URL", "value": "postgres://postgres@$BLAH_HOST"},
     {"name": "ELASTICSEARCH_URL", "value": "http://$BLAH_HOST:9200"}
   ]
 }

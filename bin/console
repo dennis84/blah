@@ -20,7 +20,7 @@ create_streaming_apps() {
   ! is_open "localhost" 8080 && exit 1
   create_app blah-count/algo/marathon.json
   create_app blah-user/algo/marathon.json
-  create_app blah-collection/algo/marathon.json
+  create_app blah-collection/processing/marathon.json
 }
 
 create_jobs() {
@@ -32,16 +32,11 @@ create_jobs() {
   create_job blah-funnel/algo/chronos-items.json
   create_job blah-funnel/algo/chronos-signup.json
   create_job blah-referrer/algo/chronos.json
-  create_job blah-collection/algo/chronos.json
+  create_job blah-collection/processing/chronos.json
 }
 
 build_apps() {
   local project_root="$(dirname "$0")/.."
-
-  pushd "$project_root/blah-collection/algo" > /dev/null
-  sbt assembly
-  sbt docker:publishLocal
-  popd > /dev/null
 
   pushd "$project_root/blah-count/algo" > /dev/null
   sbt assembly
@@ -84,7 +79,7 @@ build_apps() {
   npm run build
   docker build -t blah/collection .
   popd > /dev/null
-  
+
   pushd "$project_root/blah-funnel/serving" > /dev/null
   npm install
   npm run build
@@ -121,17 +116,10 @@ build_apps() {
   docker build -t blah/jobs .
   popd > /dev/null
 
-  pushd "$project_root/blah-events" > /dev/null
-  docker build -t blah/events .
-  popd > /dev/null
-
-  pushd "$project_root/blah-data" > /dev/null
-  docker build -t blah/data .
-  popd > /dev/null
-
-  pushd "$project_root/blah-autoscale" > /dev/null
-  docker build -t blah/autoscale .
-  popd > /dev/null
+  docker build -t blah/events "$project_root/blah-events"
+  docker build -t blah/data "$project_root/blah-data"
+  docker build -t blah/autoscale "$project_root/blah-autoscale"
+  docker build -t blah/collection-processing "$project_root/blah-collection/processing"
 
   pushd "$project_root/blah-ui" > /dev/null
   npm install
