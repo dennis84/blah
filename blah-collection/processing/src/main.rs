@@ -84,21 +84,18 @@ fn main() {
         producer: producer,
     };
 
-    match env::args().nth(1) {
-        Some(command) => match command.as_ref() {
-            "streaming" => {
-                info!("Start streaming ...");
-                streaming::start(&app);
-            },
-            "batch" => {
-                batch::start(&app);
-            },
-            value => {
-                error!("Error: No such command: {}", value);
-            },
+    let command = env::args().nth(1).unwrap_or("".to_string());
+
+    match command.as_ref() {
+        "streaming" => {
+            info!("Start streaming ...");
+            streaming::start(&app);
         },
-        None => {
-            error!("Error: No such command: ");
-        }
+        "batch" => {
+            batch::start(&app);
+        },
+        value => {
+            error!("Error: No such command: {}", value);
+        },
     }
 }
