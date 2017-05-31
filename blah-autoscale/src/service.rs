@@ -6,10 +6,10 @@ use futures::{self, Future, BoxFuture};
 
 use curl::easy::{Easy, List};
 
-use tokio_core::reactor::{Handle, Core};
+use tokio_core::reactor::Handle;
 use tokio_curl::{Session, PerformError};
 
-use serde_json::{self, from_value, from_str, Value};
+use serde_json::{from_value, from_str, Value};
 
 pub type Fut<T> = BoxFuture<T, PerformError>;
 
@@ -43,7 +43,8 @@ struct TaskStatistic {
 
 pub struct Service {
     handle: Handle,
-    host: String,
+    marathon_url: String,
+    mesos_url: String,
     max_mem_usage: f64,
     max_cpu_usage: f64,
     multiplier: f64,
@@ -51,13 +52,14 @@ pub struct Service {
 }
 
 impl Service {
-    pub fn new(handle: Handle, host: String,
+    pub fn new(handle: Handle, marathon_url: String, mesos_url: String,
                max_mem_usage: f64, max_cpu_usage: f64,
                multiplier: f64, max_instances: i64)
                -> Service {
         Service {
             handle: handle,
-            host: host,
+            marathon_url: marathon_url,
+            mesos_url: mesos_url,
             max_mem_usage: max_mem_usage,
             max_cpu_usage: max_cpu_usage,
             multiplier: multiplier,
@@ -66,7 +68,7 @@ impl Service {
     }
 
     pub fn get_apps(&mut self) -> Fut<Vec<String>> {
-        let url = format!("http://{}:8080/v2/apps", &self.host);
+        let url = format!("{}/v2/apps", &self.marathon_url);
         self.send_get(&url).map(|body| {
             let data = from_str::<Value>(&body).unwrap();
             let data = data["apps"].as_array().unwrap();
@@ -82,7 +84,7 @@ impl Service {
     }
 
     pub fn get_app(&mut self, app: &str) -> Fut<Option<App>> {
-        let url = format!("http://{}:8080/v2/apps/{}", &self.host, &app);
+        let url = format!("{}/v2/apps/{}", &self.marathon_url, &app);
         let app = app.to_string();
         let mut max_instances = self.max_instances.clone();
         let mut max_mem_usage = self.max_mem_usage.clone();
@@ -134,7 +136,7 @@ impl Service {
     }
 
     pub fn get_slaves(&mut self) -> Fut<HashMap<String, String>> {
-        let url = format!("http://{}:5050/master/slaves", &self.host);
+        let url = format!("{}/master/slaves", &self.mesos_url);
         self.send_get(&url).map(|body| {
             let data = from_str::<Value>(&body).unwrap();
             let data = data["slaves"].as_array().unwrap();
@@ -142,8 +144,10 @@ impl Service {
 
             for slave in data.iter() {
                 let id = slave["id"].as_str().unwrap();
-                let pid = slave["pid"].as_str().unwrap();
-                slaves.insert(id.clone().to_string(), pid.clone().to_string());
+                let hostname = slave["hostname"].as_str().unwrap();
+                let port = slave["port"].as_i64().unwrap();
+                let addr = format!("{}:{}", hostname, port);
+                slaves.insert(id.clone().to_string(), addr.to_string());
             }
 
             slaves
@@ -175,6 +179,10 @@ impl Service {
             let mut timestamp: f64 = 0.0;
 
             for task in tasks {
+                if task.is_none() {
+                    continue;
+                }
+
                 let task = task.unwrap();
                 timestamp = task.timestamp;
                 cpus.push(task.cpus_user_time_secs + task.cpus_system_time_secs);
@@ -209,7 +217,7 @@ impl Service {
             return futures::done(Ok(())).boxed();
         }
 
-        let url = format!("http://{}:8080/v2/apps/{}", &self.host, &app.name);
+        let url = format!("{}/v2/apps/{}", &self.marathon_url, &app.name);
         let body = format!(r#"{{"instances": {}}}"#, instances);
         let session = Session::new(self.handle.clone());
 
@@ -277,30 +285,37 @@ impl Service {
     }
 }
 
-#[test]
-#[ignore]
-fn test() {
-    let host = "172.17.42.1";
-    let mut evloop = Core::new().unwrap();
-    let mut service = Service::new(evloop.handle(),
-                                   host.to_string(),
-                                   80.0, 80.0, 1.5, 10);
+#[cfg(test)]
+mod tests {
+    use tokio_core::reactor::Core;
 
-    let fut = service.get_slaves();
-    let slaves =  evloop.run(fut).unwrap();
+    #[test]
+    #[ignore]
+    fn test() {
+        let marathon_url = "http://localhost:8080";
+        let mesos_url = "http://localhost:5050";
+        let mut evloop = Core::new().unwrap();
+        let mut service = ::Service::new(evloop.handle(),
+                                         marathon_url.to_string(),
+                                         mesos_url.to_string(),
+                                         80.0, 80.0, 1.5, 10);
 
-    let fut = service.get_apps();
-    let apps =  evloop.run(fut).unwrap();
-    for id in apps {
-        let fut = service.get_app(&id);
-        let app =  evloop.run(fut).unwrap().unwrap();
+        let fut = service.get_slaves();
+        let slaves =  evloop.run(fut).unwrap();
 
-        let fut = service.get_statistic(&app, &slaves, None);
-        let stat =  evloop.run(fut).unwrap();
+        let fut = service.get_apps();
+        let apps =  evloop.run(fut).unwrap();
+        for id in apps {
+            let fut = service.get_app(&id);
+            let app =  evloop.run(fut).unwrap().unwrap();
 
-        if app.name == "api" {
-            let fut = service.scale(&app);
-            evloop.run(fut).unwrap();
+            let fut = service.get_statistic(&app, &slaves, None);
+            let stat =  evloop.run(fut).unwrap();
+
+            if app.name == "api" {
+                let fut = service.scale(&app);
+                evloop.run(fut).unwrap();
+            }
         }
     }
 }

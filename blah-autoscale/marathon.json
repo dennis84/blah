@@ -15,6 +15,7 @@
     "RUST_BACKTRACE": "1"
   },
   "args": [
-    "--host", "$BLAH_HOST"
+    "--marathon", "http://$BLAH_HOST:8080",
+    "--mesos", "http://$BLAH_HOST:5050"
   ]
 }

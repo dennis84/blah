@@ -28,13 +28,20 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     let mut opts = Options::new();
-    opts.reqopt("", "host", "Set marathon/mesos hostname", "172.17.42.1");
+    opts.optopt("", "marathon", "Set marathon url", "http://localhost:8080");
+    opts.optopt("", "mesos", "Set mesos url", "http://localhost:5050");
     opts.optopt("", "cpu-percent", "Set maximum CPU usage", "80");
     opts.optopt("", "mem-percent", "Set maximum memory usage", "80");
     opts.optopt("", "max", "Set maximum instances", "10");
 
     let matches = opts.parse(&args[1..]).unwrap();
-    let host = matches.opt_str("host").unwrap();
+    let marathon_url = matches
+        .opt_str("marathon")
+        .unwrap_or("http://localhost:8080".to_string());
+
+    let mesos_url = matches
+        .opt_str("mesos")
+        .unwrap_or("http://localhost:5050".to_string());
 
     let max_mem_usage = matches
         .opt_str("mem-percent")
@@ -58,7 +65,8 @@ fn main() {
 
     let mut evloop = Core::new().unwrap();
     let mut service = Service::new(evloop.handle(),
-                                   host.clone(),
+                                   marathon_url.clone(),
+                                   mesos_url.clone(),
                                    max_mem_usage,
                                    max_cpu_usage,
                                    multiplier,
@@ -67,6 +75,8 @@ fn main() {
     let mut stats: HashMap<String, Statistic> = HashMap::new();
 
     loop {
+        info!("Tick.");
+
         let apps = {
             let f = service.get_apps().and_then(|apps| {
                 futures::collect(apps.iter().map(|id| {
@@ -85,6 +95,7 @@ fn main() {
             if app.is_none() {
                 continue;
             }
+            info!("sasdsd 1");
 
             let app = app.unwrap();
             let stat = {
@@ -92,6 +103,7 @@ fn main() {
                 let f = service.get_statistic(&app, &slaves, s);
                 evloop.run(f).unwrap()
             };
+            info!("sasdsd 2");
 
             if stat.cpu_usage > app.max_cpu_usage ||
                stat.mem_usage > app.max_mem_usage {
@@ -100,6 +112,7 @@ fn main() {
                 evloop.run(f).unwrap();
             }
 
+            info!("sasdsd 3");
             info!("{}", serde_json::to_string(&AppInfo {
                 app: app.name.to_owned(),
                 instances: app.instances,
